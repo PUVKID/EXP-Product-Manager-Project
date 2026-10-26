@@ -1,8 +1,12 @@
 <div align="center">
 
-# EXP-Product-Manager-Project
+# EXP 번장 상품 등록·관리
 
-## 🛍️ EXP 번장 상품 등록·관리
+**EXP-Product-Manager-Project**
+
+**기술 분류:** 데스크톱 소프트웨어 › Windows Forms·브라우저 자동화 › Selenium·예약·상태 관리
+
+
 
 ### Windows Forms · 상품 목록 · 브라우저 작업 · 예약 실행
 
@@ -16,7 +20,31 @@ Windows 화면, Selenium 브라우저 작업, 일정·라이선스·사용량 �
 
 [빠른 시작](#quick-start) · [저장소 구성](#repository-structure) · [상품 데이터](#data-settings)
 
+[예시 이미지](#preview)
+
 </div>
+
+<a name="preview"></a>
+
+## 🖼️ 예시로 보기
+
+<p align="center"><img src="assets/previews/historical-app-preview.png" width="900" alt="기존 앱 화면 · EXP-Product-Manager-Project" /></p>
+
+**기존 앱 화면** — 12차에 보관된 EXP 2.2.2 사용자 라이트 화면입니다. 기존 화면 기록이며 이번 작업에서 앱을 실행한 결과가 아닙니다.
+
+
+
+<a name="input-processing-output"></a>
+
+## 🔄 입력·처리·출력
+
+| 단계 | 이 프로젝트에서 다루는 내용 |
+| :--- | :--- |
+| 입력 | 상품 목록·사진 경로·예약 설정 |
+| 처리 | WinForms 편집, Selenium 등록, 진행·라이선스·사용량 제어 |
+| 출력 | 상품 처리 상태·등록 결과·운영 기록 |
+
+
 
 ---
 
