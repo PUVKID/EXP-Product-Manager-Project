@@ -1,0 +1,13 @@
+# HTTPS 는 앞단의 리버스 프록시(Caddy/nginx/Cloudflare 등)에서 처리하고, 이 컨테이너는 내부 포트(8080)만 연다.
+services:
+  bja-logs:
+    build: .
+    restart: unless-stopped
+    environment:
+      BJA_TRUST_PROXY: "1"
+    volumes:
+      - bja-data:/data
+    ports:
+      - "127.0.0.1:8080:8080"
+volumes:
+  bja-data:

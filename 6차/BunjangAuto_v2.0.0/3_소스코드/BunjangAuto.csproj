@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Windows 에서 `dotnet build -c Release` / Visual Studio 로 빌드하기 위한 SDK 스타일 프로젝트입니다.
+    (build.bat / build.sh 와 같은 소스·리소스를 사용합니다.)
+    주의: 이 프로젝트 파일은 제작 환경(NuGet 접근 불가)에서는 실행해 보지 못했습니다. 검증된 빌드는 build.sh(Mono) 입니다.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>BunjangAuto</AssemblyName>
+    <RootNamespace>BunjangAuto</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <ApplicationIcon>resources\app.ico</ApplicationIcon>
+    <ApplicationManifest>resources\app.manifest</ApplicationManifest>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <Nullable>disable</Nullable>
+    <NoWarn>1701;1702;0618;0168;0219;0414;0649;0169;0108</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src\**\*.cs" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+  </ItemGroup>
+  <!-- lib\*.dll: 컴파일 참조 + exe 안에 'lib.<이름>.dll' 로 내장 (Program.cs 의 AssemblyResolve 가 꺼내 쓴다. 단일 exe 유지) -->
+  <ItemGroup>
+    <LibDll Include="lib\*.dll" />
+    <Reference Include="%(LibDll.Filename)"><HintPath>%(LibDll.Identity)</HintPath><Private>false</Private></Reference>
+    <EmbeddedResource Include="@(LibDll)" LogicalName="lib.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="resources\help\*.md" LogicalName="help.%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>
