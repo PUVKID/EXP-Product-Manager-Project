@@ -1,17 +1,10 @@
 <div align="center">
 
-# 📦 EXP 번장 상품 등록·관리
+# 📦 EXP Project
 
-**EXP-Product-Manager-Project**
+번장 상품 편집·등록과 예약 작업을 관리하는 Windows 앱입니다.
 
 **기술 분류:** 데스크톱 소프트웨어 › Windows Forms·브라우저 자동화 › Selenium·예약·상태 관리
-
-
-
-### ✨ Windows Forms · 상품 목록 · 브라우저 작업 · 예약 실행
-
-상품 정보를 목록으로 정리하고 등록 흐름과 진행 상태를 관리합니다.<br>
-Windows 화면, Selenium 브라우저 작업, 일정·라이선스·사용량 처리를 연결한 EXP 프로젝트입니다.
 
 ![CSharp](https://img.shields.io/badge/Language-C%23-7C3AED?style=flat-square)
 ![DotNet](https://img.shields.io/badge/.NET_Framework-4.7.2-512BD4?style=flat-square)
@@ -23,6 +16,38 @@ Windows 화면, Selenium 브라우저 작업, 일정·라이선스·사용량 �
 [예시 이미지](#preview)
 
 </div>
+
+<a name="overview"></a>
+
+## 🗺️ 한눈에 보는 구성
+
+<p align="center"><img src="assets/overview.png" width="960" alt="프로젝트의 입력·처리·출력을 정리한 설명도" /></p>
+보관한 프로젝트 자료의 흐름을 정리한 설명도입니다.
+
+<a name="latest-changes"></a>
+## ✨ 최신차수에서 달라진 점
+
+**20차 · 최신보관본** — 전체 목록 반복·실행 설정 고정·로컬 활동 집계
+
+- 시작할 때 설정과 상품 목록의 사본을 만들고 전체 목록 반복의 다음 간격·매시 지정분을 계산합니다. 실패 상품이 있거나 실제 시도 상품이 없으면 반복을 중단합니다.
+- Program은 UsageMetricsService.Load·Hook를 연결하여 이 PC의 실행·성공·실패·오류 활동을 usage.dat에 저장합니다. 과거 중앙 전송 클라이언트와 구분합니다.
+- 공통 컨트롤은 모션 줄이기·최소화·포커스와 Segmented 키보드·접근성 동작을 보완합니다.
+
+[🔍 최신 자료 자세히 보기](docs/versions/20%EC%B0%A8.md) · [🗂️ 전체 차수 의미 비교](docs/VERSIONS.md)
+
+### 🧭 차수 바로가기
+
+[2차](docs/versions/2%EC%B0%A8.md) · [3차](docs/versions/3%EC%B0%A8.md) · [4차](docs/versions/4%EC%B0%A8.md) · [5차](docs/versions/5%EC%B0%A8.md) · [6차](docs/versions/6%EC%B0%A8.md) · [7차](docs/versions/7%EC%B0%A8.md) · [8차](docs/versions/8%EC%B0%A8.md) · [9차](docs/versions/9%EC%B0%A8.md) · [11차](docs/versions/11%EC%B0%A8.md) · [12차](docs/versions/12%EC%B0%A8.md) · [13차](docs/versions/13%EC%B0%A8.md) · [14차](docs/versions/14%EC%B0%A8.md) · [15차](docs/versions/15%EC%B0%A8.md) · [16차](docs/versions/16%EC%B0%A8.md) · [17차](docs/versions/17%EC%B0%A8.md) · [18차](docs/versions/18%EC%B0%A8.md) · [19차](docs/versions/19%EC%B0%A8.md) · [20차](docs/versions/20%EC%B0%A8.md)
+
+현재 공개 목록에는 1차·10차 자료가 없습니다. 해당 차수의 코드·변경 내용을 추정해 만들지 않았습니다. 11차는 현재 2.2.2와 이전 2.2.1을 함께 보관하고, 12차는 같은 2.2.2 묶음을 따로 보관합니다.
+
+| 관심 있는 내용 | 바로가기 |
+| :--- | :--- |
+| 코드를 먼저 보고 싶어요 | [최신 원본 폴더](20%EC%B0%A8/) |
+| 이전과 무엇이 다른가요? | [차수별 해설과 근거](docs/VERSIONS.md) |
+| 어떻게 실행하나요? | [준비 조건과 실행 제약](#quick-start) |
+
+
 
 <a name="preview"></a>
 
