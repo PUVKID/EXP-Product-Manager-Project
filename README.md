@@ -6,23 +6,18 @@
 
 **기술 분류:** 데스크톱 소프트웨어 › Windows Forms·브라우저 자동화 › Selenium·예약·상태 관리
 
-![CSharp](https://img.shields.io/badge/Language-C%23-7C3AED?style=flat-square)
-![DotNet](https://img.shields.io/badge/.NET_Framework-4.7.2-512BD4?style=flat-square)
-![Selenium](https://img.shields.io/badge/Selenium-43B02A?style=flat-square&logo=selenium&logoColor=white)
-![Windows](https://img.shields.io/badge/Platform-Windows-0078D4?style=flat-square)
+`C#`
+`.NET Framework 4.7.2`
+`Selenium`
+`Windows`
 
 [빠른 시작](#quick-start) · [저장소 구성](#repository-structure) · [상품 데이터](#data-settings)
 
-[예시 이미지](#preview)
+[핵심 구성](#input-processing-output)
 
 </div>
 
 <a name="overview"></a>
-
-## 🗺️ 한눈에 보는 구성
-
-<p align="center"><img src="assets/overview.png" width="960" alt="프로젝트의 입력·처리·출력을 정리한 설명도" /></p>
-보관한 프로젝트 자료의 흐름을 정리한 설명도입니다.
 
 <a name="latest-changes"></a>
 ## ✨ 최신차수에서 달라진 점
@@ -48,16 +43,7 @@
 | 어떻게 실행하나요? | [준비 조건과 실행 제약](#quick-start) |
 
 
-
 <a name="preview"></a>
-
-## 🖼️ 예시로 보기
-
-<p align="center"><img src="assets/previews/historical-app-preview.png" width="900" alt="기존 앱 화면 · EXP-Product-Manager-Project" /></p>
-
-**기존 앱 화면** — 12차에 보관된 EXP 2.2.2 사용자 라이트 화면입니다. 기존 화면 기록이며 이번 작업에서 앱을 실행한 결과가 아닙니다.
-
-
 
 <a name="input-processing-output"></a>
 
@@ -65,10 +51,9 @@
 
 | 단계 | 이 프로젝트에서 다루는 내용 |
 | :--- | :--- |
-| 입력 | 상품 목록·사진 경로·예약 설정 |
-| 처리 | WinForms 편집, Selenium 등록, 진행·라이선스·사용량 제어 |
-| 출력 | 상품 처리 상태·등록 결과·운영 기록 |
-
+| 📥 입력 | 상품 목록·사진 경로·예약 설정 |
+| ⚙️ 처리 | WinForms 편집, Selenium 등록, 진행·라이선스·사용량 제어 |
+| 📤 출력 | 상품 처리 상태·등록 결과·운영 기록 |
 
 
 ---
