@@ -1,0 +1,9 @@
+{
+  "selection_reason": "재현된 컨트롤 생명주기와 좁은 배치 문제이며 기존 구현자의 공통 UI 범위 수리로 제한 가능",
+  "model": "gpt-6.1-sol",
+  "new_observation": "실제 진단에서 FluentButton NavItem FluentProgress 모두 Visible=false/running=true, 좁은 메뉴폭76에서 글자 일부 노출",
+  "method": "부모 가시성 변경을 구독하고 수명 종료/재부모화 때 해제, 아이콘 전용 폭에서는 글자 생략 및 AccessibleName 유지, 기존 모션/DPI 검사 재실행",
+  "effort": "medium",
+  "cause": "상위 Form.Hide가 자식 VisibleChanged를 전달하지 않아 세 모션 타이머가 계속 활성",
+  "role": "build"
+}

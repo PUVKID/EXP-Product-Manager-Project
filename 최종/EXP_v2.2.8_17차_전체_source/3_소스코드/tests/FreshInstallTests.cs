@@ -1,0 +1,13 @@
+using System;using System.IO;using System.Reflection;using System.Security.Cryptography;using Microsoft.Win32;using BunjangAuto;using Lumivolt.Admin;using Lumivolt.Security;
+class FreshInstallTests {
+ static int good,bad;static void Check(string n,bool b){Console.WriteLine((b?"PASS ":"FAIL ")+n);if(b)good++;else bad++;}
+ [STAThread]static void Main(){AppDomain.CurrentDomain.AssemblyResolve+=delegate(object s,ResolveEventArgs e){using(var x=Assembly.GetExecutingAssembly().GetManifestResourceStream("lib."+new AssemblyName(e.Name).Name+".dll")){if(x==null)return null;using(var m=new MemoryStream()){x.CopyTo(m);return Assembly.Load(m.ToArray());}}};Environment.ExitCode=Run();}
+ [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]static int Run(){int pid=System.Diagnostics.Process.GetCurrentProcess().Id;string dir=Paths.Root+"-issuer";try{
+ Check("fresh product profile",!Directory.Exists(Paths.Root));using(var k=Registry.CurrentUser.OpenSubKey(@"Software\EXP\Tests\"+pid))Check("fresh usage registry",k==null);
+ IssuerService.Create(dir);var pub=IssuerService.Load(dir).GeneratePublicKey().GetEncoded();TrustedKeys.All.Add(LicenseProtocol.KeyId(pub),pub);string req=TpmDevice.CreateRequest(),message;
+ foreach(string edition in new[]{"Classic","Studio","Pro"}){string key=IssuerService.Issue(dir,req,"PUVKID",DateTime.UtcNow.AddDays(1),edition);Check("activate PUVKID "+edition,LicenseGate.TryActivate(key,out message));Check("recheck "+edition,LicenseGate.Recheck());UsageQuota.EnsureReady();Check("usage after activation "+edition,UsageQuota.Summary().Contains("오늘 0 / "+EditionPolicy.DailyLimit(edition)));}
+ var method=typeof(BunjangAuto.Program).GetMethod("SetupActivation",BindingFlags.NonPublic|BindingFlags.Static);for(int i=0;i<2;i++)Check("actual setup gate "+i,(int)method.Invoke(null,new object[]{true})==30);
+ Check("renew same name",LicenseGate.TryActivate(IssuerService.Issue(dir,req,"PUVKID",DateTime.UtcNow.AddDays(2),"Pro"),out message));UsageQuota.EnsureReady();Check("renewal does not change usage",UsageQuota.Summary().Contains("오늘 0 / 100"));
+ }catch(Exception e){Console.WriteLine(e);bad++;}finally{foreach(var item in new[]{Tuple.Create(TpmDevice.KeyName,new CngProvider("Microsoft Platform Crypto Provider")),Tuple.Create("EXP.Usage.Test."+pid,CngProvider.MicrosoftSoftwareKeyStorageProvider)})if(CngKey.Exists(item.Item1,item.Item2))using(var k=CngKey.Open(item.Item1,item.Item2))k.Delete();Registry.CurrentUser.DeleteSubKeyTree(@"Software\EXP\Tests\"+pid,false);Registry.CurrentUser.DeleteSubKeyTree(@"Software\EXP\TestIssuer\"+pid,false);}
+ Console.WriteLine("FRESH: "+good+" passed, "+bad+" failed");return bad==0?0:1;}
+}

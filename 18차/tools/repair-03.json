@@ -1,0 +1,9 @@
+{
+  "method": "TESTBUILD에서 DiagnosticsForm subclass OnShown의 base호출 없이 실제검사 차단하고 보이는 offscreen폼 렌더; 공통폼도 offscreen Show; preview 타이머는 Dispose/ExitThread로 완전종료, 소유 preview만 경로 확인해 종료",
+  "cause": "하네스 CreateControl만으로 숨긴 Form 자식이 그려지지 않음; preview Close는 MainForm 트레이 동작으로 프로세스를 남김",
+  "role": "build",
+  "selection_reason": "제품 인증/실제진단 변경 없이 테스트 하네스의 관측과 수명주기만 정확히 고치는 범위",
+  "effort": "medium",
+  "model": "gpt-6.1-sol",
+  "new_observation": "verifier 자가진단/관리공통 캡처 빈배경 확인, Test EXE 잠금빌드실패와 preview PID32516 잔존 확인"
+}

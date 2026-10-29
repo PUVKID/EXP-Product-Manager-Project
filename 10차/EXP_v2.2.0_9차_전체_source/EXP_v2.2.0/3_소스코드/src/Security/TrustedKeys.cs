@@ -1,0 +1,1 @@
+using System.Collections.Generic; namespace BunjangAuto { internal static class TrustedKeys { internal static readonly IDictionary<string, byte[]> All = new Dictionary<string, byte[]> { { "72FE5042D4CF73700FABA7642A8351E0", System.Convert.FromBase64String("n0xK7sOS7aL3k8h3FHfUac0ozGTmd3Awt+Yd/nLM/VY=") } }; } }
