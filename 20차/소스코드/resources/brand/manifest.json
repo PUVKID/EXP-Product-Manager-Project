@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "width": 192,
+  "height": 192,
+  "columns": 8,
+  "frames": 48,
+  "fps": 12,
+  "period_seconds": 4,
+  "mesh": "EXP_Bevel_E",
+  "triangles": 92,
+  "units": "원본 GLB 미터; E 높이0.07m",
+  "pivot": [
+    0,
+    0,
+    0
+  ],
+  "renderer": "NumPy 삼각형 원근 투영·픽셀 Z버퍼·면 법선 Lambert/Blinn-Phong 조명",
+  "motion": "X/Y/Z 고유 축의 작은 주기적 회전과 Y 부유, 4초주기",
+  "alpha": "straight RGBA, alpha0 RGB0",
+  "runtime": "PNG 시트 공유 1개, GPU/웹서버 없음",
+  "external_assets": false,
+  "elapsed_seconds": 1.0250527000171132,
+  "sheet_bytes": 153710,
+  "sheet_sha256": "a2be32b6e2908ab9642366b94d48e8ca1298f962d7066b8810e32c0f8103eafd",
+  "glb_sha256": "f684b3b53283ab5784e963b28334542cbb5e4a78f1d62019268082c5cf495fd6",
+  "limitation": "경로추적/물리정확 금속 반사 아님; 실제 기하와 깊이로 구운 스타일 렌더"
+}
