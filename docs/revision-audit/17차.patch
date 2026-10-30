@@ -1,0 +1,794 @@
+--- 16차/admin/AssemblyInfo.cs
++++ 17차/admin/AssemblyInfo.cs
+@@ -2,8 +2,8 @@
+ [assembly: AssemblyTitle("EXP Master")]
+ [assembly: AssemblyProduct("EXP Master")]
+ [assembly: AssemblyDescription("EXP 오프라인 라이선스 및 추가 등록권 발급")]
+-[assembly: AssemblyVersion("2.2.7.0")]
+-[assembly: AssemblyFileVersion("2.2.7.0")]
++[assembly: AssemblyVersion("2.2.8.0")]
++[assembly: AssemblyFileVersion("2.2.8.0")]
+ 
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+--- 16차/build/Build.ps1
++++ 17차/build/Build.ps1
+@@ -39,6 +39,8 @@
+     Compile 'EXP' ($app + $shared) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $true
+ }
+ if ($Target -eq 'Tests') {
++    Compile 'ShippingFormTests' ($app + $shared + @('tests\ShippingFormTests.cs')) @('/target:exe','/define:TESTBUILD','/main:ShippingFormTests') $true
++    Compile 'DpiLayoutTests' ($app + $shared + @('tests\DpiLayoutTests.cs')) @('/target:exe','/define:TESTBUILD','/main:DpiLayoutTests') $true
+     Compile 'FreshInstallTests' ($app + $shared + @('admin\IssuerService.cs','tests\FreshInstallTests.cs')) @('/target:exe','/define:TESTBUILD','/main:FreshInstallTests') $true
+     Compile 'ResetTests' ($app + $shared + @('admin\IssuerService.cs','tools\ResetProgram.cs','tests\ResetTests.cs')) @('/target:exe','/define:TESTBUILD','/main:ResetTests') $true
+     Compile 'SurfaceUiTests' ($app + $shared + @('tests\SurfaceUiTests.cs')) @('/target:exe','/define:TESTBUILD','/main:SurfaceUiTests') $true
+--- 16차/installer/EXP.iss
++++ 17차/installer/EXP.iss
+@@ -1,4 +1,4 @@
+-#define AppVersion "2.2.7"
++#define AppVersion "2.2.8"
+ [Setup]
+ AppId={{BBD63563-5422-4DA7-93C6-2F0D98E87E3F}
+ AppName={code:ProductName}
+@@ -21,7 +21,7 @@
+ CloseApplications=no
+ RestartApplications=no
+ AppMutex=BunjangAuto_SingleInstance
+-VersionInfoVersion=2.2.7.0
++VersionInfoVersion=2.2.8.0
+ VersionInfoCompany=EXPMASTER
+ VersionInfoDescription=EXP 통합 설치 프로그램
+ VersionInfoProductName=EXP
+--- 16차/resources/help/02-guide.md
++++ 17차/resources/help/02-guide.md
+@@ -2,9 +2,15 @@
+ 
+ ## 상품 추가와 수정
+ 상품 관리에서 추가를 누르거나 수정할 상품을 선택해 편집창을 여세요.
+-왼쪽에는 상품명, 가격, 수량, 카테고리, 상품 상태, 배송비 포함 여부와 태그를 입력합니다. 카테고리는 대분류부터 차례대로 선택하세요.
++왼쪽에는 상품명, 가격, 수량, 카테고리, 상품 상태와 태그를 입력합니다. 카테고리는 대분류부터 차례대로 선택하세요.
+ ## 설명과 사진
+ 오른쪽에는 상품 설명을 적고 사진을 추가하세요. 설명의 줄바꿈은 저장 후에도 유지됩니다. 태그는 쉼표 또는 띄어쓰기로 구분합니다.
+ 상품 저장을 누르면 목록에 반영됩니다. 취소를 누르면 입력한 변경 사항을 적용하지 않습니다.
+ ## 등록 전 확인
+ 가격과 사진 순서, 카테고리를 확인하세요. 등록한 상품의 제목과 상세 내용은 번개장터에 게시되는 정보이므로 저장 전에 다시 읽어 주세요.
++
++## 배송 설정
++편집창 아래의 배송 설정에서 배송비 포함 여부를 선택하세요. 포함을 선택하면 별도 배송 요금은 입력하지 않습니다.
++배송비 별도 상품은 일반택배 요금을 100~30,000원으로 입력하세요. 기존에 저장한 별도 배송 상품도 요금을 한 번 입력해야 합니다.
++반값택배는 불가능 또는 가능을 선택합니다. 가능하면 둘 다 가능, GS25 만, CU만 중 하나를 고르고 반값택배 요금을 입력하세요. 실제 등록 시 번개장터가 제시하는 요금 범위와 상품 조건을 확인하며, 적용할 수 없는 값이면 등록 전에 중단합니다.
++다음 등록시에도 사용을 선택하면 번개장터의 같은 옵션을 켭니다. EXP에 저장한 상품별 배송 설정은 매번 등록할 때 적용합니다.--- 16차/src/AssemblyInfo.cs
++++ 17차/src/AssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyProduct("EXP")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+-[assembly: AssemblyVersion("2.2.7.0")]
+-[assembly: AssemblyFileVersion("2.2.7.0")]
+-[assembly: AssemblyInformationalVersion("2.2.7")]
++[assembly: AssemblyVersion("2.2.8.0")]
++[assembly: AssemblyFileVersion("2.2.8.0")]
++[assembly: AssemblyInformationalVersion("2.2.8")]
+--- 16차/src/Bot.cs
++++ 17차/src/Bot.cs
+@@ -291,6 +291,7 @@
+                 if (!p.IsValid) throw new Exception("제목 또는 가격이 비어 있습니다.");
+                 if (Regex.Matches((p.Title ?? "") + (p.Description ?? ""), @"\?\?").Count >= 3)
+                     throw new Exception("제목/설명에 '??' 가 여러 곳 있습니다. 상품 편집에서 제목과 설명을 확인해 주세요.");
++                ShippingOptions.Validate(p);
+                 Go(_sel.NewProductUrl);
+                 Sleep(2000);
+                 // 사이트가 맨 위 검색창에 포커스를 줘서 검색 팝업이 열려 있을 수 있으니 포커스를 해제한다
+@@ -341,18 +342,8 @@
+ 
+                 SetText(Require(_sel.PriceXPath, "가격"), p.Price);
+ 
+-                // 택배거래: 기본값이 '배송비 포함'. 포함하지 않으려면 '배송비 별도'를 고른다.
+-                if (!p.FreeShipping)
+-                {
+-                    var ship = Find(_sel.ShippingOpenXPath, 2);
+-                    if (ship != null)
+-                    {
+-                        Click(ship); Sleep(500);
+-                        if (!TryClick(SelectorSet.Fill(_sel.ShippingOptionXPath, "별도"), 3))
+-                            Log.Write("  '배송비 별도' 항목을 찾지 못했습니다. 기본값(배송비 포함)으로 등록합니다.");
+-                    }
+-                }
+-
++                ConfigureShipping(p);
++
+                 if (!string.IsNullOrWhiteSpace(p.Quantity) && p.Quantity.Trim() != "1")
+                 {
+                     var q = Find(_sel.QuantityXPath, 2);
+@@ -426,6 +417,52 @@
+                 return r is bool && (bool)r;
+             }
+             catch { return false; }
++        }
++
++        private void ConfigureShipping(Product p)
++        {
++            ShippingOptions.Validate(p);
++            string expected=p.FreeShipping?"배송비 포함":"배송비 별도";
++            var open=Require(_sel.ShippingOpenXPath,"배송비 포함 / 별도 선택");
++            if(!open.Text.Replace(" ","").Contains(expected.Replace(" ",""))){
++                Click(open);
++                Click(Require("//*[@role='option'][translate(normalize-space(.),' ','')='"+expected.Replace(" ","")+"']",expected));
++            }
++            if(!Require(_sel.ShippingOpenXPath,"배송 방식").Text.Replace(" ","").Contains(expected.Replace(" ","")))
++                throw new InvalidOperationException("배송 방식이 적용되지 않았습니다. 상품 등록을 중단했습니다.");
++            const string section="//*[@id='scroll-trade-shippingSpecs']";
++            if(!p.FreeShipping){
++                SetShippingAmount(Require("("+section+"//input[@inputmode='numeric'])[1]","일반택배 배송비"),p.ShippingFee.Value,"일반택배");
++                string radio="//input[@type='radio' and @name='isPossible' and @value='"+(p.HalfShipping?"1":"0")+"']";
++                var choice=Require(radio,"반값택배 가능 여부");
++                if(!choice.Selected)Click(choice.FindElement(By.XPath("ancestor::label[1]")));
++                if(!Require(radio,"반값택배 가능 여부").Selected)
++                    throw new InvalidOperationException("이 상품에 반값택배 설정을 적용할 수 없습니다. 번개장터의 상품 가격·배송 조건을 확인해 주세요.");
++                if(p.HalfShipping){
++                    string label=ShippingOptions.CarrierLabel(p.HalfShippingCarrier);
++                    var carrier=Require(section+"//button[@aria-haspopup='listbox']","반값택배 편의점");
++                    if(carrier.Text.Replace(" ","")!=label.Replace(" ","")){
++                        Click(carrier);Click(Require("//*[@role='option'][translate(normalize-space(.),' ','')='"+label.Replace(" ","")+"']",label));
++                    }
++                    if(Require(section+"//button[@aria-haspopup='listbox']","반값택배 편의점").Text.Replace(" ","")!=label.Replace(" ",""))
++                        throw new InvalidOperationException("반값택배 편의점 설정이 적용되지 않았습니다.");
++                    SetShippingAmount(Require("("+section+"//input[@inputmode='numeric'])[2]","반값택배 요금"),p.HalfShippingFee.Value,"반값택배");
++                }
++            }
++            var remember=Require("//input[@type='checkbox' and @id='default-shipping-fee'] | //label[contains(normalize-space(.),'다음 등록시에도 사용')]//input[@type='checkbox']","다음 등록시에도 사용");
++            if(remember.Selected!=p.RememberShipping)Click(remember);
++            if(remember.Selected!=p.RememberShipping)throw new InvalidOperationException("배송 기본값 저장 옵션을 적용하지 못했습니다.");
++        }
++
++        private void SetShippingAmount(IWebElement input,int amount,string caption)
++        {
++            var range=Regex.Match(input.GetAttribute("placeholder")??"",@"([\d,]+)\s*~\s*([\d,]+)");
++            int min,max;
++            if(range.Success&&int.TryParse(range.Groups[1].Value.Replace(",",""),out min)&&int.TryParse(range.Groups[2].Value.Replace(",",""),out max)&&(amount<min||amount>max))
++                throw new InvalidOperationException(caption+" 요금은 현재 번개장터에서 "+min.ToString("N0")+"~"+max.ToString("N0")+"원으로 입력할 수 있습니다. 상품 편집에서 변경해 주세요.");
++            SetText(input,amount.ToString());
++            int actual;if(!int.TryParse((input.GetAttribute("value")??"").Replace(",",""),out actual)||actual!=amount)
++                throw new InvalidOperationException(caption+" 배송비가 정확히 입력되지 않았습니다. 등록을 중단했습니다.");
+         }
+ 
+         private IWebElement FindTitleInput()
+--- 16차/src/Brand.cs
++++ 17차/src/Brand.cs
+@@ -4,7 +4,7 @@
+     {
+         public const string Name = "EXP";
+         public const string Master = "EXP Master";
+-        public const string Version = "2.2.7";
++        public const string Version = "2.2.8";
+         public static string Email
+         {
+             get
+--- 16차/src/Design.cs
++++ 17차/src/Design.cs
+@@ -232,22 +232,37 @@
+     }
+     public class SoftCombo : ComboBox
+     {
++        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
++        struct NativeRect { public int Left,Top,Right,Bottom; }
++        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
++        struct ComboInfo { public int Size; public NativeRect Item,Button; public int State; public IntPtr Combo,Edit,List; }
++        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern bool GetComboBoxInfo(IntPtr handle,ref ComboInfo info);
++        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern bool SetWindowPos(IntPtr handle,IntPtr after,int x,int y,int width,int height,uint flags);
++        void AlignEditor() {
++            if(!IsHandleCreated || DropDownStyle!=ComboBoxStyle.DropDown)return;
++            var info=new ComboInfo {Size=System.Runtime.InteropServices.Marshal.SizeOf(typeof(ComboInfo))};
++            if(!GetComboBoxInfo(Handle,ref info)||info.Edit==IntPtr.Zero)return;
++            int h=Math.Min(Height-Dpi.S(8),TextRenderer.MeasureText("가Ag",Font,Size.Empty,TextFormatFlags.NoPadding|TextFormatFlags.SingleLine).Height);
++            SetWindowPos(info.Edit,IntPtr.Zero,Dpi.S(12),Math.Max(0,(Height-h)/2),Math.Max(1,Width-Dpi.S(44)),h,0x0014);
++        }
+         protected override void WndProc(ref Message m) {
+             base.WndProc(ref m);
++            if(m.Msg==0x0005 || m.Msg==0x0030 || m.Msg==0x0047 || m.Msg==0x000F)AlignEditor();
+             if((m.Msg==0x000F || m.Msg==0x0317 || m.Msg==0x0318) && IsHandleCreated && Width>30 && DropDownStyle!=ComboBoxStyle.Simple)using(var g=m.Msg==0x000F?Graphics.FromHwnd(Handle):Graphics.FromHdc(m.WParam)) {
+                 var p=Theme.Current;int w=Dpi.S(22);var r=new Rectangle(Width-w-1,1,w,Height-2);
+                 SoftInput.PaintSurface(g,this,Focused);
+-                if(DropDownStyle==ComboBoxStyle.DropDownList)TextRenderer.DrawText(g,Text,Font,new Rectangle(Dpi.S(12),0,Width-Dpi.S(38),Height),Enabled?p.Text:p.TextMuted,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
++                TextRenderer.DrawText(g,Text,Font,new Rectangle(Dpi.S(12),0,Width-Dpi.S(38),Height),Enabled?p.Text:p.TextMuted,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis|TextFormatFlags.NoPadding|TextFormatFlags.SingleLine);
+                 g.SmoothingMode=SmoothingMode.AntiAlias;float x=r.Left+r.Width/2f,y=Height/2f;
+                 using(var pen=new Pen(Enabled?p.TextMuted:p.Border,Dpi.S(2))) {g.DrawLine(pen,x-Dpi.S(3),y-Dpi.S(1),x,y+Dpi.S(2));g.DrawLine(pen,x,y+Dpi.S(2),x+Dpi.S(3),y-Dpi.S(1));}
+             }
+         }
+-        public SoftCombo() { DrawMode=DrawMode.OwnerDrawFixed;ItemHeight=30;DropDownStyle=ComboBoxStyle.DropDownList;Font=Theme.FontBase(); }
++        public SoftCombo() { DrawMode=DrawMode.OwnerDrawFixed;ItemHeight=Dpi.S(30);DropDownStyle=ComboBoxStyle.DropDownList;Font=Theme.FontBase(); }
++        protected override void ScaleControl(SizeF factor,BoundsSpecified specified){base.ScaleControl(factor,specified);ItemHeight=Dpi.S(30);AlignEditor();}
+         protected override void OnDrawItem(DrawItemEventArgs e) {
+             bool selected=(e.State&DrawItemState.Selected)!=0;
+             using(var b=new SolidBrush(selected?Theme.Current.Selected:Theme.Current.Field))e.Graphics.FillRectangle(b,e.Bounds);
+             string text=e.Index>=0?Convert.ToString(Items[e.Index]):Text;
+-            TextRenderer.DrawText(e.Graphics,text,Font,new Rectangle(e.Bounds.X+8,e.Bounds.Y,e.Bounds.Width-12,e.Bounds.Height),Enabled?Theme.TextPrimary:Theme.TextMuted,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
++            TextRenderer.DrawText(e.Graphics,text,Font,new Rectangle(e.Bounds.X+Dpi.S(12),e.Bounds.Y,e.Bounds.Width-Dpi.S(24),e.Bounds.Height),Enabled?Theme.TextPrimary:Theme.TextMuted,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
+             if((e.State&DrawItemState.Focus)!=0)e.DrawFocusRectangle();
+         }
+     }
+--- 16차/src/EditForm.cs
++++ 17차/src/EditForm.cs
+@@ -15,13 +15,13 @@
+         private ComboBox cat1, cat2, cat3;
+         private List<CatNode> _roots;
+         private ComboBox cmbCond;
+-        private CheckBox chkShip;
++        private ShippingEditor shipping;
+         private ListBox lstImg;
+ 
+         public EditForm(Product p)
+         {
+             _p = p;
+-            Text = "EXP · 상품 편집"; ClientSize=new Size(1020,804);
++            Text = "EXP · 상품 편집"; ClientSize=new Size(1020,1102);
+             StartPosition=FormStartPosition.CenterParent;FormBorderStyle=FormBorderStyle.FixedDialog;MaximizeBox=false;Font=Theme.FontBase();
+             Controls.Add(new HeroBanner {Left=24,Top=20,Width=972,Height=136,Eyebrow="EXP / PRODUCT",Title="상품을 더 매력적으로.",Subtitle="정보와 사진을 준비하고 저장하세요."});
+             var left=new SoftCard {Left=24,Top=174,Width=472,Height=548};
+@@ -42,7 +42,7 @@
+             cat2.SelectedIndexChanged+=delegate{cat3.Text="";FillChild(cat3,cat1.Text,cat2.Text);};
+             left.Controls.Add(Design.Label("상품 상태",24,392,238,24,10,"m"));
+             cmbCond=Category(24,420,238);cmbCond.Items.AddRange(new object[]{"새 상품(미사용)","사용감 없음","사용감 적음","사용감 많음","고장/파손 상품"});cmbCond.Text=p.Condition;
+-            chkShip=new CheckBox {Left=282,Top=423,Width=162,Height=28,Text="배송비 포함",Checked=p.FreeShipping};left.Controls.AddRange(new Control[]{cmbCond,chkShip});
++            left.Controls.Add(cmbCond);
+             txtTags=Field(left,"태그 · 쉼표 또는 띄어쓰기로 구분",24,464,424,p.Tags);
+             right.Controls.Add(Design.Label("상품 설명",24,20,430,28,15,"t"));
+             var description=new FieldFrame {Left=24,Top=62,Width=436,Height=224,Padding=new Padding(12)};
+@@ -54,8 +54,9 @@
+             lstImg.DrawItem+=DrawPhoto;right.Controls.Add(lstImg);
+             var bAddImg=Design.Button("사진 추가",24,494,118,true);var bDelImg=Design.Button("삭제",150,494,94,false);var bUp=Design.Button("위로",252,494,94,false);var bDown=Design.Button("아래로",354,494,106,false);
+             right.Controls.AddRange(new Control[]{bAddImg,bDelImg,bUp,bDown});
+-            var ok=Design.Button("상품 저장",810,742,186,true);ok.Name="saveProduct";ok.Height=42;ok.DialogResult=DialogResult.OK;
+-            var cancel=Design.Button("취소",680,742,118,false);cancel.Height=42;cancel.DialogResult=DialogResult.Cancel;
++            shipping=new ShippingEditor(p){Left=24,Top=742};Controls.Add(shipping);
++            var ok=Design.Button("상품 저장",810,1040,186,true);ok.Name="saveProduct";ok.Height=42;ok.DialogResult=DialogResult.OK;
++            var cancel=Design.Button("취소",680,1040,118,false);cancel.Height=42;cancel.DialogResult=DialogResult.Cancel;
+             Controls.AddRange(new Control[]{left,right,ok,cancel});CancelButton=cancel;AcceptButton=null;
+             Design.Scale(this);Theme.Apply(this);
+ 
+@@ -81,13 +82,14 @@
+                     DialogResult = DialogResult.None;
+                     return;
+                 }
++                try { shipping.ValidateValues(); } catch(Exception ex){FluentBox.Show(this,ex.Message,"배송 설정");DialogResult=DialogResult.None;return;}
+                 _p.Title = txtTitle.Text.Trim();
+                 _p.Price = new string(txtPrice.Text.Where(char.IsDigit).ToArray());
+                 _p.Category = string.Join(">", new string[] { cat1.Text.Trim(), cat2.Text.Trim(), cat3.Text.Trim() }.Where(x => x.Length > 0).ToArray());
+                 _p.Condition = cmbCond.Text.Trim();
+                 _p.Quantity = string.IsNullOrWhiteSpace(txtQty.Text) ? "1" : txtQty.Text.Trim();
+                 _p.Tags = txtTags.Text.Trim();
+-                _p.FreeShipping = chkShip.Checked;
++                shipping.Save(_p);
+                 _p.Description = txtDesc.Text;
+                 _p.Images = string.Join(";", lstImg.Items.Cast<object>().Select(x => x.ToString()).ToArray());
+             };
+--- 16차/src/Models.cs
++++ 17차/src/Models.cs
+@@ -39,6 +39,11 @@
+         public string Images { get { return _images; } set { _images = value; Raise("Images"); } }
+         public string Description { get { return _description; } set { _description = value; Raise("Description"); } }
+         public bool FreeShipping { get { return _freeShipping; } set { _freeShipping = value; Raise("FreeShipping"); } }
++        public int? ShippingFee { get; set; }
++        public bool HalfShipping { get; set; }
++        public string HalfShippingCarrier { get; set; }
++        public int? HalfShippingFee { get; set; }
++        public bool RememberShipping { get; set; }
+ 
+         // ----- 실행 결과(프로그램이 채움) -----
+         public string Status { get { return _status; } set { _status = value; Raise("Status"); } }
+--- 16차/src/ShippingEditor.cs
++++ 17차/src/ShippingEditor.cs
+@@ -0,0 +1,43 @@
++using System;
++using System.Drawing;
++using System.Windows.Forms;
++namespace BunjangAuto {
++    public static class ShippingOptions {
++        public static string CarrierLabel(string code){return code=="GS_HALF_PRICE"?"GS25 만":code=="CU_THRIFTY"?"CU만":"둘 다 가능";}
++        public static void Validate(Product p){
++            if(p.FreeShipping)return;
++            if(!p.ShippingFee.HasValue||p.ShippingFee<100||p.ShippingFee>30000)throw new InvalidOperationException("일반택배 배송비를 100~30,000원으로 입력해 주세요. 상품 편집의 배송 설정에서 변경할 수 있습니다.");
++            if(p.HalfShipping){
++                if(!p.HalfShippingFee.HasValue||p.HalfShippingFee<0||p.HalfShippingFee>30000)throw new InvalidOperationException("반값택배 요금을 입력해 주세요.");
++                if(p.HalfShippingCarrier!="ALL"&&p.HalfShippingCarrier!="GS_HALF_PRICE"&&p.HalfShippingCarrier!="CU_THRIFTY")throw new InvalidOperationException("반값택배 편의점을 선택해 주세요.");
++            }
++        }
++    }
++    public class ShippingEditor : SoftCard {
++        readonly CheckBox included,remember;
++        readonly RadioButton halfNo,halfYes;
++        readonly SoftInput normal,halfFee;
++        readonly SoftCombo carrier;
++        public ShippingEditor(Product p){
++            Size=new Size(972,278);
++            Controls.Add(Design.Label("배송 설정",24,18,400,30,15,"t"));
++            included=new CheckBox{Name="shippingIncluded",Text="배송비 포함",Left=744,Top=23,Width=200,Height=26,Checked=p.FreeShipping};
++            Controls.Add(Design.Label("일반택배 · 100~30,000원",24,70,300,24,10,"m"));
++            normal=new SoftInput{Name="shippingFee",Left=24,Top=100,Width=300,Height=42,Text=p.ShippingFee.HasValue?p.ShippingFee.Value.ToString():""};
++            Controls.Add(Design.Label("반값택배",368,70,300,24,10,"m"));
++            halfNo=new RadioButton{Name="halfShippingNo",Text="불가능",Left=368,Top=108,Width=104,Height=26,Checked=!p.HalfShipping};
++            halfYes=new RadioButton{Name="halfShippingYes",Text="가능",Left=484,Top=108,Width=104,Height=26,Checked=p.HalfShipping};
++            Controls.Add(Design.Label("반값택배 편의점",24,160,300,24,10,"m"));
++            carrier=new SoftCombo{Name="halfShippingCarrier",Left=24,Top=190,Width=300};carrier.Items.AddRange(new object[]{"둘 다 가능","GS25 만","CU만"});carrier.SelectedIndex=p.HalfShippingCarrier=="GS_HALF_PRICE"?1:p.HalfShippingCarrier=="CU_THRIFTY"?2:0;
++            Controls.Add(Design.Label("반값택배 요금 · 원",368,160,300,24,10,"m"));
++            halfFee=new SoftInput{Name="halfShippingFee",Left=368,Top=190,Width=260,Height=42,Text=p.HalfShippingFee.HasValue?p.HalfShippingFee.Value.ToString():""};
++            remember=new CheckBox{Name="rememberShipping",Text="다음 등록시에도 사용",Left=664,Top=198,Width=282,Height=28,Checked=p.RememberShipping};
++            Controls.AddRange(new Control[]{included,normal,halfNo,halfYes,carrier,halfFee,remember});
++            included.CheckedChanged+=delegate{RefreshFields();};halfYes.CheckedChanged+=delegate{RefreshFields();};RefreshFields();
++        }
++        void RefreshFields(){normal.Enabled=!included.Checked;halfNo.Enabled=halfYes.Enabled=!included.Checked;carrier.Enabled=halfFee.Enabled=!included.Checked&&halfYes.Checked;}
++        static int? Amount(string text){int value;return int.TryParse((text??"").Replace(",","").Trim(),out value)?(int?)value:null;}
++        public void Save(Product p){p.FreeShipping=included.Checked;p.ShippingFee=Amount(normal.Text);p.HalfShipping=halfYes.Checked;p.HalfShippingCarrier=carrier.SelectedIndex==1?"GS_HALF_PRICE":carrier.SelectedIndex==2?"CU_THRIFTY":"ALL";p.HalfShippingFee=Amount(halfFee.Text);p.RememberShipping=remember.Checked;}
++        public void ValidateValues(){var p=new Product();Save(p);ShippingOptions.Validate(p);}
++    }
++}
+--- 16차/src/UI/Pages/AutomationPage.cs
++++ 17차/src/UI/Pages/AutomationPage.cs
+@@ -6,7 +6,7 @@
+ namespace BunjangAuto
+ {
+     /// <summary>자동 등록 실행 화면. Runner / Bot / Schedule 은 그대로이고, AutomationController 의 상태를 보여 주기만 한다.</summary>
+-    public class AutomationPage : PageBase
++    public class AutomationPage : PageBase, IDpiLayout
+     {
+         private readonly FluentButton btnStart, btnPause, btnStop;
+         private readonly Label lblState, lblCurrent, lblProgress, lblNext, lblMode, lblOk, lblFail, lblLeft;
+@@ -14,12 +14,12 @@
+         private readonly Chip chipRun;
+         private readonly Timer _t = new Timer { Interval = 500 };
+         private readonly CardPanel cardMain, cardNums;
+-        private Label usage, clock; private int quotaTick;
++        private Label usage, clock,title,policy,contact; private int quotaTick; private bool ready,placing;
+ 
+         public AutomationPage(AppHost host) : base(host)
+         {
+             Key = "automation"; PageTitle = "자동 등록";
+-            var title = Ui.Title("자동 등록"); title.Location = new Point(0, 0);
++            title = Ui.Title("자동 등록"); title.Location = new Point(0, 0);
+ 
+ 
+             cardMain = new CardPanel { Location = new Point(0, 74), Height = 250 };
+@@ -42,10 +42,10 @@
+             lblLeft = NumBlock(cardNums, "남은 상품", 420, "t");
+             usage=Ui.Heading(UsageQuota.Summary()); usage.Location=new Point(2,462);
+             clock=Ui.Muted(ServerClock.Status); clock.Location=new Point(2,498);
+-            var policy=Ui.Muted("기본 한도: 자정 초기화 · 등록 버튼 제출 시 1회 차감 · 제출 후 결과 미확인도 차감 유지"); policy.Location=new Point(2,530);
+-            var contact=Ui.Muted("Pro 추가 등록권 문의  "+Brand.Email); contact.Location=new Point(2,560);
++            policy =Ui.Muted("기본 한도: 자정 초기화 · 등록 버튼 제출 시 1회 차감 · 제출 후 결과 미확인도 차감 유지"); policy.Location=new Point(2,530);
++            contact =Ui.Muted("Pro 추가 등록권 문의  "+Brand.Email); contact.Location=new Point(2,560);
+             Controls.AddRange(new Control[] { title, cardMain, cardNums,usage,clock,policy,contact });
+-            Resize += delegate { cardMain.Width = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); cardNums.Width = cardMain.Width; bar.Width = cardMain.Width - Ui.S(44); };
++            ready=true;Resize+=delegate{LayoutForDpi();};
+ 
+             btnStart.Click += delegate { Host.Auto.Start(); };
+             btnStop.Click += delegate { Host.Auto.Stop(); };
+@@ -53,6 +53,35 @@
+             Host.Auto.Changed += delegate { if (IsHandleCreated) Sync(); };
+             _t.Tick += delegate { if (Visible) Sync(); };
+             Sync();
++        }
++
++        static int Wrap(Label label,int x,int y,int w,int h){label.AutoSize=false;label.SetBounds(x,y,w,Math.Max(h,TextRenderer.MeasureText(label.Text.Length==0?" ":label.Text,label.Font,new Size(w,int.MaxValue),TextFormatFlags.WordBreak|TextFormatFlags.NoPadding).Height+Ui.S(4)));return label.Bottom;}
++        public void LayoutForDpi(){
++            if(!ready||placing)return;placing=true;SuspendLayout();
++            try {
++                Padding=new Padding(Ui.S(32),Ui.S(26),Ui.S(32),Ui.S(26));
++                int x=Padding.Left+AutoScrollPosition.X,y=Padding.Top+AutoScrollPosition.Y;
++                int w=Math.Max(Ui.S(300),ClientSize.Width-Padding.Horizontal),pad=Ui.S(20),gap=Ui.S(12);
++                int row=Wrap(title,x,y,w,Ui.S(40));
++                cardMain.SetBounds(x,row+Ui.S(20),w,Ui.S(250));
++                lblState.Name="automationState";chipRun.Name="automationBadge";lblProgress.Name="automationProgress";
++                chipRun.Location=new Point(w-pad-chipRun.Width,pad);
++                row=Wrap(lblState,pad,pad,Math.Max(Ui.S(80),chipRun.Left-pad-gap),Ui.S(32));
++                row=Wrap(lblCurrent,pad,Math.Max(row,chipRun.Bottom)+gap,w-pad*2,Ui.S(24));
++                bar.Anchor=AnchorStyles.Top|AnchorStyles.Left;bar.SetBounds(pad,row+gap,w-pad*2,Ui.S(8));
++                row=Wrap(lblProgress,pad,bar.Bottom+gap,w-pad*2,Ui.S(24));
++                row=Wrap(lblNext,pad,row+Ui.S(6),w-pad*2,Ui.S(24));
++                row=Wrap(lblMode,pad,row+Ui.S(6),w-pad*2,Ui.S(24))+gap;
++                int bx=pad,bottom=row;
++                foreach(var button in new[]{btnStart,btnPause,btnStop}){if(bx+button.Width>w-pad){bx=pad;row=bottom+gap;}button.Location=new Point(bx,row);bx=button.Right+gap;bottom=Math.Max(bottom,button.Bottom);}
++                cardMain.Height=bottom+pad;
++                cardNums.SetBounds(x,cardMain.Bottom+Ui.S(16),w,Ui.S(108));
++                var labels=cardNums.Controls.OfType<Label>().ToArray();int col=(w-pad*2)/3;
++                for(int i=0;i<3;i++){Wrap(labels[i*2],pad+i*col,Ui.S(14),col-Ui.S(8),Ui.S(24));Wrap(labels[i*2+1],pad+i*col,Ui.S(46),col-Ui.S(8),Ui.S(40));}
++                row=Wrap(usage,x,cardNums.Bottom+Ui.S(20),w,Ui.S(28));
++                row=Wrap(clock,x,row+gap,w,Ui.S(24));row=Wrap(policy,x,row+gap,w,Ui.S(24));row=Wrap(contact,x,row+gap,w,Ui.S(24));
++                AutoScrollMinSize=new Size(0,row-AutoScrollPosition.Y+Padding.Bottom);
++            }finally{ResumeLayout(false);placing=false;}
+         }
+ 
+         private static Label NumBlock(CardPanel card, string caption, int x, string tone)
+@@ -71,7 +100,7 @@
+             if(clock!=null)clock.Text=ServerClock.Status; if(usage!=null && ++quotaTick%10==0)usage.Text=UsageQuota.Summary();
+             var a = Host.Auto; var r = Host.Runner;
+             bool running = r.Running;
+-            lblState.Text = a.StateText;
++            lblState.Text = a.Paused ? "일시정지" : running ? "실행 중" : a.Active ? "예약 대기" : a.StateText;
+             btnStart.Enabled = !a.Active && !running;
+             btnStop.Enabled = a.Active || running;
+             btnPause.Enabled = running;
+@@ -92,7 +121,8 @@
+             parts.Add(c.OneByOne ? (c.UseTimeRules ? "1개씩 · 시간대별 간격" : "1개씩 · " + c.OneByOneMinutes + "분 간격") : "한 번에 최대 30개");
+             if (c.OneByOne && c.RepeatAll) parts.Add("총 " + c.RepeatCount + "회 반복");
+             if (c.AllowDuplicate) parts.Add("중복 등록 허용");
+-            lblMode.Text = "현재 설정: " + string.Join("  ·  ", parts.ToArray()) + "   (예약 메뉴에서 바꿀 수 있습니다)";
++            lblMode.Text = "현재 설정: " + string.Join("  ·  ", parts.ToArray()) + "   (예약 메뉴에서 바꿀 수 있습니다)";
++            LayoutForDpi();
+         }
+     }
+ }
+--- 16차/src/UI/Pages/LicensePage.cs
++++ 17차/src/UI/Pages/LicensePage.cs
+@@ -5,58 +5,70 @@
+ namespace BunjangAuto
+ {
+     /// <summary>라이선스 센터: 상태·이름·만료일·남은 기간·PC 고유번호(복사)·키 교체. 검증은 기존 License.Verify 를 그대로 쓴다.</summary>
+-    public class LicensePage : PageBase
++    public class LicensePage : PageBase, IDpiLayout
+     {
+         private readonly Label lblStatus, lblName, lblExp, lblLeft, lblPc, lblMsg;
+         private readonly SoftInput txtKey;
+         private readonly Chip chip;
++        private CardPanel c1,c2,extra;
++        private Label title,sub,h1,h2,d2,h3,info,contact;
++        private SoftInput credit;
++        private FluentButton bCopy,bRequest,bOk,bImport,redeem;
++        private readonly System.Collections.Generic.List<Label> captions=new System.Collections.Generic.List<Label>();
++        private readonly System.Collections.Generic.List<Label> values=new System.Collections.Generic.List<Label>();
++        private bool ready,placing;
+ 
+         public LicensePage(AppHost host) : base(host)
+         {
+             Key = "license"; PageTitle = "라이선스";
+-            var title = Ui.Title("라이선스"); title.Location = new Point(0, 0);
+-            var sub = Ui.Muted("이 PC 한 대에서 기간 동안만 사용할 수 있는 라이선스입니다."); sub.Location = new Point(2, 38);
++            title = Ui.Title("라이선스"); title.Location = new Point(0, 0);
++            sub = Ui.Muted("이 PC 한 대에서 기간 동안만 사용할 수 있는 라이선스입니다."); sub.Location = new Point(2, 38);
+ 
+-            var c1 = new CardPanel { Location = new Point(0, 74), Height = 230, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+-            var h1 = Ui.Heading("라이선스 정보"); h1.Location = new Point(20, 16);
++            c1 = new CardPanel { Location = new Point(0, 74), Height = 230, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
++            h1 = Ui.Heading("라이선스 정보"); h1.Location = new Point(20, 16);
+             chip = new Chip { Text = "확인 중" }; chip.Location = new Point(160, 18);
+             int y = 56; Func<string, Label> row = cap =>
+             {
+                 var a = Ui.Muted(cap); a.Location = new Point(22, y);
+                 var b = Ui.Text("-", 10f, true); b.Location = new Point(150, y - 2);
+-                c1.Controls.Add(a); c1.Controls.Add(b); y += 32; return b;
++                c1.Controls.Add(a); c1.Controls.Add(b); captions.Add(a); values.Add(b); y += 32; return b;
+             };
+             lblName = row("라이선스 이름"); lblExp = row("만료일"); lblLeft = row("남은 기간");
+             lblPc = row("PC 고유번호"); lblPc.Font = Theme.FontMono(11f);
+-            var bCopy = Ui.Button("등록코드 복사", "\uE8C8", BtnStyle.Primary, 150); bCopy.Location = new Point(330, 177);
++            bCopy = Ui.Button("등록코드 복사", "\uE8C8", BtnStyle.Primary, 150); bCopy.Location = new Point(330, 177);
+             lblStatus = lblName; // (호환용)
+-            var bRequest = Ui.Button("파일로 저장", "", BtnStyle.Standard, 150); bRequest.Location = new Point(490, 177);
++            bRequest = Ui.Button("파일로 저장", "", BtnStyle.Standard, 150); bRequest.Location = new Point(490, 177);
+             bRequest.Click += delegate { LicenseFiles.ExportRequest(this); Sync(); };
+             c1.Controls.AddRange(new Control[] { h1, chip, bCopy, bRequest });
+ 
+-            var c2 = new CardPanel { Location = new Point(0, 316), Height = 210, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+-            var h2 = Ui.Heading("라이선스 키 변경 / 연장"); h2.Location = new Point(20, 16);
+-            var d2 = Ui.Muted("관리자에게 받은 새 키를 붙여 넣고 [인증]을 누르세요. 기간이 연장된 키도 같은 방법입니다."); d2.Location = new Point(22, 46);
++            c2 = new CardPanel { Location = new Point(0, 316), Height = 210, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
++            h2 = Ui.Heading("라이선스 키 변경 / 연장"); h2.Location = new Point(20, 16);
++            d2 = Ui.Muted("관리자에게 받은 새 키를 붙여 넣고 [인증]을 누르세요. 기간이 연장된 키도 같은 방법입니다."); d2.Location = new Point(22, 46);
+             txtKey = new SoftInput { Location = new Point(22, 76), Width = 560, Height = 64, Multiline = true, ScrollBars = ScrollBars.Vertical, Font = Theme.FontMono(9f), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+-            var bOk = Ui.Button("인증", "\uE73E", BtnStyle.Primary, 110); bOk.Location = new Point(22, 152);
++            bOk = Ui.Button("인증", "\uE73E", BtnStyle.Primary, 110); bOk.Location = new Point(22, 152);
+             lblMsg = Ui.Text("", 9.5f, false, "m"); lblMsg.Location = new Point(146, 160);
+-            var bImport = Ui.Button("키 붙여넣기", "", BtnStyle.Standard, 120); bImport.Location = new Point(146, 152);
++            bImport = Ui.Button("키 붙여넣기", "", BtnStyle.Standard, 120); bImport.Location = new Point(146, 152);
+             lblMsg.Location = new Point(272, 160);
+             bImport.Click += delegate { try { txtKey.Text = LicenseFiles.PasteKey(); } catch (Exception ex) { lblMsg.Text = ex is FormatException ? ex.Message : "직접 붙여 넣어 주세요."; } };
+             c2.Controls.AddRange(new Control[] { h2, d2, txtKey, bOk, bImport, lblMsg });
+ 
+-            var extra=new CardPanel {Left=0,Top=542,Height=178};
+-            var h3=Ui.Heading("Pro 추가 등록권"); h3.Location=new Point(20,16);
+-            var info=Ui.Muted("기본 한도를 다 쓰면 추가 등록권을 사용합니다. 미사용 잔액은 이월됩니다.");info.Location=new Point(22,48);
+-            var credit=Design.Input("creditKey",22,78,470,44,false);
+-            var redeem=Ui.Button("충전", "",BtnStyle.Primary,110);redeem.Location=new Point(510,80);
+-            var contact=Ui.Muted("추가 구매 문의  "+Brand.Email); contact.Location=new Point(22,138);
++            extra =new CardPanel {Left=0,Top=542,Height=178};
++            h3 =Ui.Heading("Pro 추가 등록권"); h3.Location=new Point(20,16);
++            info =Ui.Muted("기본 한도를 다 쓰면 추가 등록권을 사용합니다. 미사용 잔액은 이월됩니다.");info.Location=new Point(22,48);
++            credit =Design.Input("creditKey",22,78,470,44,false);
++            redeem =Ui.Button("충전", "",BtnStyle.Primary,110);redeem.Location=new Point(510,80);
++            contact =Ui.Muted("추가 구매 문의  "+Brand.Email); contact.Location=new Point(22,138);
+             redeem.Click+=delegate { try { UsageQuota.Redeem(credit.Text);credit.Clear();info.Text=UsageQuota.Summary(); }catch(Exception ex){info.Text=ex.Message;} };
+             extra.Controls.AddRange(new Control[]{h3,info,credit,redeem,contact});
+             Controls.AddRange(new Control[] { title, sub, c1, c2,extra });
+-            Resize+=delegate {extra.Width=Math.Max(Ui.S(400),ClientSize.Width-Padding.Horizontal);};
+-            Resize += delegate { int w = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); c1.Width = w; c2.Width = w; txtKey.Width = w - Ui.S(44); };
+ 
++            c1.Name="licenseInfoCard";c2.Name="licenseKeyCard";extra.Name="licenseCreditCard";
++            txtKey.Name="licenseKeyInput";bOk.Name="activateLicense";bImport.Name="pasteLicense";
++            credit.Name="creditInput";redeem.Name="redeemCredit";bCopy.Name="copyRegistration";bRequest.Name="saveRegistration";
++            ready=true;Resize+=delegate{LayoutForDpi();};
++            lblMsg.TextChanged+=delegate{LayoutForDpi();};info.TextChanged+=delegate{LayoutForDpi();};
++            foreach(var value in values)value.TextChanged+=delegate{LayoutForDpi();};
++            LayoutForDpi();
+             bCopy.Click += delegate { string token, msg; bool ok = LicenseFiles.CopyRequest(out token, out msg); lblMsg.Text = msg; lblMsg.Tag = ok ? "s" : "d"; lblMsg.ForeColor = ok ? Theme.Success : Theme.Danger; if (!ok && token.Length > 0) { txtKey.Text = token; txtKey.SelectAll(); } Sync(); };
+             bOk.Click += delegate
+             {
+@@ -65,6 +77,68 @@
+                 lblMsg.Text = msg; lblMsg.Tag = ok ? "s" : "d"; lblMsg.ForeColor = ok ? Theme.Success : Theme.Danger;
+                 if (ok) { txtKey.Text = ""; Sync(); }
+             };
++        }
++
++        private static int PlaceText(Label label,int x,int y,int width,int minimum)
++        {
++            label.AutoSize=false;
++            int h=Math.Max(minimum,TextRenderer.MeasureText(label.Text.Length==0?" ":label.Text,label.Font,
++                new Size(Math.Max(1,width),int.MaxValue),TextFormatFlags.WordBreak|TextFormatFlags.NoPadding).Height+Ui.S(4));
++            label.SetBounds(x,y,Math.Max(1,width),h);return y+h;
++        }
++        public void LayoutForDpi()
++        {
++            if(!ready||placing)return;
++            placing=true;SuspendLayout();
++            try {
++                Padding=new Padding(Ui.S(32),Ui.S(26),Ui.S(32),Ui.S(26));
++                int w=Math.Max(Ui.S(260),ClientSize.Width-Padding.Horizontal),pad=Ui.S(20),gap=Ui.S(12);
++                int x=Padding.Left+AutoScrollPosition.X,y=Padding.Top+AutoScrollPosition.Y;
++                int end=PlaceText(title,x,y,w,Ui.S(36));
++                end=PlaceText(sub,x,end+Ui.S(6),w,Ui.S(24))+Ui.S(20);
++                foreach(var card in new[]{c1,c2,extra}){card.Anchor=AnchorStyles.Top|AnchorStyles.Left;card.Padding=new Padding(pad);card.Width=w;}
++                c1.Location=new Point(x,end);
++                int row=PlaceText(h1,pad,pad,w-Ui.S(150),Ui.S(28));
++                chip.Location=new Point(w-pad-chip.Width,pad);
++                row=Math.Max(row,chip.Bottom)+gap;
++                for(int i=0;i<values.Count;i++){
++                    if(w<Ui.S(420)){
++                        row=PlaceText(captions[i],pad,row,w-pad*2,Ui.S(22));
++                        row=PlaceText(values[i],pad,row,w-pad*2,Ui.S(26))+gap;
++                    } else {
++                        int a=PlaceText(captions[i],pad,row,Ui.S(116),Ui.S(28));
++                        int b=PlaceText(values[i],Ui.S(150),row,w-Ui.S(150)-pad,Ui.S(28));
++                        row=Math.Max(a,b)+Ui.S(8);
++                    }
++                }
++                bCopy.Location=new Point(pad,row+Ui.S(4));
++                bRequest.Location=w>=bCopy.Width+bRequest.Width+pad*2+gap
++                    ?new Point(bCopy.Right+gap,bCopy.Top):new Point(pad,bCopy.Bottom+gap);
++                c1.Height=Math.Max(bCopy.Bottom,bRequest.Bottom)+pad;
++
++                c2.Location=new Point(x,c1.Bottom+Ui.S(16));
++                row=PlaceText(h2,pad,pad,w-pad*2,Ui.S(28));
++                row=PlaceText(d2,pad,row+Ui.S(6),w-pad*2,Ui.S(24));
++                txtKey.Anchor=AnchorStyles.Top|AnchorStyles.Left;
++                txtKey.SetBounds(pad,row+gap,w-pad*2,Ui.S(88));
++                bOk.Location=new Point(pad,txtKey.Bottom+gap);
++                bImport.Location=w>=bOk.Width+bImport.Width+pad*2+gap
++                    ?new Point(bOk.Right+gap,bOk.Top):new Point(pad,bOk.Bottom+gap);
++                row=Math.Max(bOk.Bottom,bImport.Bottom)+Ui.S(8);
++                row=PlaceText(lblMsg,pad,row,w-pad*2,Ui.S(22));
++                c2.Height=row+pad;
++
++                extra.Location=new Point(x,c2.Bottom+Ui.S(16));
++                row=PlaceText(h3,pad,pad,w-pad*2,Ui.S(28));
++                row=PlaceText(info,pad,row+Ui.S(6),w-pad*2,Ui.S(24));
++                bool inline=w>=Ui.S(620);
++                credit.SetBounds(pad,row+gap,inline?w-pad*2-redeem.Width-gap:w-pad*2,Ui.S(44));
++                redeem.Location=inline?new Point(credit.Right+gap,credit.Top+(credit.Height-redeem.Height)/2):new Point(pad,credit.Bottom+gap);
++                row=Math.Max(credit.Bottom,redeem.Bottom)+gap;
++                row=PlaceText(contact,pad,row,w-pad*2,Ui.S(24));
++                extra.Height=row+pad;
++                AutoScrollMinSize=new Size(0,extra.Bottom-AutoScrollPosition.Y+Padding.Bottom);
++            } finally {ResumeLayout(false);placing=false;}
+         }
+ 
+         private void Sync()
+--- 16차/src/UI/UiKit.cs
++++ 17차/src/UI/UiKit.cs
+@@ -21,6 +21,8 @@
+         /// </summary>
+         public static void ScaleTree(Control root)
+         {
++            var responsive=root as IDpiLayout;
++            if(responsive!=null){responsive.LayoutForDpi();return;}
+             double f = Scale;
+             if (f <= 1.001) return;
+             root.Padding = ScalePad(root.Padding, f);
+@@ -146,6 +148,7 @@
+ 
+     /// <summary>스스로 실제 화면 픽셀로 크기를 정하는 컨트롤 표시(Ui.ScaleTree 가 크기를 다시 키우지 않는다).</summary>
+     public interface IPreScaled { }
++    public interface IDpiLayout { void LayoutForDpi(); }
+ 
+     /// <summary>각 화면의 공통 틀: 제목 줄 + 스크롤 가능한 본문. OnActivated 는 화면이 보일 때마다 호출된다.</summary>
+     public abstract class PageBase : Panel
+--- 16차/tests/DpiLayoutTests.cs
++++ 17차/tests/DpiLayoutTests.cs
+@@ -0,0 +1,115 @@
++using System;
++using System.Drawing;
++using System.IO;
++using System.Linq;
++using System.Reflection;
++using System.Runtime.InteropServices;
++using System.Windows.Forms;
++using BunjangAuto;
++class DpiLayoutTests {
++    static int passed;
++    [StructLayout(LayoutKind.Sequential)]struct Rect {public int L,T,R,B;}
++    [StructLayout(LayoutKind.Sequential)]struct Info {public int Size;public Rect Item,Button;public int State;public IntPtr Combo,Edit,List;}
++    [DllImport("user32.dll")]static extern bool GetComboBoxInfo(IntPtr h,ref Info i);
++    [DllImport("user32.dll")]static extern bool GetWindowRect(IntPtr h,out Rect r);
++    static void Check(bool ok,string name){if(!ok)throw new Exception(name);passed++;Console.WriteLine("PASS "+name);}
++    static void Show(Form f){f.ShowInTaskbar=false;f.Opacity=0;f.StartPosition=FormStartPosition.Manual;f.Location=new Point(-20000,-20000);f.Show();Application.DoEvents();}
++    static void Save(Form f,string path){using(var b=new Bitmap(f.Width,f.Height)){f.DrawToBitmap(b,new Rectangle(Point.Empty,f.Size));b.Save(path);}}
++    static Control Find(Control parent,string name){foreach(Control c in parent.Controls){if(c.Name==name)return c;var found=Find(c,name);if(found!=null)return found;}return null;}
++    static void Validate(LicensePage p,string mode){
++        var cards=p.Controls.OfType<CardPanel>().OrderBy(c=>c.Top).ToArray();
++        Check(cards.Length==3,"three cards "+mode);
++        Check(cards[0].Bottom<cards[1].Top&&cards[1].Bottom<cards[2].Top,"cards never overlap "+mode);
++        Check(cards.All(c=>c.Left==cards[0].Left&&c.Width==cards[0].Width),"consistent card edges "+mode);
++        foreach(var card in cards){
++            var controls=card.Controls.Cast<Control>().Where(c=>c.Visible).ToArray();
++            Check(controls.All(c=>c.Left>=0&&c.Top>=0&&c.Right<=card.ClientSize.Width&&c.Bottom<=card.ClientSize.Height),"children fit "+card.Name+" "+mode);
++            for(int a=0;a<controls.Length;a++)for(int b=a+1;b<controls.Length;b++)
++                Check(!controls[a].Bounds.IntersectsWith(controls[b].Bounds),"no overlap "+card.Name+" "+a+"/"+b+" "+mode);
++        }
++        var key=Find(p,"licenseKeyInput");var ok=Find(p,"activateLicense");
++        Check(ok.Top>=key.Bottom+Ui.S(10),"key/button gap "+mode);
++        foreach(var input in new[]{(SoftInput)key,(SoftInput)Find(p,"creditInput")}){
++            var editor=input.Controls.OfType<TextBox>().Single();
++            Check(editor.Top>=Ui.S(8)&&editor.Bottom<=input.Height-Ui.S(8),"input inner padding "+mode);
++        }
++    }
++    [STAThread]static int Main(string[] args){
++        AppDomain.CurrentDomain.AssemblyResolve+=delegate(object sender,ResolveEventArgs e){using(var s=Assembly.GetExecutingAssembly().GetManifestResourceStream("lib."+new AssemblyName(e.Name).Name+".dll")){if(s==null)return null;using(var m=new MemoryStream()){s.CopyTo(m);return Assembly.Load(m.ToArray());}}};
++        try{Run(args);Console.WriteLine("DPI: "+passed+" passed");return 0;}catch(Exception e){Console.WriteLine(e);return 1;}
++    }
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static void Run(string[] args){
++        Dpi.ForcedScale=double.Parse(args[1],System.Globalization.CultureInfo.InvariantCulture);Dpi.EmulateFontScale=true;
++        AppFont.Init();Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);Directory.CreateDirectory(args[0]);
++        Check(AppFont.Active&&Theme.FontBase().Bold,"embedded Nanum Gothic Bold active");
++        foreach(bool dark in new[]{false,true}){
++            Theme.Set(dark?ThemePalette.DarkPal:ThemePalette.Light);string mode=dark?"Dark":"Light";
++            using(var f=new Form{AutoScaleMode=AutoScaleMode.None,ClientSize=new Size(Ui.S(960),Ui.S(1040)),Font=Theme.FontBase()}){
++                var page=new LicensePage(new AppHost());Ui.ScaleTree(page);f.Controls.Add(page);Theme.Apply(f);Show(f);
++                foreach(var pair in new[]{new[]{"lblName","EXP Classic / 테스트 사용자"},new[]{"lblExp","2026-11-01 23:59"},new[]{"lblLeft","20일 남음"},new[]{"lblPc","F00333C5A86DD6EC"}})
++                    ((Label)typeof(LicensePage).GetField(pair[0],BindingFlags.Instance|BindingFlags.NonPublic).GetValue(page)).Text=pair[1];
++                page.LayoutForDpi();Application.DoEvents();Validate(page,mode+" wide");Save(f,Path.Combine(args[0],mode+"-license-wide.png"));
++                f.ClientSize=new Size(Ui.S(540),Ui.S(1040));Application.DoEvents();Validate(page,mode+" narrow");
++                ((Label)typeof(LicensePage).GetField("lblMsg",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(page)).Text="인증키 형식을 확인해 주세요. 관리자에게 받은 전체 키를 다시 붙여 넣으세요.";
++                Application.DoEvents();Validate(page,mode+" message");Save(f,Path.Combine(args[0],mode+"-license-narrow.png"));
++                page.AutoScrollPosition=new Point(0,Ui.S(100));f.ClientSize=new Size(Ui.S(720),Ui.S(600));Application.DoEvents();Validate(page,mode+" scrolled resize");
++                f.ClientSize=new Size(Ui.S(960),Ui.S(1040));page.AutoScrollPosition=Point.Empty;Application.DoEvents();Validate(page,mode+" restored");
++            }
++            using(var f=new Form{AutoScaleMode=AutoScaleMode.None,ClientSize=new Size(490,195),Font=Theme.FontBase()}){
++                int y=20;foreach(var label in new[]{"디지털","오디오/영상/관련기기","기타 오디오/영상/관련기기"}){
++                    var combo=new SoftCombo{DropDownStyle=ComboBoxStyle.DropDown,Left=24,Top=y,Width=430};combo.Items.AddRange(new object[]{label,"다른 항목"});combo.SelectedIndex=0;f.Controls.Add(combo);y+=48;
++                }
++                Design.Scale(f);Theme.Apply(f);Show(f);
++                foreach(var combo in f.Controls.OfType<SoftCombo>()){
++                    combo.Refresh();Application.DoEvents();var info=new Info{Size=Marshal.SizeOf(typeof(Info))};GetComboBoxInfo(combo.Handle,ref info);Rect r;GetWindowRect(info.Edit,out r);
++                    var origin=combo.PointToScreen(Point.Empty);int top=r.T-origin.Y,left=r.L-origin.X;
++                    Check(left>=Ui.S(10),"combo horizontal padding "+mode);
++                    Check(Math.Abs(top-(combo.Height-(r.B-r.T))/2)<=2,"combo vertical center "+mode);
++                    combo.Text="한글 직접 입력";Check(combo.Text=="한글 직접 입력","editable Korean value "+mode);combo.SelectedIndex=0;
++                    combo.Focus();combo.DroppedDown=true;Check(combo.DroppedDown,"dropdown opens "+mode);combo.SelectedIndex=1;combo.DroppedDown=false;Check(combo.Text=="다른 항목","dropdown selection "+mode);combo.SelectedIndex=0;
++                }
++                Save(f,Path.Combine(args[0],mode+"-categories.png"));
++            }
++            using(var f=new Form{AutoScaleMode=AutoScaleMode.None,ClientSize=new Size(Ui.S(700),Ui.S(900)),Font=Theme.FontBase()}){
++                var host=new AppHost{Cfg=new AppSettings{RepeatAll=true,RepeatCount=int.MaxValue},Sel=new SelectorSet(),Products=new System.ComponentModel.BindingList<Product>(),Runner=new Runner()};
++                host.Auto=new AutomationController(host.Cfg,host.Sel,host.Products,host.Runner,f);
++                host.Auto.StateText="실행 중... (99999/99999) · 999999/2147483647회차";
++                typeof(AutomationController).GetField("_roundTotal",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(host.Auto,int.MaxValue);
++                var page=new AutomationPage(host);Ui.ScaleTree(page);f.Controls.Add(page);Theme.Apply(f);Show(f);page.LayoutForDpi();
++                var state=Find(page,"automationState");var badge=Find(page,"automationBadge");
++                Check(!state.Bounds.IntersectsWith(badge.Bounds),"huge repeat count cannot overlap badge "+mode);
++                var cards=page.Controls.OfType<CardPanel>().OrderBy(c=>c.Top).ToArray();
++                Check(cards[0].Bottom<cards[1].Top,"automation cards stay separated "+mode);
++                var widgets=cards[0].Controls.Cast<Control>().ToArray();
++                for(int a=0;a<widgets.Length;a++)for(int b=a+1;b<widgets.Length;b++)Check(!widgets[a].Bounds.IntersectsWith(widgets[b].Bounds),"automation no overlap "+a+"/"+b+" "+mode);
++                Save(f,Path.Combine(args[0],mode+"-automation.png"));
++            }
++            using(var f=new Form{AutoScaleMode=AutoScaleMode.None,ClientSize=new Size(1020,330),Font=Theme.FontBase()}){
++                var product=new Product{ShippingFee=3500,HalfShipping=true,HalfShippingCarrier="GS_HALF_PRICE",HalfShippingFee=1800,RememberShipping=true};
++                var editor=new ShippingEditor(product){Left=24,Top=24};f.Controls.Add(editor);Design.Scale(f);Theme.Apply(f);Show(f);editor.ValidateValues();
++                var saved=new Product();editor.Save(saved);Check(saved.ShippingFee==3500&&saved.HalfShippingFee==1800&&saved.HalfShippingCarrier=="GS_HALF_PRICE"&&saved.RememberShipping,"shipping editor saves full settings "+mode);
++                ((CheckBox)Find(editor,"shippingIncluded")).Checked=true;
++                Check(!Find(editor,"shippingFee").Enabled&&!Find(editor,"halfShippingFee").Enabled,"included disables fee fields "+mode);
++                ((CheckBox)Find(editor,"shippingIncluded")).Checked=false;
++                ((RadioButton)Find(editor,"halfShippingNo")).Checked=true;
++                Check(!Find(editor,"halfShippingFee").Enabled&&Find(editor,"shippingFee").Enabled,"half shipping independent toggle "+mode);
++                ((RadioButton)Find(editor,"halfShippingYes")).Checked=true;
++                Save(f,Path.Combine(args[0],mode+"-shipping.png"));
++            }
++            var item=new Product{Title="테스트 상품",Price="43000",Category="디지털>오디오/영상/관련기기>기타 오디오/영상/관련기기",Condition="새 상품(미사용)",ShippingFee=3500,HalfShipping=true,HalfShippingCarrier="ALL",HalfShippingFee=1800};
++            using(var f=new EditForm(item)){
++                Show(f);Save(f,Path.Combine(args[0],mode+"-product-top.png"));
++                var ship=f.Controls.OfType<ShippingEditor>().Single();var save=Find(f,"saveProduct");
++                Check(ship.Bottom<save.Top,"shipping card separate from save button "+mode);
++                f.ScrollControlIntoView(save);Application.DoEvents();Save(f,Path.Combine(args[0],mode+"-product-shipping.png"));
++                ((SoftInput)Find(ship,"shippingFee")).Text="4100";((Button)save).PerformClick();
++                Check(item.ShippingFee==4100&&item.HalfShippingFee==1800&&item.HalfShipping,"product save includes shipping "+mode);
++            }
++            using(var f=new EditForm(item)){
++                Show(f);((SoftInput)Find(f,"shippingFee")).Text="9900";
++                ((Button)f.CancelButton).PerformClick();Check(item.ShippingFee==4100,"cancel preserves shipping "+mode);
++            }
++        }
++    }
++}
+--- 16차/tests/ShippingFormTests.cs
++++ 17차/tests/ShippingFormTests.cs
+@@ -0,0 +1,60 @@
++using System;
++using System.IO;
++using System.Reflection;
++using System.Linq;
++using System.Collections.Generic;
++using Newtonsoft.Json;
++using BunjangAuto;
++using OpenQA.Selenium;
++using OpenQA.Selenium.Chrome;
++class ShippingFormTests {
++    static int passed;
++    static readonly Dictionary<string,Assembly> loaded=new Dictionary<string,Assembly>();
++    static void Check(bool ok,string name){if(!ok)throw new Exception(name);passed++;Console.WriteLine("PASS "+name);}
++    static void Reject(Action action,string name){try{action();}catch(Exception){Check(true,name);return;}throw new Exception(name);}
++    static void Apply(Bot bot,Product p){try{typeof(Bot).GetMethod("ConfigureShipping",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(bot,new object[]{p});}catch(TargetInvocationException e){throw e.InnerException;}}
++    static bool Selected(IWebDriver d,string css){return d.FindElement(By.CssSelector(css)).Selected;}
++    static string Val(IWebDriver d,string id){return d.FindElement(By.Id(id)).GetAttribute("value");}
++    static int Main(string[] args){AppDomain.CurrentDomain.AssemblyResolve+=delegate(object sender,ResolveEventArgs e){string name=new AssemblyName(e.Name).Name;Assembly existing;if(loaded.TryGetValue(name,out existing))return existing;using(var s=Assembly.GetExecutingAssembly().GetManifestResourceStream("lib."+name+".dll")){if(s==null)return null;using(var m=new MemoryStream()){s.CopyTo(m);var assembly=Assembly.Load(m.ToArray());loaded[name]=assembly;return assembly;}}};try{Run(args);Console.WriteLine("SHIPPING: "+passed+" passed");return 0;}catch(Exception e){Console.WriteLine(e);return 1;}}
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static void Run(string[] args){
++        var old=JsonConvert.DeserializeObject<Product>("{FreeShipping:true,Title:'기존 상품',Price:'1000'}");ShippingOptions.Validate(old);Check(old.FreeShipping&&!old.ShippingFee.HasValue,"legacy included shipping remains usable");
++        Reject(()=>ShippingOptions.Validate(new Product()),"missing separate fee rejected");
++        Reject(()=>ShippingOptions.Validate(new Product{ShippingFee=99}),"normal minimum enforced");
++        Reject(()=>ShippingOptions.Validate(new Product{ShippingFee=30001}),"normal maximum enforced");
++        Reject(()=>ShippingOptions.Validate(new Product{ShippingFee=3000,HalfShipping=true}),"half fee and carrier required");
++        var p=new Product{Title="상품",Price="10000",ShippingFee=3500,HalfShipping=true,HalfShippingCarrier="GS_HALF_PRICE",HalfShippingFee=1800,RememberShipping=true};
++        Paths.EnsureAll();Storage.SaveProducts(new List<Product>{p});var saved=Storage.LoadProducts().Single();
++        Check(saved.ShippingFee==3500&&saved.HalfShipping&&saved.HalfShippingCarrier=="GS_HALF_PRICE"&&saved.HalfShippingFee==1800&&saved.RememberShipping,"encrypted product round trip preserves shipping");
++        string fixture=Path.Combine(args[1],"shipping-fixture.html");Directory.CreateDirectory(args[1]);File.WriteAllText(fixture,Html);
++        var service=ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(args[0]),Path.GetFileName(args[0]));service.HideCommandPromptWindow=true;
++        var options=new ChromeOptions();options.AddArgument("--headless=new");options.AddArgument("--window-size=1200,900");options.AddArgument("--no-first-run");options.AddArgument("--disable-background-networking");
++        options.AddArgument("--user-data-dir="+Path.Combine(args[1],"fixture-profile"));
++        using(var driver=new ChromeDriver(service,options))using(var bot=new Bot(new AppSettings(),new SelectorSet())){
++            driver.Navigate().GoToUrl(new Uri(fixture).AbsoluteUri);typeof(Bot).GetField("_driver",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(bot,driver);
++            p.HalfShipping=false;Apply(bot,p);Check(Val(driver,"normal")=="3500"&&Selected(driver,"input[name=isPossible][value='0']"),"normal fee and half shipping disabled applied");
++            foreach(var carrier in new[]{"ALL","GS_HALF_PRICE","CU_THRIFTY"}){
++                p.HalfShipping=true;p.HalfShippingCarrier=carrier;Apply(bot,p);
++                Check(driver.FindElement(By.Id("carrier")).Text==ShippingOptions.CarrierLabel(carrier)&&Val(driver,"halfFee")=="1800"&&Selected(driver,"input[name=isPossible][value='1']"),"carrier and half fee applied "+carrier);
++            }
++            p.RememberShipping=false;Apply(bot,p);Check(!Selected(driver,"#default-shipping-fee"),"remember can be cleared");
++            p.FreeShipping=true;Apply(bot,p);Check(driver.FindElement(By.Id("method")).Text=="배송비 포함","explicitly switches back to included");
++            p.FreeShipping=false;p.HalfShipping=false;p.ShippingFee=100;Apply(bot,p);Check(Val(driver,"normal")=="100","minimum normal fee applied");
++            p.ShippingFee=30000;Apply(bot,p);Check(Val(driver,"normal")=="30000","maximum normal fee applied");
++            p.HalfShipping=true;p.HalfShippingFee=4000;Reject(()=>Apply(bot,p),"live half fee range enforced before submit");
++            p.HalfShippingFee=1800;
++            ((IJavaScriptExecutor)driver).ExecuteScript("document.querySelector('input[value=\"1\"]').disabled=true;document.querySelector('input[value=\"0\"]').click();");
++            Reject(()=>Apply(bot,p),"locked half shipping fails without fallback");
++        }
++    }
++    const string Html=@"<!doctype html><meta charset='utf-8'><style>body{padding:30px}button,input,label{margin:8px}section{padding:20px}</style>
++<button id='method' aria-haspopup='listbox' onclick='document.getElementById(""methods"").hidden=false'><span>배송비 포함</span></button>
++<ul id='methods' hidden><li role='option' onclick='method(true)'>배송비 포함</li><li role='option' onclick='method(false)'>배송비 별도</li></ul>
++<section id='scroll-trade-shippingSpecs' style='display:none'>일반택배 <input id='normal' type='text' inputmode='numeric' placeholder='100~30,000'>
++<label><input type='radio' name='isPossible' value='0' checked hidden onchange='half(false)'>불가능</label><label><input type='radio' name='isPossible' value='1' hidden onchange='half(true)'>가능</label>
++<div id='half' hidden><button id='carrier' aria-haspopup='listbox' onclick='document.getElementById(""carriers"").hidden=false'>둘 다 가능</button>
++<ul id='carriers' hidden><li role='option' onclick='carrier(this)'>둘 다 가능</li><li role='option' onclick='carrier(this)'>GS25 만</li><li role='option' onclick='carrier(this)'>CU만</li></ul>
++<input id='halfFee' type='text' inputmode='numeric' placeholder='100~3,000'></div></section>
++<label><input id='default-shipping-fee' type='checkbox'>다음 등록시에도 사용</label>
++<script>function method(v){document.getElementById('method').innerHTML='<span>배송비 '+(v?'포함':'별도')+'</span>';document.getElementById('methods').hidden=true;document.getElementById('scroll-trade-shippingSpecs').style.display=v?'none':'block';}function half(v){document.getElementById('half').hidden=!v;}function carrier(e){document.getElementById('carrier').textContent=e.textContent;document.getElementById('carriers').hidden=true;}</script>";
++}
+--- 16차/tools/ResetAssemblyInfo.cs
++++ 17차/tools/ResetAssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyProduct("EXP Reset")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+-[assembly: AssemblyVersion("2.2.7.0")]
+-[assembly: AssemblyFileVersion("2.2.7.0")]
+-[assembly: AssemblyInformationalVersion("2.2.7")]
++[assembly: AssemblyVersion("2.2.8.0")]
++[assembly: AssemblyFileVersion("2.2.8.0")]
++[assembly: AssemblyInformationalVersion("2.2.8")]

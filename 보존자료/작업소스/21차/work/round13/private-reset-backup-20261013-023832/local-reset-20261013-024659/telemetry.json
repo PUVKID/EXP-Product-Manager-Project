@@ -1,0 +1,10 @@
+﻿{
+  "Enabled": true,
+  "ServerUrl": "",
+  "IngestKey": "",
+  "BatchSize": 50,
+  "FlushSeconds": 10,
+  "HeartbeatSeconds": 60,
+  "UrlAllowed": false,
+  "Active": false
+}

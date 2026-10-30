@@ -1,0 +1,21 @@
+{
+  "new_observation": "중앙tool에두배열필수라는exit1원문확인,루프첫호출",
+  "method": "제품코드는수정하지않고해당실패기록의실제인자/관측을별도로기록",
+  "role": "main",
+  "before_argv": [
+    "routing_state.py",
+    "input-fix",
+    "--assessment",
+    "work/input-fix01.json"
+  ],
+  "effort": "medium",
+  "selection_reason": "필수JSON필드와실제경로의확정된입력오류보정",
+  "after_argv": [
+    "routing_state.py",
+    "input-fix",
+    "--assessment",
+    "work/corrected-input-fix03.json"
+  ],
+  "cause": "첫번째input-fix기록의before_argv/after_argv누락",
+  "model": "gpt-6.1-sol"
+}

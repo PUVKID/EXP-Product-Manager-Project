@@ -1,0 +1,19 @@
+{
+  "new_observation": "build-help-input-failure.json os123,실제help디렉터리와rg -g 옵션확인",
+  "before_argv": [
+    "rg",
+    ".../*.md"
+  ],
+  "method": "파일디렉터리와-g필터를분리해서조회",
+  "effort": "medium",
+  "cause": "build담당rg에Windows글롭경로를직접전달",
+  "after_argv": [
+    "rg",
+    "-g",
+    "*.md",
+    "resources/help"
+  ],
+  "model": "gpt-6.1-sol",
+  "role": "build",
+  "selection_reason": "기계적명령인자보정이며제품코드검사기준변경없음"
+}

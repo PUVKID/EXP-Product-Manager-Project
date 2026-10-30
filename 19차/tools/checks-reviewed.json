@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "checks": [
+    {
+      "argv": [
+        "C:\\Users\\PUVKID\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/verify_scope.py"
+      ],
+      "id": "핵심로직-UTF8",
+      "timeout_seconds": 15,
+      "cwd": "."
+    },
+    {
+      "argv": [
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\19차\\소스코드\\dist\\DpiLayoutTests.exe",
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\19차\\work\\dpi-1.5",
+        "1.5"
+      ],
+      "id": "DPI150",
+      "timeout_seconds": 30,
+      "cwd": "."
+    },
+    {
+      "argv": [
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\19차\\소스코드\\dist\\DpiLayoutTests.exe",
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\19차\\work\\dpi-2",
+        "2"
+      ],
+      "id": "DPI200",
+      "timeout_seconds": 30,
+      "cwd": "."
+    },
+    {
+      "id": "새디자인-격리UI",
+      "argv": [
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\19차\\소스코드\\dist\\RedesignUiTests.exe",
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\19차\\work\\independent-redesign"
+      ],
+      "cwd": ".",
+      "timeout_seconds": 45
+    }
+  ],
+  "total_timeout_seconds": 120
+}
+

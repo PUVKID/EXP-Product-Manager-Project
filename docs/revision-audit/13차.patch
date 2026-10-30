@@ -1,0 +1,103 @@
+--- 12차/EXP.csproj
++++ 13차/EXP.csproj
+@@ -29,6 +29,7 @@
+     <LibDll Include="lib\*.dll" />
+     <Reference Include="%(LibDll.Filename)"><HintPath>%(LibDll.Identity)</HintPath><Private>false</Private></Reference>
+     <EmbeddedResource Include="@(LibDll)" LogicalName="lib.%(Filename)%(Extension)" />
++    <EmbeddedResource Include="resources\app.ico" LogicalName="brand.app.ico" />
+     <EmbeddedResource Include="resources\fonts\NanumGothicBold.ttf" LogicalName="font.NanumGothicBold.ttf" />
+     <EmbeddedResource Include="resources\help\*.md" LogicalName="help.%(Filename)%(Extension)" />
+   </ItemGroup>
+--- 12차/admin/AdminWorkflow.cs
++++ 13차/admin/AdminWorkflow.cs
+@@ -25,6 +25,7 @@
+             if (parent != null) folders.Add(parent.FullName);
+             // Existing administrator vaults only. Never generate or switch to a new signing identity silently.
+             try { folders.AddRange(Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Lumivolt_AdminVault_*", SearchOption.TopDirectoryOnly)); } catch { }
++            try { folders.AddRange(Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "EXP_MasterVault_*", SearchOption.TopDirectoryOnly)); } catch { }
+             foreach (var folder in folders) if (!String.IsNullOrWhiteSpace(folder) && IsMatchingVault(folder)) return folder;
+             return "";
+         }
+--- 12차/admin/AssemblyInfo.cs
++++ 13차/admin/AssemblyInfo.cs
+@@ -2,5 +2,5 @@
+ [assembly: AssemblyTitle("EXP Master")]
+ [assembly: AssemblyProduct("EXP Master")]
+ [assembly: AssemblyDescription("EXP 오프라인 라이선스 및 추가 등록권 발급")]
+-[assembly: AssemblyVersion("2.2.2.0")]
+-[assembly: AssemblyFileVersion("2.2.2.0")]
++[assembly: AssemblyVersion("2.2.3.0")]
++[assembly: AssemblyFileVersion("2.2.3.0")]
+--- 12차/admin/LicenseAdmin.cs
++++ 13차/admin/LicenseAdmin.cs
+@@ -47,6 +47,7 @@
+     public AdminForm()
+     {
+         Theme.Set(Design.AdminDark ? ThemePalette.DarkPal : ThemePalette.Light);
++        using(var stream=Assembly.GetExecutingAssembly().GetManifestResourceStream("brand.app.ico")) if(stream!=null) Icon=new Icon(stream);
+         Text = Brand.Master; ClientSize = new Size(980,808); Font = Theme.FontBase(); StartPosition = FormStartPosition.CenterScreen;
+         FormBorderStyle = FormBorderStyle.FixedSingle; MaximizeBox = false;
+         Controls.Add(new HeroBanner { Left=32,Top=24,Width=916,Height=128,Eyebrow="EXP MASTER  /  윤석",Title="키 발급, 더 간결하게.",Subtitle="등록코드 하나로 제품과 기간을 연결하세요." });
+@@ -123,7 +124,7 @@
+     void RequireVault() { if(!AdminWorkflow.IsMatchingVault(vault))throw new InvalidOperationException("관리 메뉴에서 기존 보안키를 연결해 주세요."); }
+     string Password(bool confirm)
+     {
+-        using (var f = new Form { Text = "발급키 백업 암호", Width = 420, Height = confirm ? 220 : 160, StartPosition = FormStartPosition.CenterParent, FormBorderStyle = FormBorderStyle.FixedDialog, MaximizeBox = false, MinimizeBox = false, Font = Theme.FontBase() })
++        using (var f = new Form { Text = "발급키 백업 암호", Width = 420, Height = confirm ? 220 : 160, StartPosition = FormStartPosition.CenterParent, FormBorderStyle = FormBorderStyle.FixedDialog, MaximizeBox = false, MinimizeBox = false, Font = Theme.FontBase(), Icon = this.Icon })
+         {
+             var label = new Label { Left = 16, Top = 12, Width = 380, Text = "12자 이상의 암호" };
+             var first = new TextBox { Left = 16, Top = 38, Width = 370, UseSystemPasswordChar = true };
+--- 12차/build/Build.ps1
++++ 13차/build/Build.ps1
+@@ -28,6 +28,7 @@
+         if ($AllLibraries -or $dll.Name -in @('Newtonsoft.Json.dll','BouncyCastle.Cryptography.dll')) { $compilerArgs += '/r:' + $dll.FullName; $compilerArgs += '/resource:' + $dll.FullName + ',lib.' + $dll.Name }
+     }
+     $compilerArgs += '/resource:resources\fonts\NanumGothicBold.ttf,font.NanumGothicBold.ttf'
++    $compilerArgs += '/resource:resources\app.ico,brand.app.ico'
+     foreach ($h in Get-ChildItem resources\help\*.md) { $compilerArgs += '/resource:' + $h.FullName + ',help.' + $h.Name }
+     & $csc @compilerArgs @Sources
+     if ($LASTEXITCODE -ne 0 -or !(Test-Path -LiteralPath $output)) { throw "Build failed: $Name" }
+--- 12차/installer/EXP.iss
++++ 13차/installer/EXP.iss
+@@ -1,4 +1,4 @@
+-#define AppVersion "2.2.2"
++#define AppVersion "2.2.3"
+ [Setup]
+ AppId={{BBD63563-5422-4DA7-93C6-2F0D98E87E3F}
+ AppName={code:ProductName}
+@@ -21,7 +21,7 @@
+ CloseApplications=no
+ RestartApplications=no
+ AppMutex=BunjangAuto_SingleInstance
+-VersionInfoVersion=2.2.2.0
++VersionInfoVersion=2.2.3.0
+ VersionInfoCompany=EXP
+ VersionInfoDescription=EXP 통합 설치 프로그램
+ VersionInfoProductName=EXP
+--- 12차/src/AssemblyInfo.cs
++++ 13차/src/AssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("음악천재")]
+ [assembly: AssemblyProduct("EXP")]
+ [assembly: AssemblyCopyright("Copyright © 음악천재. All rights reserved.")]
+-[assembly: AssemblyVersion("2.2.2.0")]
+-[assembly: AssemblyFileVersion("2.2.2.0")]
+-[assembly: AssemblyInformationalVersion("2.2.2")]
++[assembly: AssemblyVersion("2.2.3.0")]
++[assembly: AssemblyFileVersion("2.2.3.0")]
++[assembly: AssemblyInformationalVersion("2.2.3")]
+--- 12차/src/Brand.cs
++++ 13차/src/Brand.cs
+@@ -4,7 +4,7 @@
+     {
+         public const string Name = "EXP";
+         public const string Master = "EXP Master";
+-        public const string Version = "2.2.2";
++        public const string Version = "2.2.3";
+         public static string Email
+         {
+             get
+--- 12차/src/Security/TrustedKeys.cs
++++ 13차/src/Security/TrustedKeys.cs
+@@ -1 +1 @@
+-using System.Collections.Generic; namespace BunjangAuto { internal static class TrustedKeys { internal static readonly IDictionary<string, byte[]> All = new Dictionary<string, byte[]> { { "72FE5042D4CF73700FABA7642A8351E0", System.Convert.FromBase64String("n0xK7sOS7aL3k8h3FHfUac0ozGTmd3Awt+Yd/nLM/VY=") } }; } }+using System.Collections.Generic; namespace BunjangAuto { internal static class TrustedKeys { internal static readonly IDictionary<string, byte[]> All = new Dictionary<string, byte[]> { { "A7A91B5CC0DDBAEAAD5C0ECC02A9754A", System.Convert.FromBase64String("FyV1Gsh7vuvlRn2IouMpLBM6a4c3rFfyEovdhKbrTIU=") } }; } }

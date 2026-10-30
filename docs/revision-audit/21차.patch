@@ -1,0 +1,199 @@
+--- 14차/admin/AssemblyInfo.cs
++++ 21차/admin/AssemblyInfo.cs
+@@ -2,8 +2,8 @@
+ [assembly: AssemblyTitle("EXP Master")]
+ [assembly: AssemblyProduct("EXP Master")]
+ [assembly: AssemblyDescription("EXP 오프라인 라이선스 및 추가 등록권 발급")]
+-[assembly: AssemblyVersion("2.2.4.0")]
+-[assembly: AssemblyFileVersion("2.2.4.0")]
++[assembly: AssemblyVersion("2.2.5.0")]
++[assembly: AssemblyFileVersion("2.2.5.0")]
+ 
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+--- 14차/admin/LicenseAdmin.cs
++++ 21차/admin/LicenseAdmin.cs
+@@ -139,4 +139,3 @@
+     void LoadVault(string folder) { if (!AdminWorkflow.IsMatchingVault(folder)) throw new InvalidOperationException("이 EXP 버전과 맞지 않는 발급키입니다. 기존 키를 선택해 주세요."); vault = folder; IssuerService.LastVault = folder; lblKey.Text = "발급 준비 완료  ·  기존 보안키 연결됨"; }
+     void ChooseVault(bool create) { Safe(delegate { using (var d = new FolderBrowserDialog { Description = "관리자 전용 보관 폴더 (새 키 생성 시 비어 있는 새 폴더)" }) if (d.ShowDialog(this) == DialogResult.OK) { if (create) IssuerService.Create(d.SelectedPath); LoadVault(d.SelectedPath); if (create) MessageBox.Show(this, "새 공개키를 내보내고 Build.ps1 -PublicKeyFile로 고객 앱을 다시 빌드해야 합니다."); } }); }
+ }
+-
+--- 14차/build.bat
++++ 21차/build.bat
+@@ -1,3 +1,3 @@
+-@echo off
+-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0build\Build.ps1" %*
+-exit /b %errorlevel%
++@echo off
++powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0build\Build.ps1" %*
++exit /b %errorlevel%
+--- 14차/build/Build.ps1
++++ 21차/build/Build.ps1
+@@ -39,6 +39,7 @@
+     Compile 'EXP' ($app + $shared) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $true
+ }
+ if ($Target -eq 'Tests') {
++    Compile 'UsageRecoveryTests' ($app + $shared + @('tests\UsageRecoveryTests.cs')) @('/target:exe','/define:TESTBUILD','/main:UsageRecoveryTests') $true
+     Compile 'RevisionUi' ($app + $shared + @('tests\RevisionUi.cs')) @('/target:exe','/define:TESTBUILD','/main:RevisionUi') $true
+     Compile 'ReleaseTests' ($app + $shared + @('admin\IssuerService.cs','admin\AdminWorkflow.cs','admin\CreditIssuer.cs','admin\TrialIssuer.cs','tests\ReleaseTests.cs')) @('/target:exe','/define:TESTBUILD','/main:ReleaseTests') $true
+     Compile 'SecurityTests' ($shared + @('tests\SecurityTests.cs','src\Security\TpmDevice.cs','admin\IssuerService.cs')) @('/target:exe') $false
+--- 14차/installer/EXP.iss
++++ 21차/installer/EXP.iss
+@@ -1,4 +1,4 @@
+-#define AppVersion "2.2.4"
++#define AppVersion "2.2.5"
+ [Setup]
+ AppId={{BBD63563-5422-4DA7-93C6-2F0D98E87E3F}
+ AppName={code:ProductName}
+@@ -21,7 +21,7 @@
+ CloseApplications=no
+ RestartApplications=no
+ AppMutex=BunjangAuto_SingleInstance
+-VersionInfoVersion=2.2.4.0
++VersionInfoVersion=2.2.5.0
+ VersionInfoCompany=EXPMASTER
+ VersionInfoDescription=EXP 통합 설치 프로그램
+ VersionInfoProductName=EXP
+--- 14차/src/AssemblyInfo.cs
++++ 21차/src/AssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyProduct("EXP")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+-[assembly: AssemblyVersion("2.2.4.0")]
+-[assembly: AssemblyFileVersion("2.2.4.0")]
+-[assembly: AssemblyInformationalVersion("2.2.4")]
++[assembly: AssemblyVersion("2.2.5.0")]
++[assembly: AssemblyFileVersion("2.2.5.0")]
++[assembly: AssemblyInformationalVersion("2.2.5")]
+--- 14차/src/Brand.cs
++++ 21차/src/Brand.cs
+@@ -4,7 +4,7 @@
+     {
+         public const string Name = "EXP";
+         public const string Master = "EXP Master";
+-        public const string Version = "2.2.4";
++        public const string Version = "2.2.5";
+         public static string Email
+         {
+             get
+--- 14차/src/Security/UsageQuota.cs
++++ 21차/src/Security/UsageQuota.cs
+@@ -63,12 +63,16 @@
+             // the marker exists, a missing copy is never treated as a fresh allowance.
+             if(marker && (file==null || reg==null)) throw new IOException("사용량 기록 일부가 삭제되었습니다. 관리자에게 문의해 주세요.");
+             JObject a=file==null?null:Decode(file), b=reg==null?null:Decode(reg), o=a??b;
++            byte[] currentData=file??reg;
++            bool repair=file==null || reg==null;
+             if(a!=null && b!=null) {
+                 if((long)a["seq"]==(long)b["seq"]) { if(!JToken.DeepEquals(a,b)) throw new IOException("사용량 기록이 일치하지 않습니다."); }
+                 else {
+                     var newer=(long)a["seq"]>(long)b["seq"]?a:b; var older=ReferenceEquals(newer,a)?b:a;
+                     if((long)newer["seq"]!=(long)older["seq"]+1 || (string)newer["previous"]!=LicenseProtocol.Fingerprint(LicenseProtocol.Utf8.GetBytes(older.ToString(Newtonsoft.Json.Formatting.None)))) throw new IOException("사용량 기록 되돌리기가 감지되었습니다.");
+                     o=newer; // Recover only an adjacent, hash-linked interrupted commit, using the newer charge.
++                    currentData=ReferenceEquals(newer,a)?file:reg;
++                    repair=true;
+                 }
+             }
+             o.AddAnnotation(LicenseProtocol.Fingerprint(LicenseProtocol.Utf8.GetBytes(o.ToString(Newtonsoft.Json.Formatting.None))));
+@@ -76,6 +80,10 @@
+             if(now.AddMinutes(5)<LicenseProtocol.Time((string)o["lastUtc"])) throw new IOException("PC 시간이 이전으로 변경되었습니다.");
+             int order=String.CompareOrdinal(Day(now),(string)o["day"]);
+             if(order<0) throw new IOException("날짜를 확인해 주세요.");
++            // Complete the interrupted commit BEFORE another sequence is issued. Otherwise,
++            // two file replacement failures leave a gap of two and look like a rollback.
++            // Only already authenticated, device/time-checked adjacent states are repaired.
++            if(repair) PersistCopies(currentData);
+             if(order>0) { o["day"]=Day(now); o["used"]=0; o["accounts"]=new JObject(); }
+             return o;
+         }
+@@ -83,12 +91,15 @@
+             string previous=state.Annotation<string>() ?? ""; state["seq"]=(long)state["seq"]+1;
+             state["previous"]=previous;
+             byte[] data=ProtectedData.Protect(LicenseProtocol.Utf8.GetBytes(state.ToString(Newtonsoft.Json.Formatting.None)),Entropy,DataProtectionScope.CurrentUser);
++            PersistCopies(data);
++            if(!CngKey.Exists(MarkerName,Provider)) using(var key=CngKey.Create(CngAlgorithm.ECDsaP256,MarkerName,new CngKeyCreationParameters { Provider=Provider,ExportPolicy=CngExportPolicies.None,KeyUsage=CngKeyUsages.Signing })) { }
++        }
++        static void PersistCopies(byte[] data) {
+             Directory.CreateDirectory(Paths.Root); string temp=FilePath+".tmp";
+             using(var f=new FileStream(temp,FileMode.Create,FileAccess.Write,FileShare.None,4096,FileOptions.WriteThrough)) { f.Write(data,0,data.Length); f.Flush(true); }
+             // Registry first; if the process stops between writes, Read selects this newer state.
+             using(var k=Registry.CurrentUser.CreateSubKey(RegistryPath)) { k.SetValue("State",data,RegistryValueKind.Binary); k.Flush(); }
+             if(File.Exists(FilePath)) File.Replace(temp,FilePath,null); else File.Move(temp,FilePath);
+-            if(!CngKey.Exists(MarkerName,Provider)) using(var key=CngKey.Create(CngAlgorithm.ECDsaP256,MarkerName,new CngKeyCreationParameters { Provider=Provider,ExportPolicy=CngExportPolicies.None,KeyUsage=CngKeyUsages.Signing })) { }
+         }
+         static LicenseInfo RequireLicense() { if(!LicenseGate.Recheck()) throw new InvalidOperationException("유효한 라이선스가 필요합니다."); return LicenseGate.LastInfo; }
+         public static void RequireMode(AppSettings cfg,bool includeRegistered) {
+--- 14차/src/SelfTest.cs
++++ 21차/src/SelfTest.cs
+@@ -258,6 +258,6 @@
+         }
+     }
+ }
+-
++
+ 
+ #endif
+--- 14차/src/Storage.cs
++++ 21차/src/Storage.cs
+@@ -345,4 +345,3 @@
+         }
+     }
+ }
+-
+--- 14차/tests/ProductionSmoke.cs
++++ 21차/tests/ProductionSmoke.cs
+@@ -29,4 +29,3 @@
+         return good.Valid && !bad.Valid && clean && removed ? 0 : 1;
+     }
+ }
+-
+--- 14차/tests/UsageRecoveryTests.cs
++++ 21차/tests/UsageRecoveryTests.cs
+@@ -0,0 +1,46 @@
++using System;
++using System.IO;
++using System.Reflection;
++using System.Security.Cryptography;
++using Microsoft.Win32;
++using Newtonsoft.Json.Linq;
++using BunjangAuto;
++class UsageRecoveryTests {
++ static int passed,failed;
++ static string file,reg;
++ static DateTime now=DateTime.UtcNow;
++ static MethodInfo read=typeof(UsageQuota).GetMethod("Read",BindingFlags.NonPublic|BindingFlags.Static);
++ static MethodInfo write=typeof(UsageQuota).GetMethod("Write",BindingFlags.NonPublic|BindingFlags.Static);
++ static JObject Read(string device="device-a"){return (JObject)read.Invoke(null,new object[]{device,now});}
++ static void Write(JObject state){write.Invoke(null,new object[]{state});}
++ static byte[] RegistryData(){using(var k=Registry.CurrentUser.OpenSubKey(reg))return (byte[])k.GetValue("State");}
++ static void SetRegistry(byte[] data){using(var k=Registry.CurrentUser.CreateSubKey(reg))k.SetValue("State",data,RegistryValueKind.Binary);}
++ static void Check(string name,bool value){Console.WriteLine((value?"PASS ":"FAIL ")+name);if(value)passed++;else failed++;}
++ static void Reject(string name,Action action){try{action();Check(name,false);}catch{Check(name,true);}}
++ static bool Equal(byte[] a,byte[] b){return Convert.ToBase64String(a)==Convert.ToBase64String(b);}
++ static int Main(){AppDomain.CurrentDomain.AssemblyResolve+=delegate(object sender,ResolveEventArgs e){using(var s=Assembly.GetExecutingAssembly().GetManifestResourceStream("lib."+new AssemblyName(e.Name).Name+".dll")){if(s==null)return null;using(var m=new MemoryStream()){s.CopyTo(m);return Assembly.Load(m.ToArray());}}};return Run();}
++ [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++ static int Run(){file=Path.Combine(Paths.Root,"usage.v1");reg=@"Software\EXP\Tests\"+System.Diagnostics.Process.GetCurrentProcess().Id;
++  try {
++   var s=Read();s["used"]=12;s["credits"]=7;s["trialId"]="trial-a";((JObject)s["redeemed"])["credit-a"]=true;Write(s);
++   for(int i=0;i<3;i++){
++    s=Read();s["used"]=(int)s["used"]+1;
++    using(var held=new FileStream(file,FileMode.Open,FileAccess.Read,FileShare.Read))Reject("injected file replacement failure "+i,()=>Write(s));
++    var recovered=Read();
++    Check("interrupted charge retained "+i,(int)recovered["used"]==13+i);
++    Check("both copies repaired before next write "+i,Equal(File.ReadAllBytes(file),RegistryData()));
++   }
++   s=Read();Check("credits/trial/redemption retained",(long)s["credits"]==7&&(string)s["trialId"]=="trial-a"&&(bool)s["redeemed"]["credit-a"]);
++   var old=File.ReadAllBytes(file);s["used"]=16;Write(s);var newer=File.ReadAllBytes(file);SetRegistry(old);
++   Check("older registry recovers newest file",(int)Read()["used"]==16&&Equal(File.ReadAllBytes(file),RegistryData()));
++   SetRegistry(old);Reject("wrong device rejected before repair",()=>Read("device-b"));Check("wrong device does not alter copies",Equal(RegistryData(),old)&&Equal(File.ReadAllBytes(file),newer));SetRegistry(newer);
++   s=Read();Write(s);var newest=File.ReadAllBytes(file);SetRegistry(old);Reject("nonadjacent rollback still rejected",()=>Read());SetRegistry(newest);
++   File.Delete(file);Reject("deleted file remains blocked",()=>Read());File.WriteAllBytes(file,newest);
++   using(var k=Registry.CurrentUser.OpenSubKey(reg,true))k.DeleteValue("State");File.Delete(file);Reject("both copies deleted remains blocked",()=>Read());SetRegistry(newest);File.WriteAllBytes(file,newest);
++   File.WriteAllBytes(file,new byte[100]);Reject("tampered DPAPI file remains blocked",()=>Read());File.WriteAllBytes(file,newest);
++   Check("repaired ledger remains readable",(int)Read()["used"]==16);
++  }catch(Exception ex){Console.WriteLine(ex);failed++;}
++  finally{try{using(var k=CngKey.Open("EXP.Usage.Test."+System.Diagnostics.Process.GetCurrentProcess().Id,CngProvider.MicrosoftSoftwareKeyStorageProvider))k.Delete();}catch{}Registry.CurrentUser.DeleteSubKeyTree(reg,false);}
++  Console.WriteLine("RECOVERY: "+passed+" passed, "+failed+" failed");return failed==0?0:1;
++ }
++}

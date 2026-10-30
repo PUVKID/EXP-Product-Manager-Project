@@ -1,0 +1,18 @@
+Package=15700 
+Root=C:\Users\PUVKID\AppData\Roaming\BunjangAuto; 64bit=True
+LicenseValid=True Trial=False
+FileExists=True
+RegistryExists=True
+RegistryBytes=502
+ReadResult={
+  "version": 1,
+  "seq": 3,
+  "device": "0E1D2A2CD2C137B915D52958B3A0A668BDC23CE5BE50697653AB709FBC016BFE",
+  "day": "2026-10-13",
+  "lastUtc": "2026-10-12T18:06:15Z",
+  "used": 0,
+  "credits": 0,
+  "accounts": {},
+  "redeemed": {},
+  "previous": "4829A07FF74F6DC34F34D880B0D54A89C36078E8AE3E17B586FAC33499DFF6DC"
+}

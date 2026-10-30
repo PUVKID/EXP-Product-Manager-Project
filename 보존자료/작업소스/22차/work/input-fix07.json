@@ -1,0 +1,18 @@
+{
+  "cause": "verifier가컴파일로그를소스와같은UTF8로가정하여엄격해독오류",
+  "before_argv": [
+    "read_text",
+    "repair3-tests-build.log",
+    "encoding=utf-8"
+  ],
+  "model": "gpt-6.1-sol",
+  "new_observation": "repair3-verifier-buildlog-decode-failure.json byte0xb9 pos16.기존.NET컴파일출력은혼합인코딩이며UI출력/소스UTF8과별개",
+  "effort": "high",
+  "role": "verifier",
+  "method": "불필요한컴파일로그해독조회제거,이미보존된빌드종료코드와컴파일EXEhash로대조",
+  "after_argv": [
+    "파일hash/mtime대조",
+    "repair3-freeze.json"
+  ],
+  "selection_reason": "입력로그해석가정수정만,소스/업무assert/검사기준은불변"
+}

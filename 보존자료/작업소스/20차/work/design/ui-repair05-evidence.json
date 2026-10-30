@@ -1,0 +1,48 @@
+{
+  "time_kst": "2026-10-26T16:09:50.577518+09:00",
+  "role": "escalate",
+  "requested_model": "gpt-6-astra",
+  "requested_effort": "medium",
+  "server_identity_verified": false,
+  "argv": [
+    "소스코드/dist/RepeatDesignUiTests.exe",
+    "work/design/repeat-repair05"
+  ],
+  "cwd": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\20차",
+  "exit_code": 0,
+  "passed": 1298,
+  "failed": 0,
+  "additional_checks": 50,
+  "wall_seconds": 7.079306,
+  "log": "work/design/repeat-repair05.log",
+  "log_bytes": 61278,
+  "log_display": "도구 응답은 마지막12줄이며 전체는 파일에 보존",
+  "images": 30,
+  "visually_reviewed": [
+    "work/design/repeat-repair05/Dark-1-batch-clock.png",
+    "work/design/repeat-repair05/Light-1-batch-interval.png"
+  ],
+  "files": [
+    {
+      "file": "소스코드/src/UI/Pages/SchedulePage.cs",
+      "sha256": "c6471414311b4d544fca824b483551f90310a410cf014ee252fee0c749b871e6",
+      "bytes": 9542,
+      "replacement_characters": 0,
+      "actual_sha256": "c6471414311b4d544fca824b483551f90310a410cf014ee252fee0c749b871e6",
+      "unchanged_after_freeze": true
+    },
+    {
+      "file": "소스코드/tests/RepeatDesignUiTests.cs",
+      "sha256": "471edc8959651a73e5bdd49ce62d2610e2b2b1b1d38f4bb548a0cd85c938d8e6",
+      "bytes": 9205,
+      "replacement_characters": 0,
+      "actual_sha256": "471edc8959651a73e5bdd49ce62d2610e2b2b1b1d38f4bb548a0cd85c938d8e6",
+      "unchanged_after_freeze": true
+    }
+  ],
+  "aggregate_latest_applicable_checks": 8295,
+  "aggregate_note": "이번1298+이전Redesign1312+이전DPI1137x5. 전체 재실행 아님. 이전8245검사증거 보존.",
+  "repair_used_at_assignment": 5,
+  "input_fix_used_at_assignment": 12,
+  "independent_verifier": false
+}

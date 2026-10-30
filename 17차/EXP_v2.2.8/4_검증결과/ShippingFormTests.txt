@@ -1,0 +1,17 @@
+PASS legacy included shipping remains usable
+PASS missing separate fee rejected
+PASS normal minimum enforced
+PASS normal maximum enforced
+PASS half fee and carrier required
+PASS encrypted product round trip preserves shipping
+PASS normal fee and half shipping disabled applied
+PASS carrier and half fee applied ALL
+PASS carrier and half fee applied GS_HALF_PRICE
+PASS carrier and half fee applied CU_THRIFTY
+PASS remember can be cleared
+PASS explicitly switches back to included
+PASS minimum normal fee applied
+PASS maximum normal fee applied
+PASS live half fee range enforced before submit
+PASS locked half shipping fails without fallback
+SHIPPING: 16 passed

@@ -1,0 +1,1138 @@
+PASS embedded Nanum Gothic Bold active
+PASS three cards Light wide
+PASS cards never overlap Light wide
+PASS consistent card edges Light wide
+PASS children fit licenseInfoCard Light wide
+PASS no overlap licenseInfoCard 0/1 Light wide
+PASS no overlap licenseInfoCard 0/2 Light wide
+PASS no overlap licenseInfoCard 0/3 Light wide
+PASS no overlap licenseInfoCard 0/4 Light wide
+PASS no overlap licenseInfoCard 0/5 Light wide
+PASS no overlap licenseInfoCard 0/6 Light wide
+PASS no overlap licenseInfoCard 0/7 Light wide
+PASS no overlap licenseInfoCard 0/8 Light wide
+PASS no overlap licenseInfoCard 0/9 Light wide
+PASS no overlap licenseInfoCard 0/10 Light wide
+PASS no overlap licenseInfoCard 0/11 Light wide
+PASS no overlap licenseInfoCard 1/2 Light wide
+PASS no overlap licenseInfoCard 1/3 Light wide
+PASS no overlap licenseInfoCard 1/4 Light wide
+PASS no overlap licenseInfoCard 1/5 Light wide
+PASS no overlap licenseInfoCard 1/6 Light wide
+PASS no overlap licenseInfoCard 1/7 Light wide
+PASS no overlap licenseInfoCard 1/8 Light wide
+PASS no overlap licenseInfoCard 1/9 Light wide
+PASS no overlap licenseInfoCard 1/10 Light wide
+PASS no overlap licenseInfoCard 1/11 Light wide
+PASS no overlap licenseInfoCard 2/3 Light wide
+PASS no overlap licenseInfoCard 2/4 Light wide
+PASS no overlap licenseInfoCard 2/5 Light wide
+PASS no overlap licenseInfoCard 2/6 Light wide
+PASS no overlap licenseInfoCard 2/7 Light wide
+PASS no overlap licenseInfoCard 2/8 Light wide
+PASS no overlap licenseInfoCard 2/9 Light wide
+PASS no overlap licenseInfoCard 2/10 Light wide
+PASS no overlap licenseInfoCard 2/11 Light wide
+PASS no overlap licenseInfoCard 3/4 Light wide
+PASS no overlap licenseInfoCard 3/5 Light wide
+PASS no overlap licenseInfoCard 3/6 Light wide
+PASS no overlap licenseInfoCard 3/7 Light wide
+PASS no overlap licenseInfoCard 3/8 Light wide
+PASS no overlap licenseInfoCard 3/9 Light wide
+PASS no overlap licenseInfoCard 3/10 Light wide
+PASS no overlap licenseInfoCard 3/11 Light wide
+PASS no overlap licenseInfoCard 4/5 Light wide
+PASS no overlap licenseInfoCard 4/6 Light wide
+PASS no overlap licenseInfoCard 4/7 Light wide
+PASS no overlap licenseInfoCard 4/8 Light wide
+PASS no overlap licenseInfoCard 4/9 Light wide
+PASS no overlap licenseInfoCard 4/10 Light wide
+PASS no overlap licenseInfoCard 4/11 Light wide
+PASS no overlap licenseInfoCard 5/6 Light wide
+PASS no overlap licenseInfoCard 5/7 Light wide
+PASS no overlap licenseInfoCard 5/8 Light wide
+PASS no overlap licenseInfoCard 5/9 Light wide
+PASS no overlap licenseInfoCard 5/10 Light wide
+PASS no overlap licenseInfoCard 5/11 Light wide
+PASS no overlap licenseInfoCard 6/7 Light wide
+PASS no overlap licenseInfoCard 6/8 Light wide
+PASS no overlap licenseInfoCard 6/9 Light wide
+PASS no overlap licenseInfoCard 6/10 Light wide
+PASS no overlap licenseInfoCard 6/11 Light wide
+PASS no overlap licenseInfoCard 7/8 Light wide
+PASS no overlap licenseInfoCard 7/9 Light wide
+PASS no overlap licenseInfoCard 7/10 Light wide
+PASS no overlap licenseInfoCard 7/11 Light wide
+PASS no overlap licenseInfoCard 8/9 Light wide
+PASS no overlap licenseInfoCard 8/10 Light wide
+PASS no overlap licenseInfoCard 8/11 Light wide
+PASS no overlap licenseInfoCard 9/10 Light wide
+PASS no overlap licenseInfoCard 9/11 Light wide
+PASS no overlap licenseInfoCard 10/11 Light wide
+PASS children fit licenseKeyCard Light wide
+PASS no overlap licenseKeyCard 0/1 Light wide
+PASS no overlap licenseKeyCard 0/2 Light wide
+PASS no overlap licenseKeyCard 0/3 Light wide
+PASS no overlap licenseKeyCard 0/4 Light wide
+PASS no overlap licenseKeyCard 0/5 Light wide
+PASS no overlap licenseKeyCard 1/2 Light wide
+PASS no overlap licenseKeyCard 1/3 Light wide
+PASS no overlap licenseKeyCard 1/4 Light wide
+PASS no overlap licenseKeyCard 1/5 Light wide
+PASS no overlap licenseKeyCard 2/3 Light wide
+PASS no overlap licenseKeyCard 2/4 Light wide
+PASS no overlap licenseKeyCard 2/5 Light wide
+PASS no overlap licenseKeyCard 3/4 Light wide
+PASS no overlap licenseKeyCard 3/5 Light wide
+PASS no overlap licenseKeyCard 4/5 Light wide
+PASS children fit licenseCreditCard Light wide
+PASS no overlap licenseCreditCard 0/1 Light wide
+PASS no overlap licenseCreditCard 0/2 Light wide
+PASS no overlap licenseCreditCard 0/3 Light wide
+PASS no overlap licenseCreditCard 0/4 Light wide
+PASS no overlap licenseCreditCard 1/2 Light wide
+PASS no overlap licenseCreditCard 1/3 Light wide
+PASS no overlap licenseCreditCard 1/4 Light wide
+PASS no overlap licenseCreditCard 2/3 Light wide
+PASS no overlap licenseCreditCard 2/4 Light wide
+PASS no overlap licenseCreditCard 3/4 Light wide
+PASS key/button gap Light wide
+PASS input inner padding Light wide
+PASS input inner padding Light wide
+PASS three cards Light narrow
+PASS cards never overlap Light narrow
+PASS consistent card edges Light narrow
+PASS children fit licenseInfoCard Light narrow
+PASS no overlap licenseInfoCard 0/1 Light narrow
+PASS no overlap licenseInfoCard 0/2 Light narrow
+PASS no overlap licenseInfoCard 0/3 Light narrow
+PASS no overlap licenseInfoCard 0/4 Light narrow
+PASS no overlap licenseInfoCard 0/5 Light narrow
+PASS no overlap licenseInfoCard 0/6 Light narrow
+PASS no overlap licenseInfoCard 0/7 Light narrow
+PASS no overlap licenseInfoCard 0/8 Light narrow
+PASS no overlap licenseInfoCard 0/9 Light narrow
+PASS no overlap licenseInfoCard 0/10 Light narrow
+PASS no overlap licenseInfoCard 0/11 Light narrow
+PASS no overlap licenseInfoCard 1/2 Light narrow
+PASS no overlap licenseInfoCard 1/3 Light narrow
+PASS no overlap licenseInfoCard 1/4 Light narrow
+PASS no overlap licenseInfoCard 1/5 Light narrow
+PASS no overlap licenseInfoCard 1/6 Light narrow
+PASS no overlap licenseInfoCard 1/7 Light narrow
+PASS no overlap licenseInfoCard 1/8 Light narrow
+PASS no overlap licenseInfoCard 1/9 Light narrow
+PASS no overlap licenseInfoCard 1/10 Light narrow
+PASS no overlap licenseInfoCard 1/11 Light narrow
+PASS no overlap licenseInfoCard 2/3 Light narrow
+PASS no overlap licenseInfoCard 2/4 Light narrow
+PASS no overlap licenseInfoCard 2/5 Light narrow
+PASS no overlap licenseInfoCard 2/6 Light narrow
+PASS no overlap licenseInfoCard 2/7 Light narrow
+PASS no overlap licenseInfoCard 2/8 Light narrow
+PASS no overlap licenseInfoCard 2/9 Light narrow
+PASS no overlap licenseInfoCard 2/10 Light narrow
+PASS no overlap licenseInfoCard 2/11 Light narrow
+PASS no overlap licenseInfoCard 3/4 Light narrow
+PASS no overlap licenseInfoCard 3/5 Light narrow
+PASS no overlap licenseInfoCard 3/6 Light narrow
+PASS no overlap licenseInfoCard 3/7 Light narrow
+PASS no overlap licenseInfoCard 3/8 Light narrow
+PASS no overlap licenseInfoCard 3/9 Light narrow
+PASS no overlap licenseInfoCard 3/10 Light narrow
+PASS no overlap licenseInfoCard 3/11 Light narrow
+PASS no overlap licenseInfoCard 4/5 Light narrow
+PASS no overlap licenseInfoCard 4/6 Light narrow
+PASS no overlap licenseInfoCard 4/7 Light narrow
+PASS no overlap licenseInfoCard 4/8 Light narrow
+PASS no overlap licenseInfoCard 4/9 Light narrow
+PASS no overlap licenseInfoCard 4/10 Light narrow
+PASS no overlap licenseInfoCard 4/11 Light narrow
+PASS no overlap licenseInfoCard 5/6 Light narrow
+PASS no overlap licenseInfoCard 5/7 Light narrow
+PASS no overlap licenseInfoCard 5/8 Light narrow
+PASS no overlap licenseInfoCard 5/9 Light narrow
+PASS no overlap licenseInfoCard 5/10 Light narrow
+PASS no overlap licenseInfoCard 5/11 Light narrow
+PASS no overlap licenseInfoCard 6/7 Light narrow
+PASS no overlap licenseInfoCard 6/8 Light narrow
+PASS no overlap licenseInfoCard 6/9 Light narrow
+PASS no overlap licenseInfoCard 6/10 Light narrow
+PASS no overlap licenseInfoCard 6/11 Light narrow
+PASS no overlap licenseInfoCard 7/8 Light narrow
+PASS no overlap licenseInfoCard 7/9 Light narrow
+PASS no overlap licenseInfoCard 7/10 Light narrow
+PASS no overlap licenseInfoCard 7/11 Light narrow
+PASS no overlap licenseInfoCard 8/9 Light narrow
+PASS no overlap licenseInfoCard 8/10 Light narrow
+PASS no overlap licenseInfoCard 8/11 Light narrow
+PASS no overlap licenseInfoCard 9/10 Light narrow
+PASS no overlap licenseInfoCard 9/11 Light narrow
+PASS no overlap licenseInfoCard 10/11 Light narrow
+PASS children fit licenseKeyCard Light narrow
+PASS no overlap licenseKeyCard 0/1 Light narrow
+PASS no overlap licenseKeyCard 0/2 Light narrow
+PASS no overlap licenseKeyCard 0/3 Light narrow
+PASS no overlap licenseKeyCard 0/4 Light narrow
+PASS no overlap licenseKeyCard 0/5 Light narrow
+PASS no overlap licenseKeyCard 1/2 Light narrow
+PASS no overlap licenseKeyCard 1/3 Light narrow
+PASS no overlap licenseKeyCard 1/4 Light narrow
+PASS no overlap licenseKeyCard 1/5 Light narrow
+PASS no overlap licenseKeyCard 2/3 Light narrow
+PASS no overlap licenseKeyCard 2/4 Light narrow
+PASS no overlap licenseKeyCard 2/5 Light narrow
+PASS no overlap licenseKeyCard 3/4 Light narrow
+PASS no overlap licenseKeyCard 3/5 Light narrow
+PASS no overlap licenseKeyCard 4/5 Light narrow
+PASS children fit licenseCreditCard Light narrow
+PASS no overlap licenseCreditCard 0/1 Light narrow
+PASS no overlap licenseCreditCard 0/2 Light narrow
+PASS no overlap licenseCreditCard 0/3 Light narrow
+PASS no overlap licenseCreditCard 0/4 Light narrow
+PASS no overlap licenseCreditCard 1/2 Light narrow
+PASS no overlap licenseCreditCard 1/3 Light narrow
+PASS no overlap licenseCreditCard 1/4 Light narrow
+PASS no overlap licenseCreditCard 2/3 Light narrow
+PASS no overlap licenseCreditCard 2/4 Light narrow
+PASS no overlap licenseCreditCard 3/4 Light narrow
+PASS key/button gap Light narrow
+PASS input inner padding Light narrow
+PASS input inner padding Light narrow
+PASS three cards Light message
+PASS cards never overlap Light message
+PASS consistent card edges Light message
+PASS children fit licenseInfoCard Light message
+PASS no overlap licenseInfoCard 0/1 Light message
+PASS no overlap licenseInfoCard 0/2 Light message
+PASS no overlap licenseInfoCard 0/3 Light message
+PASS no overlap licenseInfoCard 0/4 Light message
+PASS no overlap licenseInfoCard 0/5 Light message
+PASS no overlap licenseInfoCard 0/6 Light message
+PASS no overlap licenseInfoCard 0/7 Light message
+PASS no overlap licenseInfoCard 0/8 Light message
+PASS no overlap licenseInfoCard 0/9 Light message
+PASS no overlap licenseInfoCard 0/10 Light message
+PASS no overlap licenseInfoCard 0/11 Light message
+PASS no overlap licenseInfoCard 1/2 Light message
+PASS no overlap licenseInfoCard 1/3 Light message
+PASS no overlap licenseInfoCard 1/4 Light message
+PASS no overlap licenseInfoCard 1/5 Light message
+PASS no overlap licenseInfoCard 1/6 Light message
+PASS no overlap licenseInfoCard 1/7 Light message
+PASS no overlap licenseInfoCard 1/8 Light message
+PASS no overlap licenseInfoCard 1/9 Light message
+PASS no overlap licenseInfoCard 1/10 Light message
+PASS no overlap licenseInfoCard 1/11 Light message
+PASS no overlap licenseInfoCard 2/3 Light message
+PASS no overlap licenseInfoCard 2/4 Light message
+PASS no overlap licenseInfoCard 2/5 Light message
+PASS no overlap licenseInfoCard 2/6 Light message
+PASS no overlap licenseInfoCard 2/7 Light message
+PASS no overlap licenseInfoCard 2/8 Light message
+PASS no overlap licenseInfoCard 2/9 Light message
+PASS no overlap licenseInfoCard 2/10 Light message
+PASS no overlap licenseInfoCard 2/11 Light message
+PASS no overlap licenseInfoCard 3/4 Light message
+PASS no overlap licenseInfoCard 3/5 Light message
+PASS no overlap licenseInfoCard 3/6 Light message
+PASS no overlap licenseInfoCard 3/7 Light message
+PASS no overlap licenseInfoCard 3/8 Light message
+PASS no overlap licenseInfoCard 3/9 Light message
+PASS no overlap licenseInfoCard 3/10 Light message
+PASS no overlap licenseInfoCard 3/11 Light message
+PASS no overlap licenseInfoCard 4/5 Light message
+PASS no overlap licenseInfoCard 4/6 Light message
+PASS no overlap licenseInfoCard 4/7 Light message
+PASS no overlap licenseInfoCard 4/8 Light message
+PASS no overlap licenseInfoCard 4/9 Light message
+PASS no overlap licenseInfoCard 4/10 Light message
+PASS no overlap licenseInfoCard 4/11 Light message
+PASS no overlap licenseInfoCard 5/6 Light message
+PASS no overlap licenseInfoCard 5/7 Light message
+PASS no overlap licenseInfoCard 5/8 Light message
+PASS no overlap licenseInfoCard 5/9 Light message
+PASS no overlap licenseInfoCard 5/10 Light message
+PASS no overlap licenseInfoCard 5/11 Light message
+PASS no overlap licenseInfoCard 6/7 Light message
+PASS no overlap licenseInfoCard 6/8 Light message
+PASS no overlap licenseInfoCard 6/9 Light message
+PASS no overlap licenseInfoCard 6/10 Light message
+PASS no overlap licenseInfoCard 6/11 Light message
+PASS no overlap licenseInfoCard 7/8 Light message
+PASS no overlap licenseInfoCard 7/9 Light message
+PASS no overlap licenseInfoCard 7/10 Light message
+PASS no overlap licenseInfoCard 7/11 Light message
+PASS no overlap licenseInfoCard 8/9 Light message
+PASS no overlap licenseInfoCard 8/10 Light message
+PASS no overlap licenseInfoCard 8/11 Light message
+PASS no overlap licenseInfoCard 9/10 Light message
+PASS no overlap licenseInfoCard 9/11 Light message
+PASS no overlap licenseInfoCard 10/11 Light message
+PASS children fit licenseKeyCard Light message
+PASS no overlap licenseKeyCard 0/1 Light message
+PASS no overlap licenseKeyCard 0/2 Light message
+PASS no overlap licenseKeyCard 0/3 Light message
+PASS no overlap licenseKeyCard 0/4 Light message
+PASS no overlap licenseKeyCard 0/5 Light message
+PASS no overlap licenseKeyCard 1/2 Light message
+PASS no overlap licenseKeyCard 1/3 Light message
+PASS no overlap licenseKeyCard 1/4 Light message
+PASS no overlap licenseKeyCard 1/5 Light message
+PASS no overlap licenseKeyCard 2/3 Light message
+PASS no overlap licenseKeyCard 2/4 Light message
+PASS no overlap licenseKeyCard 2/5 Light message
+PASS no overlap licenseKeyCard 3/4 Light message
+PASS no overlap licenseKeyCard 3/5 Light message
+PASS no overlap licenseKeyCard 4/5 Light message
+PASS children fit licenseCreditCard Light message
+PASS no overlap licenseCreditCard 0/1 Light message
+PASS no overlap licenseCreditCard 0/2 Light message
+PASS no overlap licenseCreditCard 0/3 Light message
+PASS no overlap licenseCreditCard 0/4 Light message
+PASS no overlap licenseCreditCard 1/2 Light message
+PASS no overlap licenseCreditCard 1/3 Light message
+PASS no overlap licenseCreditCard 1/4 Light message
+PASS no overlap licenseCreditCard 2/3 Light message
+PASS no overlap licenseCreditCard 2/4 Light message
+PASS no overlap licenseCreditCard 3/4 Light message
+PASS key/button gap Light message
+PASS input inner padding Light message
+PASS input inner padding Light message
+PASS three cards Light scrolled resize
+PASS cards never overlap Light scrolled resize
+PASS consistent card edges Light scrolled resize
+PASS children fit licenseInfoCard Light scrolled resize
+PASS no overlap licenseInfoCard 0/1 Light scrolled resize
+PASS no overlap licenseInfoCard 0/2 Light scrolled resize
+PASS no overlap licenseInfoCard 0/3 Light scrolled resize
+PASS no overlap licenseInfoCard 0/4 Light scrolled resize
+PASS no overlap licenseInfoCard 0/5 Light scrolled resize
+PASS no overlap licenseInfoCard 0/6 Light scrolled resize
+PASS no overlap licenseInfoCard 0/7 Light scrolled resize
+PASS no overlap licenseInfoCard 0/8 Light scrolled resize
+PASS no overlap licenseInfoCard 0/9 Light scrolled resize
+PASS no overlap licenseInfoCard 0/10 Light scrolled resize
+PASS no overlap licenseInfoCard 0/11 Light scrolled resize
+PASS no overlap licenseInfoCard 1/2 Light scrolled resize
+PASS no overlap licenseInfoCard 1/3 Light scrolled resize
+PASS no overlap licenseInfoCard 1/4 Light scrolled resize
+PASS no overlap licenseInfoCard 1/5 Light scrolled resize
+PASS no overlap licenseInfoCard 1/6 Light scrolled resize
+PASS no overlap licenseInfoCard 1/7 Light scrolled resize
+PASS no overlap licenseInfoCard 1/8 Light scrolled resize
+PASS no overlap licenseInfoCard 1/9 Light scrolled resize
+PASS no overlap licenseInfoCard 1/10 Light scrolled resize
+PASS no overlap licenseInfoCard 1/11 Light scrolled resize
+PASS no overlap licenseInfoCard 2/3 Light scrolled resize
+PASS no overlap licenseInfoCard 2/4 Light scrolled resize
+PASS no overlap licenseInfoCard 2/5 Light scrolled resize
+PASS no overlap licenseInfoCard 2/6 Light scrolled resize
+PASS no overlap licenseInfoCard 2/7 Light scrolled resize
+PASS no overlap licenseInfoCard 2/8 Light scrolled resize
+PASS no overlap licenseInfoCard 2/9 Light scrolled resize
+PASS no overlap licenseInfoCard 2/10 Light scrolled resize
+PASS no overlap licenseInfoCard 2/11 Light scrolled resize
+PASS no overlap licenseInfoCard 3/4 Light scrolled resize
+PASS no overlap licenseInfoCard 3/5 Light scrolled resize
+PASS no overlap licenseInfoCard 3/6 Light scrolled resize
+PASS no overlap licenseInfoCard 3/7 Light scrolled resize
+PASS no overlap licenseInfoCard 3/8 Light scrolled resize
+PASS no overlap licenseInfoCard 3/9 Light scrolled resize
+PASS no overlap licenseInfoCard 3/10 Light scrolled resize
+PASS no overlap licenseInfoCard 3/11 Light scrolled resize
+PASS no overlap licenseInfoCard 4/5 Light scrolled resize
+PASS no overlap licenseInfoCard 4/6 Light scrolled resize
+PASS no overlap licenseInfoCard 4/7 Light scrolled resize
+PASS no overlap licenseInfoCard 4/8 Light scrolled resize
+PASS no overlap licenseInfoCard 4/9 Light scrolled resize
+PASS no overlap licenseInfoCard 4/10 Light scrolled resize
+PASS no overlap licenseInfoCard 4/11 Light scrolled resize
+PASS no overlap licenseInfoCard 5/6 Light scrolled resize
+PASS no overlap licenseInfoCard 5/7 Light scrolled resize
+PASS no overlap licenseInfoCard 5/8 Light scrolled resize
+PASS no overlap licenseInfoCard 5/9 Light scrolled resize
+PASS no overlap licenseInfoCard 5/10 Light scrolled resize
+PASS no overlap licenseInfoCard 5/11 Light scrolled resize
+PASS no overlap licenseInfoCard 6/7 Light scrolled resize
+PASS no overlap licenseInfoCard 6/8 Light scrolled resize
+PASS no overlap licenseInfoCard 6/9 Light scrolled resize
+PASS no overlap licenseInfoCard 6/10 Light scrolled resize
+PASS no overlap licenseInfoCard 6/11 Light scrolled resize
+PASS no overlap licenseInfoCard 7/8 Light scrolled resize
+PASS no overlap licenseInfoCard 7/9 Light scrolled resize
+PASS no overlap licenseInfoCard 7/10 Light scrolled resize
+PASS no overlap licenseInfoCard 7/11 Light scrolled resize
+PASS no overlap licenseInfoCard 8/9 Light scrolled resize
+PASS no overlap licenseInfoCard 8/10 Light scrolled resize
+PASS no overlap licenseInfoCard 8/11 Light scrolled resize
+PASS no overlap licenseInfoCard 9/10 Light scrolled resize
+PASS no overlap licenseInfoCard 9/11 Light scrolled resize
+PASS no overlap licenseInfoCard 10/11 Light scrolled resize
+PASS children fit licenseKeyCard Light scrolled resize
+PASS no overlap licenseKeyCard 0/1 Light scrolled resize
+PASS no overlap licenseKeyCard 0/2 Light scrolled resize
+PASS no overlap licenseKeyCard 0/3 Light scrolled resize
+PASS no overlap licenseKeyCard 0/4 Light scrolled resize
+PASS no overlap licenseKeyCard 0/5 Light scrolled resize
+PASS no overlap licenseKeyCard 1/2 Light scrolled resize
+PASS no overlap licenseKeyCard 1/3 Light scrolled resize
+PASS no overlap licenseKeyCard 1/4 Light scrolled resize
+PASS no overlap licenseKeyCard 1/5 Light scrolled resize
+PASS no overlap licenseKeyCard 2/3 Light scrolled resize
+PASS no overlap licenseKeyCard 2/4 Light scrolled resize
+PASS no overlap licenseKeyCard 2/5 Light scrolled resize
+PASS no overlap licenseKeyCard 3/4 Light scrolled resize
+PASS no overlap licenseKeyCard 3/5 Light scrolled resize
+PASS no overlap licenseKeyCard 4/5 Light scrolled resize
+PASS children fit licenseCreditCard Light scrolled resize
+PASS no overlap licenseCreditCard 0/1 Light scrolled resize
+PASS no overlap licenseCreditCard 0/2 Light scrolled resize
+PASS no overlap licenseCreditCard 0/3 Light scrolled resize
+PASS no overlap licenseCreditCard 0/4 Light scrolled resize
+PASS no overlap licenseCreditCard 1/2 Light scrolled resize
+PASS no overlap licenseCreditCard 1/3 Light scrolled resize
+PASS no overlap licenseCreditCard 1/4 Light scrolled resize
+PASS no overlap licenseCreditCard 2/3 Light scrolled resize
+PASS no overlap licenseCreditCard 2/4 Light scrolled resize
+PASS no overlap licenseCreditCard 3/4 Light scrolled resize
+PASS key/button gap Light scrolled resize
+PASS input inner padding Light scrolled resize
+PASS input inner padding Light scrolled resize
+PASS three cards Light restored
+PASS cards never overlap Light restored
+PASS consistent card edges Light restored
+PASS children fit licenseInfoCard Light restored
+PASS no overlap licenseInfoCard 0/1 Light restored
+PASS no overlap licenseInfoCard 0/2 Light restored
+PASS no overlap licenseInfoCard 0/3 Light restored
+PASS no overlap licenseInfoCard 0/4 Light restored
+PASS no overlap licenseInfoCard 0/5 Light restored
+PASS no overlap licenseInfoCard 0/6 Light restored
+PASS no overlap licenseInfoCard 0/7 Light restored
+PASS no overlap licenseInfoCard 0/8 Light restored
+PASS no overlap licenseInfoCard 0/9 Light restored
+PASS no overlap licenseInfoCard 0/10 Light restored
+PASS no overlap licenseInfoCard 0/11 Light restored
+PASS no overlap licenseInfoCard 1/2 Light restored
+PASS no overlap licenseInfoCard 1/3 Light restored
+PASS no overlap licenseInfoCard 1/4 Light restored
+PASS no overlap licenseInfoCard 1/5 Light restored
+PASS no overlap licenseInfoCard 1/6 Light restored
+PASS no overlap licenseInfoCard 1/7 Light restored
+PASS no overlap licenseInfoCard 1/8 Light restored
+PASS no overlap licenseInfoCard 1/9 Light restored
+PASS no overlap licenseInfoCard 1/10 Light restored
+PASS no overlap licenseInfoCard 1/11 Light restored
+PASS no overlap licenseInfoCard 2/3 Light restored
+PASS no overlap licenseInfoCard 2/4 Light restored
+PASS no overlap licenseInfoCard 2/5 Light restored
+PASS no overlap licenseInfoCard 2/6 Light restored
+PASS no overlap licenseInfoCard 2/7 Light restored
+PASS no overlap licenseInfoCard 2/8 Light restored
+PASS no overlap licenseInfoCard 2/9 Light restored
+PASS no overlap licenseInfoCard 2/10 Light restored
+PASS no overlap licenseInfoCard 2/11 Light restored
+PASS no overlap licenseInfoCard 3/4 Light restored
+PASS no overlap licenseInfoCard 3/5 Light restored
+PASS no overlap licenseInfoCard 3/6 Light restored
+PASS no overlap licenseInfoCard 3/7 Light restored
+PASS no overlap licenseInfoCard 3/8 Light restored
+PASS no overlap licenseInfoCard 3/9 Light restored
+PASS no overlap licenseInfoCard 3/10 Light restored
+PASS no overlap licenseInfoCard 3/11 Light restored
+PASS no overlap licenseInfoCard 4/5 Light restored
+PASS no overlap licenseInfoCard 4/6 Light restored
+PASS no overlap licenseInfoCard 4/7 Light restored
+PASS no overlap licenseInfoCard 4/8 Light restored
+PASS no overlap licenseInfoCard 4/9 Light restored
+PASS no overlap licenseInfoCard 4/10 Light restored
+PASS no overlap licenseInfoCard 4/11 Light restored
+PASS no overlap licenseInfoCard 5/6 Light restored
+PASS no overlap licenseInfoCard 5/7 Light restored
+PASS no overlap licenseInfoCard 5/8 Light restored
+PASS no overlap licenseInfoCard 5/9 Light restored
+PASS no overlap licenseInfoCard 5/10 Light restored
+PASS no overlap licenseInfoCard 5/11 Light restored
+PASS no overlap licenseInfoCard 6/7 Light restored
+PASS no overlap licenseInfoCard 6/8 Light restored
+PASS no overlap licenseInfoCard 6/9 Light restored
+PASS no overlap licenseInfoCard 6/10 Light restored
+PASS no overlap licenseInfoCard 6/11 Light restored
+PASS no overlap licenseInfoCard 7/8 Light restored
+PASS no overlap licenseInfoCard 7/9 Light restored
+PASS no overlap licenseInfoCard 7/10 Light restored
+PASS no overlap licenseInfoCard 7/11 Light restored
+PASS no overlap licenseInfoCard 8/9 Light restored
+PASS no overlap licenseInfoCard 8/10 Light restored
+PASS no overlap licenseInfoCard 8/11 Light restored
+PASS no overlap licenseInfoCard 9/10 Light restored
+PASS no overlap licenseInfoCard 9/11 Light restored
+PASS no overlap licenseInfoCard 10/11 Light restored
+PASS children fit licenseKeyCard Light restored
+PASS no overlap licenseKeyCard 0/1 Light restored
+PASS no overlap licenseKeyCard 0/2 Light restored
+PASS no overlap licenseKeyCard 0/3 Light restored
+PASS no overlap licenseKeyCard 0/4 Light restored
+PASS no overlap licenseKeyCard 0/5 Light restored
+PASS no overlap licenseKeyCard 1/2 Light restored
+PASS no overlap licenseKeyCard 1/3 Light restored
+PASS no overlap licenseKeyCard 1/4 Light restored
+PASS no overlap licenseKeyCard 1/5 Light restored
+PASS no overlap licenseKeyCard 2/3 Light restored
+PASS no overlap licenseKeyCard 2/4 Light restored
+PASS no overlap licenseKeyCard 2/5 Light restored
+PASS no overlap licenseKeyCard 3/4 Light restored
+PASS no overlap licenseKeyCard 3/5 Light restored
+PASS no overlap licenseKeyCard 4/5 Light restored
+PASS children fit licenseCreditCard Light restored
+PASS no overlap licenseCreditCard 0/1 Light restored
+PASS no overlap licenseCreditCard 0/2 Light restored
+PASS no overlap licenseCreditCard 0/3 Light restored
+PASS no overlap licenseCreditCard 0/4 Light restored
+PASS no overlap licenseCreditCard 1/2 Light restored
+PASS no overlap licenseCreditCard 1/3 Light restored
+PASS no overlap licenseCreditCard 1/4 Light restored
+PASS no overlap licenseCreditCard 2/3 Light restored
+PASS no overlap licenseCreditCard 2/4 Light restored
+PASS no overlap licenseCreditCard 3/4 Light restored
+PASS key/button gap Light restored
+PASS input inner padding Light restored
+PASS input inner padding Light restored
+PASS combo horizontal padding Light
+PASS combo vertical center Light
+PASS editable Korean value Light
+PASS dropdown opens Light
+PASS dropdown selection Light
+PASS combo horizontal padding Light
+PASS combo vertical center Light
+PASS editable Korean value Light
+PASS dropdown opens Light
+PASS dropdown selection Light
+PASS combo horizontal padding Light
+PASS combo vertical center Light
+PASS editable Korean value Light
+PASS dropdown opens Light
+PASS dropdown selection Light
+PASS huge repeat count cannot overlap badge Light
+PASS automation cards stay separated Light
+PASS automation no overlap 0/1 Light
+PASS automation no overlap 0/2 Light
+PASS automation no overlap 0/3 Light
+PASS automation no overlap 0/4 Light
+PASS automation no overlap 0/5 Light
+PASS automation no overlap 0/6 Light
+PASS automation no overlap 0/7 Light
+PASS automation no overlap 0/8 Light
+PASS automation no overlap 0/9 Light
+PASS automation no overlap 1/2 Light
+PASS automation no overlap 1/3 Light
+PASS automation no overlap 1/4 Light
+PASS automation no overlap 1/5 Light
+PASS automation no overlap 1/6 Light
+PASS automation no overlap 1/7 Light
+PASS automation no overlap 1/8 Light
+PASS automation no overlap 1/9 Light
+PASS automation no overlap 2/3 Light
+PASS automation no overlap 2/4 Light
+PASS automation no overlap 2/5 Light
+PASS automation no overlap 2/6 Light
+PASS automation no overlap 2/7 Light
+PASS automation no overlap 2/8 Light
+PASS automation no overlap 2/9 Light
+PASS automation no overlap 3/4 Light
+PASS automation no overlap 3/5 Light
+PASS automation no overlap 3/6 Light
+PASS automation no overlap 3/7 Light
+PASS automation no overlap 3/8 Light
+PASS automation no overlap 3/9 Light
+PASS automation no overlap 4/5 Light
+PASS automation no overlap 4/6 Light
+PASS automation no overlap 4/7 Light
+PASS automation no overlap 4/8 Light
+PASS automation no overlap 4/9 Light
+PASS automation no overlap 5/6 Light
+PASS automation no overlap 5/7 Light
+PASS automation no overlap 5/8 Light
+PASS automation no overlap 5/9 Light
+PASS automation no overlap 6/7 Light
+PASS automation no overlap 6/8 Light
+PASS automation no overlap 6/9 Light
+PASS automation no overlap 7/8 Light
+PASS automation no overlap 7/9 Light
+PASS automation no overlap 8/9 Light
+PASS shipping editor saves full settings Light
+PASS included disables fee fields Light
+PASS half shipping independent toggle Light
+PASS shipping card separate from save button Light
+PASS product save includes shipping Light
+PASS cancel preserves shipping Light
+PASS three cards Dark wide
+PASS cards never overlap Dark wide
+PASS consistent card edges Dark wide
+PASS children fit licenseInfoCard Dark wide
+PASS no overlap licenseInfoCard 0/1 Dark wide
+PASS no overlap licenseInfoCard 0/2 Dark wide
+PASS no overlap licenseInfoCard 0/3 Dark wide
+PASS no overlap licenseInfoCard 0/4 Dark wide
+PASS no overlap licenseInfoCard 0/5 Dark wide
+PASS no overlap licenseInfoCard 0/6 Dark wide
+PASS no overlap licenseInfoCard 0/7 Dark wide
+PASS no overlap licenseInfoCard 0/8 Dark wide
+PASS no overlap licenseInfoCard 0/9 Dark wide
+PASS no overlap licenseInfoCard 0/10 Dark wide
+PASS no overlap licenseInfoCard 0/11 Dark wide
+PASS no overlap licenseInfoCard 1/2 Dark wide
+PASS no overlap licenseInfoCard 1/3 Dark wide
+PASS no overlap licenseInfoCard 1/4 Dark wide
+PASS no overlap licenseInfoCard 1/5 Dark wide
+PASS no overlap licenseInfoCard 1/6 Dark wide
+PASS no overlap licenseInfoCard 1/7 Dark wide
+PASS no overlap licenseInfoCard 1/8 Dark wide
+PASS no overlap licenseInfoCard 1/9 Dark wide
+PASS no overlap licenseInfoCard 1/10 Dark wide
+PASS no overlap licenseInfoCard 1/11 Dark wide
+PASS no overlap licenseInfoCard 2/3 Dark wide
+PASS no overlap licenseInfoCard 2/4 Dark wide
+PASS no overlap licenseInfoCard 2/5 Dark wide
+PASS no overlap licenseInfoCard 2/6 Dark wide
+PASS no overlap licenseInfoCard 2/7 Dark wide
+PASS no overlap licenseInfoCard 2/8 Dark wide
+PASS no overlap licenseInfoCard 2/9 Dark wide
+PASS no overlap licenseInfoCard 2/10 Dark wide
+PASS no overlap licenseInfoCard 2/11 Dark wide
+PASS no overlap licenseInfoCard 3/4 Dark wide
+PASS no overlap licenseInfoCard 3/5 Dark wide
+PASS no overlap licenseInfoCard 3/6 Dark wide
+PASS no overlap licenseInfoCard 3/7 Dark wide
+PASS no overlap licenseInfoCard 3/8 Dark wide
+PASS no overlap licenseInfoCard 3/9 Dark wide
+PASS no overlap licenseInfoCard 3/10 Dark wide
+PASS no overlap licenseInfoCard 3/11 Dark wide
+PASS no overlap licenseInfoCard 4/5 Dark wide
+PASS no overlap licenseInfoCard 4/6 Dark wide
+PASS no overlap licenseInfoCard 4/7 Dark wide
+PASS no overlap licenseInfoCard 4/8 Dark wide
+PASS no overlap licenseInfoCard 4/9 Dark wide
+PASS no overlap licenseInfoCard 4/10 Dark wide
+PASS no overlap licenseInfoCard 4/11 Dark wide
+PASS no overlap licenseInfoCard 5/6 Dark wide
+PASS no overlap licenseInfoCard 5/7 Dark wide
+PASS no overlap licenseInfoCard 5/8 Dark wide
+PASS no overlap licenseInfoCard 5/9 Dark wide
+PASS no overlap licenseInfoCard 5/10 Dark wide
+PASS no overlap licenseInfoCard 5/11 Dark wide
+PASS no overlap licenseInfoCard 6/7 Dark wide
+PASS no overlap licenseInfoCard 6/8 Dark wide
+PASS no overlap licenseInfoCard 6/9 Dark wide
+PASS no overlap licenseInfoCard 6/10 Dark wide
+PASS no overlap licenseInfoCard 6/11 Dark wide
+PASS no overlap licenseInfoCard 7/8 Dark wide
+PASS no overlap licenseInfoCard 7/9 Dark wide
+PASS no overlap licenseInfoCard 7/10 Dark wide
+PASS no overlap licenseInfoCard 7/11 Dark wide
+PASS no overlap licenseInfoCard 8/9 Dark wide
+PASS no overlap licenseInfoCard 8/10 Dark wide
+PASS no overlap licenseInfoCard 8/11 Dark wide
+PASS no overlap licenseInfoCard 9/10 Dark wide
+PASS no overlap licenseInfoCard 9/11 Dark wide
+PASS no overlap licenseInfoCard 10/11 Dark wide
+PASS children fit licenseKeyCard Dark wide
+PASS no overlap licenseKeyCard 0/1 Dark wide
+PASS no overlap licenseKeyCard 0/2 Dark wide
+PASS no overlap licenseKeyCard 0/3 Dark wide
+PASS no overlap licenseKeyCard 0/4 Dark wide
+PASS no overlap licenseKeyCard 0/5 Dark wide
+PASS no overlap licenseKeyCard 1/2 Dark wide
+PASS no overlap licenseKeyCard 1/3 Dark wide
+PASS no overlap licenseKeyCard 1/4 Dark wide
+PASS no overlap licenseKeyCard 1/5 Dark wide
+PASS no overlap licenseKeyCard 2/3 Dark wide
+PASS no overlap licenseKeyCard 2/4 Dark wide
+PASS no overlap licenseKeyCard 2/5 Dark wide
+PASS no overlap licenseKeyCard 3/4 Dark wide
+PASS no overlap licenseKeyCard 3/5 Dark wide
+PASS no overlap licenseKeyCard 4/5 Dark wide
+PASS children fit licenseCreditCard Dark wide
+PASS no overlap licenseCreditCard 0/1 Dark wide
+PASS no overlap licenseCreditCard 0/2 Dark wide
+PASS no overlap licenseCreditCard 0/3 Dark wide
+PASS no overlap licenseCreditCard 0/4 Dark wide
+PASS no overlap licenseCreditCard 1/2 Dark wide
+PASS no overlap licenseCreditCard 1/3 Dark wide
+PASS no overlap licenseCreditCard 1/4 Dark wide
+PASS no overlap licenseCreditCard 2/3 Dark wide
+PASS no overlap licenseCreditCard 2/4 Dark wide
+PASS no overlap licenseCreditCard 3/4 Dark wide
+PASS key/button gap Dark wide
+PASS input inner padding Dark wide
+PASS input inner padding Dark wide
+PASS three cards Dark narrow
+PASS cards never overlap Dark narrow
+PASS consistent card edges Dark narrow
+PASS children fit licenseInfoCard Dark narrow
+PASS no overlap licenseInfoCard 0/1 Dark narrow
+PASS no overlap licenseInfoCard 0/2 Dark narrow
+PASS no overlap licenseInfoCard 0/3 Dark narrow
+PASS no overlap licenseInfoCard 0/4 Dark narrow
+PASS no overlap licenseInfoCard 0/5 Dark narrow
+PASS no overlap licenseInfoCard 0/6 Dark narrow
+PASS no overlap licenseInfoCard 0/7 Dark narrow
+PASS no overlap licenseInfoCard 0/8 Dark narrow
+PASS no overlap licenseInfoCard 0/9 Dark narrow
+PASS no overlap licenseInfoCard 0/10 Dark narrow
+PASS no overlap licenseInfoCard 0/11 Dark narrow
+PASS no overlap licenseInfoCard 1/2 Dark narrow
+PASS no overlap licenseInfoCard 1/3 Dark narrow
+PASS no overlap licenseInfoCard 1/4 Dark narrow
+PASS no overlap licenseInfoCard 1/5 Dark narrow
+PASS no overlap licenseInfoCard 1/6 Dark narrow
+PASS no overlap licenseInfoCard 1/7 Dark narrow
+PASS no overlap licenseInfoCard 1/8 Dark narrow
+PASS no overlap licenseInfoCard 1/9 Dark narrow
+PASS no overlap licenseInfoCard 1/10 Dark narrow
+PASS no overlap licenseInfoCard 1/11 Dark narrow
+PASS no overlap licenseInfoCard 2/3 Dark narrow
+PASS no overlap licenseInfoCard 2/4 Dark narrow
+PASS no overlap licenseInfoCard 2/5 Dark narrow
+PASS no overlap licenseInfoCard 2/6 Dark narrow
+PASS no overlap licenseInfoCard 2/7 Dark narrow
+PASS no overlap licenseInfoCard 2/8 Dark narrow
+PASS no overlap licenseInfoCard 2/9 Dark narrow
+PASS no overlap licenseInfoCard 2/10 Dark narrow
+PASS no overlap licenseInfoCard 2/11 Dark narrow
+PASS no overlap licenseInfoCard 3/4 Dark narrow
+PASS no overlap licenseInfoCard 3/5 Dark narrow
+PASS no overlap licenseInfoCard 3/6 Dark narrow
+PASS no overlap licenseInfoCard 3/7 Dark narrow
+PASS no overlap licenseInfoCard 3/8 Dark narrow
+PASS no overlap licenseInfoCard 3/9 Dark narrow
+PASS no overlap licenseInfoCard 3/10 Dark narrow
+PASS no overlap licenseInfoCard 3/11 Dark narrow
+PASS no overlap licenseInfoCard 4/5 Dark narrow
+PASS no overlap licenseInfoCard 4/6 Dark narrow
+PASS no overlap licenseInfoCard 4/7 Dark narrow
+PASS no overlap licenseInfoCard 4/8 Dark narrow
+PASS no overlap licenseInfoCard 4/9 Dark narrow
+PASS no overlap licenseInfoCard 4/10 Dark narrow
+PASS no overlap licenseInfoCard 4/11 Dark narrow
+PASS no overlap licenseInfoCard 5/6 Dark narrow
+PASS no overlap licenseInfoCard 5/7 Dark narrow
+PASS no overlap licenseInfoCard 5/8 Dark narrow
+PASS no overlap licenseInfoCard 5/9 Dark narrow
+PASS no overlap licenseInfoCard 5/10 Dark narrow
+PASS no overlap licenseInfoCard 5/11 Dark narrow
+PASS no overlap licenseInfoCard 6/7 Dark narrow
+PASS no overlap licenseInfoCard 6/8 Dark narrow
+PASS no overlap licenseInfoCard 6/9 Dark narrow
+PASS no overlap licenseInfoCard 6/10 Dark narrow
+PASS no overlap licenseInfoCard 6/11 Dark narrow
+PASS no overlap licenseInfoCard 7/8 Dark narrow
+PASS no overlap licenseInfoCard 7/9 Dark narrow
+PASS no overlap licenseInfoCard 7/10 Dark narrow
+PASS no overlap licenseInfoCard 7/11 Dark narrow
+PASS no overlap licenseInfoCard 8/9 Dark narrow
+PASS no overlap licenseInfoCard 8/10 Dark narrow
+PASS no overlap licenseInfoCard 8/11 Dark narrow
+PASS no overlap licenseInfoCard 9/10 Dark narrow
+PASS no overlap licenseInfoCard 9/11 Dark narrow
+PASS no overlap licenseInfoCard 10/11 Dark narrow
+PASS children fit licenseKeyCard Dark narrow
+PASS no overlap licenseKeyCard 0/1 Dark narrow
+PASS no overlap licenseKeyCard 0/2 Dark narrow
+PASS no overlap licenseKeyCard 0/3 Dark narrow
+PASS no overlap licenseKeyCard 0/4 Dark narrow
+PASS no overlap licenseKeyCard 0/5 Dark narrow
+PASS no overlap licenseKeyCard 1/2 Dark narrow
+PASS no overlap licenseKeyCard 1/3 Dark narrow
+PASS no overlap licenseKeyCard 1/4 Dark narrow
+PASS no overlap licenseKeyCard 1/5 Dark narrow
+PASS no overlap licenseKeyCard 2/3 Dark narrow
+PASS no overlap licenseKeyCard 2/4 Dark narrow
+PASS no overlap licenseKeyCard 2/5 Dark narrow
+PASS no overlap licenseKeyCard 3/4 Dark narrow
+PASS no overlap licenseKeyCard 3/5 Dark narrow
+PASS no overlap licenseKeyCard 4/5 Dark narrow
+PASS children fit licenseCreditCard Dark narrow
+PASS no overlap licenseCreditCard 0/1 Dark narrow
+PASS no overlap licenseCreditCard 0/2 Dark narrow
+PASS no overlap licenseCreditCard 0/3 Dark narrow
+PASS no overlap licenseCreditCard 0/4 Dark narrow
+PASS no overlap licenseCreditCard 1/2 Dark narrow
+PASS no overlap licenseCreditCard 1/3 Dark narrow
+PASS no overlap licenseCreditCard 1/4 Dark narrow
+PASS no overlap licenseCreditCard 2/3 Dark narrow
+PASS no overlap licenseCreditCard 2/4 Dark narrow
+PASS no overlap licenseCreditCard 3/4 Dark narrow
+PASS key/button gap Dark narrow
+PASS input inner padding Dark narrow
+PASS input inner padding Dark narrow
+PASS three cards Dark message
+PASS cards never overlap Dark message
+PASS consistent card edges Dark message
+PASS children fit licenseInfoCard Dark message
+PASS no overlap licenseInfoCard 0/1 Dark message
+PASS no overlap licenseInfoCard 0/2 Dark message
+PASS no overlap licenseInfoCard 0/3 Dark message
+PASS no overlap licenseInfoCard 0/4 Dark message
+PASS no overlap licenseInfoCard 0/5 Dark message
+PASS no overlap licenseInfoCard 0/6 Dark message
+PASS no overlap licenseInfoCard 0/7 Dark message
+PASS no overlap licenseInfoCard 0/8 Dark message
+PASS no overlap licenseInfoCard 0/9 Dark message
+PASS no overlap licenseInfoCard 0/10 Dark message
+PASS no overlap licenseInfoCard 0/11 Dark message
+PASS no overlap licenseInfoCard 1/2 Dark message
+PASS no overlap licenseInfoCard 1/3 Dark message
+PASS no overlap licenseInfoCard 1/4 Dark message
+PASS no overlap licenseInfoCard 1/5 Dark message
+PASS no overlap licenseInfoCard 1/6 Dark message
+PASS no overlap licenseInfoCard 1/7 Dark message
+PASS no overlap licenseInfoCard 1/8 Dark message
+PASS no overlap licenseInfoCard 1/9 Dark message
+PASS no overlap licenseInfoCard 1/10 Dark message
+PASS no overlap licenseInfoCard 1/11 Dark message
+PASS no overlap licenseInfoCard 2/3 Dark message
+PASS no overlap licenseInfoCard 2/4 Dark message
+PASS no overlap licenseInfoCard 2/5 Dark message
+PASS no overlap licenseInfoCard 2/6 Dark message
+PASS no overlap licenseInfoCard 2/7 Dark message
+PASS no overlap licenseInfoCard 2/8 Dark message
+PASS no overlap licenseInfoCard 2/9 Dark message
+PASS no overlap licenseInfoCard 2/10 Dark message
+PASS no overlap licenseInfoCard 2/11 Dark message
+PASS no overlap licenseInfoCard 3/4 Dark message
+PASS no overlap licenseInfoCard 3/5 Dark message
+PASS no overlap licenseInfoCard 3/6 Dark message
+PASS no overlap licenseInfoCard 3/7 Dark message
+PASS no overlap licenseInfoCard 3/8 Dark message
+PASS no overlap licenseInfoCard 3/9 Dark message
+PASS no overlap licenseInfoCard 3/10 Dark message
+PASS no overlap licenseInfoCard 3/11 Dark message
+PASS no overlap licenseInfoCard 4/5 Dark message
+PASS no overlap licenseInfoCard 4/6 Dark message
+PASS no overlap licenseInfoCard 4/7 Dark message
+PASS no overlap licenseInfoCard 4/8 Dark message
+PASS no overlap licenseInfoCard 4/9 Dark message
+PASS no overlap licenseInfoCard 4/10 Dark message
+PASS no overlap licenseInfoCard 4/11 Dark message
+PASS no overlap licenseInfoCard 5/6 Dark message
+PASS no overlap licenseInfoCard 5/7 Dark message
+PASS no overlap licenseInfoCard 5/8 Dark message
+PASS no overlap licenseInfoCard 5/9 Dark message
+PASS no overlap licenseInfoCard 5/10 Dark message
+PASS no overlap licenseInfoCard 5/11 Dark message
+PASS no overlap licenseInfoCard 6/7 Dark message
+PASS no overlap licenseInfoCard 6/8 Dark message
+PASS no overlap licenseInfoCard 6/9 Dark message
+PASS no overlap licenseInfoCard 6/10 Dark message
+PASS no overlap licenseInfoCard 6/11 Dark message
+PASS no overlap licenseInfoCard 7/8 Dark message
+PASS no overlap licenseInfoCard 7/9 Dark message
+PASS no overlap licenseInfoCard 7/10 Dark message
+PASS no overlap licenseInfoCard 7/11 Dark message
+PASS no overlap licenseInfoCard 8/9 Dark message
+PASS no overlap licenseInfoCard 8/10 Dark message
+PASS no overlap licenseInfoCard 8/11 Dark message
+PASS no overlap licenseInfoCard 9/10 Dark message
+PASS no overlap licenseInfoCard 9/11 Dark message
+PASS no overlap licenseInfoCard 10/11 Dark message
+PASS children fit licenseKeyCard Dark message
+PASS no overlap licenseKeyCard 0/1 Dark message
+PASS no overlap licenseKeyCard 0/2 Dark message
+PASS no overlap licenseKeyCard 0/3 Dark message
+PASS no overlap licenseKeyCard 0/4 Dark message
+PASS no overlap licenseKeyCard 0/5 Dark message
+PASS no overlap licenseKeyCard 1/2 Dark message
+PASS no overlap licenseKeyCard 1/3 Dark message
+PASS no overlap licenseKeyCard 1/4 Dark message
+PASS no overlap licenseKeyCard 1/5 Dark message
+PASS no overlap licenseKeyCard 2/3 Dark message
+PASS no overlap licenseKeyCard 2/4 Dark message
+PASS no overlap licenseKeyCard 2/5 Dark message
+PASS no overlap licenseKeyCard 3/4 Dark message
+PASS no overlap licenseKeyCard 3/5 Dark message
+PASS no overlap licenseKeyCard 4/5 Dark message
+PASS children fit licenseCreditCard Dark message
+PASS no overlap licenseCreditCard 0/1 Dark message
+PASS no overlap licenseCreditCard 0/2 Dark message
+PASS no overlap licenseCreditCard 0/3 Dark message
+PASS no overlap licenseCreditCard 0/4 Dark message
+PASS no overlap licenseCreditCard 1/2 Dark message
+PASS no overlap licenseCreditCard 1/3 Dark message
+PASS no overlap licenseCreditCard 1/4 Dark message
+PASS no overlap licenseCreditCard 2/3 Dark message
+PASS no overlap licenseCreditCard 2/4 Dark message
+PASS no overlap licenseCreditCard 3/4 Dark message
+PASS key/button gap Dark message
+PASS input inner padding Dark message
+PASS input inner padding Dark message
+PASS three cards Dark scrolled resize
+PASS cards never overlap Dark scrolled resize
+PASS consistent card edges Dark scrolled resize
+PASS children fit licenseInfoCard Dark scrolled resize
+PASS no overlap licenseInfoCard 0/1 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/2 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/3 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/4 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/5 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/6 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/7 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/8 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/9 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 0/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/2 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/3 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/4 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/5 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/6 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/7 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/8 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/9 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 1/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 2/3 Dark scrolled resize
+PASS no overlap licenseInfoCard 2/4 Dark scrolled resize
+PASS no overlap licenseInfoCard 2/5 Dark scrolled resize
+PASS no overlap licenseInfoCard 2/6 Dark scrolled resize
+PASS no overlap licenseInfoCard 2/7 Dark scrolled resize
+PASS no overlap licenseInfoCard 2/8 Dark scrolled resize
+PASS no overlap licenseInfoCard 2/9 Dark scrolled resize
+PASS no overlap licenseInfoCard 2/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 2/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 3/4 Dark scrolled resize
+PASS no overlap licenseInfoCard 3/5 Dark scrolled resize
+PASS no overlap licenseInfoCard 3/6 Dark scrolled resize
+PASS no overlap licenseInfoCard 3/7 Dark scrolled resize
+PASS no overlap licenseInfoCard 3/8 Dark scrolled resize
+PASS no overlap licenseInfoCard 3/9 Dark scrolled resize
+PASS no overlap licenseInfoCard 3/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 3/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 4/5 Dark scrolled resize
+PASS no overlap licenseInfoCard 4/6 Dark scrolled resize
+PASS no overlap licenseInfoCard 4/7 Dark scrolled resize
+PASS no overlap licenseInfoCard 4/8 Dark scrolled resize
+PASS no overlap licenseInfoCard 4/9 Dark scrolled resize
+PASS no overlap licenseInfoCard 4/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 4/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 5/6 Dark scrolled resize
+PASS no overlap licenseInfoCard 5/7 Dark scrolled resize
+PASS no overlap licenseInfoCard 5/8 Dark scrolled resize
+PASS no overlap licenseInfoCard 5/9 Dark scrolled resize
+PASS no overlap licenseInfoCard 5/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 5/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 6/7 Dark scrolled resize
+PASS no overlap licenseInfoCard 6/8 Dark scrolled resize
+PASS no overlap licenseInfoCard 6/9 Dark scrolled resize
+PASS no overlap licenseInfoCard 6/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 6/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 7/8 Dark scrolled resize
+PASS no overlap licenseInfoCard 7/9 Dark scrolled resize
+PASS no overlap licenseInfoCard 7/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 7/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 8/9 Dark scrolled resize
+PASS no overlap licenseInfoCard 8/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 8/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 9/10 Dark scrolled resize
+PASS no overlap licenseInfoCard 9/11 Dark scrolled resize
+PASS no overlap licenseInfoCard 10/11 Dark scrolled resize
+PASS children fit licenseKeyCard Dark scrolled resize
+PASS no overlap licenseKeyCard 0/1 Dark scrolled resize
+PASS no overlap licenseKeyCard 0/2 Dark scrolled resize
+PASS no overlap licenseKeyCard 0/3 Dark scrolled resize
+PASS no overlap licenseKeyCard 0/4 Dark scrolled resize
+PASS no overlap licenseKeyCard 0/5 Dark scrolled resize
+PASS no overlap licenseKeyCard 1/2 Dark scrolled resize
+PASS no overlap licenseKeyCard 1/3 Dark scrolled resize
+PASS no overlap licenseKeyCard 1/4 Dark scrolled resize
+PASS no overlap licenseKeyCard 1/5 Dark scrolled resize
+PASS no overlap licenseKeyCard 2/3 Dark scrolled resize
+PASS no overlap licenseKeyCard 2/4 Dark scrolled resize
+PASS no overlap licenseKeyCard 2/5 Dark scrolled resize
+PASS no overlap licenseKeyCard 3/4 Dark scrolled resize
+PASS no overlap licenseKeyCard 3/5 Dark scrolled resize
+PASS no overlap licenseKeyCard 4/5 Dark scrolled resize
+PASS children fit licenseCreditCard Dark scrolled resize
+PASS no overlap licenseCreditCard 0/1 Dark scrolled resize
+PASS no overlap licenseCreditCard 0/2 Dark scrolled resize
+PASS no overlap licenseCreditCard 0/3 Dark scrolled resize
+PASS no overlap licenseCreditCard 0/4 Dark scrolled resize
+PASS no overlap licenseCreditCard 1/2 Dark scrolled resize
+PASS no overlap licenseCreditCard 1/3 Dark scrolled resize
+PASS no overlap licenseCreditCard 1/4 Dark scrolled resize
+PASS no overlap licenseCreditCard 2/3 Dark scrolled resize
+PASS no overlap licenseCreditCard 2/4 Dark scrolled resize
+PASS no overlap licenseCreditCard 3/4 Dark scrolled resize
+PASS key/button gap Dark scrolled resize
+PASS input inner padding Dark scrolled resize
+PASS input inner padding Dark scrolled resize
+PASS three cards Dark restored
+PASS cards never overlap Dark restored
+PASS consistent card edges Dark restored
+PASS children fit licenseInfoCard Dark restored
+PASS no overlap licenseInfoCard 0/1 Dark restored
+PASS no overlap licenseInfoCard 0/2 Dark restored
+PASS no overlap licenseInfoCard 0/3 Dark restored
+PASS no overlap licenseInfoCard 0/4 Dark restored
+PASS no overlap licenseInfoCard 0/5 Dark restored
+PASS no overlap licenseInfoCard 0/6 Dark restored
+PASS no overlap licenseInfoCard 0/7 Dark restored
+PASS no overlap licenseInfoCard 0/8 Dark restored
+PASS no overlap licenseInfoCard 0/9 Dark restored
+PASS no overlap licenseInfoCard 0/10 Dark restored
+PASS no overlap licenseInfoCard 0/11 Dark restored
+PASS no overlap licenseInfoCard 1/2 Dark restored
+PASS no overlap licenseInfoCard 1/3 Dark restored
+PASS no overlap licenseInfoCard 1/4 Dark restored
+PASS no overlap licenseInfoCard 1/5 Dark restored
+PASS no overlap licenseInfoCard 1/6 Dark restored
+PASS no overlap licenseInfoCard 1/7 Dark restored
+PASS no overlap licenseInfoCard 1/8 Dark restored
+PASS no overlap licenseInfoCard 1/9 Dark restored
+PASS no overlap licenseInfoCard 1/10 Dark restored
+PASS no overlap licenseInfoCard 1/11 Dark restored
+PASS no overlap licenseInfoCard 2/3 Dark restored
+PASS no overlap licenseInfoCard 2/4 Dark restored
+PASS no overlap licenseInfoCard 2/5 Dark restored
+PASS no overlap licenseInfoCard 2/6 Dark restored
+PASS no overlap licenseInfoCard 2/7 Dark restored
+PASS no overlap licenseInfoCard 2/8 Dark restored
+PASS no overlap licenseInfoCard 2/9 Dark restored
+PASS no overlap licenseInfoCard 2/10 Dark restored
+PASS no overlap licenseInfoCard 2/11 Dark restored
+PASS no overlap licenseInfoCard 3/4 Dark restored
+PASS no overlap licenseInfoCard 3/5 Dark restored
+PASS no overlap licenseInfoCard 3/6 Dark restored
+PASS no overlap licenseInfoCard 3/7 Dark restored
+PASS no overlap licenseInfoCard 3/8 Dark restored
+PASS no overlap licenseInfoCard 3/9 Dark restored
+PASS no overlap licenseInfoCard 3/10 Dark restored
+PASS no overlap licenseInfoCard 3/11 Dark restored
+PASS no overlap licenseInfoCard 4/5 Dark restored
+PASS no overlap licenseInfoCard 4/6 Dark restored
+PASS no overlap licenseInfoCard 4/7 Dark restored
+PASS no overlap licenseInfoCard 4/8 Dark restored
+PASS no overlap licenseInfoCard 4/9 Dark restored
+PASS no overlap licenseInfoCard 4/10 Dark restored
+PASS no overlap licenseInfoCard 4/11 Dark restored
+PASS no overlap licenseInfoCard 5/6 Dark restored
+PASS no overlap licenseInfoCard 5/7 Dark restored
+PASS no overlap licenseInfoCard 5/8 Dark restored
+PASS no overlap licenseInfoCard 5/9 Dark restored
+PASS no overlap licenseInfoCard 5/10 Dark restored
+PASS no overlap licenseInfoCard 5/11 Dark restored
+PASS no overlap licenseInfoCard 6/7 Dark restored
+PASS no overlap licenseInfoCard 6/8 Dark restored
+PASS no overlap licenseInfoCard 6/9 Dark restored
+PASS no overlap licenseInfoCard 6/10 Dark restored
+PASS no overlap licenseInfoCard 6/11 Dark restored
+PASS no overlap licenseInfoCard 7/8 Dark restored
+PASS no overlap licenseInfoCard 7/9 Dark restored
+PASS no overlap licenseInfoCard 7/10 Dark restored
+PASS no overlap licenseInfoCard 7/11 Dark restored
+PASS no overlap licenseInfoCard 8/9 Dark restored
+PASS no overlap licenseInfoCard 8/10 Dark restored
+PASS no overlap licenseInfoCard 8/11 Dark restored
+PASS no overlap licenseInfoCard 9/10 Dark restored
+PASS no overlap licenseInfoCard 9/11 Dark restored
+PASS no overlap licenseInfoCard 10/11 Dark restored
+PASS children fit licenseKeyCard Dark restored
+PASS no overlap licenseKeyCard 0/1 Dark restored
+PASS no overlap licenseKeyCard 0/2 Dark restored
+PASS no overlap licenseKeyCard 0/3 Dark restored
+PASS no overlap licenseKeyCard 0/4 Dark restored
+PASS no overlap licenseKeyCard 0/5 Dark restored
+PASS no overlap licenseKeyCard 1/2 Dark restored
+PASS no overlap licenseKeyCard 1/3 Dark restored
+PASS no overlap licenseKeyCard 1/4 Dark restored
+PASS no overlap licenseKeyCard 1/5 Dark restored
+PASS no overlap licenseKeyCard 2/3 Dark restored
+PASS no overlap licenseKeyCard 2/4 Dark restored
+PASS no overlap licenseKeyCard 2/5 Dark restored
+PASS no overlap licenseKeyCard 3/4 Dark restored
+PASS no overlap licenseKeyCard 3/5 Dark restored
+PASS no overlap licenseKeyCard 4/5 Dark restored
+PASS children fit licenseCreditCard Dark restored
+PASS no overlap licenseCreditCard 0/1 Dark restored
+PASS no overlap licenseCreditCard 0/2 Dark restored
+PASS no overlap licenseCreditCard 0/3 Dark restored
+PASS no overlap licenseCreditCard 0/4 Dark restored
+PASS no overlap licenseCreditCard 1/2 Dark restored
+PASS no overlap licenseCreditCard 1/3 Dark restored
+PASS no overlap licenseCreditCard 1/4 Dark restored
+PASS no overlap licenseCreditCard 2/3 Dark restored
+PASS no overlap licenseCreditCard 2/4 Dark restored
+PASS no overlap licenseCreditCard 3/4 Dark restored
+PASS key/button gap Dark restored
+PASS input inner padding Dark restored
+PASS input inner padding Dark restored
+PASS combo horizontal padding Dark
+PASS combo vertical center Dark
+PASS editable Korean value Dark
+PASS dropdown opens Dark
+PASS dropdown selection Dark
+PASS combo horizontal padding Dark
+PASS combo vertical center Dark
+PASS editable Korean value Dark
+PASS dropdown opens Dark
+PASS dropdown selection Dark
+PASS combo horizontal padding Dark
+PASS combo vertical center Dark
+PASS editable Korean value Dark
+PASS dropdown opens Dark
+PASS dropdown selection Dark
+PASS huge repeat count cannot overlap badge Dark
+PASS automation cards stay separated Dark
+PASS automation no overlap 0/1 Dark
+PASS automation no overlap 0/2 Dark
+PASS automation no overlap 0/3 Dark
+PASS automation no overlap 0/4 Dark
+PASS automation no overlap 0/5 Dark
+PASS automation no overlap 0/6 Dark
+PASS automation no overlap 0/7 Dark
+PASS automation no overlap 0/8 Dark
+PASS automation no overlap 0/9 Dark
+PASS automation no overlap 1/2 Dark
+PASS automation no overlap 1/3 Dark
+PASS automation no overlap 1/4 Dark
+PASS automation no overlap 1/5 Dark
+PASS automation no overlap 1/6 Dark
+PASS automation no overlap 1/7 Dark
+PASS automation no overlap 1/8 Dark
+PASS automation no overlap 1/9 Dark
+PASS automation no overlap 2/3 Dark
+PASS automation no overlap 2/4 Dark
+PASS automation no overlap 2/5 Dark
+PASS automation no overlap 2/6 Dark
+PASS automation no overlap 2/7 Dark
+PASS automation no overlap 2/8 Dark
+PASS automation no overlap 2/9 Dark
+PASS automation no overlap 3/4 Dark
+PASS automation no overlap 3/5 Dark
+PASS automation no overlap 3/6 Dark
+PASS automation no overlap 3/7 Dark
+PASS automation no overlap 3/8 Dark
+PASS automation no overlap 3/9 Dark
+PASS automation no overlap 4/5 Dark
+PASS automation no overlap 4/6 Dark
+PASS automation no overlap 4/7 Dark
+PASS automation no overlap 4/8 Dark
+PASS automation no overlap 4/9 Dark
+PASS automation no overlap 5/6 Dark
+PASS automation no overlap 5/7 Dark
+PASS automation no overlap 5/8 Dark
+PASS automation no overlap 5/9 Dark
+PASS automation no overlap 6/7 Dark
+PASS automation no overlap 6/8 Dark
+PASS automation no overlap 6/9 Dark
+PASS automation no overlap 7/8 Dark
+PASS automation no overlap 7/9 Dark
+PASS automation no overlap 8/9 Dark
+PASS shipping editor saves full settings Dark
+PASS included disables fee fields Dark
+PASS half shipping independent toggle Dark
+PASS shipping card separate from save button Dark
+PASS product save includes shipping Dark
+PASS cancel preserves shipping Dark
+DPI: 1137 passed

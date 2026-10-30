@@ -1,0 +1,2 @@
+PASS customer/master binary owner EXPMASTER; previous owner absent.
+PASS installer publisher EXPMASTER.

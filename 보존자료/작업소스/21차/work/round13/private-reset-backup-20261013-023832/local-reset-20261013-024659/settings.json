@@ -1,0 +1,20 @@
+﻿{
+  "Id": "",
+  "PwProtected": "",
+  "SaveAccount": true,
+  "Headless": false,
+  "DelayMinSec": 3,
+  "DelayMaxSec": 7,
+  "MaxPerRun": 30,
+  "DoRegister": true,
+  "DoBump": false,
+  "DoRepost": false,
+  "Repeat": false,
+  "IntervalMinutes": 60,
+  "OneByOne": true,
+  "OneByOneMinutes": 20,
+  "AllowDuplicate": false,
+  "LastCsv": "",
+  "ChromePath": "",
+  "AssumeLoggedIn": false
+}

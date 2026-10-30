@@ -1,0 +1,35 @@
+[
+  {
+    "name": "batch",
+    "argv": [
+      "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\소스코드\\dist\\BatchRepeatTests.exe"
+    ],
+    "cwd": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차",
+    "exit_code": 0,
+    "duration_seconds": 6.782,
+    "bytes": 7786,
+    "utf8": true,
+    "tail": [
+      "PASS 검사 종료 시 작업 스레드와 UI 콜백 완료\r",
+      "BATCH: 171 passed, 0 failed\r",
+      ""
+    ]
+  },
+  {
+    "name": "slow-completion",
+    "argv": [
+      "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\소스코드\\dist\\BatchRepeatTests.exe",
+      "--slow-completion"
+    ],
+    "cwd": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차",
+    "exit_code": 0,
+    "duration_seconds": 2.531,
+    "bytes": 180,
+    "utf8": true,
+    "tail": [
+      "PASS 검사 종료 시 작업 스레드와 UI 콜백 완료\r",
+      "BATCH: 3 passed, 0 failed\r",
+      ""
+    ]
+  }
+]

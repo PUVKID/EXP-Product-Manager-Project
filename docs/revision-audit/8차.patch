@@ -1,0 +1,1767 @@
+--- 7차/Lumivolt.csproj
++++ 8차/Lumivolt.csproj
+@@ -1,9 +1,5 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+-  <!--
+-    Windows 에서 `dotnet build -c Release` / Visual Studio 로 빌드하기 위한 SDK 스타일 프로젝트입니다.
+-    (build.bat / build.sh 와 같은 소스·리소스를 사용합니다.)
+-    주의: 이 프로젝트 파일은 제작 환경(NuGet 접근 불가)에서는 실행해 보지 못했습니다. 검증된 빌드는 build.sh(Mono) 입니다.
+-  -->
++  <!-- Windows SDK project. Verified build path: build/Build.ps1 using the Windows .NET Framework compiler. -->
+   <PropertyGroup>
+     <OutputType>WinExe</OutputType>
+     <TargetFramework>net472</TargetFramework>
+@@ -22,6 +18,7 @@
+   </PropertyGroup>
+   <ItemGroup>
+     <Compile Include="src\**\*.cs" />
++    <Compile Include="shared\*.cs" />
+     <Reference Include="System.Management" />
+     <Reference Include="System.Security" />
+     <Reference Include="System.IO.Compression" />
+--- 7차/admin/IssuerService.cs
++++ 8차/admin/IssuerService.cs
+@@ -0,0 +1,139 @@
++using System;
++using System.Collections.Generic;
++using System.IO;
++using System.Security.AccessControl;
++using System.Security.Cryptography;
++using System.Security.Principal;
++using Microsoft.Win32;
++using Newtonsoft.Json.Linq;
++using Org.BouncyCastle.Crypto.Parameters;
++using Org.BouncyCastle.Crypto.Signers;
++using Org.BouncyCastle.Security;
++using Lumivolt.Security;
++
++namespace Lumivolt.Admin
++{
++    public static class IssuerService
++    {
++        static readonly byte[] Entropy = LicenseProtocol.Utf8.GetBytes("Lumivolt.Admin.Ed25519.v3");
++        public static string LastVault
++        {
++            get { using (var k = Registry.CurrentUser.OpenSubKey(@"Software\Lumivolt\Issuer")) return k == null ? "" : Convert.ToString(k.GetValue("Vault", "")); }
++            set { using (var k = Registry.CurrentUser.CreateSubKey(@"Software\Lumivolt\Issuer")) k.SetValue("Vault", value); }
++        }
++        public static void SecureDirectory(string path)
++        {
++            Directory.CreateDirectory(path);
++            var acl = new DirectorySecurity(); acl.SetAccessRuleProtection(true, false);
++            acl.AddAccessRule(new FileSystemAccessRule(WindowsIdentity.GetCurrent().User, FileSystemRights.FullControl, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow));
++            Directory.SetAccessControl(path, acl);
++        }
++        public static void Create(string directory)
++        {
++            directory = Path.GetFullPath(directory);
++            // Never silently replace an issuer: previously issued licenses must remain verifiable.
++            if (File.Exists(Path.Combine(directory, "issuer.dpapi"))) throw new IOException("이 폴더에는 이미 발급키가 있습니다.");
++            if (Directory.Exists(directory) && Directory.GetFileSystemEntries(directory).Length != 0) throw new IOException("비어 있는 새 관리자 폴더를 선택해 주세요.");
++            SecureDirectory(directory);
++            var privateKey = new Ed25519PrivateKeyParameters(new SecureRandom());
++            byte[] seed = privateKey.GetEncoded();
++            try
++            {
++                File.WriteAllBytes(Path.Combine(directory, "issuer.dpapi"), ProtectedData.Protect(seed, Entropy, DataProtectionScope.CurrentUser));
++                ExportPublic(directory, Path.Combine(directory, "issuer-public.json"));
++                LastVault = directory;
++            }
++            finally { Array.Clear(seed, 0, seed.Length); }
++        }
++        public static Ed25519PrivateKeyParameters Load(string directory)
++        {
++            var path = Path.Combine(directory, "issuer.dpapi");
++            if (new FileInfo(path).Length > 8192) throw new FormatException("발급키 파일 오류");
++            byte[] seed = ProtectedData.Unprotect(File.ReadAllBytes(path), Entropy, DataProtectionScope.CurrentUser);
++            try { if (seed.Length != 32) throw new FormatException("발급키 길이 오류"); return new Ed25519PrivateKeyParameters(seed, 0); }
++            finally { Array.Clear(seed, 0, seed.Length); }
++        }
++        public static JObject Public(string directory)
++        {
++            var pub = Load(directory).GeneratePublicKey().GetEncoded();
++            return new JObject { { "keyId", LicenseProtocol.KeyId(pub) }, { "publicKey", Convert.ToBase64String(pub) } };
++        }
++        public static void ExportPublic(string directory, string file) { File.WriteAllText(file, Public(directory).ToString(), LicenseProtocol.Utf8); }
++        public static string Issue(string directory, string request, string name, DateTime? expires)
++        {
++            if (String.IsNullOrWhiteSpace(name) || name.Trim().Length > 120) throw new FormatException("이름/메모를 1~120자로 입력해 주세요.");
++            if (expires.HasValue && expires.Value.ToUniversalTime() <= DateTime.UtcNow) throw new FormatException("미래의 만료일을 선택해 주세요.");
++            var req = LicenseProtocol.VerifyRequest(request, DateTime.UtcNow);
++            var key = Load(directory); var pub = key.GeneratePublicKey().GetEncoded();
++            var o = new JObject { { "version", 3 }, { "licenseId", Guid.NewGuid().ToString("D") }, { "product", LicenseProtocol.Product }, { "name", name.Trim() }, { "issuedUtc", LicenseProtocol.Utc(DateTime.UtcNow) }, { "expiresUtc", expires.HasValue ? (JToken)LicenseProtocol.Utc(expires.Value) : JValue.CreateNull() }, { "perpetual", !expires.HasValue }, { "features", new JArray("automation") }, { "devicePublicKey", req["devicePublicKey"].DeepClone() }, { "keyId", LicenseProtocol.KeyId(pub) }, { "status", "active" } };
++            byte[] data = LicenseProtocol.Bytes(o);
++            var signer = new Ed25519Signer(); signer.Init(true, key); signer.BlockUpdate(data, 0, data.Length);
++            string token = LicenseProtocol.Wrap("LV3", data, signer.GenerateSignature());
++            // Verify before storing. Issuance records contain public license data only.
++            LicenseProtocol.VerifyLicense(token, new Dictionary<string, byte[]> { { LicenseProtocol.KeyId(pub), pub } }, DateTime.UtcNow, "automation");
++            string records = Path.Combine(directory, "records"); Directory.CreateDirectory(records);
++            File.WriteAllText(Path.Combine(records, (string)o["licenseId"] + ".lvlicense"), token, LicenseProtocol.Utf8);
++            return token;
++        }
++        public static JObject Inspect(string directory, string token)
++        {
++            var pub = Load(directory).GeneratePublicKey().GetEncoded();
++            // Inspect historical expired records at their issuance time, preserving signature verification.
++            byte[] data, sig; LicenseProtocol.Decode(token, "LV3", out data, out sig);
++            var o = LicenseProtocol.Parse(data);
++            return LicenseProtocol.VerifyLicense(token, new Dictionary<string, byte[]> { { LicenseProtocol.KeyId(pub), pub } }, LicenseProtocol.Time(LicenseProtocol.Text(o, "issuedUtc", 32)), "automation");
++        }
++        public static void ExportRecords(string directory, string target)
++        {
++            var rows = new JArray(); var records = Path.Combine(directory, "records");
++            if (Directory.Exists(records)) foreach (string f in Directory.GetFiles(records, "*.lvlicense")) rows.Add(Inspect(directory, LicenseProtocol.ReadFile(f)));
++            File.WriteAllText(target, rows.ToString(), LicenseProtocol.Utf8);
++        }
++        // Portable backups use library AES-256-GCM + framework PBKDF2-HMAC-SHA256.
++        // DPAPI remains the normal at-rest format. Never persist the plaintext seed.
++        static byte[] BackupCrypt(bool encrypt, byte[] input, string password, byte[] salt, byte[] nonce)
++        {
++            if (password == null || password.Length < 12) throw new FormatException("백업 암호는 12자 이상으로 정해 주세요.");
++            byte[] derived;
++            using (var kdf = new Rfc2898DeriveBytes(password, salt, 600000, HashAlgorithmName.SHA256)) derived = kdf.GetBytes(32);
++            try
++            {
++                var cipher = new Org.BouncyCastle.Crypto.Modes.GcmBlockCipher(new Org.BouncyCastle.Crypto.Engines.AesEngine());
++                cipher.Init(encrypt, new Org.BouncyCastle.Crypto.Parameters.AeadParameters(new Org.BouncyCastle.Crypto.Parameters.KeyParameter(derived), 128, nonce, LicenseProtocol.Utf8.GetBytes("Lumivolt.AdminBackup.v1")));
++                var output = new byte[cipher.GetOutputSize(input.Length)];
++                int count = cipher.ProcessBytes(input, 0, input.Length, output, 0); count += cipher.DoFinal(output, count);
++                Array.Resize(ref output, count); return output;
++            }
++            finally { Array.Clear(derived, 0, derived.Length); }
++        }
++        public static void Backup(string directory, string target, string password)
++        {
++            var salt = new byte[32]; var nonce = new byte[12]; using (var rng = RandomNumberGenerator.Create()) { rng.GetBytes(salt); rng.GetBytes(nonce); }
++            byte[] seed = Load(directory).GetEncoded();
++            try
++            {
++                var cipher = BackupCrypt(true, seed, password, salt, nonce);
++                var o = new JObject { { "version", 1 }, { "salt", Convert.ToBase64String(salt) }, { "nonce", Convert.ToBase64String(nonce) }, { "ciphertext", Convert.ToBase64String(cipher) } };
++                using (var f = new FileStream(target, FileMode.CreateNew, FileAccess.Write)) { var b = LicenseProtocol.Bytes(o); f.Write(b, 0, b.Length); }
++            }
++            finally { Array.Clear(seed, 0, seed.Length); }
++        }
++        public static void Restore(string backup, string directory, string password)
++        {
++            if (Directory.Exists(directory) && Directory.GetFileSystemEntries(directory).Length != 0) throw new IOException("비어 있는 새 관리자 폴더를 선택해 주세요.");
++            var o = LicenseProtocol.Parse(LicenseProtocol.Utf8.GetBytes(LicenseProtocol.ReadFile(backup)));
++            if (o.Count != 4 || o["version"] == null || o["version"].Type != JTokenType.Integer || (int)o["version"] != 1) throw new FormatException("백업 형식 오류");
++            var salt = Convert.FromBase64String(LicenseProtocol.Text(o, "salt", 64)); var nonce = Convert.FromBase64String(LicenseProtocol.Text(o, "nonce", 32)); var cipher = Convert.FromBase64String(LicenseProtocol.Text(o, "ciphertext", 128));
++            if (salt.Length != 32 || nonce.Length != 12 || cipher.Length != 48) throw new FormatException("백업 형식 오류");
++            byte[] seed = BackupCrypt(false, cipher, password, salt, nonce);
++            try
++            {
++                if (seed.Length != 32) throw new FormatException("백업 키 오류");
++                SecureDirectory(directory);
++                File.WriteAllBytes(Path.Combine(directory, "issuer.dpapi"), ProtectedData.Protect(seed, Entropy, DataProtectionScope.CurrentUser));
++                ExportPublic(directory, Path.Combine(directory, "issuer-public.json")); LastVault = directory;
++            }
++            finally { Array.Clear(seed, 0, seed.Length); }
++        }
++    }
++}
+--- 7차/admin/LicenseAdmin.cs
++++ 8차/admin/LicenseAdmin.cs
+@@ -4,28 +4,48 @@
+ using System.Text;
+ using System.Windows.Forms;
+ using BunjangAuto;
++using Lumivolt.Security;
++using Lumivolt.Admin;
++using System.Reflection;
+ 
+ static class AdminProgram
+ {
+     [STAThread]
+-    static void Main()
++    static int Main(string[] args)
+     {
+-        Application.EnableVisualStyles();
+-        Application.Run(new AdminForm());
++        AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e) {
++            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("lib." + new AssemblyName(e.Name).Name + ".dll")) {
++                if (stream == null) return null;
++                using (var m = new MemoryStream()) { stream.CopyTo(m); return Assembly.Load(m.ToArray()); }
++            }
++        };
++        try { return Run(args); } catch (Exception ex) { if (args.Length == 0) MessageBox.Show(ex.Message); else Console.Error.WriteLine(ex.Message); return 1; }
++    }
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static int Run(string[] args) {
++        if (args.Length > 0) {
++            if (args.Length == 2 && args[0] == "--create-vault") IssuerService.Create(args[1]);
++            else if (args.Length == 3 && args[0] == "--export-public") IssuerService.ExportPublic(args[1], args[2]);
++            else if (args.Length == 3 && args[0] == "--export-records") IssuerService.ExportRecords(args[1], args[2]);
++            else if (args.Length == 6 && args[0] == "--issue") File.WriteAllText(args[5], IssuerService.Issue(args[1], LicenseProtocol.ReadFile(args[2]), args[3], args[4] == "forever" ? (DateTime?)null : LicenseProtocol.Time(args[4])), LicenseProtocol.Utf8);
++            else return 2;
++            return 0;
++        }
++        AppFont.Init(); Application.EnableVisualStyles(); Application.SetCompatibleTextRenderingDefault(false);
++        Application.Run(new AdminForm()); return 0;
+     }
+ }
+ 
+ class AdminForm : Form
+ {
+-    string _priv = "";
++    string vault = "";
+     Label lblKey;
+     TextBox txtName, txtMid, txtOut;
+     DateTimePicker dtp;
+     NumericUpDown numDays;
+     bool _sync;
+     CheckBox chkForever;
+-    string Dir { get { return AppDomain.CurrentDomain.BaseDirectory; } }
+-    string PrivPath { get { return Path.Combine(Dir, "license_private.xml"); } }
++
+ 
+     public AdminForm()
+     {
+@@ -38,8 +58,8 @@
+         lblKey = new Label { Left = 16, Top = 76, Width = 560, Height = 34 };
+         var l1 = new Label { Left = 16, Top = 118, AutoSize = true, Text = "사용자 이름 / 메모" };
+         txtName = new TextBox { Left = 16, Top = 140, Width = 550 };
+-        var l2 = new Label { Left = 16, Top = 174, AutoSize = true, Text = "사용자 PC 고유번호 (인증 창에 표시된 XXXX-XXXX-XXXX)" };
+-        txtMid = new TextBox { Left = 16, Top = 196, Width = 550, Font = Theme.FontMono(11f) };
++        var l2 = new Label { Left = 16, Top = 174, AutoSize = true, Text = "기기 등록 요청 (Lumivolt / automation 권한)" };
++        txtMid = new TextBox { Left = 16, Top = 196, Width = 418, Font = Theme.FontMono(11f) };
+         var l3 = new Label { Left = 16, Top = 234, AutoSize = true, Text = "사용 기간 (만료일 또는 일수 입력, 만료일 당일 23:59까지 사용)" };
+         dtp = new DateTimePicker { Left = 16, Top = 256, Width = 160, Format = DateTimePickerFormat.Short, Value = DateTime.Today.AddDays(30) };
+         chkForever = new CheckBox { Left = 190, Top = 258, AutoSize = true, Text = "무기한" };
+@@ -53,9 +73,27 @@
+         var l4 = new Label { Left = 16, Top = 366, AutoSize = true, Text = "발급된 키 (사용자에게 그대로 전달)" };
+         txtOut = new TextBox { Left = 16, Top = 388, Width = 550, Height = 120, Multiline = true, ScrollBars = ScrollBars.Vertical, ReadOnly = true, Font = Theme.FontMono(9.5f) };
+         var bCopy = new Button { Left = 16, Top = 518, Width = 130, Height = 30, Text = "키 복사" };
+-        Controls.AddRange(new Control[] { lblKey, l1, txtName, l2, txtMid, l3, dtp, chkForever, numDays, lblDays, b7, b30, b90, b365, bGen, l4, txtOut, bCopy, header });
++        var bRequest = new Button { Left = 442, Top = 194, Width = 124, Height = 28, Text = "요청 열기" };
++        var bSave = new Button { Left = 154, Top = 518, Width = 120, Height = 30, Text = "파일 저장" };
++        var bHistory = new Button { Left = 282, Top = 518, Width = 120, Height = 30, Text = "발급 기록" };
++        var bKeys = new Button { Left = 410, Top = 518, Width = 156, Height = 30, Text = "발급키 관리" };
++        Controls.AddRange(new Control[] { bRequest, bSave, bHistory, bKeys, lblKey, l1, txtName, l2, txtMid, l3, dtp, chkForever, numDays, lblDays, b7, b30, b90, b365, bGen, l4, txtOut, bCopy, header });
+ 
+-        LoadKey();
++        Safe(delegate { if (Directory.Exists(IssuerService.LastVault)) LoadVault(IssuerService.LastVault); else lblKey.Text = "발급키 관리에서 관리자 보관 폴더를 선택해 주세요."; });
++
++        bRequest.Click += delegate { Safe(delegate { using (var d = new OpenFileDialog { Filter = "등록 요청|*.lvrequest" }) if (d.ShowDialog(this) == DialogResult.OK) { string t = LicenseProtocol.ReadFile(d.FileName); LicenseProtocol.VerifyRequest(t, DateTime.UtcNow); txtMid.Text = t; } }); };
++        bSave.Click += delegate { Safe(delegate { if (!txtOut.Text.StartsWith("LV3.")) throw new InvalidOperationException("먼저 발급해 주세요."); using (var d = new SaveFileDialog { Filter = "라이선스|*.lvlicense", FileName = "Lumivolt.lvlicense" }) if (d.ShowDialog(this) == DialogResult.OK) File.WriteAllText(d.FileName, txtOut.Text, LicenseProtocol.Utf8); }); };
++        var history = new ContextMenuStrip();
++        history.Items.Add("기존 라이선스 조회", null, delegate { Safe(delegate { RequireVault(); using (var d = new OpenFileDialog { Filter = "라이선스|*.lvlicense", InitialDirectory = Path.Combine(vault, "records") }) if (d.ShowDialog(this) == DialogResult.OK) txtOut.Text = IssuerService.Inspect(vault, LicenseProtocol.ReadFile(d.FileName)).ToString(); }); });
++        history.Items.Add("발급 기록 JSON 내보내기", null, delegate { Safe(delegate { RequireVault(); using (var d = new SaveFileDialog { Filter = "JSON|*.json", FileName = "issued-licenses.json" }) if (d.ShowDialog(this) == DialogResult.OK) IssuerService.ExportRecords(vault, d.FileName); }); });
++        bHistory.Click += delegate { history.Show(bHistory, new Point(0, bHistory.Height)); };
++        var keys = new ContextMenuStrip();
++        keys.Items.Add("기존 발급키 보관 폴더 열기", null, delegate { ChooseVault(false); });
++        keys.Items.Add("새 발급키 생성 (고객 앱 재빌드 필요)", null, delegate { ChooseVault(true); });
++        keys.Items.Add("공개키 내보내기", null, delegate { Safe(delegate { RequireVault(); using (var d = new SaveFileDialog { Filter = "공개키 JSON|*.json", FileName = "issuer-public.json" }) if (d.ShowDialog(this) == DialogResult.OK) IssuerService.ExportPublic(vault, d.FileName); }); });
++        keys.Items.Add("암호화 백업 만들기", null, delegate { Safe(delegate { RequireVault(); using (var d = new SaveFileDialog { Filter = "암호화 키 백업|*.lvbackup", FileName = "Lumivolt-issuer.lvbackup" }) if (d.ShowDialog(this) == DialogResult.OK) { string password = Password(true); if (password != null) { IssuerService.Backup(vault, d.FileName, password); MessageBox.Show(this, "백업을 만들었습니다. 백업과 암호는 별도로 보관하세요."); } } }); });
++        keys.Items.Add("암호화 백업에서 복원", null, delegate { Safe(delegate { using (var d = new OpenFileDialog { Filter = "암호화 키 백업|*.lvbackup" }) if (d.ShowDialog(this) == DialogResult.OK) { using (var folder = new FolderBrowserDialog { Description = "복원할 비어 있는 새 관리자 폴더" }) if (folder.ShowDialog(this) == DialogResult.OK) { string password = Password(false); if (password != null) { IssuerService.Restore(d.FileName, folder.SelectedPath, password); LoadVault(folder.SelectedPath); } } } }); });
++        bKeys.Click += delegate { keys.Show(bKeys, new Point(0, bKeys.Height)); };
+         Theme.MarkPrimary(bGen);
+         Theme.Apply(this);
+         chkForever.CheckedChanged += delegate { dtp.Enabled = !chkForever.Checked; numDays.Enabled = !chkForever.Checked; };
+@@ -74,35 +112,28 @@
+         bCopy.Click += delegate { if (txtOut.Text.Length > 0) Clipboard.SetText(txtOut.Text); };
+         bGen.Click += delegate
+         {
+-            if (_priv.Length == 0) { MessageBox.Show(this, "license_private.xml(개인키)이 없습니다."); return; }
+-            if (txtName.Text.Trim().Length == 0) { MessageBox.Show(this, "사용자 이름을 입력해 주세요."); return; }
+-            string mid = txtMid.Text.Trim();
+-            if (!System.Text.RegularExpressions.Regex.IsMatch(mid, "^[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$")) { MessageBox.Show(this, "PC 고유번호 형식이 올바르지 않습니다. (예: 9CB2-7594-3C5E)"); return; }
+-            try
+-            {
+-                string payload = License.Payload(txtName.Text.Trim(), mid, chkForever.Checked ? (DateTime?)null : dtp.Value.Date);
+-                string key = License.Sign(_priv, payload);
+-                txtOut.Text = key;
+-                File.AppendAllText(Path.Combine(Dir, "issued_licenses.csv"),
+-                    DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "," + txtName.Text.Trim().Replace(",", " ") + "," + (mid.Length == 0 ? "*" : mid) + "," +
+-                    (chkForever.Checked ? "무기한" : dtp.Value.ToString("yyyy-MM-dd")) + "\r\n", new UTF8Encoding(true));
+-            }
+-            catch (Exception ex) { MessageBox.Show(this, "발급 실패: " + ex.Message); }
++            Safe(delegate {
++                RequireVault();
++                txtOut.Text = IssuerService.Issue(vault, txtMid.Text, txtName.Text, chkForever.Checked ? (DateTime?)null : dtp.Value.Date.AddDays(1));
++            });
+         };
+     }
+ 
+-    void LoadKey()
++    void RequireVault() { if (vault.Length == 0) throw new InvalidOperationException("먼저 발급키 보관 폴더를 선택해 주세요."); }
++    string Password(bool confirm)
+     {
+-        if (File.Exists(PrivPath))
++        using (var f = new Form { Text = "발급키 백업 암호", Width = 420, Height = confirm ? 220 : 160, StartPosition = FormStartPosition.CenterParent, FormBorderStyle = FormBorderStyle.FixedDialog, MaximizeBox = false, MinimizeBox = false, Font = Theme.FontBase() })
+         {
+-            _priv = File.ReadAllText(PrivPath, Encoding.UTF8);
+-            lblKey.ForeColor = Color.DarkGreen;
+-            lblKey.Text = "개인키 로드됨: " + PrivPath + "\r\n이 파일은 절대 배포하지 마세요.";
+-        }
+-        else
+-        {
+-            lblKey.ForeColor = Color.Firebrick;
+-            lblKey.Text = "license_private.xml 이 이 프로그램과 같은 폴더에 없습니다.";
++            var label = new Label { Left = 16, Top = 12, Width = 380, Text = "12자 이상의 암호" };
++            var first = new TextBox { Left = 16, Top = 38, Width = 370, UseSystemPasswordChar = true };
++            var second = new TextBox { Left = 16, Top = 78, Width = 370, UseSystemPasswordChar = true, Visible = confirm };
++            var ok = new Button { Text = "확인", Left = 286, Top = confirm ? 125 : 76, Width = 100 };
++            ok.Click += delegate { if (first.Text.Length < 12 || (confirm && first.Text != second.Text)) { MessageBox.Show(f, "12자 이상이며 두 입력이 일치해야 합니다."); return; } f.DialogResult = DialogResult.OK; };
++            f.Controls.AddRange(new Control[] { label, first, second, ok }); f.AcceptButton = ok; Theme.Apply(f);
++            return f.ShowDialog(this) == DialogResult.OK ? first.Text : null;
+         }
+     }
++    void Safe(Action action) { try { action(); } catch (Exception ex) { MessageBox.Show(this, "작업 실패: " + ex.Message); } }
++    void LoadVault(string folder) { var pub = IssuerService.Public(folder); vault = folder; IssuerService.LastVault = folder; lblKey.Text = "Ed25519: " + (string)pub["keyId"] + "\r\n관리자 개인키: DPAPI + 계정 접근 권한 보호 · 고객 배포 제외"; }
++    void ChooseVault(bool create) { Safe(delegate { using (var d = new FolderBrowserDialog { Description = "관리자 전용 보관 폴더 (새 키 생성 시 비어 있는 새 폴더)" }) if (d.ShowDialog(this) == DialogResult.OK) { if (create) IssuerService.Create(d.SelectedPath); LoadVault(d.SelectedPath); if (create) MessageBox.Show(this, "새 공개키를 내보내고 Build.ps1 -PublicKeyFile로 고객 앱을 다시 빌드해야 합니다."); } }); }
+ }
+--- 7차/build.bat
++++ 8차/build.bat
+@@ -1,43 +1,3 @@
+ @echo off
+-rem ============================================================================
+-rem  Lumivolt 2.0  -  Windows 에서 직접 빌드 (Visual Studio / .NET SDK 불필요)
+-rem  Windows 10/11 에 기본 포함된 .NET Framework 4.x 의 csc.exe 를 사용합니다.
+-rem
+-rem  중앙 로그 서버 주소/등록 키를 exe 안에 넣고 싶으면 빌드 전에 지정하세요:
+-rem      set BJA_SERVER_URL=https://logs.example.com
+-rem      set BJA_INGEST_KEY=서버의 data\ingest_keys.txt 에 있는 키
+-rem      build.bat
+-rem  (지정하지 않으면 비워 두고, 사용자 PC 의 %%AppData%%\BunjangAuto\telemetry.json 에서 설정)
+-rem ============================================================================
+-setlocal enabledelayedexpansion
+-chcp 65001 >nul
+-cd /d "%~dp0"
+-set CSC=%WINDIR%\Microsoft.NET\Framework\v4.0.30319\csc.exe
+-if not exist "%CSC%" (echo csc.exe 를 찾을 수 없습니다: %CSC% & goto :end)
+-
+-rem --- 서버 주소/키 주입
+-> src\Telemetry\BuildConfig.cs echo namespace BunjangAuto { public static class BuildConfig { public const string ServerUrl = "%BJA_SERVER_URL%"; public const string IngestKey = "%BJA_INGEST_KEY%"; } }
+-
+-set REFS=
+-set RES=
+-for %%f in (lib\*.dll) do (
+-  set REFS=!REFS! /r:%%f
+-  set RES=!RES! /resource:%%f,lib.%%~nf.dll
+-)
+-if exist resources\fonts\NanumGothicBold.ttf set RES=!RES! /resource:resources\fonts\NanumGothicBold.ttf,font.NanumGothicBold.ttf
+-for %%f in (resources\help\*.md) do (
+-  set RES=!RES! /resource:%%f,help.%%~nxf
+-)
+-set SRC=
+-for /r src %%f in (*.cs) do set SRC=!SRC! "%%f"
+-if not exist dist mkdir dist
+-"%CSC%" /target:winexe /optimize+ /platform:anycpu /nowarn:1701,1702,0618,0168,0219,0414,0649,0169,0108 ^
+-  /win32icon:resources\app.ico /win32manifest:resources\app.manifest ^
+-  /out:dist\Lumivolt.exe !REFS! !RES! ^
+-  /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.Security.dll ^
+-  /r:System.IO.Compression.dll /r:System.IO.Compression.FileSystem.dll /r:System.Core.dll /r:Microsoft.CSharp.dll /r:System.Management.dll ^
+-  !SRC!
+-echo.
+-if exist dist\Lumivolt.exe (echo 빌드 성공: dist\Lumivolt.exe) else (echo 빌드 실패)
+-:end
+-pause
++powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0build\Build.ps1" %*
++exit /b %errorlevel%
+--- 7차/build.sh
++++ 8차/build.sh
+@@ -1,46 +1,3 @@
+-#!/bin/bash
+-# Mono 컴파일러(mcs)로 .NET Framework 4.7.2 용 단일 exe 를 만든다. (Windows 에서는 build.bat 사용)
+-#   BJA_SERVER_URL=https://logs.example.com BJA_INGEST_KEY=xxxx ./build.sh   ← 중앙 로그 서버 주소/등록키를 exe 에 넣어 빌드
+-set -e
+-cd "$(dirname "$0")"
+-L=lib
+-REFS=""
+-RES=""
+-for f in $L/*.dll; do
+-  n=$(basename "$f" .dll)
+-  REFS="$REFS -r:$f"
+-  RES="$RES -resource:$f,lib.$n.dll"
+-done
+-# 글꼴(나눔고딕 Bold, SIL OFL)과 도움말 문서(오프라인)를 exe 안에 내장
+-[ -f resources/fonts/NanumGothicBold.ttf ] && RES="$RES -resource:resources/fonts/NanumGothicBold.ttf,font.NanumGothicBold.ttf"
+-for f in resources/help/*.md; do
+-  [ -f "$f" ] && RES="$RES -resource:$f,help.$(basename "$f")"
+-done
+-EXTRA=""
+-[ -f resources/app.ico ] && EXTRA="$EXTRA -win32icon:resources/app.ico"
+-# (mcs 는 -win32manifest 를 지원하지 않아 DPI 설정은 Program.EnableDpiAwareness() 가 대신한다. Windows 의 csc 빌드(build.bat)는 매니페스트를 내장한다)
+-DEFS=""
+-[ -n "$BJA_DEFINE" ] && DEFS="-define:$BJA_DEFINE"
+-
+-# 서버 주소/등록키 주입 (환경변수가 없으면 비워 둔다 → telemetry.json 에서 설정)
+-cat > src/Telemetry/BuildConfig.cs <<CS
+-namespace BunjangAuto
+-{
+-    // 이 파일은 build.sh / build.bat 가 환경변수(BJA_SERVER_URL, BJA_INGEST_KEY)로 다시 생성한다.
+-    public static class BuildConfig
+-    {
+-        public const string ServerUrl = "${BJA_SERVER_URL:-}";
+-        public const string IngestKey = "${BJA_INGEST_KEY:-}";
+-    }
+-}
+-CS
+-
+-mkdir -p dist
+-SRC=$(find src -name '*.cs' | sort)
+-mcs -target:winexe -sdk:4.7.2 -optimize+ -langversion:latest -nowarn:1701,1702,0618,0168,0219,0414,0649,0169 $DEFS $EXTRA \
+-  -out:dist/Lumivolt.exe \
+-  $REFS $RES \
+-  -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Security.dll \
+-  -r:System.IO.Compression.dll -r:System.IO.Compression.FileSystem.dll -r:System.Core.dll -r:Microsoft.CSharp.dll -r:System.Management.dll \
+-  $SRC
+-ls -la dist/Lumivolt.exe
++#!/bin/sh
++echo "TPM/CNG security build requires Windows. Use build/Build.ps1 (-Target Admin for issuer)." >&2
++exit 1
+--- 7차/build/Build-Installer.ps1
++++ 8차/build/Build-Installer.ps1
+@@ -0,0 +1,6 @@
++param([Parameter(Mandatory=$true)][string]$IsccPath)
++$ErrorActionPreference = 'Stop'
++$project = Split-Path $PSScriptRoot -Parent
++if (!(Test-Path -LiteralPath (Join-Path $project 'dist\Lumivolt.exe'))) { throw 'Build the application first using Build.ps1.' }
++& $IsccPath (Join-Path $project 'installer\Lumivolt.iss')
++if ($LASTEXITCODE -ne 0) { throw 'Inno Setup build failed.' }
+--- 7차/build/Build.ps1
++++ 8차/build/Build.ps1
+@@ -0,0 +1,47 @@
++param([ValidateSet('All','App','Admin','Tests')][string]$Target = 'All', [string]$PublicKeyFile)
++$ErrorActionPreference = 'Stop'
++$root = Split-Path $PSScriptRoot -Parent
++Set-Location -LiteralPath $root
++$csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
++if (!(Test-Path $csc)) { throw 'Windows .NET Framework 4.7.2 or later is required.' }
++$dist = Join-Path $root 'dist'
++New-Item -ItemType Directory -Force $dist | Out-Null
++if ($PublicKeyFile) {
++    $key = Get-Content -LiteralPath $PublicKeyFile -Raw | ConvertFrom-Json
++    $bytes = [Convert]::FromBase64String($key.publicKey)
++    if ($bytes.Length -ne 32) { throw 'Expected 32-byte Ed25519 public key.' }
++    $hash = [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($bytes)).Replace('-','').Substring(0,32)
++    if ($hash -ne $key.keyId) { throw 'Key ID mismatch.' }
++    $code = 'using System.Collections.Generic; namespace BunjangAuto { internal static class TrustedKeys { internal static readonly IDictionary<string, byte[]> All = new Dictionary<string, byte[]> { { "' + $hash + '", System.Convert.FromBase64String("' + $key.publicKey + '") } }; } }'
++    [IO.File]::WriteAllText((Join-Path $root 'src\Security\TrustedKeys.cs'), $code, [Text.UTF8Encoding]::new($true))
++}
++$refs = @('/r:System.Windows.Forms.dll','/r:System.Drawing.dll','/r:System.Security.dll','/r:System.Core.dll','/r:Microsoft.CSharp.dll','/r:System.Management.dll','/r:System.IO.Compression.dll','/r:System.IO.Compression.FileSystem.dll')
++$libs = @(Get-ChildItem lib\*.dll)
++$base = @('/nologo','/optimize+','/platform:anycpu','/codepage:65001','/nowarn:1701,1702,0618,0168,0219,0414,0649,0169,0108') + $refs
++$shared = @(Get-ChildItem shared\*.cs | ForEach-Object { $_.FullName })
++$app = @(Get-ChildItem src\*.cs -Recurse | ForEach-Object { $_.FullName })
++function Compile([string]$Name, [string[]]$Sources, [string[]]$Extra, [bool]$AllLibraries) {
++    $output = Join-Path $dist ($Name + '.exe')
++    if (Test-Path -LiteralPath $output) { Remove-Item -LiteralPath $output }
++    $compilerArgs = $base + @('/out:' + $output) + $Extra
++    foreach ($dll in $libs) {
++        if ($AllLibraries -or $dll.Name -in @('Newtonsoft.Json.dll','BouncyCastle.Cryptography.dll')) { $compilerArgs += '/r:' + $dll.FullName; $compilerArgs += '/resource:' + $dll.FullName + ',lib.' + $dll.Name }
++    }
++    $compilerArgs += '/resource:resources\fonts\NanumGothicBold.ttf,font.NanumGothicBold.ttf'
++    foreach ($h in Get-ChildItem resources\help\*.md) { $compilerArgs += '/resource:' + $h.FullName + ',help.' + $h.Name }
++    & $csc @compilerArgs @Sources
++    if ($LASTEXITCODE -ne 0 -or !(Test-Path -LiteralPath $output)) { throw "Build failed: $Name" }
++}
++if ($Target -in @('All','Admin')) { Compile 'LicenseAdmin' ($shared + @('admin\LicenseAdmin.cs','admin\IssuerService.cs','src\Theme.cs')) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $false }
++if ($Target -in @('All','App')) {
++    if (!(Test-Path src\Security\TrustedKeys.cs)) { throw 'Provide -PublicKeyFile exported by LicenseAdmin. No default or test signing key is accepted.' }
++    Compile 'Lumivolt' ($app + $shared) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $true
++}
++if ($Target -eq 'Tests') {
++    Compile 'SecurityTests' ($shared + @('tests\SecurityTests.cs','src\Security\TpmDevice.cs','admin\IssuerService.cs')) @('/target:exe') $false
++    Compile 'RegressionTests' ($app + $shared) @('/target:exe','/define:TESTBUILD') $true
++    Compile 'UiSmoke' ($app + $shared + @('tests\UiSmoke.cs')) @('/target:exe','/define:TESTBUILD','/main:UiSmoke') $true
++    Compile 'GateIntegration' ($app + $shared + @('tests\GateIntegration.cs')) @('/target:exe','/define:TESTBUILD','/main:GateIntegration') $true
++    Compile 'AdminUiSmoke' ($shared + @('admin\LicenseAdmin.cs','admin\IssuerService.cs','src\Theme.cs','tests\AdminUiSmoke.cs')) @('/target:exe','/main:AdminUiSmoke') $false
++}
++Write-Host "Build completed: $Target -> $dist"
+--- 7차/build/Package.ps1
++++ 8차/build/Package.ps1
+@@ -0,0 +1,38 @@
++param([Parameter(Mandatory=$true)][string]$OutputDirectory)
++$ErrorActionPreference = 'Stop'
++$project = Split-Path $PSScriptRoot -Parent
++$bundle = Split-Path $project -Parent
++foreach ($name in @('Lumivolt.exe','LicenseAdmin.exe')) { if (!(Test-Path -LiteralPath (Join-Path $project ('dist\' + $name)))) { throw 'Run Build.ps1 first.' } }
++$customer = Join-Path $bundle '1_배포용_앱'
++$admin = Join-Path $bundle '2_관리자용_발급툴'
++New-Item -ItemType Directory -Force $customer,$admin,$OutputDirectory | Out-Null
++Copy-Item -LiteralPath (Join-Path $project 'dist\Lumivolt.exe') -Destination $customer
++Copy-Item -LiteralPath (Join-Path $project 'dist\LicenseAdmin.exe') -Destination $admin
++$forbidden = @(Get-ChildItem -LiteralPath $bundle -Recurse -File | Where-Object { $_.Name -match '(?i)license_private|\.dpapi$|\.lvbackup$|\.pfx$|\.p12$' })
++if ($forbidden.Count -gt 0) { throw 'Secret key files detected. Do not distribute this tree.' }
++foreach ($folder in @($customer,$admin)) {
++    New-Item -ItemType Directory -Force (Join-Path $folder 'licenses') | Out-Null
++    Copy-Item -LiteralPath (Join-Path $project 'resources\fonts\NanumGothic-OFL.txt') -Destination (Join-Path $folder 'licenses')
++    Copy-Item -LiteralPath (Join-Path $project 'licenses\BouncyCastle-LICENSE.txt') -Destination (Join-Path $folder 'licenses')
++}
++$zip = Join-Path $OutputDirectory 'Lumivolt_v2.1.0_Customer.zip'
++if (Test-Path -LiteralPath $zip) { throw 'Output already exists; use a new output folder.' }
++Compress-Archive -LiteralPath $customer -DestinationPath $zip -CompressionLevel Optimal
++Write-Host "Customer package: $zip"
++$stage = Join-Path ([IO.Path]::GetTempPath()) ('Lumivolt-package-' + [Guid]::NewGuid().ToString('N'))
++$stagedBundle = Join-Path $stage 'Lumivolt_v2.1.0'
++New-Item -ItemType Directory -Force $stagedBundle | Out-Null
++foreach ($file in Get-ChildItem -LiteralPath $bundle -Recurse -File) {
++    $relative = $file.FullName.Substring($bundle.Length + 1)
++    if ($relative -match '(^|\\)(dist|bin|obj|\.git|__pycache__)(\\|$)') { continue }
++    $destination = Join-Path $stagedBundle $relative
++    New-Item -ItemType Directory -Force (Split-Path $destination -Parent) | Out-Null
++    Copy-Item -LiteralPath $file.FullName -Destination $destination
++}
++$fullZip = Join-Path $OutputDirectory 'Lumivolt_v2.1.0_Complete.zip'
++if (Test-Path -LiteralPath $fullZip) { throw 'Full output already exists.' }
++Compress-Archive -LiteralPath $stagedBundle -DestinationPath $fullZip -CompressionLevel Optimal
++$tempRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
++$resolvedStage = [IO.Path]::GetFullPath($stage)
++if ($resolvedStage.StartsWith($tempRoot, [StringComparison]::OrdinalIgnoreCase) -and ([IO.Path]::GetFileName($resolvedStage) -match '^Lumivolt-package-[a-f0-9]{32}$')) { Remove-Item -LiteralPath $resolvedStage -Recurse -Force }
++Write-Host "Complete project: $fullZip"
+--- 7차/build/Sign.ps1
++++ 8차/build/Sign.ps1
+@@ -0,0 +1,7 @@
++param([Parameter(Mandatory=$true)][string]$SignTool, [Parameter(Mandatory=$true)][string]$File, [Parameter(Mandatory=$true)][string]$CertificateThumbprint, [Parameter(Mandatory=$true)][string]$TimestampUrl)
++$ErrorActionPreference = 'Stop'
++if ($TimestampUrl -notmatch '^https://') { throw 'An HTTPS RFC3161 timestamp endpoint is required.' }
++& $SignTool sign /sha1 $CertificateThumbprint /fd SHA256 /tr $TimestampUrl /td SHA256 $File
++if ($LASTEXITCODE -ne 0) { throw 'Authenticode signing failed.' }
++& $SignTool verify /pa $File
++if ($LASTEXITCODE -ne 0) { throw 'Authenticode verification failed.' }
+--- 7차/build/Test.ps1
++++ 8차/build/Test.ps1
+@@ -0,0 +1,14 @@
++param([string]$LocalLicense, [string]$OtherDeviceLicense)
++$ErrorActionPreference = 'Stop'
++& (Join-Path $PSScriptRoot 'Build.ps1') -Target Tests
++$root = Split-Path $PSScriptRoot -Parent
++& (Join-Path $root 'dist\SecurityTests.exe')
++if ($LASTEXITCODE -ne 0) { throw 'Security tests failed.' }
++& (Join-Path $root 'dist\RegressionTests.exe') --selftest
++if ($LASTEXITCODE -ne 0) { throw 'Regression tests failed.' }
++& (Join-Path $root 'dist\UiSmoke.exe') (Join-Path $root 'dist\ui-tests')
++if ($LASTEXITCODE -ne 0) { throw 'UI render tests failed.' }
++if ($LocalLicense -and $OtherDeviceLicense) {
++    & (Join-Path $root 'dist\GateIntegration.exe') $LocalLicense $OtherDeviceLicense
++    if ($LASTEXITCODE -ne 0) { throw 'Gate integration tests failed.' }
++}
+--- 7차/build_admin.sh
++++ 8차/build_admin.sh
+@@ -1,6 +1,3 @@
+-#!/bin/bash
+-set -e
+-cd "$(dirname "$0")"
+-mkdir -p dist
+-mcs -target:winexe -sdk:4.7.2 -optimize+ -win32icon:resources/app.ico -resource:resources/fonts/NanumGothicBold.ttf,font.NanumGothicBold.ttf -out:dist/LicenseAdmin.exe -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Security.dll admin/LicenseAdmin.cs src/License.cs src/Theme.cs
+-ls -la dist
++#!/bin/sh
++echo "TPM/CNG security build requires Windows. Use build/Build.ps1 (-Target Admin for issuer)." >&2
++exit 1
+--- 7차/installer/Lumivolt.iss
++++ 8차/installer/Lumivolt.iss
+@@ -0,0 +1,50 @@
++; Deferred installer configuration. This delivery is the portable EXE ZIP.
++#define AppVersion "2.1.0"
++[Setup]
++AppId={{BBD63563-5422-4DA7-93C6-2F0D98E87E3F}
++AppName=Lumivolt
++AppVersion={#AppVersion}
++AppPublisher=음악천재
++DefaultDirName={localappdata}\Programs\Lumivolt
++DefaultGroupName=Lumivolt
++DisableDirPage=no
++PrivilegesRequired=lowest
++MinVersion=10.0
++OutputDir=..\dist\installer
++OutputBaseFilename=Lumivolt_Setup_{#AppVersion}
++SetupIconFile=..\resources\app.ico
++UninstallDisplayIcon={app}\Lumivolt.exe
++Compression=lzma2
++SolidCompression=yes
++WizardStyle=modern
++SetupLogging=yes
++CloseApplications=yes
++RestartApplications=no
++AppMutex=BunjangAuto_SingleInstance
++VersionInfoVersion=2.1.0.0
++VersionInfoCompany=음악천재
++
++[Tasks]
++Name: "desktopicon"; Description: "바탕 화면 바로 가기 만들기"; GroupDescription: "바로 가기"; Flags: unchecked
++
++[Files]
++Source: "..\dist\Lumivolt.exe"; DestDir: "{app}"; Flags: ignoreversion
++Source: "..\resources\fonts\NanumGothic-OFL.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
++Source: "..\licenses\BouncyCastle-LICENSE.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
++Source: "..\..\1_배포용_앱\상품양식.csv"; DestDir: "{app}"; Flags: onlyifdoesntexist uninsneveruninstall
++
++[Icons]
++Name: "{group}\Lumivolt"; Filename: "{app}\Lumivolt.exe"; WorkingDir: "{app}"
++Name: "{autodesktop}\Lumivolt"; Filename: "{app}\Lumivolt.exe"; Tasks: desktopicon
++
++[Run]
++Filename: "{app}\Lumivolt.exe"; Description: "Lumivolt 실행"; Flags: nowait postinstall skipifsilent
++
++[Code]
++function InitializeSetup(): Boolean;
++var Release: Cardinal;
++begin
++  Result := RegQueryDWordValue(HKLM, 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', Release) and (Release >= 461808);
++  if not Result then MsgBox('.NET Framework 4.7.2 이상을 먼저 설치해 주세요.', mbError, MB_OK);
++end;
++; No AppData deletion, TPM-key removal, registry-key removal, or wildcard payload copy.
+--- 7차/kg.cs
++++ 8차/kg.cs
+@@ -1,2 +0,0 @@
+-using System; using System.IO; using System.Security.Cryptography;
+-class K { static void Main(){ var r=new RSACryptoServiceProvider(4096); File.WriteAllText("private.xml", r.ToXmlString(true)); File.WriteAllText("public.xml", r.ToXmlString(false)); } }
+--- 7차/license_public.xml
++++ 8차/license_public.xml
+@@ -1 +0,0 @@
+-<RSAKeyValue><Modulus>nmPLS5WQloX9/BI0ZXXGMsaKyvzuFaaKLU6jHCyKBUEzvnKw9RTH7E4vVQjQqEsErwzLgD81y1wvjxQsIiX0Un9q1nvtyPO17Isqjcjp+EnM/uCm4eBQyGOqE6SYZbwXod5e9R9K6AiLSozE1JWFwZrR9TtrBFcqx/U3e18pKw2jwNdhyz9GIl4laTa+4YrFwZD3EJ/XTKZU82S9cIZGQV5+89Vf5D8PeQvBGKkHWqXXZjB9UBpY9MqrIoIrksEt2Xxv6IqjiNmj3ZF5nb8lifz1MtDAskAdR7mtQtiep+DnhkKIwCOF3v8Ys48bGT5wWRLJHhuzlpumV7PNQmhiljRX8OiN6/x/AnlBaHWXINPQYAdKIYgyoVRneeim4UZ7w1ygI6bsqiq7NuAUuC3xFAsPmTMQeMp0tqwxlSw9oE55i6TWKBAiVlwvAtmu07Mvf6xk6mnu4jnEPsgKI6f/Lg1h/HCCY+l6T0oUI2hAb7m84o9kxq67KToJ5dciqCqASleg5A/SKSMcryXBS4XJ4o3hGDpKt7srjy9vb4UN0nW5a9AdrAYHn3FF49/LWpm5CLzjeezNgOOFnWBePOqNj59YTe/vP8oUhxEjJjE4AJC5eHHjqw4qwRuCyz+QXcn6aaiyondD9msZYcucYk1FPNd/lVBUbR+KyBRS82MdDpM=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>--- 7차/licenses/BouncyCastle-LICENSE.txt
++++ 8차/licenses/BouncyCastle-LICENSE.txt
+@@ -0,0 +1,15 @@
++MIT License (https://opensource.org/licenses/MIT)
++
++Copyright (c) 2000-2026 The Legion of the Bouncy Castle Inc. (https://www.bouncycastle.org).
++Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
++associated documentation files (the "Software"), to deal in the Software without restriction,
++including without limitation the rights to use, copy, modify, merge, publish, distribute,
++sub license, and/or sell copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions: The above copyright notice and this
++permission notice shall be included in all copies or substantial portions of the Software.
++
++**THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
++NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
++DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
++OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.**
+--- 7차/resources/help/02-license.md
++++ 8차/resources/help/02-license.md
+@@ -1,17 +1,12 @@
+ # 라이선스 등록
+ 
+-라이선스 키는 **이 PC 한 대**에서만 사용할 수 있고, 기재된 기간 동안만 유효합니다.
++1. 인증 창에서 **등록 요청 저장**을 누릅니다. Windows TPM에 비이동형 P-256 키를 만들고 공개키 등록 요청(.lvrequest)을 저장합니다.
++2. 등록 요청 파일을 관리자에게 전달하세요. PC 번호만으로는 발급되지 않습니다.
++3. 관리자가 발급한 .lvlicense 파일을 **라이선스 파일 열기**로 선택하고 **인증**을 누릅니다. 키 문자열을 붙여 넣어도 됩니다.
++4. 라이선스는 이 기기의 TPM 키와 등록한 Windows 계정에 연결됩니다.
+ 
+-## 등록 순서
+-1. 인증 창(또는 왼쪽 메뉴의 **라이선스**)에서 **PC 고유번호**를 확인합니다. 형식은 `XXXX-XXXX-XXXX` 입니다.
+-2. **복사** 버튼으로 복사해 관리자에게 보냅니다.
+-3. 관리자에게 받은 **라이선스 키**를 키 입력 칸에 붙여 넣고 **인증**을 누릅니다.
+-4. "인증되었습니다"가 나오면 완료입니다. 다음 실행부터는 다시 묻지 않습니다.
++## 연장
++라이선스 화면에서 새 파일을 열거나 붙여 넣고 인증하세요. 기존 상품과 설정은 유지됩니다.
+ 
+-## 라이선스 화면에서 볼 수 있는 것
+-- 라이선스 이름, 만료일, 남은 기간
+-- PC 고유번호와 복사 버튼
+-
+-> 라이선스 키는 다른 PC에서 사용할 수 없습니다. PC를 바꾸거나 윈도우를 새로 설치하면 새 키를 발급받아야 합니다.
+-
+-> 시스템 날짜를 과거로 바꾸면 라이선스가 무효 처리됩니다.
++## 기존 버전
++v2.0 RSA 라이선스는 새 방식으로 재발급해야 합니다. 구형 라이선스로 인증을 우회하지 않습니다.
+--- 7차/resources/help/17-licensefix.md
++++ 8차/resources/help/17-licensefix.md
+@@ -1,13 +1,13 @@
+ # 라이선스 문제 해결
+ 
+-| 안내 문구 | 원인과 해결 |
+-|---|---|
+-| 라이선스 키 형식이 올바르지 않습니다 | 키를 끝까지 복사했는지 확인. 앞뒤 공백·줄바꿈은 자동으로 지워집니다 |
+-| 라이선스 키가 올바르지 않습니다 | 잘못 복사했거나 위조된 키입니다 |
+-| 이 PC용 라이선스가 아닙니다 | 다른 PC의 고유번호로 발급된 키입니다. 이 PC의 고유번호를 다시 전달하세요 |
+-| 라이선스 기간이 만료되었습니다 | 관리자에게 연장 키를 요청하세요 |
+-| 시스템 날짜가 올바르지 않습니다 | PC 날짜와 시간을 바르게 고치세요 |
+-| 시스템 날짜가 과거로 바뀌었습니다 | 날짜를 되돌리면 라이선스가 무효가 됩니다. 날짜를 바로잡고 다시 실행하세요 |
++## TPM 사용 불가
++Windows 보안의 보안 프로세서 또는 tpm.msc에서 TPM 상태를 확인하세요. TPM 및 P-256 지원이 필요하며 소프트웨어 키로 자동 대체하지 않습니다.
+ 
+-## 분석 도구가 감지되었다는 안내
+-디버거나 분석 프로그램(dnSpy, x64dbg, Cheat Engine 등)이 실행 중이면 프로그램이 종료됩니다. 해당 프로그램을 닫고 다시 실행하세요.
++## 기기 변경 또는 TPM 초기화
++원래 등록한 Windows 계정인지 확인하세요. TPM 초기화·메인보드 교체·Windows 재설치로 키를 잃었다면 새 등록 요청을 관리자에게 전달해 재발급받으세요. 라이선스 파일만 복사해도 키가 복구되지는 않습니다.
++
++## 날짜 및 파일 오류
++Windows 날짜·시간을 바로잡고 관리자에게 원본 라이선스 파일을 다시 요청하세요. 서명/기기 검증 실패 시 실행할 수 없습니다.
++
++## 오프라인 제한
++원격 즉시 폐기, 동시 사용 탐지, 시각 조작과 VM 복제를 완전히 막는 기능은 제공하지 않습니다.
+--- 7차/shared/LicenseProtocol.cs
++++ 8차/shared/LicenseProtocol.cs
+@@ -0,0 +1,123 @@
++using System;
++using System.Collections.Generic;
++using System.Globalization;
++using System.IO;
++using System.Linq;
++using System.Security.Cryptography;
++using System.Text;
++using Newtonsoft.Json;
++using Newtonsoft.Json.Linq;
++using Org.BouncyCastle.Crypto.Parameters;
++using Org.BouncyCastle.Crypto.Signers;
++
++namespace Lumivolt.Security
++{
++    // Sign the ORIGINAL UTF-8 payload bytes. Never deserialize/re-serialize before verification.
++    public static class LicenseProtocol
++    {
++        public const string Product = "Lumivolt";
++        public const int MaxText = 32768;
++        public static readonly UTF8Encoding Utf8 = new UTF8Encoding(false, true);
++        public static string Utc(DateTime t) { return t.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture); }
++        public static DateTime Time(string t) { return DateTime.ParseExact(t, "yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal); }
++        public static byte[] Bytes(JObject o) { return Utf8.GetBytes(o.ToString(Formatting.None)); }
++        public static string Fingerprint(byte[] b) { using (var s = SHA256.Create()) return BitConverter.ToString(s.ComputeHash(b)).Replace("-", ""); }
++        public static string KeyId(byte[] b) { if (b.Length != 32) throw new FormatException("Ed25519 공개키 길이 오류"); return Fingerprint(b).Substring(0, 32); }
++        public static string ReadFile(string path)
++        {
++            if (new FileInfo(path).Length > MaxText) throw new FormatException("파일이 너무 큽니다.");
++            return File.ReadAllText(path, Utf8);
++        }
++        public static JObject Parse(byte[] data)
++        {
++            if (data.Length > 16384) throw new FormatException("데이터가 너무 큽니다.");
++            using (var sr = new StringReader(Utf8.GetString(data)))
++            using (var r = new JsonTextReader(sr) { DateParseHandling = DateParseHandling.None, MaxDepth = 8 })
++            {
++                var o = JObject.Load(r, new JsonLoadSettings { DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Error });
++                if (r.Read()) throw new FormatException("추가 JSON 데이터가 있습니다.");
++                return o;
++            }
++        }
++        public static string Text(JObject o, string name, int max)
++        {
++            var v = o[name];
++            if (v == null || v.Type != JTokenType.String || ((string)v).Length == 0 || ((string)v).Length > max) throw new FormatException("필드 오류: " + name);
++            return (string)v;
++        }
++        static void Fields(JObject o, string fields)
++        {
++            var names = fields.Split(',');
++            if (o.Count != names.Length || names.Any(n => o[n] == null)) throw new FormatException("지원하지 않는 필드 구성입니다.");
++        }
++        static void Version(JObject o)
++        {
++            if (o["version"].Type != JTokenType.Integer || (int)o["version"] != 3) throw new FormatException("지원하지 않는 라이선스 버전입니다.");
++            if (Text(o, "product", 32) != Product) throw new FormatException("다른 제품의 라이선스입니다.");
++        }
++        public static byte[] PublicBlob(string text)
++        {
++            byte[] b = Convert.FromBase64String(text);
++            // BCRYPT_ECDSA_PUBLIC_P256_MAGIC, cbKey=32, X || Y (little-endian header).
++            if (b.Length != 72 || BitConverter.ToUInt32(b, 0) != 0x31534345 || BitConverter.ToUInt32(b, 4) != 32) throw new FormatException("P-256 기기 공개키 형식 오류");
++            using (var k = CngKey.Import(b, CngKeyBlobFormat.EccPublicBlob)) { }
++            return b;
++        }
++        public static byte[] RequestBytes(byte[] payload) { return Utf8.GetBytes("Lumivolt.Request.v3\n").Concat(payload).ToArray(); }
++        public static void Decode(string token, string prefix, out byte[] payload, out byte[] sig)
++        {
++            if (token == null || token.Length > MaxText) throw new FormatException("라이선스 크기 오류");
++            var p = token.Trim().Split('.');
++            if (p.Length != 3 || p[0] != prefix) throw new FormatException("새 형식의 라이선스/등록 요청 파일이 필요합니다.");
++            payload = Convert.FromBase64String(p[1]); sig = Convert.FromBase64String(p[2]);
++            if (payload.Length == 0 || payload.Length > 16384 || sig.Length != 64) throw new FormatException("서명 형식 오류");
++        }
++        public static string Wrap(string prefix, byte[] payload, byte[] sig) { return prefix + "." + Convert.ToBase64String(payload) + "." + Convert.ToBase64String(sig); }
++        public static bool DeviceProof(byte[] pub, byte[] data, byte[] sig)
++        {
++            using (var k = CngKey.Import(pub, CngKeyBlobFormat.EccPublicBlob))
++            using (var e = new ECDsaCng(k) { HashAlgorithm = CngAlgorithm.Sha256 }) return e.VerifyData(data, sig);
++        }
++        public static JObject VerifyRequest(string token, DateTime now)
++        {
++            byte[] data, sig; Decode(token, "LVR3", out data, out sig);
++            var o = Parse(data);
++            Fields(o, "version,product,requestId,createdUtc,devicePublicKey,provider,nonce"); Version(o);
++            Guid.ParseExact(Text(o, "requestId", 36), "D");
++            if (Text(o, "provider", 64) != "Microsoft Platform Crypto Provider") throw new FormatException("TPM 등록 요청이 아닙니다.");
++            var created = Time(Text(o, "createdUtc", 32));
++            if (created > now.AddMinutes(5) || created < now.AddDays(-30)) throw new FormatException("등록 요청을 새로 내보내 주세요 (유효기간 30일).");
++            if (Convert.FromBase64String(Text(o, "nonce", 64)).Length != 32) throw new FormatException("요청 난수 오류");
++            var pub = PublicBlob(Text(o, "devicePublicKey", 128));
++            if (!DeviceProof(pub, RequestBytes(data), sig)) throw new CryptographicException("등록 요청 서명이 올바르지 않습니다.");
++            return o;
++        }
++        public static JObject VerifyLicense(string token, IDictionary<string, byte[]> trusted, DateTime now, string requiredFeature)
++        {
++            byte[] data, sig; Decode(token, "LV3", out data, out sig);
++            var o = Parse(data);
++            byte[] pub;
++            if (!trusted.TryGetValue(Text(o, "keyId", 32), out pub)) throw new CryptographicException("등록되지 않은 발급키입니다.");
++            var verifier = new Ed25519Signer(); verifier.Init(false, new Ed25519PublicKeyParameters(pub, 0));
++            verifier.BlockUpdate(data, 0, data.Length);
++            if (!verifier.VerifySignature(sig)) throw new CryptographicException("라이선스 서명이 올바르지 않습니다.");
++            Fields(o, "version,licenseId,product,name,issuedUtc,expiresUtc,perpetual,features,devicePublicKey,keyId,status"); Version(o);
++            Guid.ParseExact(Text(o, "licenseId", 36), "D"); Text(o, "name", 120);
++            PublicBlob(Text(o, "devicePublicKey", 128));
++            if (Text(o, "status", 16) != "active") throw new FormatException("활성 라이선스가 아닙니다.");
++            var issued = Time(Text(o, "issuedUtc", 32));
++            if (issued > now.AddMinutes(5)) throw new FormatException("발급 시각 이전입니다. PC 날짜를 확인해 주세요.");
++            if (o["perpetual"].Type != JTokenType.Boolean) throw new FormatException("기간 형식 오류");
++            if ((bool)o["perpetual"])
++            { if (o["expiresUtc"].Type != JTokenType.Null) throw new FormatException("영구 라이선스 기간 오류"); }
++            else
++            {
++                var expires = Time(Text(o, "expiresUtc", 32));
++                if (expires <= issued || now >= expires) throw new FormatException("라이선스 기간이 만료되었거나 잘못되었습니다.");
++            }
++            var features = o["features"] as JArray;
++            if (features == null || features.Count != 1 || features[0].Type != JTokenType.String || (string)features[0] != "automation" || requiredFeature != "automation") throw new FormatException("허용되지 않은 기능입니다.");
++            return o;
++        }
++    }
++}
+--- 7차/src/AssemblyInfo.cs
++++ 8차/src/AssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("음악천재")]
+ [assembly: AssemblyProduct("Lumivolt")]
+ [assembly: AssemblyCopyright("Copyright © 음악천재. All rights reserved.")]
+-[assembly: AssemblyVersion("2.0.0.0")]
+-[assembly: AssemblyFileVersion("2.0.0.0")]
+-[assembly: AssemblyInformationalVersion("2.0.0")]
++[assembly: AssemblyVersion("2.1.0.0")]
++[assembly: AssemblyFileVersion("2.1.0.0")]
++[assembly: AssemblyInformationalVersion("2.1.0")]
+--- 7차/src/License.cs
++++ 8차/src/License.cs
+@@ -2,74 +2,14 @@
+ using System.Security.Cryptography;
+ using System.Text;
+ using Microsoft.Win32;
+-
+-namespace BunjangAuto
+-{
+-    /// <summary>라이선스 키 검증. 키 = Base64(내용) + "." + Base64(RSA-3072 서명). 서명은 관리자 개인키로만 만들 수 있다.</summary>
+-    public class LicenseInfo
+-    {
+-        public bool Valid;
+-        public string Message = "";
+-        public string Name = "";
+-        public string MachineId = "";
+-        public DateTime Expires;      // DateTime.MaxValue = 무기한
+-        public DateTime Issued;
+-    }
+-
+-    public static class License
+-    {
+-        // 공개키(XML)는 평문으로 두지 않고 AES-256(CBC)으로 암호화해 둔다(여러 조각 상수를 조합해 키/IV를 만든다).
+-        private static readonly byte[] _k1 = { 0x4E,0x91,0xD2,0x3F,0x7A,0x0C,0x88,0x5B,0x1E,0x6D,0xA3,0x29,0xF4,0x57,0x9B,0xC0 };
+-        private static readonly byte[] _k2 = { 0x12,0xE8,0x6A,0xB5,0x3D,0xF0,0x74,0x9C,0x28,0x61,0xDA,0x4F,0x87,0x15,0xC9,0x3B };
+-        private static readonly byte[] _k3 = { 0xA7,0x5C,0x1F,0x92,0xE3,0x68,0xB0,0x4D,0x97,0x2A,0x6E,0xD1,0x53,0xF8,0x0A,0xC4 };
+-        private static readonly byte[] _iv1 = { 0x8B,0x3E,0xC7,0x14,0x5A,0x92,0xF6,0x2D,0x71,0xB8,0x4C,0xE0,0x39,0xA6,0x1D,0x85 };
+-        private static readonly byte[] _iv2 = { 0x27,0xD4,0x6F,0xB1,0x9A,0x3C,0x58,0xE2,0x0D,0x74,0xC1,0x4B,0x96,0x2E,0xF7,0x80 };
+-
+-        // AES-256-CBC 로 암호화된 공개키 XML (Base64, RSA-4096)
+-        private static readonly string _b =
+-            "WWY21hNpelVvr2DRvp80OksHjFkWxTUk2vdxGdMV2jXdEs3+l1ZBLCwYUBMqRagW" +
+-            "L7tlScrbNkjId6D4uR4rjSunqtO3IuuC1Rtyt7QqktlMNvb8EUnNJ+oJRQaOilAV" +
+-            "e3JBGoem/qlO40pwprxR6dQfvP37eQJeSqM5+UebBvGENgVylhOWeRAek/vSVkj0" +
+-            "rSByZ1etai4cjdyqblUdtpw/HcQ7tmlX8W9rcHPqjtnuIXGNXjjM2GC0zp+iaLDQ" +
+-            "oJRKk/jl+mubnQ7MRycedNnCN2+C2+B0a2HsRoXia5rhDW9JrGxojowXQS083Eye" +
+-            "fJvBWU1a/1ombVeZYNKsLN04GsvNvsT3qbVXTC7+zgKq3azWQCXPCyuhtYW7fSfD" +
+-            "2Q7bmYHkPaWsvFn6kXq9t5U0rfjY/1rcQbaFBFjbXC68J/IWaJNagwGbt04wtzB7" +
+-            "BHY619eaCAKW5imRdFWfuy2tkBwYKzO89cheyHbmzQEPyxlQj3AJEAOA8p5oKoyB" +
+-            "0IPTHMcZH/NL+K7wGR9pd6iGjht7SXNDtIQIyjLg3P/MjtMBzgU0tP0cZi05IyqQ" +
+-            "6bxzF9EOgmwolGslsIYNM+d67IKk4ULD+3X3u4m+iFSm9p5vuCBZkUPj+o2qVu70" +
+-            "IRvDAI7+KmVOzAnY8h1CREjP8ZxfyAj+0tIj5TT4HOFrDx5aqT5whKsg9Tr1taB2" +
+-            "StfJT8tXFD4YM0Uf1tFKANSE/cfw0NfZfd+uYQ3CahjCHwtWOWrfRpzQXAE4Q66e" +
+-            "t1vu+yHcl3/bbY37314H77PhU4Dr+gwZlkLqsNC71zw684IVCTnINKVSO7Fd65+L" +
+-            "mIFkV7s5d0CNAdzx3xzmodxONbGO5sA3/1QqA4pHPnFSj7HD82nEp9IcxfhwCYyN" +
+-            "Rb6nFg00FbNNs7ybypHYD11GRIGmd4NwFgzGrEujaWkW+MWJIIArGAILFfumUq3p" +
+-            "eXCm5FGxrPBMNPiH16X/p/bGimrsEYdQZamVSM1cICaTX3ncTdlS2DuWpURDWmGA";
+-
+-        private static byte[] Xor3(byte[] x, byte[] y, byte[] z)
+-        {
+-            var r = new byte[x.Length];
+-            for (int i = 0; i < x.Length; i++) r[i] = (byte)(x[i] ^ y[i] ^ z[i]);
+-            return r;
+-        }
+-
+-        private static string PublicKeyXml
+-        {
+-            get
+-            {
+-                byte[] key = SHA256.Create().ComputeHash(Xor3(_k1, _k2, _k3));
+-                byte[] iv = Xor3(_iv1, _iv2, _iv1);
+-                Array.Resize(ref iv, 16);
+-                byte[] ct = Convert.FromBase64String(_b);
+-                using (var aes = Aes.Create())
+-                {
+-                    aes.KeySize = 256; aes.Mode = CipherMode.CBC; aes.Padding = PaddingMode.PKCS7;
+-                    aes.Key = key; aes.IV = iv;
+-                    using (var dec = aes.CreateDecryptor())
+-                        return Encoding.UTF8.GetString(dec.TransformFinalBlock(ct, 0, ct.Length));
+-                }
+-            }
+-        }
+-
+-        /// <summary>이 PC 고유번호 (Windows MachineGuid 기반, 12자리)</summary>
++using Lumivolt.Security;
++namespace BunjangAuto {
++public class LicenseInfo {
++    public bool Valid; public string Message = "", Name = "", MachineId = "", LicenseId = "";
++    public DateTime Expires, Issued;
++}
++public static class License {
++// Compatibility ONLY: settings encryption and telemetry identity. Never an authorization credential.
+         public static string GetMachineId()
+         {
+             string g = "";
+@@ -88,53 +28,23 @@
+             }
+         }
+ 
+-        public static string Payload(string name, string machineId, DateTime? expires)
+-        {
+-            return "BJA2|" + name.Replace("|", " ") + "|" + machineId.Trim().ToUpperInvariant() + "|" +
+-                   (expires.HasValue ? expires.Value.ToString("yyyyMMdd") : "0") + "|" + DateTime.Now.ToString("yyyyMMdd") +
+-                   "|" + Guid.NewGuid().ToString("N").Substring(0, 8);
+-        }
+ 
+-        public static LicenseInfo Verify(string key, string myMachineId)
+-        {
+-            var r = new LicenseInfo();
+-            try
+-            {
+-                key = (key ?? "").Trim().Replace("\r", "").Replace("\n", "").Replace(" ", "");
+-                int dot = key.IndexOf('.');
+-                if (dot <= 0) { r.Message = "라이선스 키 형식이 올바르지 않습니다."; return r; }
+-                byte[] payload = Convert.FromBase64String(key.Substring(0, dot));
+-                byte[] sig = Convert.FromBase64String(key.Substring(dot + 1));
+-                using (var rsa = new RSACryptoServiceProvider())
+-                {
+-                    rsa.FromXmlString(PublicKeyXml);
+-                    if (!rsa.VerifyData(payload, "SHA256", sig)) { r.Message = "라이선스 키가 올바르지 않습니다."; return r; }
+-                }
+-                string[] p = Encoding.UTF8.GetString(payload).Split('|');
+-                if (p.Length != 6 || p[0] != "BJA2") { r.Message = "라이선스 키 형식이 올바르지 않습니다."; return r; }
+-                r.Name = p[1]; r.MachineId = p[2];
+-                r.Expires = p[3] == "0" ? DateTime.MaxValue : DateTime.ParseExact(p[3], "yyyyMMdd", null).AddDays(1).AddSeconds(-1);
+-                r.Issued = DateTime.ParseExact(p[4], "yyyyMMdd", null);
+-                if (!string.Equals(r.MachineId, myMachineId, StringComparison.OrdinalIgnoreCase))
+-                { r.Message = "이 PC용 라이선스가 아닙니다."; return r; }
+-                if (DateTime.Now < r.Issued.AddDays(-1)) { r.Message = "시스템 날짜가 올바르지 않습니다."; return r; }
+-                if (DateTime.Now > r.Expires) { r.Message = "라이선스 기간이 만료되었습니다. (" + r.Expires.ToString("yyyy-MM-dd") + ")"; return r; }
+-                r.Valid = true;
+-                r.Message = r.Expires == DateTime.MaxValue ? "무기한" : "만료일 " + r.Expires.ToString("yyyy-MM-dd");
+-                return r;
++    public static LicenseInfo Verify(string token, string diagnosticId) {
++        var r = new LicenseInfo();
++        try {
++            var o = LicenseProtocol.VerifyLicense(token, TrustedKeys.All, DateTime.UtcNow, "automation");
++            try { TpmDevice.Prove((string)o["devicePublicKey"]); }
++            catch (CryptographicException ex) {
++                if (ex.Message == "이 PC용 라이선스가 아닙니다." || ex.Message == "TPM 기기 소유 증명에 실패했습니다.") throw;
++                throw new CryptographicException(TpmDevice.Error(ex));
+             }
+-            catch (Exception) { r.Message = "라이선스 키를 읽을 수 없습니다."; return r; }
+-        }
+-
+-        public static string Sign(string privateXml, string payload)
+-        {
+-            byte[] data = Encoding.UTF8.GetBytes(payload);
+-            using (var rsa = new RSACryptoServiceProvider())
+-            {
+-                rsa.FromXmlString(privateXml);
+-                byte[] sig = rsa.SignData(data, "SHA256");
+-                return Convert.ToBase64String(data) + "." + Convert.ToBase64String(sig);
+-            }
+-        }
++            r.Name = (string)o["name"]; r.MachineId = LicenseProtocol.Fingerprint(LicenseProtocol.PublicBlob((string)o["devicePublicKey"]));
++            r.LicenseId = (string)o["licenseId"]; r.Issued = LicenseProtocol.Time((string)o["issuedUtc"]);
++            r.Expires = (bool)o["perpetual"] ? DateTime.MaxValue : LicenseProtocol.Time((string)o["expiresUtc"]).ToLocalTime().AddSeconds(-1);
++            r.Valid = true; r.Message = r.Expires == DateTime.MaxValue ? "무기한" : "만료일 " + r.Expires.ToString("yyyy-MM-dd");
++        } catch (FormatException ex) { r.Message = ex.Message; }
++          catch (CryptographicException ex) { r.Message = ex.Message; }
++          catch { r.Message = "라이선스 파일이 손상되었거나 검증할 수 없습니다."; }
++        return r;
+     }
+-}
++}}
+--- 7차/src/LicenseForm.cs
++++ 8차/src/LicenseForm.cs
+@@ -13,25 +13,17 @@
+         public static LicenseInfo LastInfo;
+ 
+         private static string KeyPath { get { return Path.Combine(Paths.Root, "license.key"); } }
+-        private static string SeenPath { get { return Path.Combine(Paths.Root, "license.seen"); } }
+ 
+         public static bool Check()
+         {
+-            string id = License.GetMachineId();
+             string msg = "";
+-            if (File.Exists(KeyPath))
+-            {
+-                var info = License.Verify(File.ReadAllText(KeyPath, Encoding.UTF8), id);
+-                if (info.Valid && !ClockRolledBack()) { Touch(); LastInfo = info; Log.Write("INFO", "License", "license.verify", "라이선스 확인됨 (" + info.Message + ")", "OK"); return true; }
+-                msg = info.Valid ? "시스템 날짜가 과거로 바뀌었습니다." : info.Message;
+-            }
+-            using (var f = new LicenseForm(id, msg))
++            if (Recheck()) return true;
++            if (File.Exists(KeyPath)) msg = "기존 라이선스를 확인할 수 없습니다. 새 TPM 라이선스를 등록해 주세요.";
++            using (var f = new LicenseForm(TpmDevice.DisplayId(), msg))
+             {
+                 if (f.ShowDialog() != DialogResult.OK) return false;
+-                File.WriteAllText(KeyPath, f.Key, Encoding.UTF8);
+-                Touch();
+-                LastInfo = License.Verify(f.Key, id);
+-                Log.Write("INFO", "License", "license.verify", "라이선스를 새로 인증했습니다.", "OK");
++                string result;
++                if (!TryActivate(f.Key, out result)) { FluentBox.Show(null, result, "라이선스"); return false; }
+                 return true;
+             }
+         }
+@@ -41,14 +33,15 @@
+         {
+             var info = License.Verify(key, License.GetMachineId());
+             message = info.Valid ? "인증되었습니다. (" + info.Message + ")" : info.Message;
+-            if (!info.Valid) { Log.Write("WARN", "License", "license.verify", "라이선스 인증 실패: " + info.Message, "FAIL"); return false; }
++            if (info.Valid && ClockRolledBack()) { message = "시스템 날짜 또는 인증 기록을 확인해 주세요."; return false; }
++            if (!info.Valid) { LastInfo = null; Log.Write("WARN", "License", "license.verify", "라이선스 인증 실패: " + info.Message, "FAIL"); return false; }
+             try
+             {
+                 Directory.CreateDirectory(Paths.Root);
+                 File.WriteAllText(KeyPath, key.Trim().Replace("\r", "").Replace("\n", "").Replace(" ", ""), Encoding.UTF8);
+             }
+             catch (Exception ex) { message = "키를 저장하지 못했습니다: " + ex.Message; return false; }
+-            Touch(); LastInfo = info;
++            if (!LicenseClock.Accept(true)) { message = "인증 시각 기록을 저장하지 못했습니다."; return false; } LastInfo = info;
+             Log.Write("INFO", "License", "license.verify", "라이선스를 새로 인증했습니다.", "OK");
+             return true;
+         }
+@@ -58,31 +51,18 @@
+         {
+             try
+             {
++                LastInfo = null;
+                 if (!File.Exists(KeyPath)) return false;
+-                var info = License.Verify(File.ReadAllText(KeyPath, Encoding.UTF8), License.GetMachineId());
++                var info = License.Verify(Lumivolt.Security.LicenseProtocol.ReadFile(KeyPath), License.GetMachineId());
+                 if (!info.Valid || ClockRolledBack()) return false;
+-                Touch();
++                if (!LicenseClock.Accept(true)) return false;
+                 LastInfo = info;
+                 return true;
+             }
+             catch { return false; }
+         }
+ 
+-        private static bool ClockRolledBack()
+-        {
+-            try
+-            {
+-                if (!File.Exists(SeenPath)) return false;
+-                var seen = DateTime.Parse(File.ReadAllText(SeenPath), null, System.Globalization.DateTimeStyles.RoundtripKind);
+-                return DateTime.Now < seen.AddDays(-1);
+-            }
+-            catch { return false; }
+-        }
+-
+-        private static void Touch()
+-        {
+-            try { File.WriteAllText(SeenPath, DateTime.Now.ToString("o")); } catch { }
+-        }
++        private static bool ClockRolledBack() { return !LicenseClock.Accept(false); }
+     }
+ 
+     public class LicenseForm : Form
+@@ -99,7 +79,7 @@
+ 
+             var header = Theme.BuildHeader("라이선스 인증", "Lumivolt   ·   © 음악천재");
+             var lblMsg = new Label { Left = 20, Top = 76, Width = 510, Height = 36, ForeColor = Theme.Danger, Font = Theme.FontBold(), Text = message };
+-            var lbl1 = new Label { Left = 20, Top = 116, AutoSize = true, ForeColor = Theme.TextMuted, Text = "이 PC의 고유번호 (관리자에게 전달해 주세요)" };
++            var lbl1 = new Label { Left = 20, Top = 116, AutoSize = true, ForeColor = Theme.TextMuted, Text = "TPM 기기 번호 (등록 요청 파일을 관리자에게 전달해 주세요)" };
+             var txtId = new TextBox { Left = 20, Top = 138, Width = 374, ReadOnly = true, Text = machineId, Font = Theme.FontMono(11f) };
+             var bCopy = new Button { Left = 404, Top = 136, Width = 126, Height = 28, Text = "복사" };
+             var lbl2 = new Label { Left = 20, Top = 180, AutoSize = true, ForeColor = Theme.TextMuted, Text = "라이선스 키" };
+@@ -107,13 +87,17 @@
+             var ok = new Button { Left = 320, Top = 330, Width = 100, Height = 32, Text = "인증" };
+             var cancel = new Button { Left = 430, Top = 330, Width = 100, Height = 32, Text = "종료", DialogResult = DialogResult.Cancel };
+             var lblCopy = new Label { Left = 20, Top = 372, Width = 510, Height = 20, ForeColor = Theme.TextMuted, Font = Theme.Font(7.8f, FontStyle.Regular), Text = "Copyright © 음악천재. All rights reserved. 무단 복제·유포 시 법적 책임이 따릅니다." };
+-            Controls.AddRange(new Control[] { lblCopy, lblMsg, lbl1, txtId, bCopy, lbl2, txtKey, ok, cancel, header });
++            var bRequest = new Button { Left = 20, Top = 330, Width = 136, Height = 32, Text = "등록 요청 저장" };
++            var bImport = new Button { Left = 162, Top = 330, Width = 142, Height = 32, Text = "라이선스 파일 열기" };
++            Controls.AddRange(new Control[] { bRequest, bImport, lblCopy, lblMsg, lbl1, txtId, bCopy, lbl2, txtKey, ok, cancel, header });
+             CancelButton = cancel;
+             Theme.MarkPrimary(ok);
+             Ui.ScaleForm(this);
+             Theme.Apply(this);
+ 
+-            bCopy.Click += delegate { try { Clipboard.SetText(machineId); } catch { } };
++            bRequest.Click += delegate { LicenseFiles.ExportRequest(this); txtId.Text = TpmDevice.DisplayId(); };
++            bImport.Click += delegate { string token = LicenseFiles.ImportLicense(this); if (token != null) txtKey.Text = token; };
++            bCopy.Click += delegate { try { Clipboard.SetText(txtId.Text); } catch { } };
+             ok.Click += delegate
+             {
+                 var info = License.Verify(txtKey.Text, machineId);
+--- 7차/src/Models.cs
++++ 8차/src/Models.cs
+@@ -78,8 +78,12 @@
+ 
+     public static class Paths
+     {
++#if TESTBUILD
++        public static readonly string Root = Path.Combine(Path.GetTempPath(), "Lumivolt-tests-" + System.Diagnostics.Process.GetCurrentProcess().Id);
++#else
+         public static readonly string Root = Path.Combine(
+             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BunjangAuto");
++#endif
+         public static string Settings { get { return Path.Combine(Root, "settings.json"); } }
+         public static string Products { get { return Path.Combine(Root, "products.json"); } }
+         public static string Selectors { get { return Path.Combine(Root, "selectors.json"); } }
+--- 7차/src/Program.cs
++++ 8차/src/Program.cs
+@@ -49,8 +49,10 @@
+             EnableDpiAwareness();
+             AppFont.Init();   // 글꼴 객체가 만들어지기 전에 내장 나눔고딕 Bold 를 등록
+             AppDomain.CurrentDomain.AssemblyResolve += OnResolve;
++#if TESTBUILD
+             if (args.Length > 0 && args[0] == "--selftest") { Environment.ExitCode = SelfTest.Run(); return; }
+             if (args.Length > 2 && args[0] == "--selftest-central") { Environment.ExitCode = SelfTestV2.RunCentral(args[1], args[2]); return; }
++#endif
+ #if UIPREVIEW
+             if (args.Length > 0 && args[0] == "--ui-preview") { PreviewHarness.Run(args); return; }
+             if (args.Length > 0 && args[0] == "--ui-layout") { Environment.ExitCode = UiLayoutCheck.Run(args); return; }
+--- 7차/src/Runner.cs
++++ 8차/src/Runner.cs
+@@ -92,6 +92,7 @@
+ 
+                     foreach (var p in toRegister)
+                     {
++                        Guard.Check();
+                         p.Status = "진행중";
+                         CurrentProduct = p;
+                         bot.Register(p);
+--- 7차/src/Security/LicenseClock.cs
++++ 8차/src/Security/LicenseClock.cs
+@@ -0,0 +1,42 @@
++using System;
++using System.IO;
++using System.Security.Cryptography;
++using Lumivolt.Security;
++namespace BunjangAuto
++{
++    internal static class LicenseClock
++    {
++        static readonly object Gate = new object();
++        static readonly byte[] Purpose = LicenseProtocol.Utf8.GetBytes("Lumivolt.Clock.v3");
++        static string FilePath { get { return Path.Combine(Paths.Root, "license.clock.v3"); } }
++        static DateTime Read()
++        {
++            if (!File.Exists(FilePath)) return DateTime.MinValue;
++            if (new FileInfo(FilePath).Length > 8192) throw new FormatException("인증 시각 기록 오류");
++            var clear = ProtectedData.Unprotect(File.ReadAllBytes(FilePath), Purpose, DataProtectionScope.CurrentUser);
++            return LicenseProtocol.Time(LicenseProtocol.Utf8.GetString(clear));
++        }
++        public static bool Accept(bool update)
++        {
++            lock (Gate)
++            {
++                string temp = FilePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
++                try
++                {
++                    var seen = Read(); var now = DateTime.UtcNow;
++                    if (now.AddMinutes(5) < seen) return false;
++                    if (update)
++                    {
++                        Directory.CreateDirectory(Paths.Root);
++                        var value = LicenseProtocol.Utc(now > seen ? now : seen);
++                        File.WriteAllBytes(temp, ProtectedData.Protect(LicenseProtocol.Utf8.GetBytes(value), Purpose, DataProtectionScope.CurrentUser));
++                        if (File.Exists(FilePath)) File.Replace(temp, FilePath, null); else File.Move(temp, FilePath);
++                    }
++                    return true;
++                }
++                catch { return false; }
++                finally { try { if (File.Exists(temp)) File.Delete(temp); } catch { } }
++            }
++        }
++    }
++}
+--- 7차/src/Security/LicenseFiles.cs
++++ 8차/src/Security/LicenseFiles.cs
+@@ -0,0 +1,28 @@
++using System;
++using System.IO;
++using System.Windows.Forms;
++using Lumivolt.Security;
++namespace BunjangAuto
++{
++    public static class LicenseFiles
++    {
++        public static void ExportRequest(IWin32Window owner)
++        {
++            using (var d = new SaveFileDialog { Filter = "Lumivolt 등록 요청|*.lvrequest", FileName = "Lumivolt-등록요청.lvrequest" })
++            {
++                if (d.ShowDialog(owner) != DialogResult.OK) return;
++                try { File.WriteAllText(d.FileName, TpmDevice.CreateRequest(), LicenseProtocol.Utf8); FluentBox.Show(owner, "등록 요청 파일을 저장했습니다. 관리자에게 전달해 주세요.", "라이선스"); }
++                catch (Exception ex) { FluentBox.Show(owner, ex is System.Security.Cryptography.CryptographicException ? TpmDevice.Error(ex) : "등록 요청을 저장하지 못했습니다. 저장 위치와 TPM 상태를 확인해 주세요.", "라이선스"); }
++            }
++        }
++        public static string ImportLicense(IWin32Window owner)
++        {
++            using (var d = new OpenFileDialog { Filter = "Lumivolt 라이선스|*.lvlicense|텍스트 파일|*.txt" })
++            {
++                if (d.ShowDialog(owner) != DialogResult.OK) return null;
++                try { return LicenseProtocol.ReadFile(d.FileName).Trim(); }
++                catch { FluentBox.Show(owner, "라이선스 파일을 읽을 수 없습니다.", "라이선스"); return null; }
++            }
++        }
++    }
++}
+--- 7차/src/Security/TpmDevice.cs
++++ 8차/src/Security/TpmDevice.cs
+@@ -0,0 +1,73 @@
++using System;
++using System.Security.Cryptography;
++using Newtonsoft.Json.Linq;
++using Lumivolt.Security;
++
++namespace BunjangAuto
++{
++    public static class TpmDevice
++    {
++        public const string KeyName = "Lumivolt.Device.v3";
++        static readonly CngProvider Provider = new CngProvider("Microsoft Platform Crypto Provider");
++        static readonly object Gate = new object();
++        internal static CngKey Open(bool create)
++        {
++            lock (Gate)
++            {
++                try { var k = CngKey.Open(KeyName, Provider); Validate(k); return k; }
++                catch (CryptographicException ex)
++                {
++                    uint code = unchecked((uint)ex.HResult);
++                    if (!create || (code != 0x80090016 && code != 0x80090011)) throw;
++                }
++                var p = new CngKeyCreationParameters { Provider = Provider, ExportPolicy = CngExportPolicies.None, KeyUsage = CngKeyUsages.Signing };
++                var key = CngKey.Create(CngAlgorithm.ECDsaP256, KeyName, p);
++                Validate(key); return key;
++            }
++        }
++        static void Validate(CngKey k)
++        {
++            // Some Platform KSP versions report generic ECDSA rather than ECDSA_P256.
++            // Validate group AND the exact exported P-256 public blob, never the alias alone.
++            if (k.Provider.Provider != Provider.Provider || k.AlgorithmGroup != CngAlgorithmGroup.ECDsa || k.ExportPolicy != CngExportPolicies.None || k.IsEphemeral)
++            { k.Dispose(); throw new CryptographicException("TPM 비이동형 키 정책이 일치하지 않습니다."); }
++            LicenseProtocol.PublicBlob(Convert.ToBase64String(k.Export(CngKeyBlobFormat.EccPublicBlob)));
++        }
++        public static string Error(Exception ex)
++        {
++            var c = ex as CryptographicException;
++            uint code = c == null ? 0 : unchecked((uint)c.HResult);
++            if (code == 0x80090010 || code == 0x80070005) return "TPM 키 접근 권한이 없습니다. 등록한 Windows 계정으로 실행해 주세요.";
++            if (code == 0x80090016 || code == 0x80090011) return "기기 키를 찾을 수 없습니다. TPM 초기화/Windows 계정 변경 시 등록 요청을 새로 발급해 주세요.";
++            if (code == 0x80090029 || code == 0x80090030 || code == 0x8028400F || ex is PlatformNotSupportedException) return "TPM 또는 P-256 키를 사용할 수 없습니다. Windows TPM 상태를 확인해 주세요.";
++            return "TPM 키 생성/접근에 실패했습니다. Windows TPM 상태를 확인해 주세요. (0x" + code.ToString("X8") + ")";
++        }
++        public static string DisplayId()
++        {
++            try { using (var k = Open(false)) return LicenseProtocol.Fingerprint(k.Export(CngKeyBlobFormat.EccPublicBlob)).Substring(0, 16); }
++            catch { return "등록 요청 내보내기 필요"; }
++        }
++        public static string CreateRequest()
++        {
++            using (var k = Open(true))
++            using (var e = new ECDsaCng(k) { HashAlgorithm = CngAlgorithm.Sha256 })
++            {
++                var nonce = new byte[32]; using (var r = RandomNumberGenerator.Create()) r.GetBytes(nonce);
++                var o = new JObject { { "version", 3 }, { "product", LicenseProtocol.Product }, { "requestId", Guid.NewGuid().ToString("D") }, { "createdUtc", LicenseProtocol.Utc(DateTime.UtcNow) }, { "devicePublicKey", Convert.ToBase64String(k.Export(CngKeyBlobFormat.EccPublicBlob)) }, { "provider", Provider.Provider }, { "nonce", Convert.ToBase64String(nonce) } };
++                var data = LicenseProtocol.Bytes(o);
++                return LicenseProtocol.Wrap("LVR3", data, e.SignData(LicenseProtocol.RequestBytes(data)));
++            }
++        }
++        public static void Prove(string expected)
++        {
++            using (var k = Open(false))
++            using (var e = new ECDsaCng(k) { HashAlgorithm = CngAlgorithm.Sha256 })
++            {
++                var pub = k.Export(CngKeyBlobFormat.EccPublicBlob);
++                if (Convert.ToBase64String(pub) != expected) throw new CryptographicException("이 PC용 라이선스가 아닙니다.");
++                var challenge = new byte[32]; using (var r = RandomNumberGenerator.Create()) r.GetBytes(challenge);
++                if (!LicenseProtocol.DeviceProof(LicenseProtocol.PublicBlob(expected), challenge, e.SignData(challenge))) throw new CryptographicException("TPM 기기 소유 증명에 실패했습니다.");
++            }
++        }
++    }
++}
+--- 7차/src/Security/TrustedKeys.cs
++++ 8차/src/Security/TrustedKeys.cs
+@@ -0,0 +1 @@
++using System.Collections.Generic; namespace BunjangAuto { internal static class TrustedKeys { internal static readonly IDictionary<string, byte[]> All = new Dictionary<string, byte[]> { { "72FE5042D4CF73700FABA7642A8351E0", System.Convert.FromBase64String("n0xK7sOS7aL3k8h3FHfUac0ozGTmd3Awt+Yd/nLM/VY=") } }; } }--- 7차/src/SelfTest.cs
++++ 8차/src/SelfTest.cs
+@@ -196,7 +196,7 @@
+                 new Random(1).NextBytes(fakeSig);
+                 string fakeKey = Convert.ToBase64String(payload) + "." + Convert.ToBase64String(fakeSig);
+                 var info = License.Verify(fakeKey, "AAAA-BBBB-CCCC");
+-                Check("라이선스: 내장 공개키 복호화 후 서명 검증까지 도달", !info.Valid && info.Message == "라이선스 키가 올바르지 않습니다.");
++                Check("라이선스: 구형 RSA 라이선스 거부", !info.Valid);
+ 
+                 Check("라이선스: 형식이 아예 틀린 키는 형식 오류로 구분", !License.Verify("asdf", "AAAA-BBBB-CCCC").Valid);
+             }
+--- 7차/src/SelfTestV2.cs
++++ 8차/src/SelfTestV2.cs
+@@ -63,7 +63,9 @@
+                     Check("[Font] 나눔고딕 Bold TTF 가 exe 안에 내장됨(TrueType 시그니처, 1MB 이상)", st != null && n == 4 && head[0] == 0 && head[1] == 1 && head[2] == 0 && head[3] == 0 && st.Length > 1000000);
+                 }
+                 Check("[Font] 나눔고딕 Bold 를 실제로 쓸 수 있음(" + (AppFont.Active ? "적용" : "대체: " + AppFont.Status) + ")", AppFont.Active);
+-                Check("[Font] 모든 글꼴 요청이 나눔고딕 Bold 로 만들어짐", !AppFont.Active || (Theme.Font(9f, System.Drawing.FontStyle.Regular).Name == "NanumGothic" && Theme.Font(9f, System.Drawing.FontStyle.Regular).Bold && Theme.FontMono(9f).Name == "NanumGothic"));
++                using (var f = Theme.Font(9f, System.Drawing.FontStyle.Regular))
++                using (var m = Theme.FontMono(9f))
++                    Check("[Font] 모든 글꼴 요청이 나눔고딕 Bold 로 만들어짐", AppFont.Active && (f.Name == "NanumGothic" || f.Name == "나눔고딕") && f.Bold && (m.Name == "NanumGothic" || m.Name == "나눔고딕") && m.Bold);
+             }
+             catch (Exception ex) { Check("[Font] 예외: " + ex.Message, false); }
+         }
+--- 7차/src/Theme.cs
++++ 8차/src/Theme.cs
+@@ -80,7 +80,7 @@
+ 
+         private static bool Probe()
+         {
+-            try { using (var f = new Font(Family, 10f, FontStyle.Bold, GraphicsUnit.Point)) return string.Equals(f.Name, Family, StringComparison.OrdinalIgnoreCase); }
++            try { using (var f = new Font(Family, 10f, FontStyle.Bold, GraphicsUnit.Point)) return string.Equals(f.Name, Family, StringComparison.OrdinalIgnoreCase) || f.Name == "나눔고딕"; }
+             catch { return false; }
+         }
+     }
+--- 7차/src/UI/Pages/LicensePage.cs
++++ 8차/src/UI/Pages/LicensePage.cs
+@@ -30,7 +30,9 @@
+             lblPc = row("PC 고유번호"); lblPc.Font = Theme.FontMono(11f);
+             var bCopy = Ui.Button("복사", "\uE8C8", BtnStyle.Standard, 90); bCopy.Location = new Point(330, 177);
+             lblStatus = lblName; // (호환용)
+-            c1.Controls.AddRange(new Control[] { h1, chip, bCopy });
++            var bRequest = Ui.Button("등록 요청 저장", "", BtnStyle.Standard, 150); bRequest.Location = new Point(430, 177);
++            bRequest.Click += delegate { LicenseFiles.ExportRequest(this); Sync(); };
++            c1.Controls.AddRange(new Control[] { h1, chip, bCopy, bRequest });
+ 
+             var c2 = new CardPanel { Location = new Point(0, 316), Height = 210, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+             var h2 = Ui.Heading("라이선스 키 변경 / 연장"); h2.Location = new Point(20, 16);
+@@ -38,12 +40,15 @@
+             txtKey = new TextBox { Location = new Point(22, 76), Width = 560, Height = 64, Multiline = true, ScrollBars = ScrollBars.Vertical, Font = Theme.FontMono(9f), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+             var bOk = Ui.Button("인증", "\uE73E", BtnStyle.Primary, 110); bOk.Location = new Point(22, 152);
+             lblMsg = Ui.Text("", 9.5f, false, "m"); lblMsg.Location = new Point(146, 160);
+-            c2.Controls.AddRange(new Control[] { h2, d2, txtKey, bOk, lblMsg });
++            var bImport = Ui.Button("파일 열기", "", BtnStyle.Standard, 110); bImport.Location = new Point(146, 152);
++            lblMsg.Location = new Point(272, 160);
++            bImport.Click += delegate { string token = LicenseFiles.ImportLicense(this); if (token != null) txtKey.Text = token; };
++            c2.Controls.AddRange(new Control[] { h2, d2, txtKey, bOk, bImport, lblMsg });
+ 
+             Controls.AddRange(new Control[] { title, sub, c1, c2 });
+             Resize += delegate { int w = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); c1.Width = w; c2.Width = w; txtKey.Width = w - Ui.S(44); };
+ 
+-            bCopy.Click += delegate { try { Clipboard.SetText(License.GetMachineId()); lblMsg.Text = "PC 고유번호를 복사했습니다."; lblMsg.Tag = "m"; lblMsg.ForeColor = Theme.TextMuted; } catch { } };
++            bCopy.Click += delegate { try { Clipboard.SetText(TpmDevice.DisplayId()); lblMsg.Text = "PC 고유번호를 복사했습니다."; lblMsg.Tag = "m"; lblMsg.ForeColor = Theme.TextMuted; } catch { } };
+             bOk.Click += delegate
+             {
+                 string msg;
+@@ -57,7 +62,7 @@
+         {
+             var li = LicenseGate.LastInfo; bool ok = li != null && li.Valid;
+             chip.Text = ok ? "정상" : "확인 필요"; chip.Tone = ok ? Theme.Success : Theme.Danger; chip.Invalidate();
+-            lblPc.Text = License.GetMachineId();
++            lblPc.Text = TpmDevice.DisplayId();
+             if (!ok) { lblName.Text = "-"; lblExp.Text = "-"; lblLeft.Text = "-"; return; }
+             lblName.Text = li.Name ?? "-";
+             if (li.Expires == DateTime.MaxValue) { lblExp.Text = "무기한"; lblLeft.Text = "무기한"; }
+--- 7차/src/UI/UiSelfTest.cs
++++ 8차/src/UI/UiSelfTest.cs
+@@ -32,20 +32,7 @@
+             LicenseGate.LastInfo = new LicenseInfo { Valid = true, Name = "테스터", Expires = DateTime.Now.AddDays(30), Message = "ok" };
+             UsageMetricsService.Load();
+ 
+-            // ---- 라이선스: 실제 개인키로 이 PC 용 키를 발급 → 앱의 인증 경로(TryActivate)로 검증 → Guard 통과
+-            string priv = Environment.GetEnvironmentVariable("BJA_TEST_PRIV");
+-            if (priv != null && System.IO.File.Exists(priv))
+-            {
+-                string pxml = System.IO.File.ReadAllText(priv), mid = License.GetMachineId(), msg;
+-                string good = License.Sign(pxml, License.Payload("테스터", mid, DateTime.Today.AddDays(30)));
+-                Check("[License] 개인키로 발급한 이 PC 용 키가 공개키로 검증됨", License.Verify(good, mid).Valid);
+-                Check("[License] 다른 PC 번호로는 거부", !License.Verify(good, "AAAA-BBBB-CCCC").Valid);
+-                Check("[License] 만료된 키는 거부", !License.Verify(License.Sign(pxml, License.Payload("t", mid, DateTime.Today.AddDays(-2))), mid).Valid);
+-                Check("[License] 한 글자만 바뀌어도 거부(변조 방지)", !License.Verify(good.Substring(0, 60) + (good[60] == 'A' ? "B" : "A") + good.Substring(61), mid).Valid);
+-                Check("[License] 무기한 키 허용", License.Verify(License.Sign(pxml, License.Payload("t", mid, null)), mid).Valid);
+-                Check("[License] 앱의 인증 경로(TryActivate)로 저장 + 정보 반영", LicenseGate.TryActivate(good, out msg) && LicenseGate.LastInfo != null && LicenseGate.LastInfo.Valid && LicenseGate.Recheck());
+-            }
+-            else Console.WriteLine("  (건너뜀) 라이선스 발급 검사: BJA_TEST_PRIV 에 license_private.xml 경로를 지정하세요");
++            // Ed25519 + TPM gate tests are in tests/SecurityTests.cs and GateIntegration.cs.
+ 
+             var f = new MainForm { StartPosition = FormStartPosition.Manual, Left = 0, Top = 0, Width = 1240, Height = 820 };
+             f.Show(); Pump(500);
+@@ -61,7 +48,7 @@
+             Check("[UI] 관리자 로그인 전에는 관리자 센터로 못 들어감(설정으로 돌려보냄)", pages.ContainsKey("settings") && pages["settings"].Visible && !pages.ContainsKey("admin"));
+ 
+             // ---- 글꼴
+-            Check("[Font] 나눔고딕 Bold 가 실제 적용됨", AppFont.Active && Theme.Family == "NanumGothic" && Theme.FontBase().Bold && Theme.FontBase().Name == "NanumGothic");
++            Check("[Font] 나눔고딕 Bold 가 실제 적용됨", AppFont.Active && Theme.Family == "NanumGothic" && Theme.FontBase().Bold && (Theme.FontBase().Name == "NanumGothic" || Theme.FontBase().Name == "나눔고딕"));
+             Check("[Font] 폼/버튼/그리드에도 같은 글꼴", f.Font.Name == "NanumGothic" && All(f).OfType<FluentButton>().All(b => b.Font.Name == "NanumGothic"));
+ 
+             // ---- 테마 전환 (헤더의 Segmented 를 누른 것과 같은 경로)
+--- 7차/tests/AdminUiSmoke.cs
++++ 8차/tests/AdminUiSmoke.cs
+@@ -0,0 +1,25 @@
++using System;
++using System.Drawing;
++using System.IO;
++using System.Reflection;
++using System.Windows.Forms;
++using BunjangAuto;
++class AdminUiSmoke
++{
++    [STAThread] static int Main(string[] args)
++    {
++        AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e) { using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("lib." + new AssemblyName(e.Name).Name + ".dll")) { if (s == null) return null; using (var m = new MemoryStream()) { s.CopyTo(m); return Assembly.Load(m.ToArray()); } } };
++        return Run(args);
++    }
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static int Run(string[] args)
++    {
++        AppFont.Init(); Application.EnableVisualStyles();
++        using (var f = new AdminForm())
++        {
++            f.ShowInTaskbar = false; f.Opacity = 0; f.Show(); Application.DoEvents();
++            using (var bmp = new Bitmap(f.Width, f.Height)) { f.DrawToBitmap(bmp, new Rectangle(0, 0, f.Width, f.Height)); bmp.Save(args[0]); }
++        }
++        Console.WriteLine("PASS administrator UI rendered"); return 0;
++    }
++}
+--- 7차/tests/GateIntegration.cs
++++ 8차/tests/GateIntegration.cs
+@@ -0,0 +1,38 @@
++using System;
++using System.IO;
++using System.Reflection;
++using System.Security.Cryptography;
++using BunjangAuto;
++class GateIntegration
++{
++    static int failed;
++    static void Check(string name, bool result) { Console.WriteLine((result ? "PASS " : "FAIL ") + name); if (!result) failed++; }
++    static int Main(string[] args)
++    {
++        AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e) { using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("lib." + new AssemblyName(e.Name).Name + ".dll")) { if (s == null) return null; using (var m = new MemoryStream()) { s.CopyTo(m); return Assembly.Load(m.ToArray()); } } };
++        return Run(args);
++    }
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static int Run(string[] args)
++    {
++        Paths.EnsureAll(); string good = File.ReadAllText(args[0]), message;
++        Check("activation stores verified license", LicenseGate.TryActivate(good, out message));
++        Check("saved activation recheck", LicenseGate.Recheck());
++        Check("copied diagnostic ID grants no bypass", !License.Verify("invalid", License.GetMachineId()).Valid);
++        File.WriteAllText(Path.Combine(Paths.Root, "license.key"), "invalid");
++        Check("corrupt license fails closed", !LicenseGate.Recheck());
++        Check("restore valid license", LicenseGate.TryActivate(good, out message));
++        var clock = Path.Combine(Paths.Root, "license.clock.v3"); var saved = File.ReadAllBytes(clock);
++        File.WriteAllBytes(clock, new byte[30]);
++        Check("clock tamper blocks recheck", !LicenseGate.Recheck());
++        Check("clock tamper blocks activation", !LicenseGate.TryActivate(good, out message));
++        File.WriteAllBytes(clock, ProtectedData.Protect(Lumivolt.Security.LicenseProtocol.Utf8.GetBytes(Lumivolt.Security.LicenseProtocol.Utc(DateTime.UtcNow.AddDays(2))), Lumivolt.Security.LicenseProtocol.Utf8.GetBytes("Lumivolt.Clock.v3"), DataProtectionScope.CurrentUser));
++        Check("clock rollback blocks activation", !LicenseGate.TryActivate(good, out message));
++        File.WriteAllBytes(clock, saved); Check("restored valid clock", LicenseGate.Recheck());
++        File.Delete(clock); Directory.CreateDirectory(clock);
++        Check("clock write failure cannot authorize", !LicenseGate.TryActivate(good, out message));
++        Directory.Delete(clock); File.WriteAllBytes(clock, saved);
++        Check("other device signed license rejected", !License.Verify(File.ReadAllText(args[1]), License.GetMachineId()).Valid);
++        Console.WriteLine("GATE FAILURES: " + failed); return failed == 0 ? 0 : 1;
++    }
++}
+--- 7차/tests/ProductionSmoke.cs
++++ 8차/tests/ProductionSmoke.cs
+@@ -0,0 +1,29 @@
++using System;
++using System.IO;
++using System.Reflection;
++using BunjangAuto;
++class ProductionSmoke
++{
++    static int Main(string[] args)
++    {
++        string directory = Path.GetDirectoryName(Path.GetFullPath(args[0]));
++        AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e) {
++            var app = Assembly.LoadFile(Path.Combine(directory, "Lumivolt.exe"));
++            using (var s = app.GetManifestResourceStream("lib." + new AssemblyName(e.Name).Name + ".dll")) { if (s == null) return null; using (var m = new MemoryStream()) { s.CopyTo(m); return Assembly.Load(m.ToArray()); } }
++        };
++        return Run(args);
++    }
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static int Run(string[] args)
++    {
++        string token = File.ReadAllText(args[1]);
++        var good = License.Verify(token, "COPIED-DIAGNOSTIC-ID");
++        Console.WriteLine((good.Valid ? "PASS " : "FAIL ") + "production EXE Ed25519 + TPM validation: " + good.Message);
++        var bad = License.Verify(token.Substring(0, token.Length-4) + "AAAA", License.GetMachineId());
++        Console.WriteLine((!bad.Valid ? "PASS " : "FAIL ") + "production EXE tamper rejection");
++        var asm = typeof(License).Assembly;
++        bool clean = asm.GetType("Lumivolt.Admin.IssuerService") == null && asm.GetType("SecurityTests") == null && asm.GetType("BunjangAuto.PreviewHarness") == null && typeof(License).GetMethod("Sign") == null;
++        Console.WriteLine((clean ? "PASS " : "FAIL ") + "no issuer/signing helper/preview harness in customer assembly");
++        return good.Valid && !bad.Valid && clean ? 0 : 1;
++    }
++}
+--- 7차/tests/SecurityTests.cs
++++ 8차/tests/SecurityTests.cs
+@@ -0,0 +1,124 @@
++using System;
++using System.Collections.Generic;
++using System.IO;
++using System.Linq;
++using System.Reflection;
++using System.Security.Cryptography;
++using Newtonsoft.Json.Linq;
++using Org.BouncyCastle.Crypto.Parameters;
++using Org.BouncyCastle.Crypto.Signers;
++using Org.BouncyCastle.Security;
++using Lumivolt.Security;
++using Lumivolt.Admin;
++using BunjangAuto;
++
++class SecurityTests
++{
++    static int failures, passed;
++    static Ed25519PrivateKeyParameters issuer;
++    static Dictionary<string, byte[]> trusted;
++    static DateTime now = DateTime.UtcNow;
++    static void Check(string name, bool value) { Console.WriteLine((value ? "PASS " : "FAIL ") + name); if (value) passed++; else failures++; }
++    static void Reject(string name, Action a) { try { a(); Check(name, false); } catch { Check(name, true); } }
++    static string Sign(byte[] data) { var s = new Ed25519Signer(); s.Init(true, issuer); s.BlockUpdate(data, 0, data.Length); return LicenseProtocol.Wrap("LV3", data, s.GenerateSignature()); }
++    static string Sign(JObject o) { return Sign(LicenseProtocol.Bytes(o)); }
++    static JObject Verify(string t) { return LicenseProtocol.VerifyLicense(t, trusted, now, "automation"); }
++    static string Request(CngKey key)
++    {
++        var random = new byte[32]; using (var r = RandomNumberGenerator.Create()) r.GetBytes(random);
++        var o = new JObject { { "version", 3 }, { "product", "Lumivolt" }, { "requestId", Guid.NewGuid().ToString("D") }, { "createdUtc", LicenseProtocol.Utc(now) }, { "devicePublicKey", Convert.ToBase64String(key.Export(CngKeyBlobFormat.EccPublicBlob)) }, { "provider", "Microsoft Platform Crypto Provider" }, { "nonce", Convert.ToBase64String(random) } };
++        var data = LicenseProtocol.Bytes(o);
++        using (var e = new ECDsaCng(key) { HashAlgorithm = CngAlgorithm.Sha256 }) return LicenseProtocol.Wrap("LVR3", data, e.SignData(LicenseProtocol.RequestBytes(data)));
++    }
++    static int Main(string[] args)
++    {
++        AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e) {
++            using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("lib." + new AssemblyName(e.Name).Name + ".dll")) { if (s == null) return null; using (var m = new MemoryStream()) { s.CopyTo(m); return Assembly.Load(m.ToArray()); } }
++        };
++        try { return Run(args); } catch (Exception ex) { Console.WriteLine("FAIL UNHANDLED " + ex); return 1; }
++    }
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static int Run(string[] args)
++    {
++        if (args.Length == 2 && args[0] == "--tpm-request") { File.WriteAllText(args[1], TpmDevice.CreateRequest(), LicenseProtocol.Utf8); Console.WriteLine("TPM REQUEST CREATED"); return 0; }
++        if (args.Length == 2 && args[0] == "--software-request") { using (var k = CngKey.Create(CngAlgorithm.ECDsaP256)) File.WriteAllText(args[1], Request(k), LicenseProtocol.Utf8); Console.WriteLine("SOFTWARE NEGATIVE-TEST REQUEST CREATED (NOT TPM ATTESTED)"); return 0; }
++        if (args.Length == 2 && args[0] == "--tpm-prove") { var req = LicenseProtocol.VerifyRequest(LicenseProtocol.ReadFile(args[1]), DateTime.UtcNow); TpmDevice.Prove((string)req["devicePublicKey"]); Console.WriteLine("TPM REOPEN + PROOF PASSED"); return 0; }
++        issuer = new Ed25519PrivateKeyParameters(new SecureRandom()); var pub = issuer.GeneratePublicKey().GetEncoded();
++        trusted = new Dictionary<string, byte[]> { { LicenseProtocol.KeyId(pub), pub } };
++        using (var device = CngKey.Create(CngAlgorithm.ECDsaP256))
++        using (var other = CngKey.Create(CngAlgorithm.ECDsaP256))
++        {
++            string blob = Convert.ToBase64String(device.Export(CngKeyBlobFormat.EccPublicBlob));
++            var o = new JObject { { "version", 3 }, { "licenseId", Guid.NewGuid().ToString("D") }, { "product", "Lumivolt" }, { "name", "테스트" }, { "issuedUtc", LicenseProtocol.Utc(now.AddSeconds(-2)) }, { "expiresUtc", LicenseProtocol.Utc(now.AddDays(30)) }, { "perpetual", false }, { "features", new JArray("automation") }, { "devicePublicKey", blob }, { "keyId", LicenseProtocol.KeyId(pub) }, { "status", "active" } };
++            string good = Sign(o);
++            Check("valid Ed25519 license", (string)Verify(good)["name"] == "테스트");
++            var p = (JObject)o.DeepClone(); p["name"] = "tampered";
++            byte[] data, sig; LicenseProtocol.Decode(good, "LV3", out data, out sig);
++            Reject("payload tamper", () => Verify(LicenseProtocol.Wrap("LV3", LicenseProtocol.Bytes(p), sig)));
++            sig[0] ^= 1; Reject("signature tamper", () => Verify(LicenseProtocol.Wrap("LV3", data, sig)));
++            Reject("unsigned payload", () => Verify(LicenseProtocol.Wrap("LV3", data, new byte[64])));
++            Reject("public key cannot forge signature", () => Verify(LicenseProtocol.Wrap("LV3", data, pub.Concat(pub).ToArray())));
++            Action<string, JToken, string> mutation = (field, value, name) => { var m = (JObject)o.DeepClone(); m[field] = value; Reject(name, () => Verify(Sign(m))); };
++            mutation("product", "OtherProduct", "different product"); mutation("version", 4, "unsupported version");
++            mutation("version", "3", "wrong field type"); mutation("expiresUtc", LicenseProtocol.Utc(now.AddDays(-1)), "expired");
++            mutation("issuedUtc", LicenseProtocol.Utc(now.AddHours(1)), "issued in future"); mutation("expiresUtc", JValue.CreateNull(), "missing expiry");
++            mutation("features", new JArray("admin"), "unsupported feature"); mutation("features", new JArray(), "missing automation entitlement");
++            mutation("features", new JArray("automation", "automation"), "duplicate entitlement"); mutation("status", "revoked", "inactive license");
++            mutation("keyId", new string('0', 32), "unknown issuer"); mutation("devicePublicKey", Convert.ToBase64String(new byte[72]), "invalid device point");
++            mutation("licenseId", "not-a-uuid", "invalid license ID"); mutation("name", new string('x',121), "oversized name");
++            Reject("oversized file", () => Verify(new string('x', 40000))); Reject("invalid base64", () => Verify("LV3.?.?"));
++            var extra = (JObject)o.DeepClone(); extra["extra"] = true; Reject("unknown field", () => Verify(Sign(extra)));
++            var dup = LicenseProtocol.Utf8.GetString(data).Replace("\"version\":3", "\"version\":3,\"version\":3"); Reject("duplicate JSON field", () => Verify(Sign(LicenseProtocol.Utf8.GetBytes(dup))));
++            Reject("trailing JSON", () => Verify(Sign(LicenseProtocol.Utf8.GetBytes(LicenseProtocol.Utf8.GetString(data) + "{}"))));
++            p = (JObject)o.DeepClone(); p["perpetual"] = true; p["expiresUtc"] = JValue.CreateNull(); Check("perpetual license", (bool)Verify(Sign(p))["perpetual"]);
++            var pretty = LicenseProtocol.Utf8.GetBytes(o.ToString()); Check("original noncanonical bytes are verified", Verify(Sign(pretty)) != null);
++            using (var e = new ECDsaCng(device) { HashAlgorithm = CngAlgorithm.Sha256 })
++            {
++                var challenge = new byte[32]; new SecureRandom().NextBytes(challenge); var proof = e.SignData(challenge);
++                Check("correct device proof", LicenseProtocol.DeviceProof(device.Export(CngKeyBlobFormat.EccPublicBlob), challenge, proof));
++                Check("different device proof rejected", !LicenseProtocol.DeviceProof(other.Export(CngKeyBlobFormat.EccPublicBlob), challenge, proof));
++                challenge[0] ^= 1; Check("replayed proof rejected", !LicenseProtocol.DeviceProof(device.Export(CngKeyBlobFormat.EccPublicBlob), challenge, proof));
++            }
++            string request = Request(device); Check("registration request proof", LicenseProtocol.VerifyRequest(request, now) != null);
++            LicenseProtocol.Decode(request, "LVR3", out data, out sig); data[data.Length-5] ^= 1; Reject("request tamper rejected", () => LicenseProtocol.VerifyRequest(LicenseProtocol.Wrap("LVR3", data, sig), now));
++            Reject("stale request rejected", () => LicenseProtocol.VerifyRequest(request, now.AddDays(31)));
++            Reject("future request rejected", () => LicenseProtocol.VerifyRequest(request, now.AddDays(-1)));
++            Reject("legacy license rejected", () => Verify("BJA2.fake"));
++            string temp = Path.Combine(Path.GetTempPath(), "LumivoltIssuerTest-" + Guid.NewGuid().ToString("N"));
++            string previous = IssuerService.LastVault;
++            try
++            {
++                IssuerService.Create(temp); Check("DPAPI private vault", File.Exists(Path.Combine(temp, "issuer.dpapi")));
++                Reject("no silent issuer overwrite", () => IssuerService.Create(temp));
++                var issued = IssuerService.Issue(temp, request, "테스트", now.AddDays(1));
++                Check("issuer round trip", (string)IssuerService.Inspect(temp, issued)["name"] == "테스트");
++                IssuerService.ExportRecords(temp, Path.Combine(temp, "export.json")); Check("issuance history export", JArray.Parse(File.ReadAllText(Path.Combine(temp, "export.json"))).Count == 1);
++                var backup = Path.Combine(temp, "backup.lvbackup"); var restored = Path.Combine(temp, "restored");
++                string password = Guid.NewGuid().ToString("N");
++                IssuerService.Backup(temp, backup, password);
++                Reject("wrong backup password", () => IssuerService.Restore(backup, restored, "Wrong-password-123"));
++                IssuerService.Restore(backup, restored, password);
++                Check("encrypted backup restore retains issuer", (string)IssuerService.Public(temp)["keyId"] == (string)IssuerService.Public(restored)["keyId"]);
++                Check("restored key verifies old licenses", IssuerService.Inspect(restored, issued) != null);
++                var damaged = JObject.Parse(File.ReadAllText(backup)); var ct = Convert.FromBase64String((string)damaged["ciphertext"]); ct[0] ^= 1; damaged["ciphertext"] = Convert.ToBase64String(ct); File.WriteAllText(backup, damaged.ToString());
++                Reject("tampered encrypted backup rejected", () => IssuerService.Restore(backup, Path.Combine(temp, "badrestore"), password));
++                byte[] protectedKey = File.ReadAllBytes(Path.Combine(temp, "issuer.dpapi")); protectedKey[protectedKey.Length-1] ^= 1; File.WriteAllBytes(Path.Combine(temp, "issuer.dpapi"), protectedKey);
++                Reject("damaged private vault rejected", () => IssuerService.Load(temp));
++            }
++            finally { IssuerService.LastVault = previous; Directory.Delete(temp, true); }
++        }
++        Console.WriteLine("SOFTWARE CRYPTOGRAPHY TESTS: " + passed + " passed, " + failures + " failed. Software device keys above are NOT physical TPM evidence.");
++        string tpmRequest = null;
++        try { tpmRequest = TpmDevice.CreateRequest(); }
++        catch (Exception ex) { Console.WriteLine("TPM UNAVAILABLE / HARDWARE VALIDATION PENDING: " + TpmDevice.Error(ex)); }
++        if (tpmRequest != null) try
++        {
++            var req = LicenseProtocol.VerifyRequest(tpmRequest, DateTime.UtcNow);
++            TpmDevice.Prove((string)req["devicePublicKey"]); Check("platform provider device ownership proof", true);
++            using (var k = TpmDevice.Open(false)) { Check("provider + nonexportable policy", k.Provider.Provider == "Microsoft Platform Crypto Provider" && k.ExportPolicy == CngExportPolicies.None); Reject("TPM private export denied", () => k.Export(CngKeyBlobFormat.EccPrivateBlob)); }
++            Check("persistent key reopen", TpmDevice.DisplayId().Length == 16);
++        }
++        catch (Exception ex) { Check("TPM proof after successful key open: " + TpmDevice.Error(ex), false); }
++        Console.WriteLine("TOTAL: " + passed + " passed, " + failures + " failed"); return failures == 0 ? 0 : 1;
++    }
++}
+--- 7차/tests/UiSmoke.cs
++++ 8차/tests/UiSmoke.cs
+@@ -0,0 +1,39 @@
++using System;
++using System.Drawing;
++using System.IO;
++using System.Reflection;
++using System.Windows.Forms;
++using BunjangAuto;
++class UiSmoke
++{
++    [STAThread] static int Main(string[] args)
++    {
++        AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e) {
++            using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("lib." + new AssemblyName(e.Name).Name + ".dll")) { if (s == null) return null; using (var m = new MemoryStream()) { s.CopyTo(m); return Assembly.Load(m.ToArray()); } }
++        };
++        try { Run(args); return 0; } catch (Exception ex) { Console.WriteLine(ex); return 1; }
++    }
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static void Run(string[] args)
++    {
++        string target = Path.GetFullPath(args[0]); Directory.CreateDirectory(target);
++        AppFont.Init(); Application.EnableVisualStyles(); Application.SetCompatibleTextRenderingDefault(false); Paths.EnsureAll();
++        foreach (var mode in new[] { "Light", "Dark" })
++        {
++            var cfg = new AppSettings { ThemeMode = mode }; Storage.SaveSettings(cfg); ThemeService.Init(cfg);
++            using (var form = new MainForm())
++            {
++                foreach (var page in new[] { "dashboard", "products", "automation", "login", "schedule", "logs", "help", "settings", "license" })
++                { form.Navigate(page); Render(form, Path.Combine(target, mode + "-" + page + ".png")); }
++            }
++            using (var form = new LicenseForm("TPM-DEVICE-ID", "라이선스를 등록해 주세요.")) Render(form, Path.Combine(target, mode + "-license-dialog.png"));
++        }
++        Console.WriteLine("PASS UI render: 20 Windows forms/pages; no browser automation or publishing executed.");
++    }
++    static void Render(Form f, string path)
++    {
++        if (!f.Visible) { f.ShowInTaskbar = false; f.Opacity = 0; f.StartPosition = FormStartPosition.Manual; f.Location = new Point(-20000, -20000); f.Show(); }
++        Application.DoEvents(); f.PerformLayout();
++        using (var bitmap = new Bitmap(f.Width, f.Height)) { f.DrawToBitmap(bitmap, new Rectangle(0, 0, f.Width, f.Height)); bitmap.Save(path, System.Drawing.Imaging.ImageFormat.Png); }
++    }
++}
+--- 7차/tests/build_preview.sh
++++ 8차/tests/build_preview.sh
+@@ -1,15 +1,3 @@
+-#!/bin/bash
+-# 개발 전용 빌드: UIPREVIEW 기호를 켜서 화면 점검 도구(--ui-preview / --ui-selftest / --ui-layout)가 들어간 exe 를 만든다. 배포하지 않는다.
+-set -e
+-cd "$(dirname "$0")/.."
+-OUTDIR=${1:-/tmp/lumivolt-preview}
+-REFS=""; RES=""
+-for f in lib/*.dll; do n=$(basename $f .dll); REFS="$REFS -r:$f"; RES="$RES -resource:$f,lib.$n.dll"; done
+-RES="$RES -resource:resources/fonts/NanumGothicBold.ttf,font.NanumGothicBold.ttf"
+-for f in resources/help/*.md; do RES="$RES -resource:$f,help.$(basename $f)"; done
+-mkdir -p "$OUTDIR"
+-mcs -target:winexe -sdk:4.7.2 -define:UIPREVIEW -langversion:latest -nowarn:1701,1702,0618,0168,0219,0414,0649,0169,0108 -out:"$OUTDIR/Preview.exe" $REFS $RES \
+-  -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Security.dll -r:System.IO.Compression.dll -r:System.IO.Compression.FileSystem.dll -r:System.Core.dll -r:Microsoft.CSharp.dll -r:System.Management.dll \
+-  $(find src -name '*.cs' | sort)
+-cp lib/*.dll "$OUTDIR"/ 2>/dev/null || true
+-echo "$OUTDIR/Preview.exe"
++#!/bin/sh
++echo "Legacy Mono test runner replaced by Windows build/Test.ps1 (TPM/CNG required)." >&2
++exit 1
+--- 7차/tests/regression.sh
++++ 8차/tests/regression.sh
+@@ -1,73 +1,3 @@
+-#!/bin/bash
+-# BunjangAuto 2.0 회귀 테스트 (Linux/Mono 에서 자동으로 확인할 수 있는 부분)
+-#   사용:  tests/regression.sh [원본_ZIP]        (원본 ZIP 을 주면 '구버전 데이터 → 신버전' 마이그레이션 테스트도 실행)
+-# Windows 에서만 확인할 수 있는 항목(Chrome/Selenium 실제 등록, DWM 창 꾸밈, 125~200% DPI)은 tests/WINDOWS_CHECKLIST.md 를 따라 직접 확인한다.
+-set -u
+-cd "$(dirname "$0")/.."
+-ROOT=$(pwd); SRV="$ROOT/../4_중앙로그서버"; export LANG=C.UTF-8 LC_ALL=C.UTF-8
+-PASS=0; FAIL=0
+-step() { echo; echo "=== $1"; }
+-ok()   { echo "  [PASS] $1"; PASS=$((PASS+1)); }
+-bad()  { echo "  [FAIL] $1"; FAIL=$((FAIL+1)); }
+-
+-step "1. 빌드 (mcs, .NET Framework 4.7.2)"
+-if bash build.sh >/tmp/bja_build.log 2>&1 && [ -f dist/Lumivolt.exe ]; then ok "Lumivolt.exe 빌드"; else bad "빌드 실패 (/tmp/bja_build.log)"; fi
+-if bash build_admin.sh >/tmp/bja_build_admin.log 2>&1 && [ -f dist/LicenseAdmin.exe ]; then ok "LicenseAdmin.exe 빌드"; else bad "관리자 발급툴 빌드 실패"; fi
+-
+-step "2. SelfTest (기존 1~6 + v2 추가 검사)"
+-H=$(mktemp -d); OUT=$(cd dist && HOME=$H XDG_CONFIG_HOME=$H/.config timeout 300 xvfb-run -a mono Lumivolt.exe --selftest 2>&1)
+-echo "$OUT" | grep -E "^\s*\[?(PASS|FAIL)" | sed 's/^/  /' | grep -c PASS | xargs -I{} echo "  통과 항목: {}"
+-if echo "$OUT" | grep -q "ALL PASSED"; then ok "SelfTest ALL PASSED"; else bad "SelfTest 실패"; echo "$OUT" | grep FAIL; fi
+-
+-step "2b. C# 5 문법 호환(Windows 기본 csc 로도 빌드되는지)"
+-REFS5=""; for f in lib/*.dll; do REFS5="$REFS5 -r:$f"; done
+-if mcs -target:winexe -sdk:4.7.2 -langversion:5 -nowarn:1701,1702,0618,0168,0219,0414,0649,0169,0108 -out:/tmp/bja_c5.exe $REFS5 -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Security.dll -r:System.IO.Compression.dll -r:System.IO.Compression.FileSystem.dll -r:System.Core.dll -r:Microsoft.CSharp.dll -r:System.Management.dll $(find src -name '*.cs' | sort) >/tmp/bja_c5.log 2>&1; then ok "-langversion:5 컴파일"; else bad "C# 5 호환 실패 (/tmp/bja_c5.log)"; fi
+-
+-step "2c. 화면 상호작용 테스트 + 배율(100~200%) 레이아웃 검사 (가상 화면, 개발용 빌드)"
+-if bash tests/build_preview.sh /tmp/bja_preview >/tmp/bja_prev_build.log 2>&1; then
+-  U=$(mktemp -d); PRIV="$ROOT/license_private.xml"
+-  UIOUT=$(cd /tmp/bja_preview && BJA_TEST_PRIV="$PRIV" HOME=$U timeout 300 xvfb-run -a -s "-screen 0 1700x1000x24" mono Preview.exe --ui-selftest 2>&1 | grep -E "PASS|FAIL|UI-SELFTEST")
+-  echo "$UIOUT" | grep -E "FAIL|UI-SELFTEST" | sed 's/^/  /'
+-  echo "$UIOUT" | grep -q "UI-SELFTEST: PASS [0-9]* / FAIL 0" && ok "UI 상호작용 테스트 (테마·검색·필터·정렬·로그·도움말·자동등록 흐름·예약 저장·라이선스 발급/검증)" || bad "UI 상호작용 테스트"
+-  for sc in 1.0 1.25 1.5 1.75 2.0; do for th in light dark; do
+-    L=$(cd /tmp/bja_preview && HOME=$(mktemp -d) timeout 200 xvfb-run -a -s "-screen 0 3000x2000x24" mono Preview.exe --ui-layout $sc $th 2>&1 | grep -E "^LAYOUT|^   !")
+-    echo "$L" | grep -q "OK" && ok "레이아웃 ${sc}x $th: 잘림/겹침 없음" || { bad "레이아웃 ${sc}x $th"; echo "$L"; }
+-  done; done
+-else bad "개발용 빌드 실패 (/tmp/bja_prev_build.log)"; fi
+-
+-step "3. 중앙 로그 서버 단위/통합 테스트 (8개) + 보강 점검(SQL 주입·경로·크기·동시 60접속·TLS)"
+-if (cd "$SRV" && python3 tests/hardening_checks.py >/tmp/bja_hard.log 2>&1); then ok "서버 보강 점검 $(grep RESULT /tmp/bja_hard.log)"; else bad "서버 보강 점검 (/tmp/bja_hard.log)"; fi
+-if (cd "$SRV" && python3 tests/test_server.py >/tmp/bja_srv_test.log 2>&1); then ok "서버 테스트 OK"; else bad "서버 테스트 실패 (/tmp/bja_srv_test.log)"; fi
+-
+-step "4. 종단 테스트: EXE 의 전송 계층 → 실제 서버 → 관리자 API"
+-D=$(mktemp -d); export BJA_DATA_DIR=$D BJA_INGEST_KEYS=reg-key BJA_QUIET=1
+-(cd "$SRV" && BJA_ADMIN_PASSWORD='regression-pass-123' python3 server.py init-admin --username admin >/dev/null)
+-(cd "$SRV" && python3 server.py serve --host 127.0.0.1 --port 18555 >/tmp/bja_srv.log 2>&1) & SP=$!
+-sleep 1.5
+-R=$(cd dist && HOME=$H mono Lumivolt.exe --selftest-central http://127.0.0.1:18555 reg-key 2>&1 | grep -E "SENT|FAILED")
+-echo "  $R"
+-TOK=$(curl -s -X POST localhost:18555/api/v1/admin/login -d '{"username":"admin","password":"regression-pass-123"}' | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
+-LOGS=$(curl -s -H "Authorization: Bearer $TOK" "localhost:18555/api/v1/admin/logs?limit=20")
+-echo "$R" | grep -q SENT && ok "EXE → 서버 전송" || bad "EXE → 서버 전송"
+-echo "$LOGS" | grep -q "REDACTED" && ! echo "$LOGS" | grep -q "SECRET-VALUE-1" && ok "서버에 저장된 로그에서 비밀번호 값이 제거됨" || bad "비밀정보 제거 확인 실패"
+-curl -s -H "Authorization: Bearer $TOK" "localhost:18555/api/v1/admin/logs?format=csv&download=1" | head -c 300 | grep -q "client_id" && ok "관리자 CSV 내보내기" || bad "CSV 내보내기"
+-curl -s -o /dev/null -w "%{http_code}" localhost:18555/api/v1/admin/users | grep -q 401 && ok "관리자 API 는 로그인 없이 401" || bad "관리자 API 보호"
+-if command -v node >/dev/null && [ -d /tmp/jt/node_modules/jsdom ]; then
+-  python3 "$SRV/tests/seed_demo.py" http://127.0.0.1:18555 reg-key >/dev/null
+-  if (cd /tmp/jt && NODE_PATH=/tmp/jt/node_modules BJA_ADMIN_PASSWORD='regression-pass-123' node "$SRV/tests/dashboard_smoke.js" http://127.0.0.1:18555 2>&1 | grep -q "JS errors: \[\]"); then ok "관리자 웹 대시보드 렌더링(jsdom) 오류 없음"; else bad "대시보드 스모크 테스트"; fi
+-else echo "  (건너뜀) 대시보드 스모크 테스트: npm i jsdom 후 /tmp/jt 에서 실행"; fi
+-kill $SP 2>/dev/null
+-
+-if [ -n "${1:-}" ] && [ -f "$1" ]; then
+-  step "5. 마이그레이션: 구버전(v1)이 만든 암호화 settings/products → 신버전(v2)"
+-  W=$(mktemp -d); mkdir -p $W/old $W/new $W/o; (cd $W/o && unzip -q "$1")
+-  (cd $W/o/3_소스코드 && bash build.sh >/dev/null 2>&1)
+-  cp $W/o/3_소스코드/dist/BunjangAuto.exe $W/old/; cp "$ROOT/dist/Lumivolt.exe" $W/new/Lumivolt.exe; cp lib/*.dll $W/old/; cp lib/*.dll $W/new/
+-  REFS="-r:Newtonsoft.Json.dll -r:System.Windows.Forms.dll -r:System.Drawing.dll"
+-  mcs -out:$W/old/w.exe tests/migration/write_with_old.cs -lib:$W/old -r:$W/old/BunjangAuto.exe $REFS 2>/dev/null
+-  mcs -out:$W/new/r.exe tests/migration/read_with_new.cs -lib:$W/new -r:$W/new/Lumivolt.exe $REFS 2>/dev/null
+-  M=$(mktemp -d); (cd $W/old && HOME=$M mono w.exe >/dev/null 2>&1); RES=$(cd $W/new && HOME=$M mono r.exe 2>&1 | grep -E "migrated|persisted")
+-  echo "$RES" | sed 's/^/  /'
+-  echo "$RES" | grep -q "settings migrated: True  products migrated: True" && ok "구버전 데이터 모든 필드 보존" || bad "마이그레이션"
+-fi
+-echo; echo "결과: PASS $PASS / FAIL $FAIL"; [ $FAIL -eq 0 ]
++#!/bin/sh
++echo "Legacy Mono test runner replaced by Windows build/Test.ps1 (TPM/CNG required)." >&2
++exit 1

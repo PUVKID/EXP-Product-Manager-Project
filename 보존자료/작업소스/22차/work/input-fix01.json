@@ -1,0 +1,17 @@
+{
+  "role": "main",
+  "cause": "기본 대화 cwd가 삭제되어 프로세스 생성 실패",
+  "model": "gpt-6.1-sol",
+  "new_observation": "명시한 C:\\Users\\PUVKID cwd에서 명령 exit0 확인",
+  "before_argv": [
+    "exec_command",
+    "default cwd"
+  ],
+  "effort": "medium",
+  "after_argv": [
+    "exec_command",
+    "workdir=C:\\Users\\PUVKID"
+  ],
+  "selection_reason": "파일시스템 경로 입력 오류이며제품코드변경없음",
+  "method": "이후 모든 명령에 존재하는 cwd를 명시"
+}

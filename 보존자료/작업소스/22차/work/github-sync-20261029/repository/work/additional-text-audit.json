@@ -1,0 +1,30 @@
+[
+  {
+    "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\2차\\BunjangAuto_소스코드_강화\\license_private.xml",
+    "target": "2차/BunjangAuto_소스코드_강화/license_private.xml"
+  },
+  {
+    "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\2차\\BunjangAuto_전체파일_업데이트\\3_소스코드\\license_private.xml",
+    "target": "2차/BunjangAuto_전체파일_업데이트/3_소스코드/license_private.xml"
+  },
+  {
+    "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\3차\\3_소스코드\\license_private.xml",
+    "target": "3차/3_소스코드/license_private.xml"
+  },
+  {
+    "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\4차\\BunjangAuto_전체파일_업데이트\\3_소스코드\\license_private.xml",
+    "target": "4차/BunjangAuto_전체파일_업데이트/3_소스코드/license_private.xml"
+  },
+  {
+    "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\5차\\BunjangAuto_전체파일_업데이트\\3_소스코드\\license_private.xml",
+    "target": "5차/BunjangAuto_전체파일_업데이트/3_소스코드/license_private.xml"
+  },
+  {
+    "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\6차\\BunjangAuto_v2.0.0\\3_소스코드\\license_private.xml",
+    "target": "6차/BunjangAuto_v2.0.0/3_소스코드/license_private.xml"
+  },
+  {
+    "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\7차\\Lumivolt_v2.0.0\\3_소스코드\\license_private.xml",
+    "target": "7차/Lumivolt_v2.0.0/3_소스코드/license_private.xml"
+  }
+]

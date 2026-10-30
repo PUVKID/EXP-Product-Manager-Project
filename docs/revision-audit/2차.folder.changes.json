@@ -1,0 +1,426 @@
+[
+  {
+    "path": "BunjangAuto_소스코드_강화/admin/LicenseAdmin.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5822,
+    "before_sha256": null,
+    "after_sha256": "81d4847e056e72213699635fac4153bb14e416e1874c7ad555eb6cd5d55dfedd"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/build.bat",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 804,
+    "before_sha256": null,
+    "after_sha256": "748bbc0de560f97ab4a44de768bd305f7fd85a07001e5f9165987cd1ceb5853f"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/build.sh",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 705,
+    "before_sha256": null,
+    "after_sha256": "f0c062de31fd0ebb60b8a66fe8421155008d3a00021e4633d444840175377e85"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/build_admin.sh",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 291,
+    "before_sha256": null,
+    "after_sha256": "3583d4a7c3ad3c0329ceb1cbac2a41d0cf14c0052e586b3f4371a1a2df3ad03f"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/kg.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 253,
+    "before_sha256": null,
+    "after_sha256": "a1ef66282aad402f4754d820568de06aa8fff8b24f2e7b59a0d7dd60aaa86448"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/license_public.xml",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 583,
+    "before_sha256": null,
+    "after_sha256": "c6c26eff2b32d7e0b9d0475021eb7b76a5dc293b97744059158ea580e1fe2f8a"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/AssemblyInfo.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 302,
+    "before_sha256": null,
+    "after_sha256": "dbb58a39378c705f7ee266e30ba716718c1600865fd74ba59160a48a6e3f58d9"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/Bot.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 41379,
+    "before_sha256": null,
+    "after_sha256": "daf155d189c1a8943a65545411ba899a7c24643c4706b00225e59071560eb74b"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/CategoryStore.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 3061,
+    "before_sha256": null,
+    "after_sha256": "09063feea9dc554d5fa446830056053afa2f4b9c93b2bb3d87826a47c555a3dd"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/DriverManager.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 8620,
+    "before_sha256": null,
+    "after_sha256": "356ff4ca174bc2954603a11fc1e198535a9afe680a2fcacb6b92c79553834efe"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/EditForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 8993,
+    "before_sha256": null,
+    "after_sha256": "a6c9c1bd143841fc09de4eea9c07a033a15fb869ffe2c263be1ed77cfee4ceb7"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/Guard.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2976,
+    "before_sha256": null,
+    "after_sha256": "c6fe4d5d7bdbd63c1abbf4e52a3d5affe041146e000fa2660431af4fd977c368"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/License.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6019,
+    "before_sha256": null,
+    "after_sha256": "a9fea88f88644bddff3a2170df59d8a75412880e4189c1fe581cc9204991a702"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/LicenseForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4693,
+    "before_sha256": null,
+    "after_sha256": "302b79348fa828d26d134cabd63ecfff2d53ba5e05c4246b707e77c21e988150"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/MainForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 27655,
+    "before_sha256": null,
+    "after_sha256": "2499a2c089a33d4e1f39f3ce09755acc53ebd1c244299740bf69ef7e5fd77b83"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/Models.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5976,
+    "before_sha256": null,
+    "after_sha256": "a34d444a85555887ad62ea7b8ec496ee7cdde91c20a336238090cbd77e3dea72"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/Program.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2919,
+    "before_sha256": null,
+    "after_sha256": "5fefd2fb9e6120b9a76fe7458cf2b2de3bca216b8f5d045c35741f4f7be11600"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/Runner.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5130,
+    "before_sha256": null,
+    "after_sha256": "267758c10ec72bdd87aacde55d6953c46be2059138b6a0dc6703a674149f9fc7"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/Selectors.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 7060,
+    "before_sha256": null,
+    "after_sha256": "3b3981cf4d37fcb19c23f7ce7ba305a055cc33b90ee83049ed125af860982d76"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/SelfTest.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4546,
+    "before_sha256": null,
+    "after_sha256": "e7fc4483a30ce4375ffb3744cc4c9a888234d86e805b3b48d1996c3ef3c7b0df"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/Storage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 9421,
+    "before_sha256": null,
+    "after_sha256": "6ea3609db44ee593517a777cb4b6174db0b69a06e54d2ff6ecea28804695feb0"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/src/Terms.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6963,
+    "before_sha256": null,
+    "after_sha256": "cbae24d168fbb5c489a08a19833f1976036b3b64454df6d4db83fb83c3edb6a0"
+  },
+  {
+    "path": "BunjangAuto_소스코드_강화/강화_안내.txt",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1632,
+    "before_sha256": null,
+    "after_sha256": "7ceaf5ed9c59e90fb0f0817b21d4b3050c259c8b9a86b3b4e348d4a4c858964d"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/1_배포용_앱/상품양식.csv",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 346,
+    "before_sha256": null,
+    "after_sha256": "bd7bf97c2f09fc99a19165295935adb7adff22b094cc524d37e11bbab3a4b144"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/2_관리자용_발급툴/issued_licenses.csv",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 45,
+    "before_sha256": null,
+    "after_sha256": "3d3b46570b5dffa8ca4a9f5fc48417aac9fd02363ab4447587d5e3b4fa312d5a"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/admin/LicenseAdmin.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6088,
+    "before_sha256": null,
+    "after_sha256": "8dac8367a639363380cf924a6dae8d1482880373b9640effa5522b77a9b4a415"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/app.ico",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 28876,
+    "before_sha256": null,
+    "after_sha256": "2c65713395d596c820f4eeca957ebf9edc2f616b78dedf725ae8192fbb6337dc"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/build.bat",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 823,
+    "before_sha256": null,
+    "after_sha256": "f598da8159409f5d401dff5f5655a6e96184ff553b90e60d6d9cbec0d58c70be"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/build.sh",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 728,
+    "before_sha256": null,
+    "after_sha256": "6455264463e3283e01a3dff8a8e5965d89372de44061959b388e1a94240c547f"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/build_admin.sh",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 276,
+    "before_sha256": null,
+    "after_sha256": "9298d426d62f689e496795f59fb6f19013440932efab1c37bcbfab4972383a89"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/kg.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 253,
+    "before_sha256": null,
+    "after_sha256": "a1ef66282aad402f4754d820568de06aa8fff8b24f2e7b59a0d7dd60aaa86448"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/license_public.xml",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 583,
+    "before_sha256": null,
+    "after_sha256": "c6c26eff2b32d7e0b9d0475021eb7b76a5dc293b97744059158ea580e1fe2f8a"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/make_icon.py",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 973,
+    "before_sha256": null,
+    "after_sha256": "2a93a68c176e41fc63add97d9bbea52b729cfba511db9092264855683c37a839"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/AssemblyInfo.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 302,
+    "before_sha256": null,
+    "after_sha256": "dbb58a39378c705f7ee266e30ba716718c1600865fd74ba59160a48a6e3f58d9"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Bot.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 41379,
+    "before_sha256": null,
+    "after_sha256": "daf155d189c1a8943a65545411ba899a7c24643c4706b00225e59071560eb74b"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/CategoryStore.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 3061,
+    "before_sha256": null,
+    "after_sha256": "09063feea9dc554d5fa446830056053afa2f4b9c93b2bb3d87826a47c555a3dd"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/DriverManager.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 8620,
+    "before_sha256": null,
+    "after_sha256": "356ff4ca174bc2954603a11fc1e198535a9afe680a2fcacb6b92c79553834efe"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/EditForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 9254,
+    "before_sha256": null,
+    "after_sha256": "e07760ba3cf09c0cd824a5a60a9eab1ef79796bf1d144e630f1f238049c0bd96"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Guard.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2115,
+    "before_sha256": null,
+    "after_sha256": "a9124d5ff8b732c17b59b04d81e82363a05db5e566aa9bf2dadc6d9a1a7e0180"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/License.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6019,
+    "before_sha256": null,
+    "after_sha256": "a9fea88f88644bddff3a2170df59d8a75412880e4189c1fe581cc9204991a702"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/LicenseForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5030,
+    "before_sha256": null,
+    "after_sha256": "fd46a35c3e96abd7eb50d5b173375dedb7e47928dd770b781be43a7e27b5665e"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/MainForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 28174,
+    "before_sha256": null,
+    "after_sha256": "e24edd742407f40aab7dadeca2395a0eac14a669f949b30d49bb338391dcc568"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Models.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5976,
+    "before_sha256": null,
+    "after_sha256": "a34d444a85555887ad62ea7b8ec496ee7cdde91c20a336238090cbd77e3dea72"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Program.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2919,
+    "before_sha256": null,
+    "after_sha256": "5fefd2fb9e6120b9a76fe7458cf2b2de3bca216b8f5d045c35741f4f7be11600"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Runner.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5130,
+    "before_sha256": null,
+    "after_sha256": "267758c10ec72bdd87aacde55d6953c46be2059138b6a0dc6703a674149f9fc7"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Selectors.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 7060,
+    "before_sha256": null,
+    "after_sha256": "3b3981cf4d37fcb19c23f7ce7ba305a055cc33b90ee83049ed125af860982d76"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/SelfTest.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4546,
+    "before_sha256": null,
+    "after_sha256": "e7fc4483a30ce4375ffb3744cc4c9a888234d86e805b3b48d1996c3ef3c7b0df"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Storage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 9421,
+    "before_sha256": null,
+    "after_sha256": "6ea3609db44ee593517a777cb4b6174db0b69a06e54d2ff6ecea28804695feb0"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Terms.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 7004,
+    "before_sha256": null,
+    "after_sha256": "775bddbdf5ed06bd9943504ff17e66ffafdf9c7948b6ea6fb735953075b28050"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Theme.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 14512,
+    "before_sha256": null,
+    "after_sha256": "9d715a886e988317e0040d8d04f170d3be86e88d13b412f68a2eba13cf66ba23"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/README.txt",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1618,
+    "before_sha256": null,
+    "after_sha256": "b539c394d271c04f3d48e1dce5986f52b9f2ae5b6bcdec8754e8a497baf4e809"
+  },
+  {
+    "path": "README.md",
+    "status": "이전만 존재",
+    "before_bytes": 177,
+    "after_bytes": null,
+    "before_sha256": "c3a5b8a61052538f18de2be83df41f9d52ab77f0340880b3c402aba44cd53a31",
+    "after_sha256": null
+  },
+  {
+    "path": "압축원본소스/BunjangAuto_전체파일/3_소스코드/src/MainForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 27656,
+    "before_sha256": null,
+    "after_sha256": "958aeb266eb5cd73208159bd365d3b76303a7389a7922392d9799f7e639f4543"
+  }
+]

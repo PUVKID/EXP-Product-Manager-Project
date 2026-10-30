@@ -1,0 +1,23 @@
+PASS missing photo fails
+PASS corrupt photo fails
+PASS valid photo passes
+PASS empty products are skipped
+PASS edit does not mutate until save Light
+PASS cancel preserves original Light
+PASS save preserves details and images Light
+PASS no log or admin navigation Light
+PASS one full-width recent activity Light
+PASS settings contains no telemetry/admin/log controls Light
+PASS diagnostics complete Light
+PASS real pass and missing-license failure visible Light
+PASS edit does not mutate until save Dark
+PASS cancel preserves original Dark
+PASS save preserves details and images Dark
+PASS no log or admin navigation Dark
+PASS one full-width recent activity Dark
+PASS settings contains no telemetry/admin/log controls Dark
+PASS diagnostics complete Dark
+PASS real pass and missing-license failure visible Dark
+PASS no telemetry transmitter types
+PASS help has no removed feature instructions
+REVISION: 22 passed, 0 failed

@@ -1,0 +1,10 @@
+{
+  "selection_reason": "동일구현에다른실패지점이관측되어deep xhigh 재개와별도verifier read-only교차분석으로제품/테스트원인을분리",
+  "effort": "xhigh",
+  "new_observation": "verifier diagnostic-basic-suite20-result.json exit1 77PASS5FAIL source6파일hash불변,9.266초",
+  "failure_evidence": "evidence/diagnostic-basic-suite20-result.json",
+  "role": "deep",
+  "cause": "독립기본suite에서지속회차2/3/4및횟수제한없음/다음인증해제중단5항목실패,65는통과해간헐상태전이불일치",
+  "model": "gpt-6.1-sol",
+  "method": "실제Controller/Runner완료콜백과테스트Until기다림의순서를대조하고각실패에상태/시도/Notice/BlockedReason/원장관측추가. 원인확정후제품또는fixture최소수리,기준유지"
+}

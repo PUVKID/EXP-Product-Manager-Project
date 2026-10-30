@@ -1,0 +1,3 @@
+ProductsReadable=0
+PASS old issuer license rejected by new release
+PASS Master window icon matches customer application icon

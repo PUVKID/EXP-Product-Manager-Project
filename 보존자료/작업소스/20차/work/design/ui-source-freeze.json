@@ -1,0 +1,120 @@
+{
+  "time_kst": "2026-10-26T15:51:03.630906+09:00",
+  "files": [
+    {
+      "file": "resources\\app.ico",
+      "sha256": "2850cd8d8e58030097ed05859fa9d24ef6bae32237b006d771d27b5d8e4cbc82",
+      "bytes": 32070,
+      "previous_sha256": "dd0c9dc044785b80a369508c588922e011ffa4c1d00aaf669a4a644ca3cb543a"
+    },
+    {
+      "file": "resources\\app.png",
+      "sha256": "0eef3d7ab79d6ade931a765fff072a9789914407121c7df17eeacc89b762e2fe",
+      "bytes": 33915,
+      "previous_sha256": "ad0a70bbfdc6ef7a81415b0fe3994e509e32c3c19cdb53de7f42e2dd8dd2c4d8"
+    },
+    {
+      "file": "src\\Brand.cs",
+      "sha256": "a38c5414d28b78bac1fd688ec6cb0b74f43ba5132d09cb36a6a12191d2c8629d",
+      "bytes": 333,
+      "previous_sha256": "e6a594963f75d7c1a9f0a60a0626aa9430e02b2b7562f8acddd3eb50dc0da9b6"
+    },
+    {
+      "file": "src\\Design.cs",
+      "sha256": "550626c09a990e6fce9a19d20d6628d6910343a68f7fc9bf8ad14dfeec1af900",
+      "bytes": 34472,
+      "previous_sha256": "da7df45c3103d74de03a9ce83825748c8578d59acc53cd56e19ce155bd1c11e7"
+    },
+    {
+      "file": "src\\MainForm.cs",
+      "sha256": "e8eb3528ee1ce80bb8b903a9e4233cc152607f031c6323648ebe715031263300",
+      "bytes": 13682,
+      "previous_sha256": "fe9ee42832a2df6de5fb396cf5ca12bb8e3a16c436c0e718e5aec70a0fdf4659"
+    },
+    {
+      "file": "tests\\RedesignUiTests.cs",
+      "sha256": "32b4b4524c6f0975128674ae7abc836fba96c6696a44bf924f5d092896a3c1de",
+      "bytes": 15167,
+      "previous_sha256": "cbb14b436642cef26225d5fc2e07017850ab4ea4e1b27b4c276b97aad8344c67"
+    },
+    {
+      "file": "tests\\RepeatDesignUiTests.cs",
+      "sha256": "81c8ba57d90b108be18a16c1dc2d2e8616c3fca7be61d97521a150fa4a54a830",
+      "bytes": 8524,
+      "previous_sha256": null
+    },
+    {
+      "file": "src\\UI\\AutomationController.cs",
+      "sha256": "d7ee2003bcb21345b9104b62f4f67c6037f1c4fd17a97935dde92306a8ef3c88",
+      "bytes": 16016,
+      "previous_sha256": "bb5c3ac93355ff1c4af6ae99dbdf67a74fed3107658cdc90183067384f82232a"
+    },
+    {
+      "file": "src\\UI\\Controls.cs",
+      "sha256": "66a6e323e764c8901c3210d85c7ef76c80d4609861a53e38999cec530cfb9234",
+      "bytes": 27781,
+      "previous_sha256": "ce242f7c539ce4632f4eaae2b6d00571fb910dbadacd023e60a5587fccfb4aa3"
+    },
+    {
+      "file": "src\\UI\\UiKit.cs",
+      "sha256": "d0cf8645c164ea571f52d543009a423418300c4988c8c671f916469c49501dc3",
+      "bytes": 9375,
+      "previous_sha256": "14f527a44840fe3bf7aaa010575eca68766a28e862879d04e738d4524de60683"
+    },
+    {
+      "file": "src\\UI\\Pages\\AutomationPage.cs",
+      "sha256": "1bcec3a3343b209853416c51b3fac2af1b26854189489c323701b08b64b4e0e2",
+      "bytes": 9540,
+      "previous_sha256": "80adc32cebcc2628ff0ec44639d8428f9ec1503dcb947058e752120fd17e3818"
+    },
+    {
+      "file": "src\\UI\\Pages\\DashboardPage.cs",
+      "sha256": "6ded1369dbed32b2ae45516429a95a1c1cd55ef24df70a0daa3bc7ed0183470f",
+      "bytes": 10871,
+      "previous_sha256": "d3bea3684ddf4a8deccc9f96253e935d26b9bf7cd43dd1c7cc5372102d00a018"
+    },
+    {
+      "file": "src\\UI\\Pages\\SchedulePage.cs",
+      "sha256": "2bff75e2868f2f33e7ba51624d97142ee2debc70f581af9c7586698272bedd99",
+      "bytes": 9382,
+      "previous_sha256": "7604cc8b5e7040efc24e830c19cb391b6c847d8eca0ffd5ab9a7f6d7a1c9aa33"
+    },
+    {
+      "file": "resources\\brand\\exp-prism-sheet.png",
+      "sha256": "a2be32b6e2908ab9642366b94d48e8ca1298f962d7066b8810e32c0f8103eafd",
+      "bytes": 153710,
+      "previous_sha256": null
+    },
+    {
+      "file": "resources\\brand\\exp-prism-source.glb",
+      "sha256": "f684b3b53283ab5784e963b28334542cbb5e4a78f1d62019268082c5cf495fd6",
+      "bytes": 7500,
+      "previous_sha256": null
+    },
+    {
+      "file": "resources\\brand\\exp-prism-still.png",
+      "sha256": "c3e678457a898841fe79451874c4896a58e78ba375ff99e531fc02c4e3c303d4",
+      "bytes": 20661,
+      "previous_sha256": null
+    },
+    {
+      "file": "resources\\brand\\LICENSE.txt",
+      "sha256": "42be68726997926a308181bf4ae57569978941aff525fff7d7bb42c69b12dd09",
+      "bytes": 181,
+      "previous_sha256": null
+    },
+    {
+      "file": "resources\\brand\\manifest.json",
+      "sha256": "84a6f3733d4487fe6bc88332bd4476ae298a0443704a934943b528f942684c8a",
+      "bytes": 952,
+      "previous_sha256": null
+    },
+    {
+      "file": "resources\\help\\06-guide.md",
+      "sha256": "db04485ed7eadd4b6882d3ae442f1abb378a85d2ee56cce002404f09f08af839",
+      "bytes": 2251,
+      "previous_sha256": "4c885f6d06152ea72e2224e5a2f3f57b524afe9a9e2f7bf46d8e41eda9263e50"
+    }
+  ],
+  "note": "빌드 전 구현자 소스 동결. 독립 검증 아님."
+}

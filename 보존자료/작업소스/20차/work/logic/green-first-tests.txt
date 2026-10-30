@@ -1,0 +1,64 @@
+PASS 60분은 시작 시각 15:02 기준
+PASS 매시 0분
+PASS 매시 20분
+PASS 지정분에 끝나면 다음 미래 시간
+PASS 느린 회차의 지난 간격 건너뜀
+PASS 간격 경계와 같아도 미래 슬롯
+PASS 날짜 경계 간격
+PASS 날짜 경계 지정분
+PASS 1440분 간격
+PASS 회차 종료 응답
+PASS 0개 전체 목록 첫 회차 기존 상품 포함
+PASS 0개 회차 상태
+PASS 회차 종료 응답
+PASS 31개 전체 목록 첫 회차 기존 상품 포함
+PASS 31개 회차 상태
+PASS 회차 종료 응답
+PASS 65개 전체 목록 첫 회차 기존 상품 포함
+PASS 65개 회차 상태
+PASS 회차 종료 응답
+PASS 유효하지 않은 상품 제외
+PASS 설정 변경에도 시작 설정으로 전체 회차
+PASS 설정 동결의 다음 60분 슬롯
+PASS 회차 종료 응답
+PASS Controller 지정분 연결
+PASS 대기 중 일시정지로 회차 방지
+PASS 일시정지 후 지연 회차 한 번만
+PASS 지연 회차 후 몰아 실행 금지
+PASS 예약 중지 후 재시작 없음
+PASS 회차 종료 응답
+PASS 서버 시각 오래되면 예약 게시 금지
+PASS 시각 복구 후 한 회차
+PASS 시각 복구 뒤 미래 슬롯
+PASS 시각 미확인 시작 차단
+PASS 잘못된 간격 0 차단
+PASS 잘못된 간격 1441 차단
+PASS 잘못된 지정분 -1 차단
+PASS 잘못된 지정분 60 차단
+PASS Classic은 첫 전체 회차부터 실제 RequireMode 차단
+PASS 회차 종료 응답
+PASS 실제 Pro 한도 소진 후 회차와 예약 중단
+PASS 회차 종료 응답
+PASS 로그인 실패도 종료 응답
+PASS 로그인 실패에 낡은 시도 재집계 없음
+PASS 회차 종료 응답
+PASS 일부 실패에도 남은 상품 시도
+PASS 실패 회차 뒤 무한 반복 차단
+PASS 진행 중 진입
+PASS 중복 Start가 새 Runner/집계 초기화 안 함
+PASS 실행 중 일시정지
+PASS 일시정지 중 중지 반응
+PASS 중지 후 남은 상품 게시 없음
+PASS 회차 종료 응답
+PASS 느린 실제 회차 뒤 다음 미래 슬롯
+PASS 회차 종료 응답
+PASS 레거시 일괄 1회 종료
+PASS 회차 종료 응답
+PASS 레거시 일괄 최대30 보존
+PASS 회차 종료 응답
+PASS 레거시 다음 상품 0
+PASS 레거시 다음 상품 1
+PASS 레거시 다음 상품 2
+PASS 레거시 횟수 반복 완료
+PASS 레거시 시간대 대기 보존
+BATCH: 63 passed, 0 failed

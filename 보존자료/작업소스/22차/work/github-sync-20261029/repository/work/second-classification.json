@@ -1,0 +1,1225 @@
+{
+  "copied": [
+    {
+      "target": "2차/BunjangAuto_소스코드_강화/강화_안내.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/01-start.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/02-license.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/03-login.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/04-add.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/05-csv.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/06-data.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/07-images.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/08-auto.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/09-onebyone.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/10-repeat.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/11-timerules.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/12-schedule.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/13-logs.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/14-errors.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/15-chrome.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/16-loginfix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/17-licensefix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/18-theme.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/19-settings.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/resources/help/20-faq.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/01-start.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/02-license.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/03-login.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/04-add.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/05-csv.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/06-data.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/07-images.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/08-auto.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/09-onebyone.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/10-repeat.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/11-timerules.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/12-schedule.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/13-logs.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/14-errors.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/15-chrome.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/16-loginfix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/17-licensefix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/18-theme.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/19-settings.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/resources/help/20-faq.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/01-start.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/02-license.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/03-login.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/04-add.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/05-csv.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/06-data.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/07-images.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/08-auto.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/09-onebyone.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/10-repeat.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/11-timerules.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/12-schedule.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/13-logs.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/14-errors.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/15-chrome.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/16-loginfix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/17-licensefix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/18-theme.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/19-settings.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "8차/Lumivolt_v2.1.0/3_소스코드/resources/help/20-faq.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/01-start.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/02-license.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/03-login.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/04-add.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/05-csv.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/06-data.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/07-images.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/08-auto.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/09-onebyone.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/10-repeat.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/11-timerules.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/12-schedule.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/13-logs.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/14-errors.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/15-chrome.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/16-loginfix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/17-licensefix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/18-theme.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/19-settings.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "9차/EXP_v2.2.0/3_소스코드/resources/help/20-faq.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/EXP_v2.2.2/3_소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/01-start.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/02-license.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/03-login.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/04-add.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/05-csv.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/06-data.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/07-images.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/08-auto.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/09-onebyone.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/10-repeat.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/11-timerules.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/12-schedule.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/13-logs.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/14-errors.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/15-chrome.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/16-loginfix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/17-licensefix.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/18-theme.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/19-settings.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "11차/이전버전_2.2.1/EXP_v2.2.1/3_소스코드/resources/help/20-faq.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "12차/EXP_v2.2.2/3_소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "13차/EXP_v2.2.3/3_소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "14차/EXP_v2.2.4/3_소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "15차/EXP_v2.2.6/3_소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "16차/EXP_v2.2.7/3_소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "17차/EXP_v2.2.8/3_소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "18차/소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "19차/소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/licenses/BouncyCastle-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/licenses/Inno-Setup-LICENSE.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/app.manifest",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/tests/WINDOWS_CHECKLIST.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/brand/manifest.json",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/fonts/NanumGothic-OFL.txt",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/01-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/02-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/03-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/04-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/05-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/06-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/07-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/08-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/09-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/10-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/11-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "20차/소스코드/resources/help/12-guide.md",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "22차/소스코드/installer/Lumivolt.iss",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "22차/소스코드/resources/brand/manifest.json",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "22차/tools/package_release.py",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "22차/tools/verify_scope.py",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    },
+    {
+      "target": "22차/tools/logic-baseline19.json",
+      "reason": "공개 가능한 제품 텍스트 또는 검증 도구"
+    }
+  ],
+  "excluded": [
+    {
+      "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\2차\\BunjangAuto_소스코드_강화\\license_private.xml",
+      "target": "2차/BunjangAuto_소스코드_강화/license_private.xml",
+      "reason": "개인키 XML"
+    },
+    {
+      "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\2차\\BunjangAuto_전체파일_업데이트\\3_소스코드\\license_private.xml",
+      "target": "2차/BunjangAuto_전체파일_업데이트/3_소스코드/license_private.xml",
+      "reason": "개인키 XML"
+    },
+    {
+      "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\3차\\3_소스코드\\license_private.xml",
+      "target": "3차/3_소스코드/license_private.xml",
+      "reason": "개인키 XML"
+    },
+    {
+      "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\4차\\BunjangAuto_전체파일_업데이트\\3_소스코드\\license_private.xml",
+      "target": "4차/BunjangAuto_전체파일_업데이트/3_소스코드/license_private.xml",
+      "reason": "개인키 XML"
+    },
+    {
+      "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\5차\\BunjangAuto_전체파일_업데이트\\3_소스코드\\license_private.xml",
+      "target": "5차/BunjangAuto_전체파일_업데이트/3_소스코드/license_private.xml",
+      "reason": "개인키 XML"
+    },
+    {
+      "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\6차\\BunjangAuto_v2.0.0\\3_소스코드\\license_private.xml",
+      "target": "6차/BunjangAuto_v2.0.0/3_소스코드/license_private.xml",
+      "reason": "개인키 XML"
+    },
+    {
+      "source": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\7차\\Lumivolt_v2.0.0\\3_소스코드\\license_private.xml",
+      "target": "7차/Lumivolt_v2.0.0/3_소스코드/license_private.xml",
+      "reason": "개인키 XML"
+    }
+  ]
+}

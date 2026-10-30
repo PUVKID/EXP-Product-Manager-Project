@@ -1,0 +1,4 @@
+﻿1-home  URL=https://m.bunjang.co.kr/  TITLE=번개장터
+2-newproduct  URL=https://m.bunjang.co.kr/products/new  TITLE=번개장터
+3-myproducts  URL=https://m.bunjang.co.kr/shops/85332087/products  TITLE=번개장터
+4-productdetail  URL=https://m.bunjang.co.kr/products/manage?tab=ALL&size=10&page=0  TITLE=번개장터

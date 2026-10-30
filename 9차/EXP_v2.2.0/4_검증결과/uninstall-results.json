@@ -1,0 +1,18 @@
+[
+  {
+    "File": "usage.v1",
+    "Preserved": true
+  },
+  {
+    "File": "products.json",
+    "Preserved": true
+  },
+  {
+    "File": "settings.json",
+    "Preserved": true
+  },
+  {
+    "File": "license.key",
+    "Preserved": true
+  }
+]

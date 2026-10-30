@@ -1,0 +1,496 @@
+--- 15차/admin/AssemblyInfo.cs
++++ 16차/admin/AssemblyInfo.cs
+@@ -2,8 +2,8 @@
+ [assembly: AssemblyTitle("EXP Master")]
+ [assembly: AssemblyProduct("EXP Master")]
+ [assembly: AssemblyDescription("EXP 오프라인 라이선스 및 추가 등록권 발급")]
+-[assembly: AssemblyVersion("2.2.6.0")]
+-[assembly: AssemblyFileVersion("2.2.6.0")]
++[assembly: AssemblyVersion("2.2.7.0")]
++[assembly: AssemblyFileVersion("2.2.7.0")]
+ 
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+--- 15차/admin/IssuerService.cs
++++ 16차/admin/IssuerService.cs
+@@ -16,10 +16,17 @@
+     public static class IssuerService
+     {
+         static readonly byte[] Entropy = LicenseProtocol.Utf8.GetBytes("Lumivolt.Admin.Ed25519.v3");
++        static string VaultRegistry { get {
++#if TESTBUILD
++ return @"Software\EXP\TestIssuer\"+System.Diagnostics.Process.GetCurrentProcess().Id;
++#else
++ return @"Software\Lumivolt\Issuer";
++#endif
++} }
+         public static string LastVault
+         {
+-            get { using (var k = Registry.CurrentUser.OpenSubKey(@"Software\Lumivolt\Issuer")) return k == null ? "" : Convert.ToString(k.GetValue("Vault", "")); }
+-            set { using (var k = Registry.CurrentUser.CreateSubKey(@"Software\Lumivolt\Issuer")) k.SetValue("Vault", value); }
++            get { using (var k = Registry.CurrentUser.OpenSubKey(VaultRegistry)) return k == null ? "" : Convert.ToString(k.GetValue("Vault", "")); }
++            set { using (var k = Registry.CurrentUser.CreateSubKey(VaultRegistry)) k.SetValue("Vault", value); }
+         }
+         public static void SecureDirectory(string path)
+         {
+--- 15차/build/Build.ps1
++++ 16차/build/Build.ps1
+@@ -1,4 +1,4 @@
+-param([ValidateSet('All','App','Admin','Tests')][string]$Target = 'All', [string]$PublicKeyFile)
++param([ValidateSet('All','App','Admin','Tests','Reset')][string]$Target = 'All', [string]$PublicKeyFile)
+ $ErrorActionPreference = 'Stop'
+ $root = Split-Path $PSScriptRoot -Parent
+ Set-Location -LiteralPath $root
+@@ -39,14 +39,20 @@
+     Compile 'EXP' ($app + $shared) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $true
+ }
+ if ($Target -eq 'Tests') {
++    Compile 'FreshInstallTests' ($app + $shared + @('admin\IssuerService.cs','tests\FreshInstallTests.cs')) @('/target:exe','/define:TESTBUILD','/main:FreshInstallTests') $true
++    Compile 'ResetTests' ($app + $shared + @('admin\IssuerService.cs','tools\ResetProgram.cs','tests\ResetTests.cs')) @('/target:exe','/define:TESTBUILD','/main:ResetTests') $true
+     Compile 'SurfaceUiTests' ($app + $shared + @('tests\SurfaceUiTests.cs')) @('/target:exe','/define:TESTBUILD','/main:SurfaceUiTests') $true
+     Compile 'UsageRecoveryTests' ($app + $shared + @('tests\UsageRecoveryTests.cs')) @('/target:exe','/define:TESTBUILD','/main:UsageRecoveryTests') $true
+     Compile 'RevisionUi' ($app + $shared + @('tests\RevisionUi.cs')) @('/target:exe','/define:TESTBUILD','/main:RevisionUi') $true
+     Compile 'ReleaseTests' ($app + $shared + @('admin\IssuerService.cs','admin\AdminWorkflow.cs','admin\CreditIssuer.cs','admin\TrialIssuer.cs','tests\ReleaseTests.cs')) @('/target:exe','/define:TESTBUILD','/main:ReleaseTests') $true
+-    Compile 'SecurityTests' ($shared + @('tests\SecurityTests.cs','src\Security\TpmDevice.cs','admin\IssuerService.cs')) @('/target:exe') $false
++    Compile 'SecurityTests' ($shared + @('tests\SecurityTests.cs','src\Security\TpmDevice.cs','admin\IssuerService.cs')) @('/target:exe','/define:TESTBUILD') $false
+     Compile 'RegressionTests' ($app + $shared) @('/target:exe','/define:TESTBUILD') $true
+     Compile 'UiSmoke' ($app + $shared + @('tests\UiSmoke.cs')) @('/target:exe','/define:TESTBUILD','/main:UiSmoke') $true
+     Compile 'GateIntegration' ($app + $shared + @('tests\GateIntegration.cs')) @('/target:exe','/define:TESTBUILD','/main:GateIntegration') $true
+     Compile 'AdminUiSmoke' ($shared + @('admin\LicenseAdmin.cs','admin\AssemblyInfo.cs','admin\IssuerService.cs','src\Theme.cs','src\Brand.cs','src\Design.cs','src\Security\TrustedKeys.cs','admin\AdminWorkflow.cs','admin\CreditIssuer.cs','admin\TrialIssuer.cs','tests\AdminUiSmoke.cs')) @('/target:exe','/main:AdminUiSmoke') $false
+ }
+ Write-Host "Build completed: $Target -> $dist"
++
++
++
++if ($Target -eq 'Reset') { Compile 'EXP-Reset' (@($app | Where-Object { [IO.Path]::GetFileName($_) -ne 'AssemblyInfo.cs' }) + $shared + @('admin\IssuerService.cs','tools\ResetProgram.cs','tools\ResetAssemblyInfo.cs')) @('/target:winexe','/main:ExpResetTool.ResetProgram','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $true }
+--- 15차/installer/EXP.iss
++++ 16차/installer/EXP.iss
+@@ -1,4 +1,4 @@
+-#define AppVersion "2.2.6"
++#define AppVersion "2.2.7"
+ [Setup]
+ AppId={{BBD63563-5422-4DA7-93C6-2F0D98E87E3F}
+ AppName={code:ProductName}
+@@ -21,7 +21,7 @@
+ CloseApplications=no
+ RestartApplications=no
+ AppMutex=BunjangAuto_SingleInstance
+-VersionInfoVersion=2.2.6.0
++VersionInfoVersion=2.2.7.0
+ VersionInfoCompany=EXPMASTER
+ VersionInfoDescription=EXP 통합 설치 프로그램
+ VersionInfoProductName=EXP
+--- 15차/resources/help/07-guide.md
++++ 16차/resources/help/07-guide.md
+@@ -5,6 +5,6 @@
+ - Studio: 하루 50개, 반복 등록과 시간대 예약.
+ - Pro: 하루 100개, 반복 등록과 시간대 예약, 추가 등록권 충전.
+ ## 한도 초기화
+-기본 한도는 한국시간 자정마다 초기화됩니다. 쓰지 않은 기본 한도는 다음 날에 누적되지 않습니다. 같은 기기에서 계정을 바꿔도 사용량을 합산하며 앱이 기록한 계정별 등록은 하루 50개까지입니다.
++기본 한도는 한국시간 자정마다 초기화됩니다. 쓰지 않은 기본 한도는 다음 날에 누적되지 않습니다. 같은 기기에서 계정을 바꿔도 EXP의 하루 사용량은 합산됩니다. 번개장터 계정별 등록 제한은 번개장터에서 적용합니다.
+ ## Pro 추가 등록권
+-구매 문의는 contact@example.invalid으로 보내 주세요. 받은 키를 라이선스의 Pro 추가 등록권에 입력하고 충전을 누릅니다. 기본 100회를 먼저 사용하며 남은 추가 등록권은 이월됩니다. 추가 등록권도 계정별 50회 제한을 늘리지 않습니다.
++구매 문의는 contact@example.invalid으로 보내 주세요. 받은 키를 라이선스의 Pro 추가 등록권에 입력하고 충전을 누릅니다. 기본 100회를 먼저 사용하며 남은 추가 등록권은 이월됩니다. 추가 등록권은 EXP의 등록 한도를 늘리며 번개장터 자체 제한을 변경하지 않습니다.
+--- 15차/src/AssemblyInfo.cs
++++ 16차/src/AssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyProduct("EXP")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+-[assembly: AssemblyVersion("2.2.6.0")]
+-[assembly: AssemblyFileVersion("2.2.6.0")]
+-[assembly: AssemblyInformationalVersion("2.2.6")]
++[assembly: AssemblyVersion("2.2.7.0")]
++[assembly: AssemblyFileVersion("2.2.7.0")]
++[assembly: AssemblyInformationalVersion("2.2.7")]
+--- 15차/src/Bot.cs
++++ 16차/src/Bot.cs
+@@ -280,23 +280,8 @@
+         }
+ 
+         // =============== 상품 등록 ===============
+-        private string CurrentShopId()
+-        {
+-            // Only the authenticated navigation's own-shop link, never an arbitrary seller
+-            // on the page, a user-supplied account label, or a session-token fingerprint.
+-            var ids = new HashSet<string>();
+-            foreach (var link in _driver.FindElements(By.XPath("//a[contains(@href,'/shop/') and (contains(translate(normalize-space(.),' ',''),'내상점') or contains(@aria-label,'내 상점'))]")))
+-            {
+-                if (!link.Displayed) continue;
+-                Uri url; if (!Uri.TryCreate(link.GetAttribute("href"), UriKind.Absolute, out url)) continue;
+-                if (url.Host != "m.bunjang.co.kr" && url.Host != "bunjang.co.kr" && url.Host != "www.bunjang.co.kr") continue;
+-                var match = Regex.Match(url.AbsolutePath, @"^/shop/(\d{1,20})(/|$)");
+-                if (match.Success) ids.Add(match.Groups[1].Value);
+-            }
+-            if (ids.Count != 1) throw new InvalidOperationException("내 상점 정보를 확인할 수 없습니다. 번개장터 로그인 상태를 확인해 주세요. 계속되면 관리자에게 문의해 주세요.");
+-            return ids.First();
+-        }
+-
++
++
+         public bool Register(Product p)
+         {
+             Start();
+@@ -311,6 +296,9 @@
+                 // 사이트가 맨 위 검색창에 포커스를 줘서 검색 팝업이 열려 있을 수 있으니 포커스를 해제한다
+                 try { ((IJavaScriptExecutor)_driver).ExecuteScript("if(document.activeElement)document.activeElement.blur();"); } catch { }
+ 
++                if (!WaitLoggedIn(5))
++                    throw new RegistrationBlockedException("번개장터 로그인이 필요합니다. 크롬 창에서 로그인한 뒤 다시 시작해 주세요.");
++
+                 // 사진 (번개장터는 jpg/png 만 허용, 최대 12장)
+                 var files = (p.Images ?? "").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                     .Select(x => x.Trim()).Where(x => x.Length > 0).Take(12).ToList();
+@@ -373,7 +361,13 @@
+ 
+                 var submit = Require(_sel.SubmitXPath, "등록하기 버튼");
+                 CheckStop();
+-                try { UsageQuota.RequireMode(_cfg, false); UsageQuota.Consume(CurrentShopId()); }
++                try
++                {
++                    UsageQuota.RequireMode(_cfg, false);
++                    // No shop lookup or account binding: EXP enforces the device total only.
++                    if (!IsLoggedIn()) throw new InvalidOperationException("번개장터 로그인이 만료되었습니다. 다시 로그인해 주세요.");
++                    UsageQuota.Consume();
++                }
+                 catch (Exception blocked) { throw new RegistrationBlockedException(blocked.Message); }
+                 Click(submit);
+                 TryClick(_sel.DialogConfirmXPath, 2);   // 확인 팝업이 뜨면 누름
+--- 15차/src/Brand.cs
++++ 16차/src/Brand.cs
+@@ -4,7 +4,7 @@
+     {
+         public const string Name = "EXP";
+         public const string Master = "EXP Master";
+-        public const string Version = "2.2.6";
++        public const string Version = "2.2.7";
+         public static string Email
+         {
+             get
+--- 15차/src/Security/TpmDevice.cs
++++ 16차/src/Security/TpmDevice.cs
+@@ -7,7 +7,11 @@
+ {
+     public static class TpmDevice
+     {
+-        public const string KeyName = "Lumivolt.Device.v3";
++        #if TESTBUILD
++        public static readonly string KeyName = "EXP.DistributionTest.Device."+System.Diagnostics.Process.GetCurrentProcess().Id;
++#else
++        public const string KeyName = "Lumivolt.Device.v3";
++#endif
+         static readonly CngProvider Provider = new CngProvider("Microsoft Platform Crypto Provider");
+         static readonly object Gate = new object();
+         internal static CngKey Open(bool create)
+--- 15차/src/Security/UsageQuota.cs
++++ 16차/src/Security/UsageQuota.cs
+@@ -113,17 +113,15 @@
+                 if(first==li.LicenseId)return true; s["trialId"]=li.LicenseId; Write(s); return true;
+             });
+         }
+-        public static void Consume(string shopId) {
++        public static void Consume() {
+             ServerClock.RequireFresh();
+-            var li=RequireLicense(); Locked(()=>{ var s=Read(li.MachineId,ServerClock.UtcNow); ApplyConsume(s,li.Edition,shopId); s["lastUtc"]=LicenseProtocol.Utc(ServerClock.UtcNow); Write(s); return true; });
++            var li=RequireLicense(); Locked(()=>{ var s=Read(li.MachineId,ServerClock.UtcNow); ApplyConsume(s,li.Edition); s["lastUtc"]=LicenseProtocol.Utc(ServerClock.UtcNow); Write(s); return true; });
+         }
+-        internal static void ApplyConsume(JObject state,string edition,string shopId) {
+-            if(String.IsNullOrWhiteSpace(shopId) || !System.Text.RegularExpressions.Regex.IsMatch(shopId,@"^\d{1,20}$")) throw new InvalidOperationException("현재 로그인한 내 상점을 확인할 수 없어 등록을 중단했습니다.");
+-            var accounts=(JObject)state["accounts"]; string account=LicenseProtocol.Fingerprint(LicenseProtocol.Utf8.GetBytes(shopId)); int used=accounts[account]==null?0:(int)accounts[account];
+-            if(used>=50) throw new InvalidOperationException("이 계정의 오늘 등록 한도 50개를 모두 사용했습니다.");
++        internal static void ApplyConsume(JObject state,string edition) {
++            // Legacy account counters remain readable; only the device total is charged.
+             int total=(int)state["used"], cap=EditionPolicy.DailyLimit(edition);
+             if(total>=cap) { if(edition!="Pro" || (long)state["credits"]<=0) throw new InvalidOperationException("오늘 EXP 등록 한도를 모두 사용했습니다. 추가 등록 문의: "+Brand.Email); state["credits"]=(long)state["credits"]-1; }
+-            state["used"]=checked(total+1); accounts[account]=used+1;
++            state["used"]=checked(total+1);
+         }
+         public static string Summary() {
+             var li=LicenseGate.LastInfo; if(li==null || !li.Valid) return "라이선스 인증 후 사용량이 표시됩니다.";
+--- 15차/tests/FreshInstallTests.cs
++++ 16차/tests/FreshInstallTests.cs
+@@ -0,0 +1,13 @@
++using System;using System.IO;using System.Reflection;using System.Security.Cryptography;using Microsoft.Win32;using BunjangAuto;using Lumivolt.Admin;using Lumivolt.Security;
++class FreshInstallTests {
++ static int good,bad;static void Check(string n,bool b){Console.WriteLine((b?"PASS ":"FAIL ")+n);if(b)good++;else bad++;}
++ [STAThread]static void Main(){AppDomain.CurrentDomain.AssemblyResolve+=delegate(object s,ResolveEventArgs e){using(var x=Assembly.GetExecutingAssembly().GetManifestResourceStream("lib."+new AssemblyName(e.Name).Name+".dll")){if(x==null)return null;using(var m=new MemoryStream()){x.CopyTo(m);return Assembly.Load(m.ToArray());}}};Environment.ExitCode=Run();}
++ [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]static int Run(){int pid=System.Diagnostics.Process.GetCurrentProcess().Id;string dir=Paths.Root+"-issuer";try{
++ Check("fresh product profile",!Directory.Exists(Paths.Root));using(var k=Registry.CurrentUser.OpenSubKey(@"Software\EXP\Tests\"+pid))Check("fresh usage registry",k==null);
++ IssuerService.Create(dir);var pub=IssuerService.Load(dir).GeneratePublicKey().GetEncoded();TrustedKeys.All.Add(LicenseProtocol.KeyId(pub),pub);string req=TpmDevice.CreateRequest(),message;
++ foreach(string edition in new[]{"Classic","Studio","Pro"}){string key=IssuerService.Issue(dir,req,"PUVKID",DateTime.UtcNow.AddDays(1),edition);Check("activate PUVKID "+edition,LicenseGate.TryActivate(key,out message));Check("recheck "+edition,LicenseGate.Recheck());UsageQuota.EnsureReady();Check("usage after activation "+edition,UsageQuota.Summary().Contains("오늘 0 / "+EditionPolicy.DailyLimit(edition)));}
++ var method=typeof(BunjangAuto.Program).GetMethod("SetupActivation",BindingFlags.NonPublic|BindingFlags.Static);for(int i=0;i<2;i++)Check("actual setup gate "+i,(int)method.Invoke(null,new object[]{true})==30);
++ Check("renew same name",LicenseGate.TryActivate(IssuerService.Issue(dir,req,"PUVKID",DateTime.UtcNow.AddDays(2),"Pro"),out message));UsageQuota.EnsureReady();Check("renewal does not change usage",UsageQuota.Summary().Contains("오늘 0 / 100"));
++ }catch(Exception e){Console.WriteLine(e);bad++;}finally{foreach(var item in new[]{Tuple.Create(TpmDevice.KeyName,new CngProvider("Microsoft Platform Crypto Provider")),Tuple.Create("EXP.Usage.Test."+pid,CngProvider.MicrosoftSoftwareKeyStorageProvider)})if(CngKey.Exists(item.Item1,item.Item2))using(var k=CngKey.Open(item.Item1,item.Item2))k.Delete();Registry.CurrentUser.DeleteSubKeyTree(@"Software\EXP\Tests\"+pid,false);Registry.CurrentUser.DeleteSubKeyTree(@"Software\EXP\TestIssuer\"+pid,false);}
++ Console.WriteLine("FRESH: "+good+" passed, "+bad+" failed");return bad==0?0:1;}
++}--- 15차/tests/ReleaseTests.cs
++++ 16차/tests/ReleaseTests.cs
+@@ -41,13 +41,21 @@
+             trialData["expiresUtc"]=LicenseProtocol.Utc(expiry);trialData["licenseId"]=Guid.NewGuid().ToString("D");
+             Check("second validly signed trial blocked on client",!LicenseGate.TryActivate(Sign(dir,trialData,"LV4"),out message));
+             Check("regular Pro upgrade",LicenseGate.TryActivate(AdminWorkflow.Issue(dir,req,"",DateTime.UtcNow.AddDays(1),"Pro"),out message));
+-            var state=State();for(int i=0;i<25;i++)UsageQuota.ApplyConsume(state,"Classic",i%2==0?"1":"2");Reject("Classic 25 across switched accounts",()=>UsageQuota.ApplyConsume(state,"Classic","3"));
+-            state=State();for(int i=0;i<50;i++)UsageQuota.ApplyConsume(state,"Studio",i%2==0?"1":"2");Reject("Studio 50 across accounts",()=>UsageQuota.ApplyConsume(state,"Studio","3"));
+-            state=State();for(int i=0;i<100;i++)UsageQuota.ApplyConsume(state,"Pro",i<50?"1":"2");Reject("Pro 100 across accounts",()=>UsageQuota.ApplyConsume(state,"Pro","3"));
++            var state=State();for(int i=0;i<25;i++)UsageQuota.ApplyConsume(state,"Classic");Reject("Classic device total 25",()=>UsageQuota.ApplyConsume(state,"Classic"));
++            state=State();for(int i=0;i<50;i++)UsageQuota.ApplyConsume(state,"Studio");Reject("Studio device total 50",()=>UsageQuota.ApplyConsume(state,"Studio"));
++            state=State();((JObject)state["accounts"])["legacy-account"]=50;
++            for(int i=0;i<50;i++)UsageQuota.ApplyConsume(state,"Pro");
++            UsageQuota.ApplyConsume(state,"Pro");
++            Check("registration 51 allowed without shop lookup",(int)state["used"]==51);
++            Check("legacy account counter does not block or reset total",(int)state["accounts"]["legacy-account"]==50);
++            for(int i=51;i<100;i++)UsageQuota.ApplyConsume(state,"Pro");
++            Check("Pro allows total 100 across logins",(int)state["used"]==100);
++            Reject("Pro device total 100",()=>UsageQuota.ApplyConsume(state,"Pro"));
++            Check("blocked registration does not consume quota",(int)state["used"]==100);
+             string top=CreditIssuer.Issue(dir,req,3);var credit=CreditProtocol.Verify(top,TrustedKeys.All,DateTime.UtcNow);UsageQuota.ApplyCredit(state,credit);
+-            Reject("top-up replay",()=>UsageQuota.ApplyCredit(state,credit));Reject("credits do not bypass account 50",()=>UsageQuota.ApplyConsume(state,"Pro","1"));
+-            UsageQuota.ApplyConsume(state,"Pro","3");Check("one extra credit consumed",(long)state["credits"]==2&&(int)state["used"]==101);
+-            state["used"]=0;state["accounts"]=new JObject();UsageQuota.ApplyConsume(state,"Pro","3");Check("base allowance before credits next day",(int)state["used"]==1&&(long)state["credits"]==2);
++            Reject("top-up replay",()=>UsageQuota.ApplyCredit(state,credit));
++            UsageQuota.ApplyConsume(state,"Pro");Check("one extra credit consumed",(long)state["credits"]==2&&(int)state["used"]==101);
++            state["used"]=0;state["accounts"]=new JObject();UsageQuota.ApplyConsume(state,"Pro");Check("base allowance before credits next day",(int)state["used"]==1&&(long)state["credits"]==2);
+             credit["quantity"]=9999;byte[] payload,signature;LicenseProtocol.Decode(top,"EXPC1",out payload,out signature);Reject("credit quantity tamper",()=>CreditProtocol.Verify(LicenseProtocol.Wrap("EXPC1",LicenseProtocol.Bytes(credit),signature),TrustedKeys.All,DateTime.UtcNow));
+             UsageQuota.Redeem(top);Reject("persisted top-up replay",()=>UsageQuota.Redeem(top));
+             Check("repeat classic denied",!EditionPolicy.CanRepeat("Classic"));Check("repeat Studio and Pro",EditionPolicy.CanRepeat("Studio")&&EditionPolicy.CanRepeat("Pro"));
+--- 15차/tests/ResetTests.cs
++++ 16차/tests/ResetTests.cs
+@@ -0,0 +1,18 @@
++using System;using System.IO;using System.Reflection;using System.Security.Cryptography;using Microsoft.Win32;using BunjangAuto;using ExpResetTool;using Lumivolt.Admin;using Lumivolt.Security;
++class ResetTests {
++ static int pass,fail;static void Check(string name,bool ok){Console.WriteLine((ok?"PASS ":"FAIL ")+name);if(ok)pass++;else fail++;}
++ static void Reject(string name,Action a){try{a();Check(name,false);}catch{Check(name,true);}}
++ static void Main(){AppDomain.CurrentDomain.AssemblyResolve+=delegate(object s,ResolveEventArgs e){using(var x=Assembly.GetExecutingAssembly().GetManifestResourceStream("lib."+new AssemblyName(e.Name).Name+".dll")){if(x==null)return null;using(var m=new MemoryStream()){x.CopyTo(m);return Assembly.Load(m.ToArray());}}};Environment.ExitCode=Run();}
++ [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]static int Run(){string root=ResetEngine.DataRoot,vault=root+"-issuer";try{
++  Directory.CreateDirectory(root);Directory.CreateDirectory(Path.Combine(root,"photos"));File.WriteAllText(Path.Combine(root,"products.json"),"preserve products");File.WriteAllText(Path.Combine(root,"photos","image.jpg"),"preserve photo");File.WriteAllText(Path.Combine(root,"license.key"),"remove authentication");
++  Reject("missing issuer refuses reset",()=>ResetEngine.Reset(vault,false));Check("unauthorized reset preserves client state",File.Exists(Path.Combine(root,"license.key")));
++  IssuerService.Create(vault);Reject("untrusted issuer refuses reset",()=>ResetEngine.Reset(vault,false));var pub=IssuerService.Load(vault).GeneratePublicKey().GetEncoded();TrustedKeys.All.Add(LicenseProtocol.KeyId(pub),pub);
++  Reject("path escape rejected",()=>ResetEngine.SafeTree(vault,root));
++  Directory.CreateDirectory(Path.Combine(vault,"records"));File.WriteAllText(Path.Combine(vault,"records","a.lvlicense"),"history");Directory.CreateDirectory(Path.Combine(vault,"credits"));File.WriteAllText(Path.Combine(vault,"credits","credit"),"credit history");
++  using(var k=Registry.CurrentUser.CreateSubKey(ResetEngine.UsageRegistry))k.SetValue("State",new byte[]{1});foreach(var name in ResetEngine.DeviceKeys)using(var k=CngKey.Create(CngAlgorithm.ECDsaP256,name,new CngKeyCreationParameters{Provider=ResetEngine.KeyProvider})){}
++  using(var held=new FileStream(Path.Combine(root,"license.key"),FileMode.Open,FileAccess.Read,FileShare.Read))Reject("locked files fail before deletion",()=>ResetEngine.Reset(vault,false));Check("failed preflight preserves license",File.Exists(Path.Combine(root,"license.key")));
++  var result=ResetEngine.Reset(vault,false);Check("authorized reset succeeds",(bool)result["success"]);Check("products preserved",File.ReadAllText(Path.Combine(root,"products.json"))=="preserve products");Check("photos preserved",File.ReadAllText(Path.Combine(root,"photos","image.jpg"))=="preserve photo");Check("license removed",!File.Exists(Path.Combine(root,"license.key")));using(var k=Registry.CurrentUser.OpenSubKey(ResetEngine.UsageRegistry))Check("registry removed",k==null);foreach(var name in ResetEngine.DeviceKeys)Check("device key removed",!CngKey.Exists(name,ResetEngine.KeyProvider));Check("issuer key preserved",IssuerService.Load(vault)!=null);Check("master history default preserved",Directory.Exists(Path.Combine(vault,"records"))&&Directory.Exists(Path.Combine(vault,"credits")));
++  ResetEngine.Reset(vault,true);Check("optional master history removed",!Directory.Exists(Path.Combine(vault,"records"))&&!Directory.Exists(Path.Combine(vault,"credits")));Check("repeat reset safe",(bool)ResetEngine.Reset(vault,true)["success"]);
++ }catch(Exception e){Console.WriteLine(e);fail++;}finally{foreach(var name in ResetEngine.DeviceKeys)if(CngKey.Exists(name,ResetEngine.KeyProvider))using(var k=CngKey.Open(name,ResetEngine.KeyProvider))k.Delete();Registry.CurrentUser.DeleteSubKeyTree(ResetEngine.UsageRegistry,false);Registry.CurrentUser.DeleteSubKeyTree(ResetEngine.IssuerRegistry,false);}
++ Console.WriteLine("RESET: "+pass+" passed, "+fail+" failed");return fail==0?0:1;}
++}
+--- 15차/tools/ResetAssemblyInfo.cs
++++ 16차/tools/ResetAssemblyInfo.cs
+@@ -0,0 +1,10 @@
++using System.Reflection;
++
++[assembly: AssemblyTitle("EXP Reset")]
++[assembly: AssemblyDescription("EXP — 마켓 자동등록 스튜디오")]
++[assembly: AssemblyCompany("EXPMASTER")]
++[assembly: AssemblyProduct("EXP Reset")]
++[assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
++[assembly: AssemblyVersion("2.2.7.0")]
++[assembly: AssemblyFileVersion("2.2.7.0")]
++[assembly: AssemblyInformationalVersion("2.2.7")]
+--- 15차/tools/ResetProgram.cs
++++ 16차/tools/ResetProgram.cs
+@@ -0,0 +1,205 @@
++using System;
++using System.Collections.Generic;
++using System.Diagnostics;
++using System.Drawing;
++using System.IO;
++using System.Linq;
++using System.Reflection;
++using System.Security.Cryptography;
++using System.Security.Principal;
++using System.Threading;
++using System.Threading.Tasks;
++using System.Windows.Forms;
++using Microsoft.Win32;
++using Newtonsoft.Json.Linq;
++using BunjangAuto;
++using Lumivolt.Admin;
++using Lumivolt.Security;
++
++namespace ExpResetTool {
++    static class ResetProgram {
++        [STAThread] static int Main(string[] args) {
++            AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e) {
++                using(var s=Assembly.GetExecutingAssembly().GetManifestResourceStream("lib."+new AssemblyName(e.Name).Name+".dll")) {
++                    if(s==null)return null;using(var m=new MemoryStream()){s.CopyTo(m);return Assembly.Load(m.ToArray());}
++                }
++            };
++            return Run(args);
++        }
++        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++        static int Run(string[] args) {
++            if(args.Length==2 && args[0]=="--worker")return Broker.Worker(args[1]);
++            if(args.Length==3 && (args[0]=="--reset-owner" || args[0]=="--reset-client")) {
++                try { File.WriteAllText(args[2],Broker.Execute(args[1],args[0]=="--reset-owner").ToString());return 0; }
++                catch(Exception ex){File.WriteAllText(args[2],ex.ToString());return 1;}
++            }
++            Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);AppFont.Init();
++            if(args.Length==2 && args[0]=="--render") {
++                Directory.CreateDirectory(args[1]);
++                foreach(bool dark in new[]{false,true})using(var f=new ResetForm()) {
++                    f.SetMode(dark,false);f.Show();Application.DoEvents();
++                    using(var bmp=new Bitmap(f.Width,f.Height)){f.DrawToBitmap(bmp,new Rectangle(Point.Empty,f.Size));bmp.Save(Path.Combine(args[1],dark?"EXP-Reset-Dark.png":"EXP-Reset-Light.png"));}
++                    f.Close();
++                }
++                return 0;
++            }
++            if(args.Length!=0)return 2;
++            Application.Run(new ResetForm());return 0;
++        }
++    }
++    // Always run destructive work via an interactive Windows task, never an inherited
++    // packaged process registry view. The worker independently verifies issuer ownership.
++    static class Broker {
++        internal static string Base {get{return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"EXPReset");}}
++        static string JobPath(string id){Guid.ParseExact(id,"N");return Path.Combine(AppDomain.CurrentDomain.BaseDirectory,".EXP-Reset-runs",id+".json");}
++        internal static JObject Execute(string vault,bool history) {
++            ResetEngine.Authorize(vault);
++            string id=Guid.NewGuid().ToString("N"), job=JobPath(id), result=job+".result", name="EXP-Reset-"+id;
++            Directory.CreateDirectory(Path.GetDirectoryName(job));
++            File.WriteAllText(job,new JObject{{"vault",Path.GetFullPath(vault)},{"history",history},{"user",WindowsIdentity.GetCurrent().User.Value}}.ToString());
++            dynamic service=null,folder=null,registered=null;
++            try {
++                service=Activator.CreateInstance(Type.GetTypeFromProgID("Schedule.Service"));service.Connect();folder=service.GetFolder("\\");
++                dynamic definition=service.NewTask(0);
++                definition.RegistrationInfo.Description="EXP 인증 초기화 · 실행 후 자동 제거";
++                definition.Principal.UserId=WindowsIdentity.GetCurrent().Name;definition.Principal.LogonType=3;definition.Principal.RunLevel=0;
++                definition.Settings.Enabled=true;definition.Settings.Hidden=true;definition.Settings.AllowDemandStart=true;
++                definition.Settings.DisallowStartIfOnBatteries=false;definition.Settings.StopIfGoingOnBatteries=false;definition.Settings.ExecutionTimeLimit="PT0S";
++                dynamic action=definition.Actions.Create(0);action.Path=Assembly.GetExecutingAssembly().Location;action.Arguments="--worker "+id;
++                registered=folder.RegisterTaskDefinition(name,definition,6,definition.Principal.UserId,null,3,null);registered.Run(null);
++                for(int i=0;i<600;i++) {
++                    if(File.Exists(result)){var data=JObject.Parse(File.ReadAllText(result));if(!(bool)data["success"])throw new IOException((string)data["message"]);return data;}
++                    Thread.Sleep(200);
++                }
++                throw new IOException("초기화 응답이 지연되고 있습니다. 실행 중인 EXP를 닫고 상태를 확인해 주세요.");
++            } finally {
++                bool running=false;try{running=registered!=null && (int)registered.State==4;}catch{}
++                if(!running) {
++                    try{if(folder!=null)folder.DeleteTask(name,0);}catch{}
++                    try{if(File.Exists(job))File.Delete(job);if(File.Exists(result))File.Delete(result);if(Directory.GetFileSystemEntries(Path.GetDirectoryName(job)).Length==0)Directory.Delete(Path.GetDirectoryName(job));}catch{}
++                }
++            }
++        }
++        internal static int Worker(string id) {
++            string job;try{job=JobPath(id);}catch{return 2;}
++            JObject result;
++            try {
++                var data=JObject.Parse(File.ReadAllText(job));
++                if((string)data["user"]!=WindowsIdentity.GetCurrent().User.Value)throw new IOException("요청한 Windows 사용자와 다릅니다.");
++                result=ResetEngine.Reset((string)data["vault"],(bool)data["history"]);
++            }catch(Exception ex){result=new JObject{{"success",false},{"message",ex.Message}};}
++            string temp=job+".result.tmp";File.WriteAllText(temp,result.ToString());File.Move(temp,job+".result");
++            try{dynamic scheduler=Activator.CreateInstance(Type.GetTypeFromProgID("Schedule.Service"));scheduler.Connect();scheduler.GetFolder("\\").DeleteTask("EXP-Reset-"+id,0);}catch{}
++            return (bool)result["success"]?0:1;
++        }
++    }
++    static class ResetEngine {
++#if TESTBUILD
++        internal static string DataRoot {get{return Paths.Root;}}
++        internal static string UsageRegistry {get{return @"Software\EXP\ResetTests\"+Process.GetCurrentProcess().Id;}}
++        internal static string IssuerRegistry {get{return @"Software\EXP\ResetIssuerTests\"+Process.GetCurrentProcess().Id;}}
++        internal static string[] DeviceKeys {get{return new[]{"EXP.ResetTest.Device."+Process.GetCurrentProcess().Id,"EXP.ResetTest.Usage."+Process.GetCurrentProcess().Id};}}
++        internal static CngProvider KeyProvider {get{return CngProvider.MicrosoftSoftwareKeyStorageProvider;}}
++#else
++        internal static string DataRoot {get{return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"BunjangAuto");}}
++        internal static string UsageRegistry {get{return @"Software\EXP\Usage";}}
++        internal static string IssuerRegistry {get{return @"Software\Lumivolt\Issuer";}}
++        internal static string[] DeviceKeys {get{return new[]{"Lumivolt.Device.v3","EXP.Usage.v1"};}}
++        internal static CngProvider KeyProvider {get{return new CngProvider("Microsoft Platform Crypto Provider");}}
++#endif
++        internal static void Authorize(string vault) {
++            try {
++                var key=IssuerService.Load(vault).GeneratePublicKey().GetEncoded();byte[] pinned;
++                if(!TrustedKeys.All.TryGetValue(LicenseProtocol.KeyId(key),out pinned) || !key.SequenceEqual(pinned))throw new Exception();
++            }catch{throw new InvalidOperationException("EXP Master의 발급 보관소를 선택해 주세요. 발급 보안키를 보유한 관리자만 초기화할 수 있습니다.");}
++        }
++        internal static string FindVault() {
++            var candidates=new List<string>();try{candidates.Add(IssuerService.LastVault);}catch{}
++            foreach(var root in new[]{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)})
++                if(Directory.Exists(root))candidates.AddRange(Directory.GetDirectories(root,"EXP_MasterVault*"));
++            foreach(var p in candidates)try{Authorize(p);return p;}catch{}
++            return "";
++        }
++        static string Hash(string path){using(var sha=SHA256.Create())using(var s=File.OpenRead(path))return Convert.ToBase64String(sha.ComputeHash(s));}
++        internal static void SafeTree(string path,string root) {
++            string full=Path.GetFullPath(path), prefix=Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
++            if(!full.StartsWith(prefix,StringComparison.OrdinalIgnoreCase))throw new IOException("초기화 경로가 허용 범위를 벗어났습니다.");
++            if((File.GetAttributes(full)&FileAttributes.ReparsePoint)!=0)throw new IOException("연결된 폴더는 초기화할 수 없습니다: "+Path.GetFileName(full));
++            if(Directory.Exists(full))foreach(var child in Directory.GetFileSystemEntries(full))SafeTree(child,root);
++        }
++        static void Remove(string path){if(Directory.Exists(path))Directory.Delete(path,true);else if(File.Exists(path))File.Delete(path);}
++        internal static JObject Reset(string vault,bool history) {
++            Authorize(vault);vault=Path.GetFullPath(vault);
++            var active=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"EXP","EXP Classic","EXP Studio","EXP Pro","EXP-Master","Lumivolt"};
++            foreach(var process in Process.GetProcesses())using(process){try{if(active.Contains(process.ProcessName))throw new IOException("EXP와 EXP Master를 모두 닫은 뒤 다시 시도해 주세요.");}catch(InvalidOperationException){}}
++            using(var usage=new Mutex(false,"Local\\EXP_Usage_v1"))using(var app=new Mutex(false,"BunjangAuto_SingleInstance"))using(var trials=new Mutex(false,"Local\\EXP_Trial_Issuer")) {
++                bool u=false,a=false,t=false;
++                try {
++                    u=Take(usage);a=Take(app);t=Take(trials);if(!u||!a||!t)throw new IOException("EXP 작업이 진행 중입니다. 프로그램을 닫고 다시 시도해 주세요.");
++                    string root=Path.GetFullPath(DataRoot);
++                    if(Directory.Exists(root)&&(File.GetAttributes(root)&FileAttributes.ReparsePoint)!=0)throw new IOException("데이터 폴더가 연결 경로입니다. 초기화를 중단했습니다.");
++                    var keep=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);var targets=new List<string>();
++                    if(Directory.Exists(root))foreach(var p in Directory.GetFileSystemEntries(root)){
++                        SafeTree(p,root);string name=Path.GetFileName(p);
++                        if(name.Equals("products.json",StringComparison.OrdinalIgnoreCase)||name.Equals("photos",StringComparison.OrdinalIgnoreCase)) {
++                            if(File.Exists(p))keep[p]=Hash(p);else foreach(var f in Directory.GetFiles(p,"*",SearchOption.AllDirectories))keep[f]=Hash(f);
++                        }else targets.Add(p);
++                    }
++                    var issuerFiles=new[]{Path.Combine(vault,"issuer.dpapi"),Path.Combine(vault,"issuer-public.json")};
++                    foreach(var f in issuerFiles)if(File.Exists(f))keep[f]=Hash(f);
++                    if(history)foreach(var name in new[]{"records","credits"}){string p=Path.Combine(vault,name);if(Directory.Exists(p)){SafeTree(p,vault);targets.Add(p);}}
++                    // All path and issuer checks complete before the first deletion.
++                    foreach(var p in targets)foreach(var file in Directory.Exists(p)?Directory.GetFiles(p,"*",SearchOption.AllDirectories):new[]{p})
++                        using(var check=new FileStream(file,FileMode.Open,FileAccess.ReadWrite,FileShare.None)){}
++                    foreach(var p in targets)Remove(p);
++                    Registry.CurrentUser.DeleteSubKeyTree(UsageRegistry,false);
++                    if(history)Registry.CurrentUser.DeleteSubKeyTree(IssuerRegistry,false);
++                    var provider=KeyProvider;
++                    foreach(var name in DeviceKeys)if(CngKey.Exists(name,provider))using(var key=CngKey.Open(name,provider))key.Delete();
++                    foreach(var pair in keep)if(!File.Exists(pair.Key)||Hash(pair.Key)!=pair.Value)throw new IOException("상품·사진 또는 발급 보안키 보존 확인에 실패했습니다.");
++                    using(var k=Registry.CurrentUser.OpenSubKey(UsageRegistry))if(k!=null)throw new IOException("사용량 레지스트리가 남아 있습니다.");
++                    foreach(var name in DeviceKeys)if(CngKey.Exists(name,provider))throw new IOException("기기 인증 키가 남아 있습니다.");
++                    if(Directory.Exists(root))foreach(var p in Directory.GetFileSystemEntries(root))if(!new[]{"products.json","photos"}.Contains(Path.GetFileName(p),StringComparer.OrdinalIgnoreCase))throw new IOException("초기화 대상 파일이 남아 있습니다.");
++                    return new JObject{{"success",true},{"message","새 등록코드로 다시 시작할 준비가 됐습니다."},{"preservedFiles",keep.Count},{"masterHistoryReset",history},{"utc",DateTime.UtcNow.ToString("o")}};
++                }finally{if(t)trials.ReleaseMutex();if(a)app.ReleaseMutex();if(u)usage.ReleaseMutex();}
++            }
++        }
++        static bool Take(Mutex m){try{return m.WaitOne(0);}catch(AbandonedMutexException){return true;}}
++    }
++    sealed class StatusDot : Control,IThemed {
++        internal int State;internal StatusDot(){DoubleBuffered=true;Size=new Size(30,30);}
++        public void ApplyTheme(){Invalidate();}
++        protected override void OnPaint(PaintEventArgs e){e.Graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.AntiAlias;var color=State==1?Theme.Success:State==2?Theme.Danger:Theme.Accent;using(var b=new SolidBrush(color))e.Graphics.FillEllipse(b,2,2,Width-4,Height-4);using(var pen=new Pen(Color.White,2.2f)){if(State==1)e.Graphics.DrawLines(pen,new[]{new Point(8,15),new Point(13,20),new Point(23,10)});else if(State==2){e.Graphics.DrawLine(pen,10,10,20,20);e.Graphics.DrawLine(pen,20,10,10,20);}else e.Graphics.DrawLine(pen,9,15,21,15);}}
++    }
++    sealed class ResetForm : Form {
++        readonly SoftInput vault;readonly SoftButton start,light,dark;readonly CheckBox history;readonly Label status;readonly StatusDot[] dots=new StatusDot[3];bool busy;
++        public ResetForm() {
++            Text="EXP Reset";ClientSize=new Size(780,770);StartPosition=FormStartPosition.CenterScreen;FormBorderStyle=FormBorderStyle.FixedSingle;MaximizeBox=false;Font=Theme.FontBase();
++            using(var s=Assembly.GetExecutingAssembly().GetManifestResourceStream("brand.app.ico"))if(s!=null)Icon=new Icon(s);
++            Controls.Add(new HeroBanner{Left=28,Top=24,Width=724,Height=136,Eyebrow="EXP RESET  /  OWNER",Title="처음부터, 다시.",Subtitle="상품과 사진은 그대로. 인증과 사용 설정을 새롭게."});
++            Controls.Add(Design.Label("초기화할 항목",32,188,410,28,15,"t"));
++            light=Design.Button("라이트",556,184,94,false);dark=Design.Button("다크",658,184,94,false);light.Click+=delegate{SetMode(false,true);};dark.Click+=delegate{SetMode(true,true);};Controls.AddRange(new Control[]{light,dark});
++            string[] titles={"인증키 · 기기 등록","체험 · 사용량 · 로그인 설정","상품 목록 · 사진"};
++            string[] descriptions={"현재 인증을 지우고 새 등록코드로 시작합니다.","이 PC의 사용 기록과 앱 설정을 초기화합니다.","작성한 상품과 사진은 그대로 보존합니다."};
++            for(int i=0;i<3;i++){var card=new SoftCard{Left=28,Top=236+i*86,Width=724,Height=76};dots[i]=new StatusDot{Left=20,Top=22};card.Controls.Add(dots[i]);card.Controls.Add(Design.Label(titles[i],66,12,610,26,12,"t"));card.Controls.Add(Design.Label(descriptions[i],66,42,610,22,10,"m"));Controls.Add(card);}
++            var owner=new SoftCard{Left=28,Top=510,Width=724,Height=146};owner.Controls.Add(Design.Label("EXP Master 발급 보관소",20,12,630,24,11,"t"));
++            vault=Design.Input("vault",20,44,564,38,true);vault.Multiline=false;vault.Text=ResetEngine.FindVault();owner.Controls.Add(vault);
++            var browse=Design.Button("찾아보기",594,44,108,false);browse.Click+=delegate{using(var d=new FolderBrowserDialog{Description="EXP Master의 발급 보안키가 있는 폴더"})if(d.ShowDialog(this)==DialogResult.OK)vault.Text=d.SelectedPath;};owner.Controls.Add(browse);
++            history=new CheckBox{Left=22,Top=99,Width=668,Height=28,Text="Master 발급 이력도 초기화 · 발급 보안키는 유지",Font=Theme.Font(10,FontStyle.Bold),Checked=false};owner.Controls.Add(history);Controls.Add(owner);
++            status=Design.Label("관리자 전용 · 고객에게 전달하지 마세요.",32,686,490,54,10,"m");Controls.Add(status);
++            start=Design.Button("초기화",562,690,190,true);start.Height=44;start.Click+=async delegate{await Reset();};Controls.Add(start);
++            bool isDark=false;try{isDark=File.ReadAllText(Path.Combine(Broker.Base,"theme.txt")).Trim()=="Dark";}catch{}SetMode(isDark,false);
++            FormClosing+=delegate(object sender,FormClosingEventArgs e){if(busy)e.Cancel=true;};Design.Scale(this);Theme.Apply(this);
++        }
++        internal void SetMode(bool isDark,bool save){Theme.Set(isDark?ThemePalette.DarkPal:ThemePalette.Light);light.Primary=!isDark;dark.Primary=isDark;Theme.Apply(this);if(save)try{Directory.CreateDirectory(Broker.Base);File.WriteAllText(Path.Combine(Broker.Base,"theme.txt"),isDark?"Dark":"Light");}catch{}}
++        async Task Reset(){
++            if(busy)return;try{ResetEngine.Authorize(vault.Text);}catch(Exception ex){AppDialog.Show(this,ex.Message,"EXP Reset");return;}
++            string message="현재 인증키와 기기 등록, 체험·사용량·로그인 설정을 삭제합니다.\r\n상품과 사진, 관리자 발급 보안키는 보존합니다.\r\n"+(history.Checked?"Master 발급 이력도 삭제합니다.\r\n":"")+"초기화 후에는 새 등록코드로 키를 발급해야 합니다.\r\n초기화할까요?";
++            if(AppDialog.Show(this,message,"EXP Reset",MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)return;
++            busy=true;start.Enabled=false;history.Enabled=false;status.Text="인증 정보를 초기화하고 있습니다…";string path=vault.Text;bool clearHistory=history.Checked;
++            try{await Task.Run(()=>Broker.Execute(path,clearHistory));foreach(var dot in dots){dot.State=1;dot.Invalidate();}status.Text="초기화 완료\r\n설치 파일에서 새 등록코드를 만들어 주세요.";start.Text="완료";}
++            catch(Exception ex){foreach(var dot in dots){dot.State=2;dot.Invalidate();}status.Text="초기화를 완료하지 못했습니다.";AppDialog.Show(this,ex.Message,"EXP Reset");start.Enabled=true;}
++            finally{busy=false;history.Enabled=true;}
++        }
++    }
++}

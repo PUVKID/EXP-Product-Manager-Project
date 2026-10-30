@@ -1,0 +1,12 @@
+{
+  "new_observation": "evidence/missing-public-text-candidates.json에 원본 전개 소스트리 후보 전수목록, 중앙 verify passed=false/verification_failures=1 보존",
+  "cause": "독립 검토에서 기존 확장자 중심 감사가 도움말/라이선스/manifest/체크리스트/22차 도구를 누락하여 요구사항 FAIL",
+  "selection_reason": "원본 자료가 명확하고 텍스트 복제·비식별화·문서 갱신으로 한정되어 같은 Terra 구현 담당을 유지. 부모 main이 수리 결정하고 독립 Sol/high 재검증",
+  "implementer_effort": "medium",
+  "method": "모든 전개 소스트리 텍스트 후보를 내용 검토하여 공개 복제 또는 근거 있는 제외로 완전 분류. 안전한22차 도구3개 포함. 기존 기준 검사는 유지하면서 미분류·미반영 탐지 추가",
+  "implementer_role": "terra",
+  "effort": "medium",
+  "model": "gpt-6.1-sol",
+  "implementer_model": "gpt-6.1-terra",
+  "role": "main"
+}

@@ -1,0 +1,11 @@
+{
+  "role": "main",
+  "selection_reason": "자료 기반 복제와 원인이 확인된 좁은 검증기·공백 수정이며 제품 로직 변경이 없어 기존 Terra 담당 유지。 중앙 도구에 Terra가 미등록되어 부모 main의 수리 결정으로 기록하며 실제 구현자는 별도 필드에 보존",
+  "model": "gpt-6.1-sol",
+  "cause": "Git 인덱스 CRLF 정규화를 바이트 변조로 판정한 검증기와 원본 끝 공백 때문에 최초 검사 실패",
+  "new_observation": "11차 Build.ps1 작업본 4705바이트와 인덱스 4703바이트가 CRLF 정규화 후 동일함을 실측, 공백 오류 원문 initial-check-failure.json 보존",
+  "effort": "medium",
+  "method": "원본 불변을 해시로 확인하고 CRLF/LF만 정규화하여 비교. 공개 사본 끝 공백만 제거하여 허용 변환을 manifest에 명시. 21차 안전한 전체 2.2.5 소스 보존",
+  "implementer_role": "terra",
+  "implementer_model": "gpt-6.1-terra"
+}

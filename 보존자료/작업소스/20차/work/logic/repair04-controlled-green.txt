@@ -1,0 +1,6 @@
+PASS 제어된 Finished 지연 진입
+PASS Running 해제와 UI 회차 완료는 다른 시점
+PASS UI 콜백 전 회차 완료로 판단하지 않음
+PASS 지연 해제 후 실제 다음 예약 생성
+PASS 검사 종료 시 작업 스레드와 UI 콜백 완료
+BATCH: 5 passed, 0 failed

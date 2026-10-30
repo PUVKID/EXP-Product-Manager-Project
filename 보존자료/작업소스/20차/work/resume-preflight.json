@@ -1,0 +1,26 @@
+[
+  {
+    "path": "C:\\Users\\PUVKID\\.codex\\AGENTS.md",
+    "time": "2026-10-26T16:10:17.5575527+09:00",
+    "read": "전체",
+    "task_kind": "project",
+    "sha256": "1BAF8B5668CF8F3158C7EE5AC561634BDA9680C3C67A57774F1A3FCDBF9A17D2",
+    "bytes": 26213
+  },
+  {
+    "path": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\20차\\docs\\20차_명세와_구현계획.md",
+    "time": "2026-10-26T16:10:17.5582764+09:00",
+    "read": "전체",
+    "task_kind": "project",
+    "sha256": "76F49F75CE2CBB12B056840FD970492DAED350BAF32CD7A3137954A6D1AE8C24",
+    "bytes": 5854
+  },
+  {
+    "path": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\20차\\ROUTING-LESSONS.md",
+    "time": "2026-10-26T16:10:17.5587192+09:00",
+    "read": "전체",
+    "task_kind": "project",
+    "sha256": "F8E5BE11D2903AFC3A251B39DFDAC789B628EC268D30D297F6EEA264938B562F",
+    "bytes": 2284
+  }
+]

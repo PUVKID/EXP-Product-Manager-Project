@@ -1,0 +1,14 @@
+{
+  "time_kst": "2026-10-30T06:25:25.452228+09:00",
+  "cwd": "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\work\\github-sync-20261029\\repository",
+  "argv": [
+    "python",
+    "-B",
+    "-X",
+    "utf8",
+    "work/verify_public_sync.py"
+  ],
+  "exit_code": 1,
+  "output": "링크 누락: docs/versions/21차.md -> ../14차/EXP_v2.2.4/3_소스코드/\n",
+  "changed": "223개 stage, 21차 추가 사본 93개 미stage, 원본 변경 없음"
+}

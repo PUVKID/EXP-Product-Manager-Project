@@ -1,0 +1,12 @@
+{
+  "hashes": 5,
+  "zip_entries": [
+    "EXP.exe",
+    "EXP_Setup_2.3.0.exe",
+    "licenses/BouncyCastle-LICENSE.txt",
+    "licenses/Inno-Setup-LICENSE.txt",
+    "licenses/NanumGothic-OFL.txt"
+  ],
+  "customer_admin_separation": true,
+  "binary_copy_match": true
+}

@@ -1,0 +1,7 @@
+{
+  "time": "2026-10-26T15:27:08.1716213+09:00",
+  "task": "전체 목록 매시간 반복",
+  "error": "BotRunner.cs 및 UsageQuota.cs를 src 직하위로 지정한 rg에서 os error 2. 후속 명령 성공으로 쉘 전체 종료는0",
+  "changed": false,
+  "next": "파일 목록부터 검색"
+}

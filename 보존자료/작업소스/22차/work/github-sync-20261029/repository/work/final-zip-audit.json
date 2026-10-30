@@ -1,0 +1,524 @@
+{
+  "time_kst": "2026-10-30T06:33:49.178244+09:00",
+  "results": [
+    {
+      "zip": "EXP_v2.2.8_17차_전체.zip",
+      "sha256": "f2ae296aa4cfdda5fae371692932288d25fe9f28d99aa9f8ed8132d437462df5",
+      "bytes": 41266139,
+      "entries": 195,
+      "source_counts": {
+        "바이트 일치": 125
+      },
+      "comparisons": [
+        {
+          "file": "build.bat",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "build.sh",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "build_admin.sh",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "EXP.csproj",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "admin/AdminWorkflow.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "admin/AssemblyInfo.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "admin/CreditIssuer.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "admin/IssuerService.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "admin/LicenseAdmin.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "admin/TrialIssuer.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "build/Build-Installer.ps1",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "build/Build.ps1",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "build/Package.ps1",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "build/Sign.ps1",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "build/Test.ps1",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "installer/EXP.iss",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "installer/Lumivolt.iss",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/BouncyCastle.Cryptography.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/Microsoft.Bcl.AsyncInterfaces.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/Newtonsoft.Json.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/Selenium.WebDriver.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.Buffers.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.Collections.Immutable.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.IO.Pipelines.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.Memory.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.Numerics.Vectors.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.Runtime.CompilerServices.Unsafe.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.Text.Encodings.Web.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.Text.Json.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.Threading.Channels.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "lib/System.Threading.Tasks.Extensions.dll",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "licenses/BouncyCastle-LICENSE.txt",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "licenses/Inno-Setup-LICENSE.txt",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/app.ico",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/app.manifest",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/app.png",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "shared/CreditProtocol.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "shared/EditionPolicy.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "shared/LicenseProtocol.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "shared/LicenseText.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/AssemblyInfo.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Bot.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Brand.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/CategoryStore.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Design.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/DiagnosticsForm.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/DriverManager.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/EditForm.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Guard.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/License.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/LicenseForm.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Log.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/MainForm.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Models.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Program.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Runner.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Schedule.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Selectors.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/SelfTest.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/SelfTestV2.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/ServerClock.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/ShippingEditor.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Storage.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Terms.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Theme.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Vault.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/AdminUiSmoke.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/build_preview.sh",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/DpiLayoutTests.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/FreshInstallTests.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/GateIntegration.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/ProductionSmoke.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/regression.sh",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/ReleaseTests.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/ResetTests.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/RevisionUi.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/SecurityTests.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/ShippingFormTests.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/SurfaceUiTests.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/UiSmoke.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/UsageRecoveryTests.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/WINDOWS_CHECKLIST.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tools/ResetAssemblyInfo.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tools/ResetProgram.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/fonts/NanumGothic-OFL.txt",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/fonts/NanumGothicBold.ttf",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/01-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/02-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/03-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/04-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/05-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/06-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/07-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/08-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/09-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/10-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/11-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "resources/help/12-guide.md",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Help/DocView.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Help/HelpService.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Security/LicenseClock.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Security/LicenseFiles.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Security/TpmDevice.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Security/TrustedKeys.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Security/UsageQuota.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Telemetry/CrashReportService.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Telemetry/LogClassifier.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Telemetry/Redactor.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/Telemetry/UsageMetricsService.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/AppHost.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/AutomationController.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/Controls.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/FluentBox.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/ThemeService.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/UiKit.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/migration/read_with_new.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "tests/migration/write_with_old.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/Pages/AutomationPage.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/Pages/DashboardPage.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/Pages/HelpPage.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/Pages/LicensePage.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/Pages/LoginPage.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/Pages/ProductsPage.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/Pages/SchedulePage.cs",
+          "result": "바이트 일치"
+        },
+        {
+          "file": "src/UI/Pages/SettingsPage.cs",
+          "result": "바이트 일치"
+        }
+      ]
+    },
+    {
+      "zip": "EXP_v2.2.8_고객배포.zip",
+      "sha256": "50afb30fc99b0a7a1a0926a0f1d24d2ec7da8595121514ffd81c0c6d22535c7f",
+      "bytes": 9512310,
+      "entries": 5,
+      "source_counts": {},
+      "comparisons": []
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "path": "BunjangAuto_전체파일_업데이트/2_관리자용_발급툴/issued_licenses.csv",
+    "status": "이전만 존재",
+    "before_bytes": 45,
+    "after_bytes": null,
+    "before_sha256": "3d3b46570b5dffa8ca4a9f5fc48417aac9fd02363ab4447587d5e3b4fa312d5a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/kg.cs",
+    "status": "수정",
+    "before_bytes": 253,
+    "after_bytes": 253,
+    "before_sha256": "a1ef66282aad402f4754d820568de06aa8fff8b24f2e7b59a0d7dd60aaa86448",
+    "after_sha256": "73a6a36f38b6835cbb0e5fd0226bd716abdca0cec8a3ff07270863faef0539b7"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/license_public.xml",
+    "status": "수정",
+    "before_bytes": 583,
+    "after_bytes": 755,
+    "before_sha256": "c6c26eff2b32d7e0b9d0475021eb7b76a5dc293b97744059158ea580e1fe2f8a",
+    "after_sha256": "2c860a309fef0b74b8b18f4c86305abb6581324118969aec5afd43ec1d72312d"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/License.cs",
+    "status": "수정",
+    "before_bytes": 6019,
+    "after_bytes": 7655,
+    "before_sha256": "a9fea88f88644bddff3a2170df59d8a75412880e4189c1fe581cc9204991a702",
+    "after_sha256": "8d39ba3a61984f71eac63292cf179c18e6a0526923c2ddf8153128d20dd0d9a7"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/SelfTest.cs",
+    "status": "수정",
+    "before_bytes": 14213,
+    "after_bytes": 17219,
+    "before_sha256": "171ceb52b1e14bbe2cd7e0411b2c26926b04f2f9c0a844740dd7b984720158cb",
+    "after_sha256": "38bc0846a39ec4f024134fc695b8b5af1aa3f2d08482ac9b825d2774097b91a2"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Storage.cs",
+    "status": "수정",
+    "before_bytes": 15067,
+    "after_bytes": 16688,
+    "before_sha256": "0ebf4403a9a9eb76d29ed2d62bb418c6e42a80d36f2243b8dc8bfeeeeac48b53",
+    "after_sha256": "58e89cd2ae9f94d84693a53f719770cde09520047d45f027081e07f81c18d3ac"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Theme.cs",
+    "status": "수정",
+    "before_bytes": 10857,
+    "after_bytes": 12718,
+    "before_sha256": "e45f845bfd6a75fec861062fe95bc31416a515cfd03b9ab2846abf16f1b23a4c",
+    "after_sha256": "9f9a13f1e2112dbcf2763f35f662d1ceaf8cd563d707284a05b3251aafe35f64"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/3_소스코드/src/Vault.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5807,
+    "before_sha256": null,
+    "after_sha256": "af313afb9beeb7827299d1f33c7bf4b988d4d0e61b963c6095b79fc07ffed564"
+  },
+  {
+    "path": "BunjangAuto_전체파일_업데이트/README.txt",
+    "status": "수정",
+    "before_bytes": 1618,
+    "after_bytes": 3207,
+    "before_sha256": "b539c394d271c04f3d48e1dce5986f52b9f2ae5b6bcdec8754e8a497baf4e809",
+    "after_sha256": "7f7a5ffcdd254f7b46163b5d5afdb7c696516ee21f632cc084fae921693996ff"
+  }
+]

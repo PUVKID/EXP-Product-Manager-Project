@@ -1,0 +1,1735 @@
+--- 19차/admin/AssemblyInfo.cs
++++ 20차/admin/AssemblyInfo.cs
+@@ -2,8 +2,8 @@
+ [assembly: AssemblyTitle("EXP Master")]
+ [assembly: AssemblyProduct("EXP Master")]
+ [assembly: AssemblyDescription("EXP 오프라인 라이선스 및 추가 등록권 발급")]
+-[assembly: AssemblyVersion("2.3.1.0")]
+-[assembly: AssemblyFileVersion("2.3.1.0")]
++[assembly: AssemblyVersion("2.4.0.0")]
++[assembly: AssemblyFileVersion("2.4.0.0")]
+ 
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+--- 19차/build/Build.ps1
++++ 20차/build/Build.ps1
+@@ -1,4 +1,4 @@
+-param([ValidateSet('All','App','Admin','Tests','Reset')][string]$Target = 'All', [string]$PublicKeyFile)
++param([ValidateSet('All','App','Admin','Tests','Reset','BatchRepeat')][string]$Target = 'All', [string]$PublicKeyFile)
+ $ErrorActionPreference = 'Stop'
+ $root = Split-Path $PSScriptRoot -Parent
+ Set-Location -LiteralPath $root
+@@ -29,6 +29,8 @@
+     }
+     $compilerArgs += '/resource:resources\fonts\NanumGothicBold.ttf,font.NanumGothicBold.ttf'
+     $compilerArgs += '/resource:resources\app.ico,brand.app.ico'
++    $compilerArgs += '/resource:resources\brand\exp-prism-sheet.png,brand.exp-prism-sheet.png'
++    $compilerArgs += '/resource:resources\brand\exp-prism-still.png,brand.exp-prism-still.png'
+     foreach ($h in Get-ChildItem resources\help\*.md) { $compilerArgs += '/resource:' + $h.FullName + ',help.' + $h.Name }
+     & $csc @compilerArgs @Sources
+     if ($LASTEXITCODE -ne 0 -or !(Test-Path -LiteralPath $output)) { throw "Build failed: $Name" }
+@@ -39,6 +41,7 @@
+     Compile 'EXP' ($app + $shared) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $true
+ }
+ if ($Target -eq 'Tests') {
++    Compile 'RepeatDesignUiTests' ($app + $shared + @('tests\RepeatDesignUiTests.cs')) @('/target:exe','/define:TESTBUILD','/main:RepeatDesignUiTests') $true
+     Compile 'RedesignUiTests' ($app + $shared + @('tests\RedesignUiTests.cs')) @('/target:exe','/define:TESTBUILD','/main:RedesignUiTests') $true
+     Compile 'ShippingFormTests' ($app + $shared + @('tests\ShippingFormTests.cs')) @('/target:exe','/define:TESTBUILD','/main:ShippingFormTests') $true
+     Compile 'DpiLayoutTests' ($app + $shared + @('tests\DpiLayoutTests.cs')) @('/target:exe','/define:TESTBUILD','/main:DpiLayoutTests') $true
+@@ -54,6 +57,10 @@
+     Compile 'GateIntegration' ($app + $shared + @('tests\GateIntegration.cs')) @('/target:exe','/define:TESTBUILD','/main:GateIntegration') $true
+     Compile 'AdminUiSmoke' ($shared + @('admin\LicenseAdmin.cs','admin\AssemblyInfo.cs','admin\IssuerService.cs','src\Theme.cs','src\Brand.cs','src\Design.cs','src\Security\TrustedKeys.cs','admin\AdminWorkflow.cs','admin\CreditIssuer.cs','admin\TrialIssuer.cs','tests\AdminUiSmoke.cs')) @('/target:exe','/main:AdminUiSmoke') $false
+ }
++if ($Target -in @('Tests','BatchRepeat')) {
++    $batchSources = @('src\Models.cs','src\Schedule.cs','src\BatchRepeatSchedule.cs','src\Runner.cs','src\UI\AutomationController.cs','src\Security\UsageQuota.cs','tests\BatchRepeatTests.cs')
++    Compile 'BatchRepeatTests' ($batchSources + $shared) @('/target:exe','/define:TESTBUILD','/main:BatchRepeatTests') $false
++}
+ Write-Host "Build completed: $Target -> $dist"
+ 
+ 
+--- 19차/installer/EXP.iss
++++ 20차/installer/EXP.iss
+@@ -1,4 +1,4 @@
+-#define AppVersion "2.3.1"
++#define AppVersion "2.4.0"
+ [Setup]
+ AppId={{BBD63563-5422-4DA7-93C6-2F0D98E87E3F}
+ AppName={code:ProductName}
+@@ -21,7 +21,7 @@
+ CloseApplications=no
+ RestartApplications=no
+ AppMutex=BunjangAuto_SingleInstance
+-VersionInfoVersion=2.3.1.0
++VersionInfoVersion=2.4.0.0
+ VersionInfoCompany=EXPMASTER
+ VersionInfoDescription=EXP 통합 설치 프로그램
+ VersionInfoProductName=EXP
+--- 19차/resources/brand/LICENSE.txt
++++ 20차/resources/brand/LICENSE.txt
+@@ -0,0 +1,2 @@
++EXP를 위해 직접 작성한 메시·조명·모션입니다. 외부 모델/텍스처/HDRI가 없습니다.
++프로젝트 소유자의 사용·수정·재배포 용도입니다.
+--- 19차/resources/brand/manifest.json
++++ 20차/resources/brand/manifest.json
+@@ -0,0 +1,27 @@
++{
++  "schema_version": 1,
++  "width": 192,
++  "height": 192,
++  "columns": 8,
++  "frames": 48,
++  "fps": 12,
++  "period_seconds": 4,
++  "mesh": "EXP_Bevel_E",
++  "triangles": 92,
++  "units": "원본 GLB 미터; E 높이0.07m",
++  "pivot": [
++    0,
++    0,
++    0
++  ],
++  "renderer": "NumPy 삼각형 원근 투영·픽셀 Z버퍼·면 법선 Lambert/Blinn-Phong 조명",
++  "motion": "X/Y/Z 고유 축의 작은 주기적 회전과 Y 부유, 4초주기",
++  "alpha": "straight RGBA, alpha0 RGB0",
++  "runtime": "PNG 시트 공유 1개, GPU/웹서버 없음",
++  "external_assets": false,
++  "elapsed_seconds": 1.0250527000171132,
++  "sheet_bytes": 153710,
++  "sheet_sha256": "a2be32b6e2908ab9642366b94d48e8ca1298f962d7066b8810e32c0f8103eafd",
++  "glb_sha256": "f684b3b53283ab5784e963b28334542cbb5e4a78f1d62019268082c5cf495fd6",
++  "limitation": "경로추적/물리정확 금속 반사 아님; 실제 기하와 깊이로 구운 스타일 렌더"
++}
+--- 19차/resources/help/06-guide.md
++++ 20차/resources/help/06-guide.md
+@@ -1,9 +1,22 @@
+ # 반복과 시간대 예약
+ 
+-## 기본 간격
+-예약에서 1개씩 등록을 켜고 간격을 분 단위로 입력하세요. 모든 상품을 처리하면 종료합니다. 목록 반복과 중복 등록은 Studio와 Pro에서 사용할 수 있습니다.
+-## 시간대 설정
+-시간대별로 간격 지정을 켜고 시작, 종료, 간격을 입력하세요. 시각은 09:00처럼 입력하며 한국시간 기준으로 실행합니다. 자정을 넘는 시간대도 사용할 수 있습니다.
++## 등록 방식 선택
++예약의 등록 방식에서 **한 번**, **1개씩**, **전체 목록 반복** 중 하나를 고르세요. 선택한 방식에 필요한 입력만 표시됩니다. 시작한 뒤에는 예약 설정을 바꿀 수 없습니다. 중지 후 변경하세요.
++
++## 전체 목록 반복
++Studio / Pro에서 사용할 수 있습니다. 유효한 전체 상품 목록을 즉시 등록한 뒤 반복합니다. 이미 등록된 상품도 포함하며, 한 회차의 전체 목록은 순서대로 처리합니다.
++
++- **N분 간격**: 1~1440분. 15:02에 시작하고 60분으로 설정하면 다음 시각은 16:02입니다.
++- **매시 지정분**: 0~59분. 15:02에 시작하고 0분을 선택하면 다음 시각은 16:00, 20분을 선택하면 15:20입니다.
++
++오래 걸린 회차 뒤에는 다음 미래 시각을 기다리며, 지나간 회차를 몰아 실행하지 않습니다. 자동 등록 화면에서 현재 방식과 다음 실행 시각을 확인할 수 있습니다. 대기 중에도 일시정지·계속·중지를 사용할 수 있습니다.
++
++로그인 실패, 예외, 시도한 상품이 없는 회차는 중단합니다. 개별 상품 실패가 있으면 나머지 상품까지 처리한 뒤 안내하고 반복을 중단합니다. 기존 인증과 일일 등록 한도가 적용됩니다.
++
++## 1개씩 등록
++상품 사이의 기본 간격을 분 단위로 입력하세요. 시간대별 간격을 켜면 시간표가 펼쳐집니다. 시간대는 한국 시각 기준이며, 겹치면 나중에 시작한 시간대가 우선합니다. 목록 완료 후 반복을 켜면 처음 1회를 포함한 총 횟수를 지정할 수 있습니다. 시간대·반복·이미 등록된 상품 포함은 Studio / Pro에서 사용할 수 있습니다.
++
+ ## 다음 예약 시작
+-08:50에 등록하고 간격이 45분이어도 다음 시간대가 09:00에 시작하면 09:00부터 다음 상품을 처리합니다. 이전 대기시간을 새 시간대까지 이어 가지 않습니다.
+-겹치는 시간대는 더 늦게 시작한 시간대를 우선합니다. 번개장터 시각 연결을 확인할 수 없으면 새 등록을 대기합니다.
++번개장터 서버 시각이 확인되어야 시작할 수 있습니다. 실행 중 설정은 시작할 때의 값으로 유지됩니다.
++
++시간대 입력은 09:00 형식이며 자정을 넘는 시간대도 사용할 수 있습니다. 예를 들어 08:50 등록 후 간격이 45분이어도 새 시간대가 09:00에 시작하면 09:00부터 다음 상품을 처리하며 이전 대기시간을 이어 가지 않습니다.
+--- 19차/src/AssemblyInfo.cs
++++ 20차/src/AssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyProduct("EXP")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+-[assembly: AssemblyVersion("2.3.1.0")]
+-[assembly: AssemblyFileVersion("2.3.1.0")]
+-[assembly: AssemblyInformationalVersion("2.3.1")]
++[assembly: AssemblyVersion("2.4.0.0")]
++[assembly: AssemblyFileVersion("2.4.0.0")]
++[assembly: AssemblyInformationalVersion("2.4.0")]
+--- 19차/src/BatchRepeatSchedule.cs
++++ 20차/src/BatchRepeatSchedule.cs
+@@ -0,0 +1,37 @@
++using System;
++
++namespace BunjangAuto
++{
++    /// <summary>전체 목록 반복의 입력과 다음 미래 슬롯을 계산한다. 시계와 실행 상태를 변경하지 않는다.</summary>
++    public static class BatchRepeatSchedule
++    {
++        public static bool TryValidate(AppSettings settings, out string error)
++        {
++            error = null;
++            if (!settings.BatchRepeatEnabled) return true;
++            if (settings.BatchRepeatClockAligned)
++            {
++                if (settings.BatchRepeatMinuteOfHour < 0 || settings.BatchRepeatMinuteOfHour > 59)
++                    error = "매시 지정분은 0~59 사이로 넣어 주세요.";
++            }
++            else if (settings.BatchRepeatMinutes < 1 || settings.BatchRepeatMinutes > 1440)
++                error = "전체 목록 반복 간격은 1~1440분 사이로 넣어 주세요.";
++            return error == null;
++        }
++
++        public static DateTime NextAfter(DateTime anchor, DateTime finished, bool clockAligned, int minutes, int minuteOfHour)
++        {
++            if (clockAligned)
++            {
++                if (minuteOfHour < 0 || minuteOfHour > 59) throw new ArgumentOutOfRangeException("minuteOfHour");
++                DateTime next = finished.Date.AddHours(finished.Hour).AddMinutes(minuteOfHour);
++                return next > finished ? next : next.AddHours(1);
++            }
++            if (minutes < 1 || minutes > 1440) throw new ArgumentOutOfRangeException("minutes");
++            long gap = TimeSpan.TicksPerMinute * minutes;
++            long elapsed = Math.Max(0, finished.Ticks - anchor.Ticks);
++            long slots = elapsed / gap + 1;
++            return anchor.AddTicks(checked(slots * gap));
++        }
++    }
++}
+--- 19차/src/Brand.cs
++++ 20차/src/Brand.cs
+@@ -4,7 +4,7 @@
+     {
+         public const string Name = "EXP";
+         public const string Master = "EXP Master";
+-        public const string Version = "2.3.1";
++        public const string Version = "2.4.0";
+         public static string Email
+         {
+             get
+--- 19차/src/Design.cs
++++ 20차/src/Design.cs
+@@ -11,9 +11,44 @@
+         readonly Control owner;readonly Action<bool> changed;
+         readonly System.Collections.Generic.List<Control> parents=new System.Collections.Generic.List<Control>();
+         public VisibilityWatch(Control control,Action<bool> action){owner=control;changed=action;owner.HandleCreated+=Rebind;owner.ParentChanged+=Rebind;owner.VisibleChanged+=Update;Rebind(null,EventArgs.Empty);}
+-        void Rebind(object sender,EventArgs e){foreach(var parent in parents){parent.VisibleChanged-=Update;parent.ParentChanged-=Rebind;}parents.Clear();for(Control parent=owner.Parent;parent!=null;parent=parent.Parent){parents.Add(parent);parent.VisibleChanged+=Update;parent.ParentChanged+=Rebind;}Update(null,EventArgs.Empty);}
+-        void Update(object sender,EventArgs e){if(!owner.IsDisposed)changed(owner.Visible);}
+-        public void Dispose(){owner.HandleCreated-=Rebind;owner.ParentChanged-=Rebind;owner.VisibleChanged-=Update;foreach(var parent in parents){parent.VisibleChanged-=Update;parent.ParentChanged-=Rebind;}parents.Clear();}
++        void Rebind(object sender,EventArgs e){foreach(var parent in parents){parent.VisibleChanged-=Update;parent.ParentChanged-=Rebind;parent.Resize-=Update;}parents.Clear();for(Control parent=owner.Parent;parent!=null;parent=parent.Parent){parents.Add(parent);parent.VisibleChanged+=Update;parent.ParentChanged+=Rebind;parent.Resize+=Update;}Update(null,EventArgs.Empty);}
++        void Update(object sender,EventArgs e){if(!owner.IsDisposed)changed(owner.Visible&&(owner.FindForm()==null||owner.FindForm().WindowState!=FormWindowState.Minimized));}
++        public void Dispose(){owner.HandleCreated-=Rebind;owner.ParentChanged-=Rebind;owner.VisibleChanged-=Update;foreach(var parent in parents){parent.VisibleChanged-=Update;parent.ParentChanged-=Rebind;parent.Resize-=Update;}parents.Clear();}
++    }
++    /// <summary>Windows의 클라이언트 모션 설정과 앱 내 모션 줄이기를 함께 따릅니다.</summary>
++    public static class MotionPreferences
++    {
++        [System.Runtime.InteropServices.DllImport("user32.dll",SetLastError=true)]
++        static extern bool SystemParametersInfo(uint action,uint parameter,out bool enabled,uint flags);
++        private static bool reduced;
++        public static event Action Changed;
++        public static bool UserReducedMotion {get{return reduced;}set{if(reduced==value)return;reduced=value;var handler=Changed;if(handler!=null)handler();}}
++        public static bool ReducedMotion {get{if(reduced)return true;bool enabled;return SystemParametersInfo(0x1042,0,out enabled,0)&&!enabled;}}
++    }
++    /// <summary>검증된 제작 자산을 프로세스에서 한 번만 디코딩합니다.</summary>
++    public static class BrandAssets
++    {
++        public static readonly Bitmap Still=Load("brand.exp-prism-still.png");
++        public static readonly Bitmap Sheet=Load("brand.exp-prism-sheet.png");
++        static Bitmap Load(string name){using(var stream=System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(name)){if(stream==null)throw new InvalidOperationException("필수 EXP 브랜드 자산이 없습니다: "+name);using(var image=Image.FromStream(stream)){return new Bitmap(image);}}}
++        public static void Draw(Graphics g,Rectangle target,int frame){g.InterpolationMode=InterpolationMode.HighQualityBicubic;int index=Math.Max(0,frame)%48;g.DrawImage(Sheet,target,new Rectangle(index%8*192,index/8*192,192,192),GraphicsUnit.Pixel);}
++    }
++    /// <summary>실제 3D 메시에서 구운 48개 프레임을 재생합니다. 숨김·최소화·모션 줄이기 때 멈춥니다.</summary>
++    public class BrandScene : Control,IThemed
++    {
++        readonly Timer timer=new Timer{Interval=83};readonly VisibilityWatch visibility;
++        int frame,current,maximum=1;
++        public bool AnimationRunning {get{return timer.Enabled;}}
++        public int FrameIndex {get{return frame;}}
++        public int Maximum {get{return maximum;}set{maximum=Math.Max(1,value);Invalidate();}}
++        public int Value {get{return current;}set{current=Math.Max(0,Math.Min(maximum,value));AccessibleName="등록 진행 "+Percentage+"%";Invalidate();}}
++        public int Percentage {get{return (int)Math.Round(current*100.0/maximum);}}
++        public BrandScene(){SetStyle(ControlStyles.UserPaint|ControlStyles.AllPaintingInWmPaint|ControlStyles.OptimizedDoubleBuffer|ControlStyles.ResizeRedraw,true);TabStop=false;AccessibleRole=AccessibleRole.ProgressBar;timer.Tick+=delegate{if(!CanAnimate()){timer.Stop();return;}frame=(frame+1)%48;Invalidate();};visibility=new VisibilityWatch(this,delegate(bool visible){UpdateMotion();});MotionPreferences.Changed+=UpdateMotion;Theme.Changed+=ApplyTheme;}
++        bool CanAnimate(){var form=FindForm();return Visible&&IsHandleCreated&&!IsDisposed&&!MotionPreferences.ReducedMotion&&(form==null||form.WindowState!=FormWindowState.Minimized);}
++        public void UpdateMotion(){if(IsDisposed)return;if(CanAnimate())timer.Start();else{timer.Stop();if(MotionPreferences.ReducedMotion)frame=0;}Invalidate();}
++        public void ApplyTheme(){Invalidate();}
++        protected override void OnPaint(PaintEventArgs e){var p=Theme.Current;e.Graphics.Clear(Parent==null?p.Bg:Parent.BackColor);int label=Dpi.S(28),size=Math.Min(Width,Math.Max(1,Height-label));BrandAssets.Draw(e.Graphics,new Rectangle((Width-size)/2,0,size,size),frame);TextRenderer.DrawText(e.Graphics,Percentage+"%",Theme.Font(13f,FontStyle.Bold),new Rectangle(0,Height-label,Width,label),p.Text,TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|TextFormatFlags.NoPadding);}
++        protected override void Dispose(bool disposing){if(disposing){visibility.Dispose();timer.Dispose();MotionPreferences.Changed-=UpdateMotion;Theme.Changed-=ApplyTheme;}base.Dispose(disposing);}
+     }
+     public class FieldFrame : Panel,IThemed
+     {
+@@ -201,11 +236,11 @@
+     {
+         public bool Primary; bool hot, down; float hover;
+         readonly Timer motion=new Timer { Interval=16 };readonly VisibilityWatch visibility;
+-        public SoftButton() { SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true); FlatStyle = FlatStyle.Flat; FlatAppearance.BorderSize = 0; Height = 40; Cursor = Cursors.Hand; Font = Theme.FontBase(); motion.Tick+=delegate {float target=hot?1:0;hover+=(target-hover)*.3f;if(Math.Abs(target-hover)<.02f){hover=target;motion.Stop();}Invalidate();}; visibility=new VisibilityWatch(this,delegate(bool visible){if(!visible){motion.Stop();hover=0;hot=down=false;}}); }
++        public SoftButton() { SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true); FlatStyle = FlatStyle.Flat; FlatAppearance.BorderSize = 0; Height = 40; Cursor = Cursors.Hand; Font = Theme.FontBase(); motion.Tick+=delegate {if(MotionPreferences.ReducedMotion){hover=hot?1:0;motion.Stop();Invalidate();return;}float target=hot?1:0;hover+=(target-hover)*.3f;if(Math.Abs(target-hover)<.02f){hover=target;motion.Stop();}Invalidate();}; visibility=new VisibilityWatch(this,delegate(bool visible){if(!visible){motion.Stop();hover=0;hot=down=false;}}); }
+         protected override void Dispose(bool disposing) { if(disposing){visibility.Dispose();motion.Dispose();}base.Dispose(disposing); }
+         public void ApplyTheme() { BackColor = Theme.Panel; ForeColor = Theme.TextPrimary; Invalidate(); }
+-        protected override void OnMouseEnter(EventArgs e) { hot = true; motion.Start(); base.OnMouseEnter(e); }
+-        protected override void OnMouseLeave(EventArgs e) { hot = down = false; motion.Start(); base.OnMouseLeave(e); }
++        protected override void OnMouseEnter(EventArgs e) { hot = true; if(MotionPreferences.ReducedMotion){hover=1;Invalidate();}else motion.Start(); base.OnMouseEnter(e); }
++        protected override void OnMouseLeave(EventArgs e) { hot = down = false; if(MotionPreferences.ReducedMotion){hover=0;Invalidate();}else motion.Start(); base.OnMouseLeave(e); }
+         protected override void OnVisibleChanged(EventArgs e) { if(!Visible){motion.Stop();hover=0;hot=down=false;}base.OnVisibleChanged(e); }
+         protected override void OnMouseDown(MouseEventArgs e) { down = true; Invalidate(); base.OnMouseDown(e); }
+         protected override void OnMouseUp(MouseEventArgs e) { down = false; Invalidate(); base.OnMouseUp(e); }
+@@ -227,10 +262,8 @@
+         protected override void OnPaint(PaintEventArgs e)
+         {
+             var g = e.Graphics; g.Clear(Parent == null ? Theme.Sidebar : Parent.BackColor); g.SmoothingMode = SmoothingMode.AntiAlias;
+-            using (var p = Theme.RoundedRect(new Rectangle(0,0,Width-1,Height-1), Math.Max(5,Width/3))) using (var b = new SolidBrush(Theme.Accent)) g.FillPath(b,p);
+-            // 첫 번째 시안의 EXP 문자 표식을 나눔고딕 Bold로 그립니다.
+-            TextRenderer.DrawText(g,"EXP",Theme.Font(Math.Max(7f,Width*.23f),FontStyle.Bold),ClientRectangle,Theme.Current.OnAccent,
+-                TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|TextFormatFlags.NoPadding|TextFormatFlags.SingleLine);
++            e.Graphics.InterpolationMode=InterpolationMode.HighQualityBicubic;
++            e.Graphics.DrawImage(BrandAssets.Still,ClientRectangle);
+         }
+     }
+     public class SoftCombo : ComboBox
+--- 19차/src/MainForm.cs
++++ 20차/src/MainForm.cs
+@@ -73,24 +73,24 @@
+             // ---- 화면 뼈대
+             content = new Panel { Dock = DockStyle.Fill, BackColor = Theme.BgDark };
+             header = new HeaderPanel { Dock = DockStyle.Top, Height = Ui.S(70) };
+-            sidebar = new SidebarPanel { Dock = DockStyle.Left, Width = Ui.S(232) };
++            sidebar = new SidebarPanel { Dock = DockStyle.Left, Width = Ui.S(216) };
+             Controls.Add(content); Controls.Add(header); Controls.Add(sidebar);
+ 
+-            lblBrand = new Label { Text = Brand.Name, AutoSize = true, Font = Theme.Font(21f, FontStyle.Bold), Location = new Point(78, 28), Tag = "t", BackColor = Theme.Sidebar };
+-            lblBrandSub = new Label { Text = Brand.Tagline, AutoSize = true, Font = Theme.FontSub(), Location = new Point(80, 65), Tag = "m", BackColor = Theme.Sidebar };
+-            sidebar.Controls.Add(new BrandMark { Left = 24, Top = 28, Width = 42, Height = 42 });
++            lblBrand = new Label { Text = Brand.Name, AutoSize = true, Font = Theme.Font(21f, FontStyle.Bold), Location = new Point(82, 28), Tag = "t", BackColor = Theme.Sidebar };
++            lblBrandSub = new Label { Text = Brand.Tagline, AutoSize = true, Font = Theme.FontSub(), Location = new Point(24, 92), Tag = "m", BackColor = Theme.Sidebar };
++            sidebar.Controls.Add(new BrandMark { Left = 20, Top = 20, Width = 58, Height = 58 });
+             sidebar.Controls.Add(lblBrand); sidebar.Controls.Add(lblBrandSub);
+             lblFoot = new Label { Text = "EXP  /  " + Brand.Version, AutoSize = true, Font = Theme.Font(8.5f, FontStyle.Regular), Tag = "m", BackColor = Theme.Sidebar };
+             sidebar.Controls.Add(lblFoot);
+ 
+-            int y = 126;
++            int y = 142;
+             foreach (var m in MenuDef)
+             {
+                 var item = new NavItem { Key = m[0], Text = m[1], Glyph = m[2], Left = 0, Top = y, Width = sidebar.Width, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+                 string key = m[0];
+                 item.Click += delegate { Navigate(key); };
+                 navs[key] = item; sidebar.Controls.Add(item);
+-                y += 46;
++                y += 50;
+             }
+ 
+             lblPage = new Label { Text = "", AutoSize = true, Font = Theme.Font(12f, FontStyle.Bold), Location = new Point(24, 17), Tag = "t", BackColor = Theme.BgDark };
+@@ -151,7 +151,7 @@
+             page.Visible = true; page.BringToFront();
+             foreach (var kv in navs) kv.Value.Selected = kv.Key == key;
+             string title = MenuDef.First(m => m[0] == key)[1];
+-            lblPage.Text = title;
++            lblPage.Text = "EXP  /  작업 공간";
+             page.OnActivated();
+             LayoutHeader();
+         }
+@@ -179,10 +179,10 @@
+ 
+         private void LayoutSidebar()
+         {
+-                        sidebar.Width = Ui.S(_compact ? 76 : 232);
++                        sidebar.Width = Ui.S(_compact ? 76 : 224);
+             lblBrand.Visible = lblBrandSub.Visible = !_compact;
+             foreach (Control c in sidebar.Controls) if (c is BrandMark) c.Visible = !_compact;
+-            int y = Ui.S(126); int step = Ui.S(46);
++            int y = Ui.S(142); int step = Ui.S(50);
+             foreach (var m in MenuDef)
+             {
+                 var it = navs[m[0]]; it.Width = sidebar.Width; it.Left = 0;
+--- 19차/src/Models.cs
++++ 20차/src/Models.cs
+@@ -64,6 +64,12 @@
+         public bool RepeatAll = false;
+         /// <summary>목록 전체를 올리는 총 횟수(처음 1회 포함).</summary>
+         public int RepeatCount = 2;
++        /// <summary>true 이면 유효한 전체 목록을 즉시 올린 뒤 중지할 때까지 정해진 시각에 반복한다.</summary>
++        public bool BatchRepeatEnabled = false;
++        /// <summary>true 이면 매시 지정분, false 이면 시작 시각 기준 분 간격으로 전체 목록을 반복한다.</summary>
++        public bool BatchRepeatClockAligned = false;
++        public int BatchRepeatMinutes = 60;
++        public int BatchRepeatMinuteOfHour = 0;
+         /// <summary>true 이면 등록을 1개씩, OneByOneMinutes 분 간격(또는 시간대별 간격)으로 진행하고 모두 끝나면 자동 종료한다.</summary>
+         public bool OneByOne = true;
+         public int OneByOneMinutes = 20;
+--- 19차/src/Runner.cs
++++ 20차/src/Runner.cs
+@@ -11,7 +11,9 @@
+     {
+         private Thread _thread;
+         private Bot _bot;
++        private AppSettings _botCfg;
+         private readonly object _gate = new object();
++        private volatile bool _stopRequested, _pauseRequested;
+ 
+         public bool Running { get; private set; }
+         public string BlockedReason = "";
+@@ -26,25 +28,33 @@
+         public Bot CurrentBot { get { return _bot; } }
+ 
+         /// <summary>일시정지 중인지 (v2)</summary>
+-        public bool Paused { get { return _bot != null && _bot.PauseRequested; } }
++        public bool Paused { get { return _pauseRequested || (_bot != null && _bot.PauseRequested); } }
+         /// <summary>지금 등록 중인 상품(화면 표시용)</summary>
+         public volatile Product CurrentProduct;
+ 
+         public void Pause()
+         {
+-            if (_bot != null && Running && !_bot.PauseRequested)
++            lock (_gate)
+             {
+-                _bot.PauseRequested = true;
+-                Log.Write("INFO", "Automation", "run.pause", "[일시정지] 현재 단계가 끝나는 대로 멈춥니다.", "");
++                if (Running && !_pauseRequested)
++                {
++                    _pauseRequested = true;
++                    if (_bot != null) _bot.PauseRequested = true;
++                    Log.Write("INFO", "Automation", "run.pause", "[일시정지] 현재 단계가 끝나는 대로 멈춥니다.", "");
++                }
+             }
+         }
+ 
+         public void Resume()
+         {
+-            if (_bot != null && _bot.PauseRequested)
++            lock (_gate)
+             {
+-                _bot.PauseRequested = false;
+-                Log.Write("INFO", "Automation", "run.resume", "[일시정지 해제] 이어서 진행합니다.", "");
++                if (_pauseRequested || (_bot != null && _bot.PauseRequested))
++                {
++                    _pauseRequested = false;
++                    if (_bot != null) _bot.PauseRequested = false;
++                    Log.Write("INFO", "Automation", "run.resume", "[일시정지 해제] 이어서 진행합니다.", "");
++                }
+             }
+         }
+         /// <summary>이번 실행에서 등록을 시도한 상품(같은 회차 안에서 다음 실행 때 제외하기 위함)</summary>
+@@ -56,32 +66,38 @@
+                         Func<IList<Product>> snapshot, Action saveProducts, bool includeRegistered)
+         {
+             Guard.Check();
++            includeRegistered = cfg.BatchRepeatEnabled || includeRegistered;
+             UsageQuota.RequireMode(cfg, includeRegistered);
+             lock (_gate)
+             {
+                 if (Running) return;
+                 Running = true;
+                 BlockedReason = "";
++                LastRegistered = new List<Product>();
++                _stopRequested = false; _pauseRequested = false;
+             }
+-            if (_bot == null) _bot = new Bot(cfg, sel);
+-            _bot.StopRequested = false;
+-            _bot.PauseRequested = false;
+-            _bot.Ask = Ask;
+-            _bot.NotifyManual = delegate (string m) { var h = ManualLoginNeeded; if (h != null) h(m); };
+-
+-            var bot = _bot;
+-
+             _thread = new Thread(delegate ()
+             {
++                Bot bot = null;
+                 try
+                 {
++                    // 같은 실행 안에서는 브라우저를 재사용하고, 다음 시작에서는 새로 동결한 설정을 전달한다.
++                    if (_bot == null || !ReferenceEquals(_botCfg, cfg))
++                    {
++                        if (_bot != null) _bot.Close();
++                        _bot = new Bot(cfg, sel); _botCfg = cfg;
++                    }
++                    bot = _bot;
++                    lock (_gate) { bot.StopRequested = _stopRequested; bot.PauseRequested = _pauseRequested; }
++                    bot.Ask = Ask;
++                    bot.NotifyManual = delegate (string m) { var h = ManualLoginNeeded; if (h != null) h(m); };
+                     Guard.Check();
+                     Log.Write("===== 작업 시작 =====");
+-                    if (!bot.EnsureLogin()) { Log.Write("로그인에 실패해 작업을 중단합니다."); return; }
++                    if (!bot.EnsureLogin()) { if (cfg.BatchRepeatEnabled) BlockedReason = "로그인에 실패해 전체 목록 반복을 중단했습니다. 로그인 상태를 확인해 주세요."; Log.Write("로그인에 실패해 작업을 중단합니다."); return; }
+ 
+                     var list = snapshot();
+                     int limit = BatchLimit;
+-                    int regLimit = cfg.OneByOne ? 1 : limit;   // 1개씩 등록 모드면 한 번에 1개만
++                    int regLimit = cfg.BatchRepeatEnabled ? int.MaxValue : cfg.OneByOne ? 1 : limit;
+                     int total = 0, done = 0;
+ 
+                     var toRegister = new List<Product>();
+@@ -89,12 +105,12 @@
+                         toRegister = (includeRegistered
+                             ? list.Where(p => p.IsValid)
+                             : list.Where(p => p.IsValid && string.IsNullOrEmpty(p.ProductId) && p.Status != "등록됨")).Take(regLimit).ToList();
+-                    LastRegistered = new List<Product>();
+                     total = toRegister.Count;
+                     Report(0, total);
+ 
+                     foreach (var p in toRegister)
+                     {
++                        if (_stopRequested) throw new StopRequestedException();
+                         Guard.Check();
+                         p.Status = "진행중";
+                         CurrentProduct = p;
+@@ -117,10 +133,10 @@
+                 catch (StopRequestedException) { CurrentProduct = null; Log.Write("사용자가 작업을 중지했습니다."); }
+                 catch (Exception ex)
+                 {
+-                    if (ex is RegistrationBlockedException) BlockedReason = ex.Message;
++                    if (ex is RegistrationBlockedException || cfg.BatchRepeatEnabled) BlockedReason = ex.Message;
+                     CurrentProduct = null;
+                     Log.Error("Automation", "run.error", "오류: " + ex.Message, ex);
+-                    try { if (!bot.IsAlive) bot.Close(); } catch { }
++                    try { if (bot != null && !bot.IsAlive) bot.Close(); } catch { }
+                 }
+                 finally
+                 {
+@@ -141,7 +157,7 @@
+ 
+         public void Stop()
+         {
+-            if (_bot != null) _bot.StopRequested = true;
++            lock (_gate) { _stopRequested = true; if (_bot != null) _bot.StopRequested = true; }
+         }
+ 
+         public void Shutdown()
+--- 19차/src/UI/AutomationController.cs
++++ 20차/src/UI/AutomationController.cs
+@@ -3,6 +3,7 @@
+ using System.ComponentModel;
+ using System.Linq;
+ using System.Windows.Forms;
++using Newtonsoft.Json;
+ 
+ namespace BunjangAuto
+ {
+@@ -26,13 +27,17 @@
+         private readonly HashSet<Product> _skip = new HashSet<Product>();
+         private DateTime _nextRun = DateTime.MinValue;
+         private bool _scheduleOn;
++        private AppSettings _runCfg;
++        private DateTime _batchAnchor;
++        private bool _paused, _batchAwaitingClock;
++        private AppSettings RunCfg { get { return _runCfg ?? Cfg; } }
+ 
+         // ---- 화면이 읽는 상태
+         public string StateText = "대기 중";
+         public string NextText = "";
+         public int Done, Total;
+         public bool Active;                         // 시작 ~ 종료 사이(예약 대기 포함)
+-        public bool Paused { get { return Runner.Paused; } }
++        public bool Paused { get { return _paused || Runner.Paused; } }
+         public DateTime NextRun { get { return _nextRun; } }
+         public int Round { get { return _round; } }
+         public int RoundTotal { get { return _roundTotal; } }
+@@ -76,26 +81,36 @@
+         // ============================ 실행 / 예약 ============================
+         public void Start()
+         {
+-            try { ServerClock.RequireFresh(); UsageQuota.RequireMode(Cfg, Cfg.AllowDuplicate); UsageQuota.EnsureReady(); }
++            if (Active || Runner.Running) return;
++            var settings = JsonConvert.DeserializeObject<AppSettings>(JsonConvert.SerializeObject(Cfg));
++            settings.TimeRules = Rules.Select(r => new TimeRule(r.Start, r.End, r.Minutes)).ToList();
++            string validation;
++            if (!BatchRepeatSchedule.TryValidate(settings, out validation)) { Say(validation, "예약 설정 확인"); return; }
++            try { ServerClock.RequireFresh(); UsageQuota.RequireMode(settings, settings.BatchRepeatEnabled || settings.AllowDuplicate); UsageQuota.EnsureReady(); }
+             catch (Exception ex) { Say(ex.Message, "EXP 이용 안내"); return; }
+             SaveSettings();
+-            if (!Cfg.DoRegister) { Say("실행할 작업을 선택해 주세요.", "안내"); return; }
++            if (!settings.DoRegister) { Say("실행할 작업을 선택해 주세요.", "안내"); return; }
++            _runCfg = settings;
++            _paused = false; _batchAwaitingClock = false;
++            _batchAnchor = ServerClock.KoreaNow;
++            _nextRun = DateTime.MinValue;
+             _skip.Clear();
+             _round = 1;
+-            _roundTotal = (Cfg.OneByOne && Cfg.RepeatAll) ? Math.Max(1, Cfg.RepeatCount) : 1;
++            _roundTotal = (!settings.BatchRepeatEnabled && settings.OneByOne && settings.RepeatAll) ? Math.Max(1, settings.RepeatCount) : 1;
+             _wins = null;
+             SuccessThisRun = 0; FailThisRun = 0;
+-            if (Cfg.OneByOne && Cfg.UseTimeRules)
++            if (!settings.BatchRepeatEnabled && settings.OneByOne && settings.UseTimeRules)
+             {
+                 string err; List<TimeWindow> wins;
+-                if (!Schedule.TryBuild(Cfg.TimeRules, out wins, out err)) { Say(err, "시간대 설정 확인"); return; }
++                if (!Schedule.TryBuild(settings.TimeRules, out wins, out err)) { Say(err, "시간대 설정 확인"); return; }
+                 _wins = wins;
+                 Log.Write("[시간대별 등록] " + Schedule.Describe(_wins));
+             }
+             if (_roundTotal > 1) Log.Write("[반복] 목록을 총 " + _roundTotal + "회 올립니다. (1/" + _roundTotal + "회차 시작)");
+-            _scheduleOn = Cfg.OneByOne;
++            _scheduleOn = settings.BatchRepeatEnabled || settings.OneByOne;
+             Active = true;
+-            Log.Write("INFO", "Automation", "run.start", "자동등록을 시작합니다. (" + (Cfg.OneByOne ? (Cfg.UseTimeRules ? "1개씩·시간대별" : "1개씩·" + Cfg.OneByOneMinutes + "분 간격") : "일괄") + (_roundTotal > 1 ? ", 총 " + _roundTotal + "회 반복" : "") + (Cfg.AllowDuplicate ? ", 중복 허용" : "") + ")", "");
++            string mode = settings.BatchRepeatEnabled ? "전체 목록 반복 · " + (settings.BatchRepeatClockAligned ? "매시 " + settings.BatchRepeatMinuteOfHour + "분" : settings.BatchRepeatMinutes + "분 간격") : (settings.OneByOne ? (settings.UseTimeRules ? "1개씩·시간대별" : "1개씩·" + settings.OneByOneMinutes + "분 간격") : "일괄");
++            Log.Write("INFO", "Automation", "run.start", "자동등록을 시작합니다. (" + mode + (_roundTotal > 1 ? ", 총 " + _roundTotal + "회 반복" : "") + (settings.AllowDuplicate ? ", 중복 허용" : "") + ")", "");
+ 
+             if (_wins != null && Schedule.ActiveAt(_wins, ServerClock.KoreaNow) == null)
+             {
+@@ -111,19 +126,23 @@
+ 
+         private void LaunchRun()
+         {
++            if (!Active || Runner.Running || _paused) return;
+             StateText = "실행 중...";
+             NextText = "";
+             Done = 0; Total = 0;
+             _runStart = ServerClock.KoreaNow;
+-            bool includeRegistered = Cfg.AllowDuplicate || _round > 1;   // 2회차부터는 이미 등록된 상품도 처음부터 다시
++            bool includeRegistered = RunCfg.BatchRepeatEnabled || RunCfg.AllowDuplicate || _round > 1;
++            var snapshot = Products.Where(p => !_skip.Contains(p)).ToList();
+             Raise();
+-            try { Runner.Run(Cfg, Sel, Products, () => Products.Where(p => !_skip.Contains(p)).ToList(), () => Storage.SaveProducts(Products), includeRegistered); }
++            if (!Active || _paused) return;
++            try { Runner.Run(RunCfg, Sel, Products, () => snapshot, () => Storage.SaveProducts(Products), includeRegistered); }
+             catch (Exception ex) { _scheduleOn = false; Active = false; StateText = "등록 중단"; Say(ex.Message,"EXP 이용 안내"); Raise(); }
+         }
+ 
+         public void Stop()
+         {
+             _scheduleOn = false;
++            _paused = false; _batchAwaitingClock = false;
+             _nextRun = DateTime.MinValue;
+             Runner.Resume();            // 일시정지 중이어도 중지가 바로 먹도록 먼저 해제
+             Runner.Stop();
+@@ -133,13 +152,13 @@
+             Raise();
+         }
+ 
+-        public void Pause() { Runner.Pause(); if (Runner.Running) StateText = "일시정지됨"; Raise(); }
+-        public void Resume() { Runner.Resume(); if (Runner.Running) StateText = "실행 중..."; Raise(); }
++        public void Pause() { if (!Active) return; _paused = true; Runner.Pause(); StateText = "일시정지됨"; Raise(); }
++        public void Resume() { _paused = false; Runner.Resume(); if (Active) StateText = Runner.Running ? "실행 중..." : "다음 실행 대기 중" + RoundText(); Raise(); }
+ 
+         /// <summary>이번 회차에 아직 등록할 상품이 남았는지</summary>
+         private bool HasPending()
+         {
+-            bool includeRegistered = Cfg.AllowDuplicate || _round > 1;
++            bool includeRegistered = RunCfg.BatchRepeatEnabled || RunCfg.AllowDuplicate || _round > 1;
+             return Products.Any(p => p.IsValid && !_skip.Contains(p) &&
+                 (includeRegistered || (string.IsNullOrEmpty(p.ProductId) && p.Status != "등록됨")));
+         }
+@@ -148,13 +167,13 @@
+         {
+             get
+             {
+-                bool includeRegistered = Cfg.AllowDuplicate || _round > 1;
++                bool includeRegistered = RunCfg.BatchRepeatEnabled || RunCfg.AllowDuplicate || _round > 1;
+                 return Products.Count(p => p.IsValid && !_skip.Contains(p) &&
+                     (includeRegistered || (string.IsNullOrEmpty(p.ProductId) && p.Status != "등록됨")));
+             }
+         }
+ 
+-        public string RoundText() { return _roundTotal > 1 ? "  ·  " + _round + "/" + _roundTotal + "회차" : ""; }
++        public string RoundText() { return RunCfg.BatchRepeatEnabled && Active ? "  ·  전체 목록 " + _round + "회차" : _roundTotal > 1 ? "  ·  " + _round + "/" + _roundTotal + "회차" : ""; }
+ 
+         private void OnRunnerFinished()
+         {
+@@ -170,6 +189,22 @@
+                 if (ProductsChanged != null) ProductsChanged();
+                 if (!String.IsNullOrEmpty(Runner.BlockedReason)) { _scheduleOn=false; _nextRun=DateTime.MinValue; FinishUi(); StateText="등록 중단"; Say(Runner.BlockedReason,"EXP 이용 안내"); Raise(); return; }
+                 if (!_scheduleOn) { FinishUi(); Raise(); return; }
++                if (RunCfg.BatchRepeatEnabled)
++                {
++                    int failures = Runner.LastRegistered.Count(p => (p.Status ?? "").StartsWith("실패"));
++                    if (Runner.LastRegistered.Count == 0 || failures > 0)
++                    {
++                        _scheduleOn = false; _nextRun = DateTime.MinValue; FinishUi();
++                        StateText = "등록 중단";
++                        Say(failures > 0 ? "전체 목록 회차에서 " + failures + "개 상품이 실패해 반복을 중단했습니다. 상품 상태를 확인한 뒤 다시 시작해 주세요." : "등록할 유효한 상품이 없어 전체 목록 반복을 종료했습니다.", "EXP 이용 안내");
++                        Raise(); return;
++                    }
++                    _round++;
++                    _batchAwaitingClock = true;
++                    if (ServerClock.Fresh) ScheduleNextBatch();
++                    else { _nextRun = DateTime.MinValue; StateText = "서버 시각 확인 중 · 예약 대기"; NextText = StateText; }
++                    Raise(); return;
++                }
+ 
+                 // 이번 회차에 이미 시도한 상품(성공/실패)은 같은 회차 안에서 다시 시도하지 않는다
+                 foreach (var p in Runner.LastRegistered) _skip.Add(p);
+@@ -197,10 +232,10 @@
+                     }
+                 }
+ 
+-                if (_wins != null) _nextRun = Schedule.NextRun(_wins, _runStart, ServerClock.KoreaNow, Cfg.OneByOneMinutes);
++                if (_wins != null) _nextRun = Schedule.NextRun(_wins, _runStart, ServerClock.KoreaNow, RunCfg.OneByOneMinutes);
+                 else
+                 {
+-                    _nextRun = _runStart.AddMinutes(Cfg.OneByOneMinutes);
++                    _nextRun = _runStart.AddMinutes(RunCfg.OneByOneMinutes);
+                     if (_nextRun < ServerClock.KoreaNow) _nextRun = ServerClock.KoreaNow;
+                 }
+                 Log.Write("[1개씩 등록] 다음 등록 예정: " + _nextRun.ToString(_nextRun.Date == ServerClock.KoreaNow.Date ? "HH:mm:ss" : "MM-dd HH:mm:ss"));
+@@ -213,6 +248,7 @@
+         {
+             if (Active) Log.Write("INFO", "Automation", "run.finish", "자동등록이 끝났습니다. (성공 " + SuccessThisRun + " / 실패 " + FailThisRun + ")", "");
+             Active = false;
++            _paused = false; _batchAwaitingClock = false;
+             StateText = "대기 중";
+             NextText = "";
+             Done = 0; Total = 0;
+@@ -224,7 +260,7 @@
+             Post(delegate
+             {
+                 Done = done; Total = total;
+-                StateText = (Runner.Paused ? "일시정지됨" : "실행 중...") + " (" + done + "/" + total + ")" + RoundText();
++                StateText = (Paused ? "일시정지됨" : "실행 중...") + " (" + done + "/" + total + ")" + RoundText();
+                 if (ProductsChanged != null) ProductsChanged();
+                 Raise();
+             });
+@@ -235,6 +271,8 @@
+         {
+             ServerClock.RefreshAsync();
+             if (!ServerClock.Fresh) { if (Active) { NextText = "서버 시각 확인 중 · 예약 대기"; Raise(); } return; }
++            if (_paused) return;
++            if (_scheduleOn && _batchAwaitingClock) { ScheduleNextBatch(); Raise(); return; }
+             if (!_scheduleOn || Runner.Running || _nextRun == DateTime.MinValue) return;
+             var left = _nextRun - ServerClock.KoreaNow;
+             if (left.TotalSeconds <= 0)
+@@ -254,6 +292,15 @@
+ 
+         private void Say(string msg, string title) { var n = Notice; if (n != null) n(msg, title); }
+ 
++        private void ScheduleNextBatch()
++        {
++            _nextRun = BatchRepeatSchedule.NextAfter(_batchAnchor, ServerClock.KoreaNow, RunCfg.BatchRepeatClockAligned, RunCfg.BatchRepeatMinutes, RunCfg.BatchRepeatMinuteOfHour);
++            _batchAwaitingClock = false;
++            StateText = "다음 전체 목록 대기 중" + RoundText();
++            NextText = "다음 전체 목록: " + _nextRun.ToString("MM-dd HH:mm:ss");
++            Log.Write("[전체 목록 반복] " + NextText);
++        }
++
+         private void Post(Action a)
+         {
+             try { if (_ui.IsHandleCreated) _ui.BeginInvoke(a); } catch { }
+--- 19차/src/UI/Controls.cs
++++ 20차/src/UI/Controls.cs
+@@ -19,7 +19,7 @@
+         protected void AnimateTo(double target)
+         {
+             motionTarget=target;
+-            if(!Visible || !IsHandleCreated){MotionValue=target;Invalidate();return;}
++            if(!Visible || !IsHandleCreated || MotionPreferences.ReducedMotion || (FindForm()!=null&&FindForm().WindowState==FormWindowState.Minimized)){MotionValue=target;Invalidate();return;}
+             if(Math.Abs(MotionValue-target)>.001)motion.Start();
+         }
+         protected override void OnVisibleChanged(EventArgs e){base.OnVisibleChanged(e);if(!Visible){motion.Stop();MotionValue=motionTarget;}}
+@@ -29,12 +29,14 @@
+                      ControlStyles.ResizeRedraw | ControlStyles.Selectable | ControlStyles.StandardClick, true);
+             Font = Theme.FontBase();
+             Theme.Changed += OnThemeChanged;
++            MotionPreferences.Changed+=OnMotionChanged;
+             motion.Tick+=delegate{MotionValue+=(motionTarget-MotionValue)*.32;if(Math.Abs(motionTarget-MotionValue)<.002){MotionValue=motionTarget;motion.Stop();}Invalidate();};
+             visibility=new VisibilityWatch(this,delegate(bool visible){if(!visible){motion.Stop();MotionValue=motionTarget;}});
+         }
++        private void OnMotionChanged(){if(MotionPreferences.ReducedMotion){motion.Stop();MotionValue=motionTarget;Invalidate();}}
+         private void OnThemeChanged() { if (!IsDisposed) { ApplyTheme(); Invalidate(); } }
+         public virtual void ApplyTheme() { }
+-        protected override void Dispose(bool disposing) { if (disposing) {Theme.Changed -= OnThemeChanged;visibility.Dispose();motion.Dispose();} base.Dispose(disposing); }
++        protected override void Dispose(bool disposing) { if (disposing) {Theme.Changed -= OnThemeChanged;MotionPreferences.Changed-=OnMotionChanged;visibility.Dispose();motion.Dispose();} base.Dispose(disposing); }
+ 
+         /// <summary>둥근 모서리 바깥을 칠할 색: 부모의 실제 배경색.</summary>
+         protected Color ParentBg { get { return Parent != null ? Parent.BackColor : Theme.Current.Bg; } }
+@@ -50,7 +52,7 @@
+     /// <summary>둥근 모서리 + 얇은 테두리의 카드(바탕보다 한 층 위).</summary>
+     public class CardPanel : Panel, IThemed
+     {
+-        public int Radius = 14;
++        public int Radius = 18;
+         public bool Tinted;
+         public bool Raised = true;     // false 면 카드색 없이 바탕색 위에 테두리만
+         public CardPanel()
+@@ -220,13 +222,17 @@
+         public List<string> Items = new List<string>();
+         private int _idx; private int _hot = -1;
+         public event EventHandler SelectedIndexChanged;
+-        public Segmented() { Height = S(32); Width = S(260); Cursor = Cursors.Hand; }
++        public Segmented() { Height = S(32); Width = S(260); Cursor = Cursors.Hand; TabStop=true; AccessibleRole=AccessibleRole.List; }
+         public int SelectedIndex { get { return _idx; } set { if (_idx == value) return; _idx = value; Invalidate(); var h = SelectedIndexChanged; if (h != null) h(this, EventArgs.Empty); } }
+         public void SetIndexSilently(int i) { _idx = i; Invalidate(); }
+         private int Hit(Point pt) { if (Items.Count == 0) return -1; int i = pt.X * Items.Count / Math.Max(1, Width); return i < 0 || i >= Items.Count ? -1 : i; }
+         protected override void OnMouseMove(MouseEventArgs e) { int h = Hit(e.Location); if (h != _hot) { _hot = h; Invalidate(); } base.OnMouseMove(e); }
+         protected override void OnMouseLeave(EventArgs e) { _hot = -1; Invalidate(); base.OnMouseLeave(e); }
+-        protected override void OnMouseClick(MouseEventArgs e) { int i = Hit(e.Location); if (i >= 0) SelectedIndex = i; base.OnMouseClick(e); }
++        protected override void OnMouseClick(MouseEventArgs e) { if(Enabled){int i = Hit(e.Location); if (i >= 0) SelectedIndex = i; Focus();} base.OnMouseClick(e); }
++        protected override bool IsInputKey(Keys key){return key==Keys.Left||key==Keys.Right||key==Keys.Home||key==Keys.End||base.IsInputKey(key);}
++        protected override void OnKeyDown(KeyEventArgs e){if(Enabled&&Items.Count>0){int next=SelectedIndex;if(e.KeyCode==Keys.Left)next=Math.Max(0,next-1);else if(e.KeyCode==Keys.Right)next=Math.Min(Items.Count-1,next+1);else if(e.KeyCode==Keys.Home)next=0;else if(e.KeyCode==Keys.End)next=Items.Count-1;else{base.OnKeyDown(e);return;}SelectedIndex=next;e.Handled=true;}base.OnKeyDown(e);}
++        protected override void OnGotFocus(EventArgs e){base.OnGotFocus(e);Invalidate();}
++        protected override void OnLostFocus(EventArgs e){base.OnLostFocus(e);Invalidate();}
+         protected override void OnPaint(PaintEventArgs pe)
+         {
+             var g = pe.Graphics; var p = Theme.Current;
+@@ -234,6 +240,7 @@
+             var outer = new Rectangle(0, 0, Width - 1, Height - 1);
+             using (var path = Theme.RoundedRect(outer, 10)) { using (var b = new SolidBrush(p.CardAlt)) g.FillPath(b, path); using (var pen = new Pen(p.Border)) g.DrawPath(pen, path); }
+             if (Items.Count == 0) return;
++            if(Focused&&ShowFocusCues)ControlPaint.DrawFocusRectangle(g,new Rectangle(3,3,Width-6,Height-6),p.Text,p.CardAlt);
+             int w = (Width - 4) / Items.Count;
+             for (int i = 0; i < Items.Count; i++)
+             {
+--- 19차/src/UI/Pages/AutomationPage.cs
++++ 20차/src/UI/Pages/AutomationPage.cs
+@@ -19,7 +19,7 @@
+         public AutomationPage(AppHost host) : base(host)
+         {
+             Key = "automation"; PageTitle = "자동 등록";
+-            title = Ui.Title("자동 등록"); title.Location = new Point(0, 0);
++            title = Ui.Title("등록 실행실"); title.Location = new Point(0, 0);
+ 
+ 
+             cardMain = new CardPanel { Location = new Point(0, 74), Height = 250, Tinted=true };
+@@ -105,7 +105,7 @@
+             lblState.Text = a.Paused ? "일시정지" : running ? "실행 중" : a.Active ? "예약 대기" : a.StateText;
+             btnStart.Enabled = !a.Active && !running;
+             btnStop.Enabled = a.Active || running;
+-            btnPause.Enabled = running;
++            btnPause.Enabled = a.Active || running;
+             btnPause.Text = a.Paused ? "계속" : "일시정지"; btnPause.Glyph = Theme.HasIconFont ? (a.Paused ? "\uE768" : "\uE769") : "";
+             chipRun.Text = a.Paused ? "일시정지" : running ? "실행 중" : a.Active ? "예약 대기" : "중지됨";
+             chipRun.Tone = a.Paused ? Theme.Warn : running ? Theme.Success : a.Active ? Theme.Accent : (Color?)null;
+@@ -120,10 +120,10 @@
+             lblLeft.Text = a.RemainingCount.ToString();
+ 
+             var c = Host.Cfg; var parts = new System.Collections.Generic.List<string>();
+-            parts.Add(c.OneByOne ? (c.UseTimeRules ? "1개씩 · 시간대별 간격" : "1개씩 · " + c.OneByOneMinutes + "분 간격") : "한 번에 최대 30개");
+-            if (c.OneByOne && c.RepeatAll) parts.Add("총 " + c.RepeatCount + "회 반복");
+-            if (c.AllowDuplicate) parts.Add("중복 등록 허용");
+-            lblMode.Text = "현재 설정: " + string.Join("  ·  ", parts.ToArray()) + "   (예약 메뉴에서 바꿀 수 있습니다)";
++            parts.Add(c.BatchRepeatEnabled ? (c.BatchRepeatClockAligned ? "전체 목록 · 매시 " + c.BatchRepeatMinuteOfHour.ToString("00") + "분" : "전체 목록 · " + c.BatchRepeatMinutes + "분 간격") : c.OneByOne ? (c.UseTimeRules ? "1개씩 · 시간대별 간격" : "1개씩 · " + c.OneByOneMinutes + "분 간격") : "한 번에 최대 30개");
++            if (!c.BatchRepeatEnabled && c.OneByOne && c.RepeatAll) parts.Add("총 " + c.RepeatCount + "회 반복");
++            if (!c.BatchRepeatEnabled && c.AllowDuplicate) parts.Add("중복 등록 허용");
++            lblMode.Text = "현재 설정: " + string.Join("  ·  ", parts.ToArray()) + (a.Active ? "   · 실행 중 설정 고정" : "   · 예약에서 변경");
+             LayoutForDpi();
+         }
+     }
+--- 19차/src/UI/Pages/DashboardPage.cs
++++ 20차/src/UI/Pages/DashboardPage.cs
+@@ -1,120 +1,120 @@
+-using System;
+-using System.Collections.Generic;
+-using System.ComponentModel;
+-using System.Drawing;
+-using System.Linq;
+-using System.Windows.Forms;
+-
+-namespace BunjangAuto
+-{
+-    /// <summary>현재 자동 등록 진행과 목록 집계를 표시합니다. 일일 사용량과 인증을 추가로 조회하지 않습니다.</summary>
+-    public class DashboardPage : PageBase, IDpiLayout
+-    {
+-        private readonly Label title, jobTitle, description, jobState, jobCurrent, jobNext, activityTitle;
+-        private readonly Label[] statCaptions, statValues, statusCaptions, statusValues;
+-        private readonly Label activityTime, activityText;
+-        private readonly CardPanel overview, activity;
+-        private readonly FlatList lstActivity;
+-        private readonly FluentButton openAutomation;
+-        private readonly RunFraction fraction;
+-        private readonly CircularProgress progress;
+-        private readonly Timer refresh = new Timer { Interval = 2000 };
+-        private readonly Action usageChanged;
+-        private bool ready, placing;
+-
+-        public DashboardPage(AppHost host) : base(host)
+-        {
+-            Key="dashboard";PageTitle="한눈에 보기";
+-            title=Ui.Title("한눈에 보기");title.Font=Theme.Font(26f,FontStyle.Bold);title.Name="dashboardTitle";
+-            overview=new CardPanel {Name="dashboardOverview"};overview.Paint+=DrawOverviewLines;
+-            jobTitle=Ui.Text("등록 진행",22f,true);jobTitle.Name="dashboardProgressTitle";
+-            description=Ui.Muted("현재 자동 등록의 진행 상황입니다.");
+-            fraction=new RunFraction {Name="dashboardFraction"};
+-            progress=new CircularProgress {Name="dashboardProgress"};
+-            jobState=Ui.Text("대기 중",11f,true);jobState.Name="dashboardState";
+-            jobCurrent=Ui.Muted("현재 상품: —");jobNext=Ui.Muted("다음 예정  —");
+-            statCaptions=new[]{Ui.Muted("등록 대기"),Ui.Muted("등록 성공"),Ui.Muted("등록 실패")};
+-            statValues=new[]{Ui.Text("0",24f,true,"t"),Ui.Text("0",24f,true,"s"),Ui.Text("0",24f,true,"d")};
+-            string[] statNames={"dashboardPending","dashboardDone","dashboardFail"};
+-            for(int i=0;i<3;i++){statValues[i].Name=statNames[i];statCaptions[i].TextAlign=ContentAlignment.MiddleCenter;statValues[i].TextAlign=ContentAlignment.MiddleCenter;overview.Controls.Add(statCaptions[i]);overview.Controls.Add(statValues[i]);}
+-            openAutomation=Ui.Button("자동 등록 열기  ›","\uE768",BtnStyle.Primary,180);openAutomation.Name="openAutomation";openAutomation.Height=Ui.S(44);
+-            openAutomation.Click+=delegate{Host.Navigate("automation");};
+-            statusCaptions=new[]{Ui.Muted("로그인"),Ui.Muted("프로그램"),Ui.Muted("남은 기간")};
+-            statusValues=new[]{Ui.Heading("미확인"),Ui.Heading("확인 필요"),Ui.Heading("—")};
+-            for(int i=0;i<3;i++){overview.Controls.Add(statusCaptions[i]);overview.Controls.Add(statusValues[i]);}
+-            overview.Controls.AddRange(new Control[]{jobTitle,description,fraction,progress,jobState,jobCurrent,jobNext,openAutomation});
+-            activityTitle=Ui.Heading("최근 활동");activityTitle.Font=Theme.Font(16f,FontStyle.Bold);
+-            activity=new CardPanel {Name="dashboardActivity"};activityTime=Ui.Muted("시간");activityText=Ui.Muted("작업 내용");
+-            lstActivity=new FlatList {Name="dashboardActivityList",DrawMode=DrawMode.OwnerDrawFixed,ItemHeight=Ui.S(34),Font=Theme.FontBase()};
+-            lstActivity.DrawItem+=DrawRow;activity.Controls.AddRange(new Control[]{activityTime,activityText,lstActivity});
+-            Controls.AddRange(new Control[]{title,overview,activityTitle,activity});
+-            ready=true;Resize+=delegate{LayoutForDpi();};refresh.Tick+=delegate{if(Visible)Refresh2();};
+-            Host.Products.ListChanged+=OnProductsChanged;
+-            usageChanged=delegate{try{if(Visible&&IsHandleCreated)BeginInvoke((Action)Refresh2);}catch(InvalidOperationException){}};
+-            UsageMetricsService.Changed+=usageChanged;LayoutForDpi();
+-        }
+-        private void OnProductsChanged(object sender,ListChangedEventArgs e){if(Visible)Refresh2();}
+-        private class Row {public string Time,Text;public Color? Tone;}
+-        private void DrawRow(object sender,DrawItemEventArgs e)
+-        {
+-            var p=Theme.Current;using(var b=new SolidBrush(p.Card))e.Graphics.FillRectangle(b,e.Bounds);
+-            if(e.Index<0)return;var row=(Row)lstActivity.Items[e.Index];var flags=TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.NoPadding|TextFormatFlags.SingleLine|TextFormatFlags.EndEllipsis;
+-            TextRenderer.DrawText(e.Graphics,row.Time,Theme.Font(9f,FontStyle.Bold),new Rectangle(e.Bounds.X+Ui.S(16),e.Bounds.Y,Ui.S(108),e.Bounds.Height),p.TextMuted,flags);
+-            TextRenderer.DrawText(e.Graphics,row.Text,Theme.FontBase(),new Rectangle(e.Bounds.X+Ui.S(132),e.Bounds.Y,Math.Max(1,e.Bounds.Width-Ui.S(148)),e.Bounds.Height),row.Tone??p.Text,flags);
+-            using(var pen=new Pen(p.Border))e.Graphics.DrawLine(pen,e.Bounds.Left+Ui.S(16),e.Bounds.Bottom-1,e.Bounds.Right-Ui.S(16),e.Bounds.Bottom-1);
+-        }
+-        private void DrawOverviewLines(object sender,PaintEventArgs e)
+-        {
+-            if(!ready)return;int pad=Ui.S(24),w=overview.Width;using(var pen=new Pen(Theme.Border)){
+-                e.Graphics.DrawLine(pen,pad,Ui.S(280),w-pad,Ui.S(280));
+-                e.Graphics.DrawLine(pen,0,Ui.S(432),w,Ui.S(432));
+-                int col=(w-pad*2)/3;for(int i=1;i<3;i++){int x=pad+i*col;e.Graphics.DrawLine(pen,x,Ui.S(296),x,Ui.S(352));e.Graphics.DrawLine(pen,x,Ui.S(450),x,Ui.S(488));}
+-            }
+-        }
+-        private static void TextBounds(Label label,int x,int y,int width,int height){label.AutoSize=false;label.AutoEllipsis=true;label.SetBounds(x,y,Math.Max(1,width),height);}
+-        public void LayoutForDpi()
+-        {
+-            if(!ready||placing)return;placing=true;SuspendLayout();
+-            try{
+-                Padding=new Padding(Ui.S(32),Ui.S(26),Ui.S(32),Ui.S(26));int x=Padding.Left+AutoScrollPosition.X,y=Padding.Top+AutoScrollPosition.Y;
+-                int w=Math.Max(Ui.S(420),ClientSize.Width-Padding.Horizontal),pad=Ui.S(24),ring=w>=Ui.S(650)?Ui.S(164):Ui.S(120),leftWidth=w-ring-pad*3;
+-                TextBounds(title,x,y,w,Ui.S(40));overview.SetBounds(x,title.Bottom+Ui.S(16),w,Ui.S(508));
+-                TextBounds(jobTitle,pad,Ui.S(20),leftWidth,Ui.S(38));TextBounds(description,pad,Ui.S(64),leftWidth,Ui.S(24));
+-                fraction.SetBounds(pad,Ui.S(92),leftWidth,Ui.S(92));progress.SetBounds(w-pad-ring,Ui.S(54),ring,ring);
+-                TextBounds(jobState,pad,Ui.S(190),leftWidth,Ui.S(26));TextBounds(jobCurrent,pad,Ui.S(220),w-pad*2,Ui.S(24));TextBounds(jobNext,pad,Ui.S(248),w-pad*2,Ui.S(24));
+-                int col=(w-pad*2)/3;
+-                for(int i=0;i<3;i++){
+-                    TextBounds(statCaptions[i],pad+i*col,Ui.S(292),col-Ui.S(8),Ui.S(24));TextBounds(statValues[i],pad+i*col,Ui.S(320),col-Ui.S(8),Ui.S(36));
+-                    TextBounds(statusCaptions[i],pad+i*col,Ui.S(442),col-Ui.S(8),Ui.S(22));TextBounds(statusValues[i],pad+i*col,Ui.S(470),col-Ui.S(8),Ui.S(24));
+-                }
+-                openAutomation.SetBounds(pad,Ui.S(372),w-pad*2,Ui.S(44));
+-                TextBounds(activityTitle,x,overview.Bottom+Ui.S(20),w,Ui.S(32));activity.SetBounds(x,activityTitle.Bottom+Ui.S(12),w,Ui.S(210));
+-                TextBounds(activityTime,Ui.S(16),Ui.S(8),Ui.S(108),Ui.S(26));TextBounds(activityText,Ui.S(132),Ui.S(8),w-Ui.S(148),Ui.S(26));
+-                lstActivity.SetBounds(1,Ui.S(40),w-2,activity.Height-Ui.S(48));AutoScrollMinSize=new Size(0,activity.Bottom-AutoScrollPosition.Y+Padding.Bottom);
+-            }finally{ResumeLayout(false);placing=false;}
+-        }
+-        public override void OnActivated(){Refresh2();refresh.Start();}
+-        public override void OnDeactivated(){refresh.Stop();}
+-        protected override void OnVisibleChanged(EventArgs e){base.OnVisibleChanged(e);if(!Visible)refresh.Stop();}
+-        public override void OnThemeChanged(){lstActivity.Invalidate();overview.Invalidate();}
+-        protected override void Dispose(bool disposing){if(disposing){refresh.Dispose();Host.Products.ListChanged-=OnProductsChanged;UsageMetricsService.Changed-=usageChanged;}base.Dispose(disposing);}
+-        public void Refresh2()
+-        {
+-            statValues[0].Text=Host.CountPending().ToString();statValues[1].Text=Host.CountDone().ToString();statValues[2].Text=Host.CountFail().ToString();
+-            var a=Host.Auto;jobState.Text=a.StateText;jobCurrent.Text="현재 상품: "+(Host.Runner.CurrentProduct==null?"—":Host.Runner.CurrentProduct.Title);
+-            fraction.SetProgress(a.Done,a.Total);progress.Maximum=Math.Max(1,a.Total);progress.Value=a.Total>0?a.Done:0;
+-            jobNext.Text=string.IsNullOrEmpty(a.NextText)?"다음 예정  —":a.NextText;
+-            statusValues[0].Text=Host.Cfg.AssumeLoggedIn?"확인됨":"미확인";var li=LicenseGate.LastInfo;bool ok=li!=null&&li.Valid;
+-            statusValues[1].Text=ok?"EXP "+li.Edition:"확인 필요";statusValues[2].Text=!ok?"—":li.Expires==DateTime.MaxValue?"무기한":Math.Max(0,(int)Math.Ceiling((li.Expires.ToUniversalTime()-ServerClock.UtcNow).TotalDays))+"일";
+-            var u=UsageMetricsService.Data;var rows=new List<Row>();
+-            if(!string.IsNullOrEmpty(u.LastRun))rows.Add(new Row{Time=Short(u.LastRun),Text="최근 자동 등록 시작"});
+-            if(!string.IsNullOrEmpty(u.LastSuccess))rows.Add(new Row{Time=Short(u.LastSuccess),Text="최근 성공 · 누적 "+u.Success+"건",Tone=Theme.Success});
+-            if(!string.IsNullOrEmpty(u.LastFail))rows.Add(new Row{Time=Short(u.LastFail),Text="최근 실패 · 누적 "+u.Fail+"건",Tone=Theme.Danger});
+-            if(!string.IsNullOrEmpty(u.LastError))rows.Add(new Row{Time=Short(u.LastError),Text="최근 오류 · 누적 "+u.Errors+"건",Tone=Theme.Danger});
+-            foreach(var p in Host.Products.Where(v=>!string.IsNullOrEmpty(v.LastPosted)).OrderByDescending(v=>v.LastPosted).Take(5))rows.Add(new Row{Time=Short(p.LastPosted),Text="등록: "+p.Title});
+-            if(rows.Count==0)rows.Add(new Row{Time="—",Text="아직 활동이 없습니다. 상품을 준비하고 자동 등록을 시작하세요.",Tone=Theme.TextMuted});
+-            lstActivity.BeginUpdate();lstActivity.Items.Clear();foreach(var row in rows)lstActivity.Items.Add(row);lstActivity.EndUpdate();
+-        }
+-        private static string Short(string s){DateTime d;return DateTime.TryParse(s,out d)?d.ToString(d.Date==DateTime.Today?"HH:mm:ss":"MM-dd HH:mm"):s;}
+-    }
++using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Drawing;
++using System.Linq;
++using System.Windows.Forms;
++
++namespace BunjangAuto
++{
++    /// <summary>현재 자동 등록 진행과 목록 집계를 표시합니다. 일일 사용량과 인증을 추가로 조회하지 않습니다.</summary>
++    public class DashboardPage : PageBase, IDpiLayout
++    {
++        private readonly Label title, jobTitle, description, jobState, jobCurrent, jobNext, activityTitle;
++        private readonly Label[] statCaptions, statValues, statusCaptions, statusValues;
++        private readonly Label activityTime, activityText;
++        private readonly CardPanel overview, activity;
++        private readonly FlatList lstActivity;
++        private readonly FluentButton openAutomation;
++        private readonly RunFraction fraction;
++        private readonly BrandScene progress;
++        private readonly Timer refresh = new Timer { Interval = 2000 };
++        private readonly Action usageChanged;
++        private bool ready, placing;
++
++        public DashboardPage(AppHost host) : base(host)
++        {
++            Key="dashboard";PageTitle="한눈에 보기";
++            title=Ui.Title("판매 작업실");title.Font=Theme.Font(26f,FontStyle.Bold);title.Name="dashboardTitle";
++            overview=new CardPanel {Name="dashboardOverview"};overview.Paint+=DrawOverviewLines;
++            jobTitle=Ui.Text("현재 등록 진행",22f,true);jobTitle.Name="dashboardProgressTitle";
++            description=Ui.Muted("작업 흐름을 확인하고 다음 등록을 준비하세요.");
++            fraction=new RunFraction {Name="dashboardFraction"};
++            progress=new BrandScene {Name="dashboardProgress"};
++            jobState=Ui.Text("대기 중",11f,true);jobState.Name="dashboardState";
++            jobCurrent=Ui.Muted("현재 상품: —");jobNext=Ui.Muted("다음 예정  —");
++            statCaptions=new[]{Ui.Muted("등록 대기"),Ui.Muted("등록 성공"),Ui.Muted("등록 실패")};
++            statValues=new[]{Ui.Text("0",24f,true,"t"),Ui.Text("0",24f,true,"s"),Ui.Text("0",24f,true,"d")};
++            string[] statNames={"dashboardPending","dashboardDone","dashboardFail"};
++            for(int i=0;i<3;i++){statValues[i].Name=statNames[i];statCaptions[i].TextAlign=ContentAlignment.MiddleCenter;statValues[i].TextAlign=ContentAlignment.MiddleCenter;overview.Controls.Add(statCaptions[i]);overview.Controls.Add(statValues[i]);}
++            openAutomation=Ui.Button("자동 등록 열기  ›","\uE768",BtnStyle.Primary,180);openAutomation.Name="openAutomation";openAutomation.Height=Ui.S(44);
++            openAutomation.Click+=delegate{Host.Navigate("automation");};
++            statusCaptions=new[]{Ui.Muted("로그인"),Ui.Muted("프로그램"),Ui.Muted("남은 기간")};
++            statusValues=new[]{Ui.Heading("미확인"),Ui.Heading("확인 필요"),Ui.Heading("—")};
++            for(int i=0;i<3;i++){overview.Controls.Add(statusCaptions[i]);overview.Controls.Add(statusValues[i]);}
++            overview.Controls.AddRange(new Control[]{jobTitle,description,fraction,progress,jobState,jobCurrent,jobNext,openAutomation});
++            activityTitle=Ui.Heading("최근 활동");activityTitle.Font=Theme.Font(16f,FontStyle.Bold);
++            activity=new CardPanel {Name="dashboardActivity"};activityTime=Ui.Muted("시간");activityText=Ui.Muted("작업 내용");
++            lstActivity=new FlatList {Name="dashboardActivityList",DrawMode=DrawMode.OwnerDrawFixed,ItemHeight=Ui.S(34),Font=Theme.FontBase()};
++            lstActivity.DrawItem+=DrawRow;activity.Controls.AddRange(new Control[]{activityTime,activityText,lstActivity});
++            Controls.AddRange(new Control[]{title,overview,activityTitle,activity});
++            ready=true;Resize+=delegate{LayoutForDpi();};refresh.Tick+=delegate{if(Visible)Refresh2();};
++            Host.Products.ListChanged+=OnProductsChanged;
++            usageChanged=delegate{try{if(Visible&&IsHandleCreated)BeginInvoke((Action)Refresh2);}catch(InvalidOperationException){}};
++            UsageMetricsService.Changed+=usageChanged;LayoutForDpi();
++        }
++        private void OnProductsChanged(object sender,ListChangedEventArgs e){if(Visible)Refresh2();}
++        private class Row {public string Time,Text;public Color? Tone;}
++        private void DrawRow(object sender,DrawItemEventArgs e)
++        {
++            var p=Theme.Current;using(var b=new SolidBrush(p.Card))e.Graphics.FillRectangle(b,e.Bounds);
++            if(e.Index<0)return;var row=(Row)lstActivity.Items[e.Index];var flags=TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.NoPadding|TextFormatFlags.SingleLine|TextFormatFlags.EndEllipsis;
++            TextRenderer.DrawText(e.Graphics,row.Time,Theme.Font(9f,FontStyle.Bold),new Rectangle(e.Bounds.X+Ui.S(16),e.Bounds.Y,Ui.S(108),e.Bounds.Height),p.TextMuted,flags);
++            TextRenderer.DrawText(e.Graphics,row.Text,Theme.FontBase(),new Rectangle(e.Bounds.X+Ui.S(132),e.Bounds.Y,Math.Max(1,e.Bounds.Width-Ui.S(148)),e.Bounds.Height),row.Tone??p.Text,flags);
++            using(var pen=new Pen(p.Border))e.Graphics.DrawLine(pen,e.Bounds.Left+Ui.S(16),e.Bounds.Bottom-1,e.Bounds.Right-Ui.S(16),e.Bounds.Bottom-1);
++        }
++        private void DrawOverviewLines(object sender,PaintEventArgs e)
++        {
++            if(!ready)return;int pad=Ui.S(24),w=overview.Width;using(var pen=new Pen(Theme.Border)){
++                e.Graphics.DrawLine(pen,pad,Ui.S(280),w-pad,Ui.S(280));
++                e.Graphics.DrawLine(pen,0,Ui.S(432),w,Ui.S(432));
++                int col=(w-pad*2)/3;for(int i=1;i<3;i++){int x=pad+i*col;e.Graphics.DrawLine(pen,x,Ui.S(296),x,Ui.S(352));e.Graphics.DrawLine(pen,x,Ui.S(450),x,Ui.S(488));}
++            }
++        }
++        private static void TextBounds(Label label,int x,int y,int width,int height){label.AutoSize=false;label.AutoEllipsis=true;label.SetBounds(x,y,Math.Max(1,width),height);}
++        public void LayoutForDpi()
++        {
++            if(!ready||placing)return;placing=true;SuspendLayout();
++            try{
++                Padding=new Padding(Ui.S(32),Ui.S(26),Ui.S(32),Ui.S(26));int x=Padding.Left+AutoScrollPosition.X,y=Padding.Top+AutoScrollPosition.Y;
++                int w=Math.Max(Ui.S(420),ClientSize.Width-Padding.Horizontal),pad=Ui.S(24),ring=w>=Ui.S(650)?Ui.S(164):Ui.S(120),leftWidth=w-ring-pad*3;
++                TextBounds(title,x,y,w,Ui.S(40));overview.SetBounds(x,title.Bottom+Ui.S(16),w,Ui.S(508));
++                TextBounds(jobTitle,pad,Ui.S(20),leftWidth,Ui.S(38));TextBounds(description,pad,Ui.S(64),leftWidth,Ui.S(24));
++                fraction.SetBounds(pad,Ui.S(92),leftWidth,Ui.S(92));progress.SetBounds(w-pad-ring,Ui.S(54),ring,ring);
++                TextBounds(jobState,pad,Ui.S(190),leftWidth,Ui.S(26));TextBounds(jobCurrent,pad,Ui.S(220),w-pad*2,Ui.S(24));TextBounds(jobNext,pad,Ui.S(248),w-pad*2,Ui.S(24));
++                int col=(w-pad*2)/3;
++                for(int i=0;i<3;i++){
++                    TextBounds(statCaptions[i],pad+i*col,Ui.S(292),col-Ui.S(8),Ui.S(24));TextBounds(statValues[i],pad+i*col,Ui.S(320),col-Ui.S(8),Ui.S(36));
++                    TextBounds(statusCaptions[i],pad+i*col,Ui.S(442),col-Ui.S(8),Ui.S(22));TextBounds(statusValues[i],pad+i*col,Ui.S(470),col-Ui.S(8),Ui.S(24));
++                }
++                openAutomation.SetBounds(pad,Ui.S(372),w-pad*2,Ui.S(44));
++                TextBounds(activityTitle,x,overview.Bottom+Ui.S(20),w,Ui.S(32));activity.SetBounds(x,activityTitle.Bottom+Ui.S(12),w,Ui.S(210));
++                TextBounds(activityTime,Ui.S(16),Ui.S(8),Ui.S(108),Ui.S(26));TextBounds(activityText,Ui.S(132),Ui.S(8),w-Ui.S(148),Ui.S(26));
++                lstActivity.SetBounds(1,Ui.S(40),w-2,activity.Height-Ui.S(48));AutoScrollMinSize=new Size(0,activity.Bottom-AutoScrollPosition.Y+Padding.Bottom);
++            }finally{ResumeLayout(false);placing=false;}
++        }
++        public override void OnActivated(){Refresh2();refresh.Start();}
++        public override void OnDeactivated(){refresh.Stop();}
++        protected override void OnVisibleChanged(EventArgs e){base.OnVisibleChanged(e);if(!Visible)refresh.Stop();}
++        public override void OnThemeChanged(){lstActivity.Invalidate();overview.Invalidate();}
++        protected override void Dispose(bool disposing){if(disposing){refresh.Dispose();Host.Products.ListChanged-=OnProductsChanged;UsageMetricsService.Changed-=usageChanged;}base.Dispose(disposing);}
++        public void Refresh2()
++        {
++            statValues[0].Text=Host.CountPending().ToString();statValues[1].Text=Host.CountDone().ToString();statValues[2].Text=Host.CountFail().ToString();
++            var a=Host.Auto;jobState.Text=a.StateText;jobCurrent.Text="현재 상품: "+(Host.Runner.CurrentProduct==null?"—":Host.Runner.CurrentProduct.Title);
++            fraction.SetProgress(a.Done,a.Total);progress.Maximum=Math.Max(1,a.Total);progress.Value=a.Total>0?a.Done:0;
++            jobNext.Text=string.IsNullOrEmpty(a.NextText)?"다음 예정  —":a.NextText;
++            statusValues[0].Text=Host.Cfg.AssumeLoggedIn?"확인됨":"미확인";var li=LicenseGate.LastInfo;bool ok=li!=null&&li.Valid;
++            statusValues[1].Text=ok?"EXP "+li.Edition:"확인 필요";statusValues[2].Text=!ok?"—":li.Expires==DateTime.MaxValue?"무기한":Math.Max(0,(int)Math.Ceiling((li.Expires.ToUniversalTime()-ServerClock.UtcNow).TotalDays))+"일";
++            var u=UsageMetricsService.Data;var rows=new List<Row>();
++            if(!string.IsNullOrEmpty(u.LastRun))rows.Add(new Row{Time=Short(u.LastRun),Text="최근 자동 등록 시작"});
++            if(!string.IsNullOrEmpty(u.LastSuccess))rows.Add(new Row{Time=Short(u.LastSuccess),Text="최근 성공 · 누적 "+u.Success+"건",Tone=Theme.Success});
++            if(!string.IsNullOrEmpty(u.LastFail))rows.Add(new Row{Time=Short(u.LastFail),Text="최근 실패 · 누적 "+u.Fail+"건",Tone=Theme.Danger});
++            if(!string.IsNullOrEmpty(u.LastError))rows.Add(new Row{Time=Short(u.LastError),Text="최근 오류 · 누적 "+u.Errors+"건",Tone=Theme.Danger});
++            foreach(var p in Host.Products.Where(v=>!string.IsNullOrEmpty(v.LastPosted)).OrderByDescending(v=>v.LastPosted).Take(5))rows.Add(new Row{Time=Short(p.LastPosted),Text="등록: "+p.Title});
++            if(rows.Count==0)rows.Add(new Row{Time="—",Text="아직 활동이 없습니다. 상품을 준비하고 자동 등록을 시작하세요.",Tone=Theme.TextMuted});
++            lstActivity.BeginUpdate();lstActivity.Items.Clear();foreach(var row in rows)lstActivity.Items.Add(row);lstActivity.EndUpdate();
++        }
++        private static string Short(string s){DateTime d;return DateTime.TryParse(s,out d)?d.ToString(d.Date==DateTime.Today?"HH:mm:ss":"MM-dd HH:mm"):s;}
++    }
+ }
+--- 19차/src/UI/Pages/SchedulePage.cs
++++ 20차/src/UI/Pages/SchedulePage.cs
+@@ -1,120 +1,66 @@
+-using System;
+-using System.ComponentModel;
+-using System.Drawing;
+-using System.Linq;
+-using System.Windows.Forms;
+-
+-namespace BunjangAuto
+-{
+-    /// <summary>예약: 1개씩 등록 간격 / 시간대별 / 중복 허용 / 반복. 예전 '실행/예약' 탭의 설정을 그대로 옮겼고 값이 바뀌면 바로 저장된다.</summary>
+-    public class SchedulePage : PageBase
+-    {
+-        private readonly ToggleSwitch chkRegister, chkOneByOne, chkWindows, chkDup, chkRepeat;
+-        private readonly SoftNumber numGap, numRounds;
+-        private readonly DataGridView gridRules;
+-        private readonly FluentButton bAdd, bDel;
+-        private readonly Label lblGap, lblRounds, lblRulesHint;
+-        private bool _loading;
+-
+-        public SchedulePage(AppHost host) : base(host)
+-        {
+-            Key = "schedule"; PageTitle = "예약";
+-            var title = Ui.Title("예약"); title.Location = new Point(0, 0);
+-            var sub = Ui.Muted("반복·시간대 예약: Studio / Pro · 번개장터 서버 시각 동기화 후 실행됩니다."); sub.Location = new Point(2, 38);
+-
+-            var card = new CardPanel { Location = new Point(0, 74), Height = 560, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+-            int y = 18;
+-            var h1 = Ui.Heading("실행할 작업"); h1.Location = new Point(20, y); y += 34;
+-            chkRegister = Ui.Toggle("등록 — 상품 목록의 상품을 올립니다"); chkRegister.Location = new Point(20, y); y += 44;
+-
+-            var h2 = Ui.Heading("1개씩 등록"); h2.Location = new Point(20, y); y += 34;
+-            chkOneByOne = Ui.Toggle("1개씩 등록하고, 모두 올리면 자동 종료"); chkOneByOne.Location = new Point(20, y); y += 36;
+-            lblGap = Ui.Muted("기본 간격(분)"); lblGap.Location = new Point(60, y + 4);
+-            numGap = Ui.Number(1, 1440, 90); numGap.Location = new Point(170, y); y += 40;
+-            chkWindows = Ui.Toggle("시간대별로 간격 지정 (켜면 위 기본 간격 대신 아래 표를 사용)"); chkWindows.Location = new Point(60, y); y += 36;
+-
+-            gridRules = new DataGridView
+-            {
+-                Location = new Point(60, y), Size = new Size(520, 130), AutoGenerateColumns = false, AllowUserToAddRows = false,
+-                SelectionMode = DataGridViewSelectionMode.FullRowSelect, RowHeadersVisible = false, MultiSelect = false
+-            };
+-            gridRules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Start", HeaderText = "시작 (HH:mm)", Width = 150 });
+-            gridRules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "End", HeaderText = "종료 (HH:mm)", Width = 150 });
+-            gridRules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Minutes", HeaderText = "간격(분)", Width = 120 });
+-            gridRules.DataSource = Host.Auto.Rules;
+-            y += 138;
+-            bAdd = Ui.Button("시간대 추가", "\uE710", BtnStyle.Standard); bAdd.Location = new Point(60, y);
+-            bDel = Ui.Button("선택 삭제", "\uE74D", BtnStyle.Standard); bDel.Location = new Point(190, y);
+-            lblRulesHint = Ui.Muted("한국시간 기준 · 새 시간대 시작 시 대기 초기화 · 겹치면 나중에 시작한 시간대 우선"); lblRulesHint.Location = new Point(60, y + 40);
+-            y += 82;
+-
+-            chkDup = Ui.Toggle("중복 등록 허용 (이미 등록된 상품도 다시 올림)"); chkDup.Location = new Point(20, y); y += 44;
+-
+-            var h3 = Ui.Heading("반복"); h3.Location = new Point(20, y); y += 34;
+-            chkRepeat = Ui.Toggle("목록을 다 올리면 처음 상품부터 다시 올리기 (1개씩 등록일 때)"); chkRepeat.Location = new Point(20, y); y += 36;
+-            lblRounds = Ui.Muted("총 횟수 (처음 1회 포함)"); lblRounds.Location = new Point(60, y + 4);
+-            numRounds = Ui.Number(2, 999, 80); numRounds.Location = new Point(240, y);
+-
+-            card.Height = y + 62;     // 마지막 줄(반복 횟수)까지 들어가도록 카드 높이를 내용에 맞춘다
+-            card.Controls.AddRange(new Control[] { h1, chkRegister, h2, chkOneByOne, lblGap, numGap, chkWindows, gridRules, bAdd, bDel, lblRulesHint, chkDup, h3, chkRepeat, lblRounds, numRounds });
+-            Controls.AddRange(new Control[] { title, sub, card });
+-            Resize += delegate { card.Width = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); };
+-
+-            LoadFromSettings();
+-            EventHandler save = delegate { if (_loading) return; ReadToSettings(); UpdateEnabled(); };
+-            foreach (var t in new[] { chkRegister, chkOneByOne, chkWindows, chkDup, chkRepeat }) t.CheckedChanged += save;
+-            numGap.ValueChanged += save; numRounds.ValueChanged += save;
+-            gridRules.CellEndEdit += delegate { if (!_loading) { Host.SaveSettings(); } };
+-            bAdd.Click += delegate { Host.Auto.Rules.Add(new TimeRule("00:00", "24:00", 60)); Host.SaveSettings(); };
+-            bDel.Click += delegate
+-            {
+-                if (gridRules.CurrentRow != null && gridRules.CurrentRow.Index >= 0 && gridRules.CurrentRow.Index < Host.Auto.Rules.Count)
+-                { Host.Auto.Rules.RemoveAt(gridRules.CurrentRow.Index); Host.SaveSettings(); }
+-            };
+-            Theme.StyleGrid(gridRules);
+-        }
+-
+-        private void LoadFromSettings()
+-        {
+-            _loading = true;
+-            var c = Host.Cfg;
+-            chkRegister.Checked = c.DoRegister; chkRepeat.Checked = c.RepeatAll; numRounds.Value = Clamp(c.RepeatCount, numRounds);
+-            chkOneByOne.Checked = c.OneByOne; chkDup.Checked = c.AllowDuplicate; numGap.Value = Clamp(c.OneByOneMinutes, numGap);
+-            chkWindows.Checked = c.UseTimeRules;
+-            _loading = false;
+-            UpdateEnabled();
+-        }
+-
+-        private static decimal Clamp(int v, SoftNumber n) { return Math.Max(n.Minimum, Math.Min(n.Maximum, v)); }
+-
+-        private void ReadToSettings()
+-        {
+-            var c = Host.Cfg;
+-            bool oldOne = c.OneByOne, oldWin = c.UseTimeRules, oldDup = c.AllowDuplicate, oldRep = c.RepeatAll; int oldGap = c.OneByOneMinutes, oldRounds = c.RepeatCount;
+-            c.DoRegister = chkRegister.Checked; c.RepeatAll = chkRepeat.Checked; c.RepeatCount = (int)numRounds.Value;
+-            c.OneByOne = chkOneByOne.Checked; c.AllowDuplicate = chkDup.Checked; c.OneByOneMinutes = (int)numGap.Value; c.UseTimeRules = chkWindows.Checked;
+-            Host.SaveSettings();
+-            if (oldOne != c.OneByOne || oldWin != c.UseTimeRules || oldDup != c.AllowDuplicate || oldRep != c.RepeatAll || oldGap != c.OneByOneMinutes || oldRounds != c.RepeatCount)
+-                Log.Write("INFO", "Settings", "settings.change", "예약 설정을 바꿨습니다. (1개씩=" + (c.OneByOne ? "켬" : "끔") + ", 간격=" + c.OneByOneMinutes + "분, 시간대별=" + (c.UseTimeRules ? "켬" : "끔") +
+-                          ", 반복=" + (c.RepeatAll ? c.RepeatCount + "회" : "끔") + ", 중복허용=" + (c.AllowDuplicate ? "켬" : "끔") + ")", "OK");
+-        }
+-
+-        /// <summary>예전 UpdateRunEnabled 와 같은 규칙: 반복은 1개씩일 때만, 시간대는 1개씩일 때만, 기본 간격은 시간대를 안 쓸 때만</summary>
+-        private void UpdateEnabled()
+-        {
+-            bool one = chkOneByOne.Checked;
+-            var li=LicenseGate.LastInfo; bool advanced=li!=null && li.Valid && Lumivolt.Security.EditionPolicy.CanRepeat(li.Edition);
+-            chkDup.Enabled=advanced;
+-            chkWindows.Enabled = one && advanced;
+-            numGap.Enabled = one && !chkWindows.Checked; lblGap.Enabled = numGap.Enabled;
+-            gridRules.Enabled = one && advanced && chkWindows.Checked; bAdd.Enabled = gridRules.Enabled; bDel.Enabled = gridRules.Enabled;
+-            chkRepeat.Enabled = one && advanced;
+-            numRounds.Enabled = one && advanced && chkRepeat.Checked; lblRounds.Enabled = numRounds.Enabled;
+-            gridRules.DefaultCellStyle.ForeColor = gridRules.Enabled ? Theme.TextPrimary : Theme.TextMuted;
+-            chkWindows.Invalidate(); chkRepeat.Invalidate();
+-        }
+-
+-        public override void OnActivated() { LoadFromSettings(); }
+-        public override void OnThemeChanged() { Theme.StyleGrid(gridRules); UpdateEnabled(); }
+-    }
+-}
++using System;
++using System.Drawing;
++using System.Windows.Forms;
++
++namespace BunjangAuto
++{
++    /// <summary>등록 방식에 필요한 설정만 펼치며 실행 중에는 변경을 잠급니다.</summary>
++    public class SchedulePage : PageBase, IDpiLayout
++    {
++        readonly Label title, sub, modeHint, batchHint, gapLabel, roundLabel;
++        readonly CardPanel card;
++        readonly Segmented mode, timing;
++        readonly ToggleSwitch chkRegister, chkWindows, chkDup, chkRepeat;
++        readonly SoftNumber numGap, numRounds, batchMinutes, batchMinute;
++        readonly DataGridView gridRules;
++        readonly FluentButton bAdd,bDel;
++        readonly Action changed;
++        bool loading,ready,placing;
++        bool Advanced {get{var li=LicenseGate.LastInfo;return li!=null&&li.Valid&&Lumivolt.Security.EditionPolicy.CanRepeat(li.Edition);}}
++        bool Locked {get{return Host.Auto.Active||Host.Runner.Running;}}
++        public SchedulePage(AppHost host):base(host)
++        {
++            Key="schedule";PageTitle="예약";
++            title=Ui.Title("등록 흐름 설정");sub=Ui.Muted("방식을 고르면 필요한 설정만 표시됩니다. 반복·시간대 예약은 Studio / Pro에서 사용할 수 있습니다.");
++            card=new CardPanel{Name="scheduleCard"};
++            chkRegister=Ui.Toggle("상품 등록 사용");chkRegister.Name="registerEnabled";
++            mode=new Segmented{Name="registrationMode",AccessibleName="등록 방식"};mode.Items.AddRange(new[]{"한 번","1개씩","전체 목록 반복"});
++            modeHint=Ui.Muted("");
++            timing=new Segmented{Name="batchTiming",AccessibleName="전체 목록 반복 시각"};timing.Items.AddRange(new[]{"N분 간격","매시 지정분"});
++            batchMinutes=Ui.Number(1,1440,144);batchMinutes.Name="batchMinutes";batchMinutes.AccessibleName="전체 목록 반복 간격 분";
++            batchMinute=Ui.Number(0,59,144);batchMinute.Name="batchMinute";batchMinute.AccessibleName="매시 실행할 분";
++            batchHint=Ui.Muted("");batchHint.Name="batchSummary";
++            gapLabel=Ui.Muted("상품 사이 기본 간격(분)");numGap=Ui.Number(1,1440,144);numGap.Name="singleGap";
++            chkWindows=Ui.Toggle("시간대별 간격 사용");chkWindows.Name="timeRulesEnabled";
++            gridRules=new DataGridView{Name="timeRules",AutoGenerateColumns=false,AllowUserToAddRows=false,SelectionMode=DataGridViewSelectionMode.FullRowSelect,RowHeadersVisible=false,MultiSelect=false,AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.Fill};
++            gridRules.Columns.Add(new DataGridViewTextBoxColumn{DataPropertyName="Start",HeaderText="시작 (HH:mm)"});gridRules.Columns.Add(new DataGridViewTextBoxColumn{DataPropertyName="End",HeaderText="종료 (HH:mm)"});gridRules.Columns.Add(new DataGridViewTextBoxColumn{DataPropertyName="Minutes",HeaderText="간격(분)"});gridRules.DataSource=Host.Auto.Rules;
++            bAdd=Ui.Button("시간대 추가");bDel=Ui.Button("선택 삭제");
++            chkRepeat=Ui.Toggle("목록 완료 후 처음부터 반복");chkRepeat.Name="legacyRepeat";
++            roundLabel=Ui.Muted("총 횟수 (처음 1회 포함)");numRounds=Ui.Number(2,999,144);numRounds.Name="legacyRounds";
++            chkDup=Ui.Toggle("이미 등록된 상품도 포함");chkDup.Name="allowDuplicate";
++            card.Controls.AddRange(new Control[]{chkRegister,mode,modeHint,timing,batchMinutes,batchMinute,batchHint,gapLabel,numGap,chkWindows,gridRules,bAdd,bDel,chkRepeat,roundLabel,numRounds,chkDup});Controls.AddRange(new Control[]{title,sub,card});
++            foreach(var t in new[]{chkRegister,chkWindows,chkDup,chkRepeat})t.CheckedChanged+=Save;
++            foreach(var n in new[]{numGap,numRounds,batchMinutes,batchMinute})n.ValueChanged+=Save;
++            mode.SelectedIndexChanged+=delegate{if(loading)return;if(Locked||(mode.SelectedIndex==2&&!Advanced)){LoadSettings();return;}Save(null,EventArgs.Empty);};timing.SelectedIndexChanged+=Save;
++            gridRules.CellEndEdit+=delegate{if(!Locked)Host.SaveSettings();};
++            bAdd.Click+=delegate{if(!Locked&&Advanced){Host.Auto.Rules.Add(new TimeRule("00:00","24:00",60));Host.SaveSettings();}};
++            bDel.Click+=delegate{if(!Locked&&Advanced&&gridRules.CurrentRow!=null&&gridRules.CurrentRow.Index>=0&&gridRules.CurrentRow.Index<Host.Auto.Rules.Count){Host.Auto.Rules.RemoveAt(gridRules.CurrentRow.Index);Host.SaveSettings();}};
++            changed=delegate{if(!IsDisposed)UpdateState();};Host.Auto.Changed+=changed;
++            ready=true;Resize+=delegate{LayoutForDpi();};LoadSettings();Theme.StyleGrid(gridRules);
++        }
++        static decimal Clamp(int value,SoftNumber n){return Math.Max(n.Minimum,Math.Min(n.Maximum,value));}
++        void LoadSettings(){loading=true;var c=Host.Cfg;chkRegister.Checked=c.DoRegister;mode.SetIndexSilently(c.BatchRepeatEnabled?2:c.OneByOne?1:0);timing.SetIndexSilently(c.BatchRepeatClockAligned?1:0);batchMinutes.Value=Clamp(c.BatchRepeatMinutes,batchMinutes);batchMinute.Value=Clamp(c.BatchRepeatMinuteOfHour,batchMinute);numGap.Value=Clamp(c.OneByOneMinutes,numGap);numRounds.Value=Clamp(c.RepeatCount,numRounds);chkWindows.Checked=c.UseTimeRules;chkDup.Checked=c.AllowDuplicate;chkRepeat.Checked=c.RepeatAll;loading=false;UpdateState();}
++        void Save(object sender,EventArgs e){if(loading)return;if(Locked){LoadSettings();return;}var c=Host.Cfg;c.DoRegister=chkRegister.Checked;c.OneByOne=mode.SelectedIndex==1;c.BatchRepeatEnabled=mode.SelectedIndex==2;c.OneByOneMinutes=(int)numGap.Value;if(Advanced){c.BatchRepeatClockAligned=timing.SelectedIndex==1;c.BatchRepeatMinutes=(int)batchMinutes.Value;c.BatchRepeatMinuteOfHour=(int)batchMinute.Value;c.UseTimeRules=chkWindows.Checked;c.AllowDuplicate=chkDup.Checked;c.RepeatAll=chkRepeat.Checked;c.RepeatCount=(int)numRounds.Value;}Host.SaveSettings();UpdateState();}
++        void UpdateState(){if(!ready)return;bool one=mode.SelectedIndex==1,batch=mode.SelectedIndex==2,edit=!Locked;chkRegister.Enabled=mode.Enabled=edit;timing.Enabled=batchMinutes.Enabled=batchMinute.Enabled=edit&&Advanced;chkWindows.Enabled=chkDup.Enabled=chkRepeat.Enabled=edit&&Advanced;numGap.Enabled=edit&&!chkWindows.Checked;numRounds.Enabled=edit&&Advanced;gridRules.Enabled=bAdd.Enabled=bDel.Enabled=edit&&Advanced;modeHint.Text=Locked?"실행 중에는 예약을 변경할 수 없습니다. 중지한 뒤 설정해 주세요.":batch?"전체 유효 목록을 즉시 등록하고, 이후 정해진 시각에 다시 등록합니다.":one?"상품을 하나씩 등록합니다. 시간대 간격과 횟수 반복을 추가할 수 있습니다.":"상품을 한 번 등록합니다. 한 번에 최대 30개를 처리합니다.";batchHint.Text=timing.SelectedIndex==0?batchMinutes.Value+"분 간격으로 전체 목록 등록 · 1~1440분\n예: 15:02 시작 + 60분 → 16:02. 늦어진 회차는 몰아 실행하지 않습니다.":"매시 "+batchMinute.Value.ToString("00")+"분에 전체 목록 등록 · 0~59분\n예: 15:02 시작 + 매시 00분 → 16:00. 첫 회차는 즉시 시작합니다.";timing.Visible=batch;batchMinutes.Visible=batch&&timing.SelectedIndex==0;batchMinute.Visible=batch&&timing.SelectedIndex==1;batchHint.Visible=batch;gapLabel.Visible=numGap.Visible=one&&!chkWindows.Checked;chkWindows.Visible=chkRepeat.Visible=one;gridRules.Visible=bAdd.Visible=bDel.Visible=one&&chkWindows.Checked;roundLabel.Visible=numRounds.Visible=one&&chkRepeat.Checked;chkDup.Visible=!batch;LayoutForDpi();}
++        int Put(Control c,int x,int y,int w,int h){c.SetBounds(x,y,w,h);return c.Bottom+Ui.S(14);}
++        int LabelAt(Label l,int x,int y,int w){l.AutoSize=false;return Put(l,x,y,w,Math.Max(Ui.S(26),TextRenderer.MeasureText(l.Text,l.Font,new Size(w,int.MaxValue),TextFormatFlags.WordBreak|TextFormatFlags.NoPadding).Height+Ui.S(6)));}
++        public void LayoutForDpi(){if(!ready||placing)return;placing=true;try{Padding=new Padding(Ui.S(32),Ui.S(26),Ui.S(32),Ui.S(26));int x=Padding.Left+AutoScrollPosition.X,y=Padding.Top+AutoScrollPosition.Y,w=Math.Max(Ui.S(340),ClientSize.Width-Padding.Horizontal),p=Ui.S(24),inner=w-p*2;y=LabelAt(title,x,y,w);y=LabelAt(sub,x,y,w);card.SetBounds(x,y,w,Ui.S(600));int row=p;row=Put(chkRegister,p,row,inner,Ui.S(28));row=Put(mode,p,row,inner,Ui.S(42));row=LabelAt(modeHint,p,row,inner);
++            if(timing.Visible){row=Put(timing,p,row,inner,Ui.S(38));row=Put(timing.SelectedIndex==0?batchMinutes:batchMinute,p,row,Ui.S(160),Ui.S(40));row=LabelAt(batchHint,p,row,inner);}
++            if(chkWindows.Visible){row=Put(chkWindows,p,row,inner,Ui.S(28));if(numGap.Visible){row=LabelAt(gapLabel,p,row,inner);row=Put(numGap,p,row,Ui.S(160),Ui.S(40));}if(gridRules.Visible){row=Put(gridRules,p,row,inner,Ui.S(144));bAdd.SetBounds(p,row,Ui.S(130),Ui.S(36));bDel.SetBounds(p+Ui.S(142),row,Ui.S(110),Ui.S(36));row=bAdd.Bottom+Ui.S(18);}row=Put(chkRepeat,p,row,inner,Ui.S(28));if(numRounds.Visible){row=LabelAt(roundLabel,p,row,inner);row=Put(numRounds,p,row,Ui.S(160),Ui.S(40));}}
++            if(chkDup.Visible)row=Put(chkDup,p,row,inner,Ui.S(28));card.Height=row+p;AutoScrollMinSize=new Size(0,card.Bottom-AutoScrollPosition.Y+Padding.Bottom);
++        }finally{placing=false;}}
++        public override void OnActivated(){LoadSettings();}
++        public override void OnThemeChanged(){Theme.StyleGrid(gridRules);UpdateState();}
++        protected override void Dispose(bool disposing){if(disposing)Host.Auto.Changed-=changed;base.Dispose(disposing);}
++    }
++}
+--- 19차/src/UI/UiKit.cs
++++ 20차/src/UI/UiKit.cs
+@@ -84,7 +84,7 @@
+             };
+         }
+ 
+-        public static Label Title(string text) { return Text(text, 22f, true); }
++        public static Label Title(string text) { return Text(text, 24f, true); }
+         public static Label Heading(string text) { return Text(text, 11.5f, true); }
+         public static Label Muted(string text) { return Text(text, 9.5f, false, "m"); }
+ 
+--- 19차/tests/BatchRepeatTests.cs
++++ 20차/tests/BatchRepeatTests.cs
+@@ -0,0 +1,399 @@
++using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Diagnostics;
++using System.IO;
++using System.Linq;
++using System.Reflection;
++using System.Security.Cryptography;
++using System.Threading;
++using System.Windows.Forms;
++using Microsoft.Win32;
++using Newtonsoft.Json.Linq;
++using BunjangAuto;
++
++// 실제 Controller / Runner / UsageQuota를 함께 컴파일한다. 외부 브라우저·인증·시각만 격리한다.
++class BatchRepeatTests
++{
++    static int passed, failed;
++    static string selection = "";
++    static Fixture currentFixture;
++    static void Check(string name, bool value)
++    {
++        Console.WriteLine((value ? "PASS " : "FAIL ") + name);
++        if (value) passed++;
++        else { failed++; if (currentFixture != null) Console.WriteLine("실패 상태 " + currentFixture.Snapshot(name)); }
++    }
++    static void Set(AppSettings cfg, string name, object value) { var f = typeof(AppSettings).GetField(name); if (f != null) f.SetValue(cfg, value); }
++    static AppSettings Batch(bool clock = false, int gap = 60, int minute = 0)
++    {
++        var cfg = new AppSettings { OneByOne = false };
++        Set(cfg, "BatchRepeatEnabled", true); Set(cfg, "BatchRepeatClockAligned", clock);
++        Set(cfg, "BatchRepeatMinutes", gap); Set(cfg, "BatchRepeatMinuteOfHour", minute); return cfg;
++    }
++    static BindingList<Product> Items(int count, bool registered = false)
++    {
++        return new BindingList<Product>(Enumerable.Range(0, count).Select(i => new Product { Title = "상품" + i, Price = "1000", ProductId = registered ? "기존" + i : "", Status = registered ? "등록됨" : "" }).ToList());
++    }
++    static bool Until(Func<bool> condition, int milliseconds = 2000)
++    {
++        var timer = Stopwatch.StartNew();
++        do { Application.DoEvents(); if (condition()) return true; Thread.Sleep(2); } while (timer.ElapsedMilliseconds < milliseconds);
++        return false;
++    }
++    static void Seed(int used = 0)
++    {
++        LicenseGate.Allowed = true; LicenseGate.LastInfo.Edition = "Pro";
++        var read = typeof(UsageQuota).GetMethod("Read", BindingFlags.NonPublic | BindingFlags.Static);
++        var write = typeof(UsageQuota).GetMethod("Write", BindingFlags.NonPublic | BindingFlags.Static);
++        var state = (JObject)read.Invoke(null, new object[] { "isolated-device", ServerClock.UtcNow });
++        state["used"] = used; state["credits"] = 0; write.Invoke(null, new object[] { state });
++    }
++    static void ResetLedger()
++    {
++        string process = Process.GetCurrentProcess().Id.ToString();
++        string expected = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "Lumivolt-tests-" + process));
++        if (!string.Equals(Path.GetFullPath(Paths.Root), expected, StringComparison.OrdinalIgnoreCase))
++            throw new InvalidOperationException("검사 전용 임시 경로가 아닙니다.");
++        string registry = @"Software\EXP\Tests\" + process;
++        string marker = "EXP.Usage.Test." + process;
++        if (CngKey.Exists(marker, CngProvider.MicrosoftSoftwareKeyStorageProvider))
++            using (var key = CngKey.Open(marker, CngProvider.MicrosoftSoftwareKeyStorageProvider)) key.Delete();
++        Registry.CurrentUser.DeleteSubKeyTree(registry, false);
++        foreach (string name in new[] { "usage.v1", "usage.v1.tmp" })
++        { string path = Path.Combine(expected, name); if (File.Exists(path)) File.Delete(path); }
++    }
++    sealed class Fixture : IDisposable
++    {
++        public readonly Control Ui = new Control();
++        public readonly Runner Runner = new Runner();
++        public readonly AppSettings Cfg;
++        public readonly BindingList<Product> Products;
++        public readonly AutomationController Auto;
++        public string Notice = "";
++        int workerFinished, uiFinished;
++        public Fixture(int count, AppSettings cfg = null, bool registered = false, Action beforeFinished = null)
++        {
++            ResetLedger(); Bot.Reset(); ServerClock.Now = new DateTime(2026, 10, 26, 15, 2, 0); ServerClock.FreshValue = true; Seed();
++            Cfg = cfg ?? Batch(); Products = Items(count, registered); Ui.CreateControl();
++            if (beforeFinished != null) Runner.Finished += beforeFinished;
++            Auto = new AutomationController(Cfg, new SelectorSet(), Products, Runner, Ui);
++            Auto.Notice = (message, title) => Notice = message;
++            // Controller의 완료 콜백 뒤에 표식을 넣어 집계와 예약 갱신까지 기다린다.
++            Runner.Finished += () => { Interlocked.Increment(ref workerFinished); Ui.BeginInvoke((Action)(() => uiFinished++)); };
++            currentFixture = this;
++        }
++        public bool RoundCompleted
++        {
++            get
++            {
++                var thread = (Thread)typeof(Runner).GetField("_thread", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Runner);
++                return !Runner.Running && (thread == null || !thread.IsAlive) && uiFinished == Interlocked.CompareExchange(ref workerFinished, 0, 0);
++            }
++        }
++        public string Snapshot(string name)
++        {
++            try
++            {
++                var thread = (Thread)typeof(Runner).GetField("_thread", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Runner);
++                return new JObject {
++                    { "check", name }, { "attempts", Bot.Attempts.Count }, { "running", Runner.Running }, { "active", Auto.Active },
++                    { "round", Auto.Round }, { "nextRun", Auto.NextRun.ToString("O") }, { "notice", Notice }, { "blockedReason", Runner.BlockedReason },
++                    { "now", ServerClock.Now.ToString("O") }, { "fresh", ServerClock.Fresh }, { "paused", Auto.Paused }, { "state", Auto.StateText },
++                    { "success", Auto.SuccessThisRun }, { "failure", Auto.FailThisRun }, { "lastRegistered", Runner.LastRegistered.Count },
++                    { "threadAlive", thread != null && thread.IsAlive }, { "threadState", thread == null ? "없음" : thread.ThreadState.ToString() },
++                    { "uiHandle", Ui.IsHandleCreated }, { "uiDisposed", Ui.IsDisposed }, { "edition", LicenseGate.LastInfo.Edition }, { "allowed", LicenseGate.Allowed },
++                    { "runnerError", Log.LastError }, { "ledger", LedgerSnapshot() }
++                }.ToString(Newtonsoft.Json.Formatting.None);
++            }
++            catch (Exception ex) { return "진단 실패: " + ex; }
++        }
++        public void StartAndWait() { Auto.Start(); Check("회차 종료 응답", Until(() => RoundCompleted && (Auto.NextRun != DateTime.MinValue || !Auto.Active))); }
++        public void Dispose()
++        {
++            Auto.Stop(); Runner.Shutdown();
++            bool drained = Until(() => RoundCompleted);
++            Check("검사 종료 시 작업 스레드와 UI 콜백 완료", drained);
++            if (!drained) throw new InvalidOperationException("검사 작업이 남아 있어 다음 검사 상태를 초기화할 수 없습니다.");
++            Ui.Dispose(); currentFixture = null;
++        }
++    }
++    static JObject LedgerSnapshot()
++    {
++        var result = new JObject();
++        foreach (string copy in new[] { "file", "registry" })
++        {
++            try
++            {
++                byte[] bytes = null;
++                if (copy == "file") { string path = Path.Combine(Paths.Root, "usage.v1"); if (File.Exists(path)) bytes = File.ReadAllBytes(path); }
++                else using (var key = Registry.CurrentUser.OpenSubKey(@"Software\EXP\Tests\" + Process.GetCurrentProcess().Id)) if (key != null) bytes = key.GetValue("State") as byte[];
++                if (bytes == null) { result[copy] = "없음"; continue; }
++                var state = (JObject)typeof(UsageQuota).GetMethod("Decode", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { bytes });
++                result[copy] = new JObject { { "seq", state["seq"] }, { "used", state["used"] }, { "day", state["day"] }, { "lastUtc", state["lastUtc"] }, { "previous", state["previous"] }, { "bytes", bytes.Length } };
++            }
++            catch (Exception ex) { result[copy] = ex.ToString(); }
++        }
++        return result;
++    }
++    static void Time(string name, DateTime anchor, DateTime finish, bool aligned, int gap, int minute, DateTime expected)
++    {
++        var type = typeof(Runner).Assembly.GetType("BunjangAuto.BatchRepeatSchedule");
++        var method = type == null ? null : type.GetMethod("NextAfter");
++        Check(name, method != null && (DateTime)method.Invoke(null, new object[] { anchor, finish, aligned, gap, minute }) == expected);
++    }
++    static void ScheduleChecks()
++    {
++        var start = new DateTime(2026, 10, 26, 15, 2, 0);
++        Time("60분은 시작 시각 15:02 기준", start, start.AddMinutes(1), false, 60, 0, new DateTime(2026, 10, 26, 16, 2, 0));
++        Time("매시 0분", start, start.AddMinutes(1), true, 60, 0, new DateTime(2026, 10, 26, 16, 0, 0));
++        Time("매시 20분", start, start.AddMinutes(1), true, 60, 20, new DateTime(2026, 10, 26, 15, 20, 0));
++        Time("지정분에 끝나면 다음 미래 시간", start, new DateTime(2026, 10, 26, 16, 20, 0), true, 60, 20, new DateTime(2026, 10, 26, 17, 20, 0));
++        Time("느린 회차의 지난 간격 건너뜀", start, new DateTime(2026, 10, 26, 18, 12, 0), false, 60, 0, new DateTime(2026, 10, 26, 19, 2, 0));
++        Time("간격 경계와 같아도 미래 슬롯", start, new DateTime(2026, 10, 26, 16, 2, 0), false, 60, 0, new DateTime(2026, 10, 26, 17, 2, 0));
++        Time("날짜 경계 간격", new DateTime(2026, 10, 26, 23, 32, 0), new DateTime(2026, 10, 26, 23, 50, 0), false, 60, 0, new DateTime(2026, 10, 27, 0, 32, 0));
++        Time("날짜 경계 지정분", new DateTime(2026, 10, 26, 23, 2, 0), new DateTime(2026, 10, 26, 23, 59, 59), true, 60, 0, new DateTime(2026, 10, 27, 0, 0, 0));
++        Time("1440분 간격", start, start.AddMinutes(1), false, 1440, 0, new DateTime(2026, 10, 27, 15, 2, 0));
++    }
++    static void WholeList(int count)
++    {
++        using (var f = new Fixture(count, null, true))
++        {
++            f.StartAndWait();
++            bool ordered = Bot.Attempts.SequenceEqual(f.Products.Select(p => p.Title));
++            bool state = count == 0 ? !f.Auto.Active : f.Auto.Active && f.Auto.NextRun == new DateTime(2026, 10, 26, 16, 2, 0);
++            if (!ordered || !state || selection.Length > 0)
++            {
++                Console.WriteLine("목록 진단 " + new JObject {
++                    { "count", count }, { "attempts", Bot.Attempts.Count }, { "running", f.Runner.Running }, { "active", f.Auto.Active },
++                    { "notice", f.Notice }, { "blockedReason", f.Runner.BlockedReason }, { "nextRun", f.Auto.NextRun.ToString("O") },
++                    { "lastRegistered", f.Runner.LastRegistered.Count }, { "success", f.Auto.SuccessThisRun }, { "failure", f.Auto.FailThisRun },
++                    { "edition", LicenseGate.LastInfo.Edition }, { "quota", UsageQuota.Summary() }, { "fixtureRoot", Paths.Root },
++                    { "ledgerFile", File.Exists(Path.Combine(Paths.Root, "usage.v1")) }, { "registry", @"Software\EXP\Tests\" + Process.GetCurrentProcess().Id }
++                }.ToString(Newtonsoft.Json.Formatting.None));
++            }
++            Check(count + "개 전체 목록 첫 회차 기존 상품 포함", ordered);
++            Check(count + "개 회차 상태", state);
++        }
++    }
++    static void RunChecks()
++    {
++        foreach (int count in new[] { 0, 31, 65 }) WholeList(count);
++        using (var f = new Fixture(2))
++        {
++            f.Products.Add(new Product { Title = "가격 없는 상품" });
++            f.StartAndWait(); Check("유효하지 않은 상품 제외", Bot.Attempts.Count == 2);
++            f.Cfg.OneByOne = true; Set(f.Cfg, "BatchRepeatMinutes", 1); Set(f.Cfg, "BatchRepeatEnabled", false);
++            ServerClock.Now = new DateTime(2026, 10, 26, 16, 2, 0); f.Auto.Tick();
++            Check("설정 변경에도 시작 설정으로 전체 회차", Until(() => f.RoundCompleted && Bot.Attempts.Count == 4));
++            Check("설정 동결의 다음 60분 슬롯", f.Auto.NextRun == new DateTime(2026, 10, 26, 17, 2, 0));
++        }
++        using (var f = new Fixture(1, Batch(true, 60, 20)))
++        {
++            f.StartAndWait(); Check("Controller 지정분 연결", f.Auto.NextRun == new DateTime(2026, 10, 26, 15, 20, 0));
++            f.Auto.Pause(); ServerClock.Now = new DateTime(2026, 10, 26, 16, 40, 0); f.Auto.Tick();
++            Check("대기 중 일시정지로 회차 방지", f.Auto.Paused && Bot.Attempts.Count == 1);
++            f.Auto.Resume(); f.Auto.Tick(); Check("일시정지 후 지연 회차 한 번만", Until(() => Bot.Attempts.Count == 2 && f.RoundCompleted));
++            Check("지연 회차 후 몰아 실행 금지", f.Auto.NextRun == new DateTime(2026, 10, 26, 17, 20, 0));
++            f.Auto.Stop(); ServerClock.Now = new DateTime(2026, 10, 26, 18, 0, 0); f.Auto.Tick();
++            Check("예약 중지 후 재시작 없음", !f.Auto.Active && Bot.Attempts.Count == 2);
++        }
++        using (var f = new Fixture(2))
++        {
++            f.StartAndWait(); ServerClock.FreshValue = false; ServerClock.Now = new DateTime(2026, 10, 26, 17, 0, 0); f.Auto.Tick();
++            Check("서버 시각 오래되면 예약 게시 금지", Bot.Attempts.Count == 2 && f.Auto.Active);
++            ServerClock.FreshValue = true; f.Auto.Tick(); Check("시각 복구 후 한 회차", Until(() => Bot.Attempts.Count == 4 && f.RoundCompleted));
++            Check("시각 복구 뒤 미래 슬롯", f.Auto.NextRun == new DateTime(2026, 10, 26, 17, 2, 0));
++        }
++        using (var f = new Fixture(1))
++        {
++            ServerClock.FreshValue = false; f.Auto.Start(); Check("시각 미확인 시작 차단", !f.Auto.Active && Bot.Attempts.Count == 0 && f.Notice.Length > 0);
++        }
++        foreach (int invalid in new[] { 0, 1441 }) using (var f = new Fixture(1, Batch(false, invalid)))
++        { f.Auto.Start(); Check("잘못된 간격 " + invalid + " 차단", !f.Auto.Active && f.Notice.Length > 0); }
++        foreach (int invalid in new[] { -1, 60 }) using (var f = new Fixture(1, Batch(true, 60, invalid)))
++        { f.Auto.Start(); Check("잘못된 지정분 " + invalid + " 차단", !f.Auto.Active && f.Notice.Length > 0); }
++        using (var f = new Fixture(2))
++        {
++            LicenseGate.LastInfo.Edition = "Classic"; f.Auto.Start();
++            Check("Classic은 첫 전체 회차부터 실제 RequireMode 차단", !f.Auto.Active && Bot.Attempts.Count == 0 && f.Notice.Length > 0);
++        }
++        using (var f = new Fixture(3))
++        {
++            Seed(99); f.StartAndWait(); Check("실제 Pro 한도 소진 후 회차와 예약 중단", Bot.Attempts.Count == 1 && !f.Auto.Active && f.Notice.Length > 0);
++        }
++        using (var f = new Fixture(1))
++        {
++            f.StartAndWait(); Bot.LoginOk = false; ServerClock.Now = f.Auto.NextRun; f.Auto.Tick();
++            Check("로그인 실패도 종료 응답", Until(() => !f.Auto.Active && f.RoundCompleted));
++            Check("로그인 실패에 낡은 시도 재집계 없음", f.Auto.SuccessThisRun == 1 && f.Runner.LastRegistered.Count == 0 && f.Notice.Length > 0);
++        }
++        using (var f = new Fixture(3))
++        {
++            Bot.FailTitle = "상품1"; f.StartAndWait();
++            Check("일부 실패에도 남은 상품 시도", Bot.Attempts.Count == 3 && f.Auto.SuccessThisRun == 2 && f.Auto.FailThisRun == 1);
++            Check("실패 회차 뒤 무한 반복 차단", !f.Auto.Active && f.Notice.Length > 0);
++        }
++        using (var f = new Fixture(3))
++        {
++            var entered = new ManualResetEvent(false); var release = new ManualResetEvent(false);
++            Bot.BeforeRegister = p => { entered.Set(); release.WaitOne(1500); };
++            f.Auto.Start(); Check("진행 중 진입", entered.WaitOne(1000)); f.Auto.Start();
++            Check("중복 Start가 새 Runner/집계 초기화 안 함", Bot.Created == 1 && f.Auto.Active);
++            f.Auto.Pause(); release.Set(); Thread.Sleep(20); Application.DoEvents();
++            Check("실행 중 일시정지", f.Auto.Paused && f.Runner.Running && Bot.Attempts.Count == 0);
++            f.Auto.Stop(); Check("일시정지 중 중지 반응", Until(() => !f.Auto.Active && f.RoundCompleted));
++            Check("중지 후 남은 상품 게시 없음", Bot.Attempts.Count == 0); entered.Dispose(); release.Dispose();
++        }
++        using (var f = new Fixture(2))
++        {
++            Bot.BeforeRegister = p => ServerClock.Now = new DateTime(2026, 10, 26, 18, 12, 0);
++            f.StartAndWait(); Check("느린 실제 회차 뒤 다음 미래 슬롯", f.Auto.NextRun == new DateTime(2026, 10, 26, 19, 2, 0));
++        }
++        using (var f = new Fixture(2))
++        {
++            f.StartAndWait(); DateTime next = f.Auto.NextRun; f.Auto.Start();
++            Check("예약 대기 중 중복 시작 무시", f.Auto.NextRun == next && f.Auto.SuccessThisRun == 2 && Bot.Attempts.Count == 2);
++            for (int i = 0; i < 3; i++)
++            {
++                ServerClock.Now = f.Auto.NextRun; f.Auto.Tick(); int expected = 4 + i * 2;
++                Check("지속 반복 회차 " + (i + 2), Until(() => f.RoundCompleted && Bot.Attempts.Count == expected && f.Auto.NextRun > ServerClock.Now));
++            }
++            Check("기존 횟수 제한 없이 계속 반복", f.Auto.Active && f.Auto.SuccessThisRun == 8);
++        }
++        using (var f = new Fixture(2, new AppSettings { OneByOne = true, RepeatAll = true, RepeatCount = 1 }))
++        {
++            Set(f.Cfg, "BatchRepeatEnabled", true); f.StartAndWait();
++            Check("전체 모드가 레거시 1개씩과 횟수보다 우선", Bot.Attempts.Count == 2 && f.Auto.Active);
++        }
++        using (var f = new Fixture(1))
++        {
++            f.StartAndWait(); LicenseGate.Allowed = false; ServerClock.Now = f.Auto.NextRun; f.Auto.Tick();
++            Check("다음 회차 인증 해제 시 즉시 중단", !f.Auto.Active && Bot.Attempts.Count == 1 && f.Notice.Length > 0);
++        }
++        using (var f = new Fixture(1))
++        {
++            Bot.BeforeRegister = p => { throw new IOException("제어된 브라우저 오류"); }; f.StartAndWait();
++            Check("회차 예외는 안내 후 반복 중단", !f.Auto.Active && Bot.Attempts.Count == 0 && f.Notice.Contains("제어된 브라우저 오류"));
++        }
++        using (var f = new Fixture(1))
++        {
++            Bot.AfterPause = () => ServerClock.FreshValue = false; f.Auto.Start();
++            Check("종료 시 시각 만료 응답", Until(() => f.RoundCompleted && f.Auto.NextText.Contains("서버 시각")));
++            Check("회차 종료 후 미확인 시각으로 예약 안 함", f.Auto.Active && f.Auto.NextRun == DateTime.MinValue);
++            ServerClock.Now = new DateTime(2026, 10, 26, 17, 3, 0); ServerClock.FreshValue = true; f.Auto.Tick();
++            Check("회차 종료 시각 복구 뒤 미래 슬롯 재계산", f.Auto.NextRun == new DateTime(2026, 10, 26, 18, 2, 0) && Bot.Attempts.Count == 1);
++        }
++        using (var f = new Fixture(1))
++        {
++            ServerClock.Now = new DateTime(2026, 10, 26, 23, 59, 0); Seed(99); f.StartAndWait();
++            ServerClock.Now = new DateTime(2026, 10, 27, 0, 59, 0); f.Auto.Tick();
++            Check("날짜 경계 실제 일일한도 초기화로 다음 회차", Until(() => f.RoundCompleted && f.Auto.SuccessThisRun == 2 && f.Auto.Active));
++        }
++        using (var f = new Fixture(1))
++        {
++            var entered = new ManualResetEvent(false); var release = new ManualResetEvent(false);
++            Bot.BeforeCreate = () => { entered.Set(); release.WaitOne(1000); };
++            f.Auto.Start(); Check("브라우저 생성 진입", entered.WaitOne(1000)); f.Auto.Stop(); release.Set();
++            Check("브라우저 생성 중 중지 보존", Until(() => !f.Auto.Active && f.RoundCompleted) && Bot.Attempts.Count == 0);
++            entered.Dispose(); release.Dispose();
++        }
++        using (var f = new Fixture(3, new AppSettings { OneByOne = false }))
++        { f.StartAndWait(); Check("레거시 일괄 1회 종료", Bot.Attempts.Count == 3 && !f.Auto.Active); }
++        using (var f = new Fixture(31, new AppSettings { OneByOne = false }))
++        { f.StartAndWait(); Check("레거시 일괄 최대30 보존", Bot.Attempts.Count == 30 && !f.Auto.Active); }
++        using (var f = new Fixture(2, new AppSettings { OneByOne = true, OneByOneMinutes = 20, RepeatAll = true, RepeatCount = 2 }))
++        {
++            f.StartAndWait(); for (int i = 0; i < 3; i++) { ServerClock.Now = f.Auto.NextRun; f.Auto.Tick(); Check("레거시 다음 상품 " + i, Until(() => f.RoundCompleted)); }
++            Check("레거시 횟수 반복 완료", Bot.Attempts.Count == 4 && !f.Auto.Active);
++        }
++        using (var f = new Fixture(1, new AppSettings { OneByOne = true, UseTimeRules = true, TimeRules = new List<TimeRule> { new TimeRule("16:00", "17:00", 20) } }))
++        {
++            f.Auto.Start(); Check("레거시 시간대 대기 보존", f.Auto.Active && Bot.Attempts.Count == 0 && f.Auto.NextRun == new DateTime(2026, 10, 26, 16, 0, 0));
++        }
++    }
++    static void CompletionSignalChecks()
++    {
++        using (var entered = new ManualResetEvent(false))
++        using (var release = new ManualResetEvent(false))
++        using (var fixture = new Fixture(1, null, false, () => { entered.Set(); release.WaitOne(1000); }))
++        {
++            fixture.Auto.Start();
++            try
++            {
++                Check("제어된 Finished 지연 진입", entered.WaitOne(1000));
++                Check("Running 해제와 UI 회차 완료는 다른 시점", Until(() => !fixture.Runner.Running) && fixture.Auto.NextRun == DateTime.MinValue && fixture.Auto.Active);
++                Check("UI 콜백 전 회차 완료로 판단하지 않음", !fixture.RoundCompleted);
++            }
++            finally { release.Set(); }
++            Check("지연 해제 후 실제 다음 예약 생성", Until(() => fixture.Auto.NextRun == new DateTime(2026, 10, 26, 16, 2, 0)));
++        }
++    }
++    [STAThread] static int Main(string[] args)
++    {
++        selection = args.Length == 0 ? "" : args[0];
++        Console.OutputEncoding = new System.Text.UTF8Encoding(false);
++        AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e) { using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("lib." + new AssemblyName(e.Name).Name + ".dll")) { if (s == null) return null; using (var m = new MemoryStream()) { s.CopyTo(m); return Assembly.Load(m.ToArray()); } } };
++        return Execute();
++    }
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static int Execute()
++    {
++        try
++        {
++            if (selection == "--whole65") WholeList(65);
++            else if (selection == "--whole-lists") foreach (int count in new[] { 0, 31, 65 }) WholeList(count);
++            else if (selection == "--completion-signal") CompletionSignalChecks();
++            else { ScheduleChecks(); RunChecks(); }
++        }
++        catch (Exception ex) { Console.WriteLine(ex); failed++; }
++        finally
++        {
++            ResetLedger();
++        }
++        Console.WriteLine("BATCH: " + passed + " passed, " + failed + " failed"); return failed == 0 ? 0 : 1;
++    }
++}
++
++namespace BunjangAuto
++{
++    // 아래 대역은 이 격리 검사 실행 파일에만 포함되며 운영 앱에는 포함되지 않는다.
++    public class SelectorSet { }
++    public class StopRequestedException : Exception { }
++    public class RegistrationBlockedException : Exception { public RegistrationBlockedException(string message) : base(message) { } }
++    public class LicenseInfo { public bool Valid = true, Trial; public string Edition = "Pro", MachineId = "isolated-device", LicenseId = "isolated-license"; }
++    public static class LicenseGate { public static bool Allowed = true; public static LicenseInfo LastInfo = new LicenseInfo(); public static bool Recheck() { return Allowed; } }
++    public static class Guard { public static void Check() { if (!LicenseGate.Recheck()) throw new RegistrationBlockedException("격리 검사 인증 차단"); } }
++    public static class Brand { public const string Email = "isolated@example.invalid"; }
++    public static class TrustedKeys { public static IDictionary<string, byte[]> All = new Dictionary<string, byte[]>(); }
++    public static class TpmDevice { public static void Prove(string key) { throw new InvalidOperationException("이 검사에서는 기기 인증을 수행하지 않습니다."); } }
++    public static class Storage { public static void SaveSettings(AppSettings cfg) { } public static void SaveProducts(BindingList<Product> products) { } }
++    public static class Log { public static string LastError = ""; public static void Write(string message) { } public static void Write(string a, string b, string c, string d, string e) { } public static void Error(string a, string b, string c, Exception ex) { LastError = ex.ToString(); } }
++    public static class ServerClock
++    {
++        public static DateTime Now = new DateTime(2026, 10, 26, 15, 2, 0); public static bool FreshValue = true;
++        public static DateTime KoreaNow { get { return Now; } } public static DateTime UtcNow { get { return DateTime.SpecifyKind(Now.AddHours(-9), DateTimeKind.Utc); } }
++        public static bool Fresh { get { return FreshValue; } } public static void RefreshAsync() { }
++        public static void RequireFresh() { if (!Fresh) throw new InvalidOperationException("격리 검사 서버 시각 미확인"); }
++    }
++    public class Bot
++    {
++        public static bool LoginOk = true; public static int Created; public static string FailTitle = "";
++        public static List<string> Attempts = new List<string>(); public static Action<Product> BeforeRegister;
++        public static Action BeforeCreate, AfterPause;
++        public volatile bool StopRequested, PauseRequested;
++        public Func<string, bool> Ask; public Action<string> NotifyManual;
++        public bool IsAlive { get { return true; } }
++        public Bot(AppSettings cfg, SelectorSet selectors) { if (BeforeCreate != null) BeforeCreate(); Created++; }
++        public static void Reset() { LoginOk = true; Created = 0; FailTitle = ""; Attempts.Clear(); BeforeRegister = null; BeforeCreate = null; AfterPause = null; Log.LastError = ""; }
++        public bool EnsureLogin() { return LoginOk; }
++        void CheckStop() { while (PauseRequested && !StopRequested) Thread.Sleep(2); if (StopRequested) throw new StopRequestedException(); }
++        public bool Register(Product product)
++        {
++            if (BeforeRegister != null) BeforeRegister(product); CheckStop();
++            try { UsageQuota.Consume(); } catch (Exception ex) { throw new RegistrationBlockedException(ex.Message); }
++            Attempts.Add(product.Title); product.Status = product.Title == FailTitle ? "실패: 제어된 상품 오류" : "등록됨"; return product.Status == "등록됨";
++        }
++        public void HumanPause() { CheckStop(); if (AfterPause != null) AfterPause(); } public void Close() { }
++    }
++}
+--- 19차/tests/RedesignUiTests.cs
++++ 20차/tests/RedesignUiTests.cs
+@@ -39,7 +39,7 @@
+         var page=(DashboardPage)All(form).First(c=>c is DashboardPage);page.LayoutForDpi();
+         Check(!All(page).OfType<StatCard>().Any(),"분리된 네 카드 대신 통합 진행 패널 "+mode);
+         Check(All(page).Count(c=>c.Name=="dashboardOverview")==1,"큰 등록 현황 영역 한 개 "+mode);
+-        Check(All(page).OfType<Label>().Single(c=>c.Name=="dashboardProgressTitle").Text=="등록 진행","현재 진행으로 명확히 구분 "+mode);
++        Check(All(page).OfType<Label>().Single(c=>c.Name=="dashboardProgressTitle").Text=="현재 등록 진행","현재 진행으로 명확히 구분 "+mode);
+         var values=new[]{"dashboardPending","dashboardDone","dashboardFail"}.Select(name=>All(page).Single(c=>c.Name==name)).ToArray();
+         Check(values.Select(c=>c.Text).SequenceEqual(new[]{"1","1","1"}),"실제 대기 성공 실패 집계 "+mode);
+         Check(values.Select(c=>c.Top).Distinct().Count()==1,"하단 통계 한 줄 "+mode);
+@@ -54,8 +54,8 @@
+         for(int i=0;i<children.Length;i++)for(int j=i+1;j<children.Length;j++)Check(!children[i].Bounds.IntersectsWith(children[j].Bounds),"작업 패널 겹침 없음 "+i+"/"+j+" "+mode);
+         var host=Field<AppHost>(form,"host");host.Auto.StateText="실행 중 (99999/99999) · 2147483647/2147483647회차";host.Auto.NextText="다음 실행까지 999시간 59분 59초 (12-31 23:59)";host.Auto.Total=99999;host.Auto.Done=33333;
+         page.Refresh2();page.LayoutForDpi();
+-        var ring=All(page).OfType<CircularProgress>().Single();var fraction=All(page).OfType<RunFraction>().Single();
+-        Check(ring.Maximum==99999&&ring.Value==33333&&ring.Percentage==33,"실제 현재 실행의 원형 진행률 "+mode);
++        var ring=All(page).OfType<BrandScene>().Single();var fraction=All(page).OfType<RunFraction>().Single();
++        Check(ring.Maximum==99999&&ring.Value==33333&&ring.Percentage==33,"실제 현재 실행의 입체 브랜드 진행률 "+mode);
+         Check(fraction.DisplayText=="33333 / 99999","큰 진행 숫자는 실제 Done Total "+mode);
+         Check(All(page).Single(c=>c.Name=="openAutomation").Width==job.Width-Ui.S(48),"가로 전체 폭 자동 등록 버튼 "+mode);
+         Check(All(page).OfType<Label>().Where(c=>c.Name=="dashboardState").All(c=>c.AutoEllipsis),"긴 상태의 안전한 말줄임 "+mode);
+@@ -112,7 +112,7 @@
+         Check(Paths.Root.Contains("Lumivolt-tests-"),"운영 자료와 다른 테스트 경로");Check(AppFont.Active&&Theme.FontBase().Bold,"나눔고딕 Bold 활성");
+         string before=ProductionState();
+         if(args.Contains("--preview")){
+-            var form=Make(args.Contains("--dark")?"Dark":"Light");LockActions(form);form.Text="EXP 19차 · 흑백 격리 UI 미리보기 (실행·인증 비활성)";form.ShowInTaskbar=true;
++            var form=Make(args.Contains("--dark")?"Dark":"Light");LockActions(form);form.Text="EXP 20차 · 흑백 격리 UI 미리보기 (실행·인증 비활성)";form.ShowInTaskbar=true;
+             var timeout=new Timer{Interval=60000};timeout.Tick+=delegate{timeout.Stop();timeout.Dispose();form.Dispose();Application.ExitThread();};form.Shown+=delegate{timeout.Start();};form.FormClosed+=delegate{timeout.Dispose();};Application.Run(form);Check(before==ProductionState(),"미리보기 운영 인증 기록 보존");return 0;
+         }
+         foreach(string mode in new[]{"Light","Dark"})using(var form=Make(mode)){
+--- 19차/tests/RepeatDesignUiTests.cs
++++ 20차/tests/RepeatDesignUiTests.cs
+@@ -0,0 +1,55 @@
++using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Drawing;
++using System.IO;
++using System.Linq;
++using System.Reflection;
++using System.Windows.Forms;
++using BunjangAuto;
++
++/// <summary>운영 인증·게시 없이 새 예약 UI와 입체 모션을 검사합니다.</summary>
++class RepeatDesignUiTests
++{
++    static int passed;
++    static void Check(bool value,string message){if(!value)throw new Exception(message);passed++;Console.WriteLine("PASS "+message);}
++    static IEnumerable<Control> All(Control root){yield return root;foreach(Control c in root.Controls)foreach(var item in All(c))yield return item;}
++    static T Find<T>(Control root,string name)where T:Control{return (T)All(root).Single(c=>c.Name==name);}
++    static void Pump(int ms){var end=DateTime.UtcNow.AddMilliseconds(ms);while(DateTime.UtcNow<end){Application.DoEvents();System.Threading.Thread.Sleep(5);}}
++    static void Key(Segmented c,Keys key){typeof(Segmented).GetMethod("OnKeyDown",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(c,new object[]{new KeyEventArgs(key)});}
++    static void Save(Form f,string path){using(var b=new Bitmap(f.Width,f.Height)){f.DrawToBitmap(b,new Rectangle(Point.Empty,f.Size));b.Save(path);}}
++    static void LayoutCheck(SchedulePage page,string caption){page.LayoutForDpi();var card=Find<CardPanel>(page,"scheduleCard");var list=card.Controls.Cast<Control>().Where(c=>c.Visible).ToArray();Check(list.All(c=>c.Left>=0&&c.Top>=0&&c.Right<=card.Width&&c.Bottom<=card.Height),"예약 내부 경계 "+caption);for(int a=0;a<list.Length;a++)for(int b=a+1;b<list.Length;b++)Check(!list[a].Bounds.IntersectsWith(list[b].Bounds),"예약 겹침 없음 "+caption+" "+a+"/"+b);}
++    [STAThread]static int Main(string[] args){AppDomain.CurrentDomain.AssemblyResolve+=delegate(object sender,ResolveEventArgs e){using(var s=Assembly.GetExecutingAssembly().GetManifestResourceStream("lib."+new AssemblyName(e.Name).Name+".dll")){if(s==null)return null;using(var m=new MemoryStream()){s.CopyTo(m);return Assembly.Load(m.ToArray());}}};try{Run(args);Console.WriteLine("REPEAT DESIGN: "+passed+" 통과, 0 실패");return 0;}catch(Exception ex){Console.WriteLine(ex);Console.WriteLine("REPEAT DESIGN: "+passed+" 통과, 1 실패");return 1;}}
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static void Run(string[] args){
++#if !TESTBUILD
++        throw new InvalidOperationException("TESTBUILD 격리 필수");
++#else
++        Paths.EnsureAll();AppFont.Init();Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);string output=Path.GetFullPath(args[0]);Directory.CreateDirectory(output);Check(Paths.Root.Contains("Lumivolt-tests-"),"운영 자료와 격리된 저장 경로");
++        foreach(double scale in new[]{1.0,1.25,1.5,1.75,2.0})foreach(bool dark in new[]{false,true}){
++            Dpi.ForcedScale=scale;Dpi.EmulateFontScale=true;Theme.Set(dark?ThemePalette.DarkPal:ThemePalette.Light);string tag=(dark?"Dark":"Light")+"-"+scale.ToString(System.Globalization.CultureInfo.InvariantCulture);
++            using(var form=new Form{AutoScaleMode=AutoScaleMode.None,ClientSize=new Size(Ui.S(700),Ui.S(960)),Font=Theme.FontBase(),ShowInTaskbar=false,Opacity=0,StartPosition=FormStartPosition.Manual,Location=new Point(-20000,-20000)}){
++                var host=new AppHost{Cfg=new AppSettings(),Sel=new SelectorSet(),Products=new BindingList<Product>(),Runner=new Runner()};host.Auto=new AutomationController(host.Cfg,host.Sel,host.Products,host.Runner,form);LicenseGate.LastInfo=new LicenseInfo{Valid=true,Edition="Studio"};
++                var page=new SchedulePage(host);form.Controls.Add(page);Theme.Apply(form);form.Show();page.OnActivated();Pump(10);
++                var mode=Find<Segmented>(page,"registrationMode");var timing=Find<Segmented>(page,"batchTiming");var minutes=Find<SoftNumber>(page,"batchMinutes");var minute=Find<SoftNumber>(page,"batchMinute");
++                mode.SelectedIndex=0;Check(!timing.Visible&&!Find<Control>(page,"timeRules").Visible,"한 번 모드의 불필요 입력 숨김 "+tag);LayoutCheck(page,tag+" once");
++                mode.SelectedIndex=2;Check(host.Cfg.BatchRepeatEnabled&&!host.Cfg.OneByOne&&minutes.Visible&&!minute.Visible,"전체 목록 간격 선택 저장 "+tag);minutes.Value=1440;Check(host.Cfg.BatchRepeatMinutes==1440&&Storage.LoadSettings().BatchRepeatMinutes==1440,"최대 간격 저장 파일 복원 "+tag);Check(Find<Label>(page,"batchSummary").Text.StartsWith("1440분 간격으로 전체 목록 등록"),"변경한 간격 요약 표시 "+tag);
++                timing.SelectedIndex=1;minute.Value=59;Check(host.Cfg.BatchRepeatClockAligned&&host.Cfg.BatchRepeatMinuteOfHour==59&&!minutes.Visible&&minute.Visible,"매시 지정분 저장 "+tag);Check(Find<Label>(page,"batchSummary").Text.StartsWith("매시 59분에 전체 목록 등록"),"59분 요약 표시 "+tag);minute.Value=20;Check(Find<Label>(page,"batchSummary").Text.StartsWith("매시 20분에 전체 목록 등록"),"20분 요약 즉시 갱신 "+tag);Check(minutes.Minimum==1&&minutes.Maximum==1440&&minute.Minimum==0&&minute.Maximum==59,"입력 허용 범위 "+tag);
++                minute.Value=0;Check(Find<Label>(page,"batchSummary").Text.StartsWith("매시 00분에 전체 목록 등록"),"정각 00분 요약 표시 "+tag);minutes.Value=60;
++                var editor=minute.Controls.OfType<TextBox>().Single();editor.Text="999999999999999999999999999999999999999";typeof(Control).GetMethod("OnValidated",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(editor,new object[]{EventArgs.Empty});Check(minute.Value==0&&editor.Text=="0","긴 숫자 입력 복구와 값 보존 "+tag);
++                page.OnActivated();Check(timing.SelectedIndex==1&&minute.Value==0&&mode.SelectedIndex==2,"예약 재진입 설정 복원 "+tag);LayoutCheck(page,tag+" batch");Save(form,Path.Combine(output,tag+"-batch-clock.png"));
++                host.Auto.Active=true;page.OnActivated();Check(!mode.Enabled&&!timing.Enabled&&!minute.Enabled,"실행 중 예약 잠금 "+tag);mode.SelectedIndex=0;Check(mode.SelectedIndex==2&&host.Cfg.BatchRepeatEnabled,"실행 중 프로그램 선택 변경도 거부 "+tag);host.Auto.Active=false;
++                LicenseGate.LastInfo=new LicenseInfo{Valid=true,Edition="Classic"};host.Cfg.BatchRepeatEnabled=false;page.OnActivated();mode.SelectedIndex=2;Check(mode.SelectedIndex==0&&!host.Cfg.BatchRepeatEnabled,"Classic 전체 반복 선택 차단 "+tag);
++                LicenseGate.LastInfo=new LicenseInfo{Valid=true,Edition="Pro"};page.OnActivated();mode.Focus();Key(mode,Keys.Right);Check(mode.SelectedIndex==1&&host.Cfg.OneByOne,"키보드 화살표 등록 방식 선택 "+tag);Find<ToggleSwitch>(page,"timeRulesEnabled").Checked=true;Find<ToggleSwitch>(page,"legacyRepeat").Checked=true;Find<SoftNumber>(page,"legacyRounds").Value=999;Check(host.Cfg.UseTimeRules&&host.Cfg.RepeatAll&&host.Cfg.RepeatCount==999,"레거시 시간대 횟수 반복 보존 "+tag);LayoutCheck(page,tag+" legacy");Save(form,Path.Combine(output,tag+"-legacy.png"));
++                mode.SelectedIndex=2;timing.SelectedIndex=0;Check(Find<Label>(page,"batchSummary").Text.StartsWith("60분 간격으로 전체 목록 등록"),"60분 간격 요약 재선택 갱신 "+tag);LayoutCheck(page,tag+" interval");Save(form,Path.Combine(output,tag+"-batch-interval.png"));
++                form.ClientSize=new Size(Ui.S(540),Ui.S(960));Pump(10);LayoutCheck(page,tag+" narrow");
++                host.Cfg.BatchRepeatMinutes=60;host.Cfg.BatchRepeatMinuteOfHour=20;host.Cfg.BatchRepeatClockAligned=true;
++                using(var automation=new AutomationPage(host)){form.Controls.Remove(page);form.Controls.Add(automation);automation.OnActivated();Pump(10);Check(All(automation).OfType<Label>().Any(l=>l.Text.Contains("전체 목록 · 매시 20분")),"자동 등록 화면 반복 방식 안내 "+tag);automation.OnDeactivated();form.Controls.Remove(automation);}
++                page.Dispose();
++            }
++        }
++        Dpi.ForcedScale=1;Dpi.EmulateFontScale=false;MotionPreferences.UserReducedMotion=false;
++        using(var f=new Form{ClientSize=new Size(220,250),ShowInTaskbar=false,Opacity=0}){var scene=new BrandScene{Width=192,Height=220,Maximum=99999,Value=33333};f.Controls.Add(scene);f.Show();Pump(170);Check(BrandAssets.Sheet.Width==1536&&BrandAssets.Sheet.Height==1152&&BrandAssets.Still.Width==384,"48개 실제 3D 프레임과 정지 자산 크기");Check(scene.Percentage==33,"긴 진행값 백분율 보존");Check(MotionPreferences.ReducedMotion||scene.AnimationRunning,"표시 중 3D 모션");f.Hide();Check(!scene.AnimationRunning,"숨김 모션 정지");f.Show();f.WindowState=FormWindowState.Minimized;Pump(10);Check(!scene.AnimationRunning,"최소화 모션 정지");f.WindowState=FormWindowState.Normal;MotionPreferences.UserReducedMotion=true;Pump(10);Check(!scene.AnimationRunning&&scene.FrameIndex==0,"모션 줄이기 정지 프레임");f.Dispose();Check(scene.IsDisposed,"입체 자산 컨트롤 정리");}MotionPreferences.UserReducedMotion=false;
++#endif
++    }
++}
+--- 19차/tools/ResetAssemblyInfo.cs
++++ 20차/tools/ResetAssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyProduct("EXP Reset")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+-[assembly: AssemblyVersion("2.3.1.0")]
+-[assembly: AssemblyFileVersion("2.3.1.0")]
+-[assembly: AssemblyInformationalVersion("2.3.1")]
++[assembly: AssemblyVersion("2.4.0.0")]
++[assembly: AssemblyFileVersion("2.4.0.0")]
++[assembly: AssemblyInformationalVersion("2.4.0")]

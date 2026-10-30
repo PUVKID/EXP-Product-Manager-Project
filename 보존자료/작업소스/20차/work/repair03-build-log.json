@@ -1,0 +1,9 @@
+{
+  "role": "main",
+  "method": "행단위strict해독및원본보존,실행결과메타데이터를해독보다먼저저장. 제품코드/검사기준변경없음",
+  "cause": "빌드출력이컴파일러CP949와PowerShellUTF8행으로섞였는데전체를한인코딩으로해독",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "new_observation": "UTF8와CP949 strict모두다른바이트위치에서실패하며원본raw보존",
+  "selection_reason": "부모가작성한빌드로그수집기의고립된오류로main이직접최소수리하며최종artifact별도검증"
+}

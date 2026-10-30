@@ -1,0 +1,19 @@
+PASS injected file replacement failure 0
+PASS interrupted charge retained 0
+PASS both copies repaired before next write 0
+PASS injected file replacement failure 1
+PASS interrupted charge retained 1
+PASS both copies repaired before next write 1
+PASS injected file replacement failure 2
+PASS interrupted charge retained 2
+PASS both copies repaired before next write 2
+PASS credits/trial/redemption retained
+PASS older registry recovers newest file
+PASS wrong device rejected before repair
+PASS wrong device does not alter copies
+PASS nonadjacent rollback still rejected
+PASS deleted file remains blocked
+PASS both copies deleted remains blocked
+PASS tampered DPAPI file remains blocked
+PASS repaired ledger remains readable
+RECOVERY: 18 passed, 0 failed

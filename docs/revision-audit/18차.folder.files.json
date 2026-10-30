@@ -1,0 +1,1655 @@
+[
+  {
+    "path": "SHA256SUMS.txt",
+    "bytes": 481,
+    "sha256": "678f4041721ccb0590ec3c10aa1ec33a766c053095a02dc985c43fb30bd66edf",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 5,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "docs/2026-10-26_디자인_명세.md",
+    "bytes": 4811,
+    "sha256": "5dbf3b03b55b98e266cdd9b7cf276fe7cf1dc5b838fc79200546f7ece0948210",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 28,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/Run-Dpi.ps1",
+    "bytes": 410,
+    "sha256": "37af352ec585743929395bb33bcd67462ae8e78a74e421f875756a4458fcbd23",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 10,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/checks-reviewed.json",
+    "bytes": 1423,
+    "sha256": "631d3e5b8a9d52bae573897cf4b0428ef12acd989d1656958b924c91cda15991",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 47,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/input-fix-initial.json",
+    "bytes": 933,
+    "sha256": "c150a8189196922351b697fe77b5e2f115fbd0d20e40b3ddd4445a5aac2f90cb",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 22,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/logic-baseline.json",
+    "bytes": 2563,
+    "sha256": "6ea4903cba38b6290fcc3a1f95fd40a5cc78c401f18b3fed52de90ab99093ad2",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 29,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/make_brand_icon.py",
+    "bytes": 807,
+    "sha256": "761912fd355427d594dc06b05052f85ec996f5dfc6c7547e9c4b9ad3a23f621e",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 15,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/package_release.py",
+    "bytes": 1509,
+    "sha256": "0e154e70f79eac58d12c1709cf89ce3d2697ecf10a0cbff85bd2ed5021f4d649",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 31,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/repair-01.json",
+    "bytes": 556,
+    "sha256": "05b3146557f84174232ee0f498edd923adfc6bd74d4f8dff9c7eaa36df451f67",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 9,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/repair-02.json",
+    "bytes": 706,
+    "sha256": "c2573e419f9ea6c7e3e8add6c3ae60d83b61add1eb4a4773cd0069348cfe198d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 9,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/repair-03.json",
+    "bytes": 799,
+    "sha256": "fe51cb316f1695d12465e8c43c42433068924d901da798fbbc081d0a0eae9192",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 9,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tools/verify_scope.py",
+    "bytes": 874,
+    "sha256": "008b92e554e5f2e2b5d3fbf470a717887b59817dbe26bbeec68c1ccc7b19bbe1",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 20,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "검증결과/검사_범위.md",
+    "bytes": 1243,
+    "sha256": "82d83a28bb48eca86f1b5d89932c956d0bf127e9ab985c6be5edf6793253d8f0",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 1,
+      "lf_without_cr_count": 8,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "고객 배포/licenses/BouncyCastle-LICENSE.txt",
+    "bytes": 1186,
+    "sha256": "be0592a6c76f398356fbf252a4fb43476fb3ca3c45331428c2f4f22c499e8311",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 15,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "고객 배포/licenses/Inno-Setup-LICENSE.txt",
+    "bytes": 1521,
+    "sha256": "2e5346868c2a18434489824e11d65c3031620f792fefc415d05f19cd441abf5c",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 31,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": false,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "고객 배포/licenses/NanumGothic-OFL.txt",
+    "bytes": 5398,
+    "sha256": "9413f0aaff51c59be2ff01113a28759b491e6fd67172c3d0a666e6354af18883",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 126,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/EXP.csproj",
+    "bytes": 1887,
+    "sha256": "bdd26703cb1dfd8361bd125dc8535ce405c3d9cebb4cc6c5c76d1736744eafa2",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 36,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/admin/AdminWorkflow.cs",
+    "bytes": 2491,
+    "sha256": "bb3742b72fa7b8cf514c7db3b8ef9b844a4d25fefaabe8540931124d25d5890d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 43,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/admin/AssemblyInfo.cs",
+    "bytes": 402,
+    "sha256": "0addf9fe81af84052a7b3afd04a8f804d37543f37b7782a2d6fa6aa260c3bf9e",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 9,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/admin/CreditIssuer.cs",
+    "bytes": 1612,
+    "sha256": "61c98bc799513bc43aada0a0f3f930f0638488442d96949cf0f83f447576727b",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 22,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/admin/IssuerService.cs",
+    "bytes": 10790,
+    "sha256": "d5306dfb8605c6753654f373f569c226dee228be883cb470675d52c88efab2d8",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 7,
+      "lf_without_cr_count": 144,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/admin/LicenseAdmin.cs",
+    "bytes": 14202,
+    "sha256": "7799a47d326e48a2d5ac04edb2138141c8d2316fc13c42cacf12c0dcc325b786",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 142,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/admin/TrialIssuer.cs",
+    "bytes": 1968,
+    "sha256": "7d7d748bc3821665fa3f9758e2db2014be070162b75d354fc1b0ad1010286c0c",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 28,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/build.bat",
+    "bytes": 112,
+    "sha256": "2c453b1b1505a2d6433e4837bc5c1a87bb97914d43a297ac32fda6577e72b4cb",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 3,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/build.sh",
+    "bytes": 117,
+    "sha256": "3f44756986aa68c52ec6accb3fc089708e58ba95107b7e7fa55d57ec2692fefb",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 3,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/build/Build-Installer.ps1",
+    "bytes": 666,
+    "sha256": "c87443f88b0c1cad6034337eef520b4624ccf45605aeac3a02fa3f0516612232",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 10,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/build/Build.ps1",
+    "bytes": 6244,
+    "sha256": "92b3a67ac93b5b19ffead07f0907a7eb53b2282ccb60d53ee72b7a0112fc9f7f",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 61,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/build/Package.ps1",
+    "bytes": 2877,
+    "sha256": "a82a3f1ced258eda0ed8dbc1aa82e5da27bfed6b4f48b47b4977fdcedea2624e",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 38,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/build/Sign.ps1",
+    "bytes": 602,
+    "sha256": "c991c1fa76e00fb11b9c5fe50ea15054b1c698c85f773ff945b7152a813b4bb2",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 7,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/build/Test.ps1",
+    "bytes": 752,
+    "sha256": "4ff6a19ded9ae9e3f354666e8cc8d8287d5b592dde9208291499e01ba8065d4d",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 14,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/build_admin.sh",
+    "bytes": 117,
+    "sha256": "3f44756986aa68c52ec6accb3fc089708e58ba95107b7e7fa55d57ec2692fefb",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 3,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/installer/EXP.iss",
+    "bytes": 5385,
+    "sha256": "c11387f44cf562b43e130ffb48aa9f6bcf024047996ee82601534194299d6c2b",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 111,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/installer/Lumivolt.iss",
+    "bytes": 77,
+    "sha256": "5103f1fa3463816a2ac7b367e2e86406834bb7be2aa296aa6671cd824df795b4",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 2,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/licenses/BouncyCastle-LICENSE.txt",
+    "bytes": 1174,
+    "sha256": "a5308790f41ac31b11f0c212839865e03a0ea9c62ef66d08ae25f6286975c115",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 15,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/licenses/Inno-Setup-LICENSE.txt",
+    "bytes": 1490,
+    "sha256": "3df23505b7ec00dc007a1e1e9ba32ee3895e7ce90043bcd1ac1b9b47155921a7",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 31,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": false,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/app.ico",
+    "bytes": 20687,
+    "sha256": "8baba4d5fa7055e58fbfc08a279497e5ca9762323de90b4dd78a0d5c18092de6"
+  },
+  {
+    "path": "소스코드/resources/app.manifest",
+    "bytes": 1167,
+    "sha256": "52089e46251618139ce152e17979308511aff51b488a4c9ecd2f98bcab56865e",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 24,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/app.png",
+    "bytes": 9081,
+    "sha256": "e0ac754ff00371ef1a3db1f49b512a568b4711f98fc89dd20786d27103fbe7aa"
+  },
+  {
+    "path": "소스코드/resources/fonts/NanumGothic-OFL.txt",
+    "bytes": 5393,
+    "sha256": "a90f671a7f9dccd2862bdd75318ed34a22f13edfb764a1602444402aeff3370d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 126,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/fonts/NanumGothicBold.ttf",
+    "bytes": 4642244,
+    "sha256": "454eb3f503f377782a99eb84fc4bb7dde22a0f075d41b47427737f2985053bc9"
+  },
+  {
+    "path": "소스코드/resources/help/01-guide.md",
+    "bytes": 642,
+    "sha256": "dbdc78ae1beb047fff645110c5b9cd9a26f608112a6caef09b86b10efe8e2b60",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 11,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/02-guide.md",
+    "bytes": 1689,
+    "sha256": "62c1bee57ccf6a20eaf67ad7a8d925032e3098d69fb091329e37e78e5b6613dd",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 15,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": false,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/03-guide.md",
+    "bytes": 679,
+    "sha256": "26ca0961457f0233cf2a77a016a159b9925a481de8511a550f191b29a3302ef5",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 8,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/04-guide.md",
+    "bytes": 671,
+    "sha256": "5aa6d23aff2ed640a1db054b7534d652b6289fb07e83bcb276fe1ae16afbfaa9",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 8,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/05-guide.md",
+    "bytes": 834,
+    "sha256": "74e30a36af1a66d2e249a144cf6b6057ab3b4f94ea77a0c585b51f921ab4bad6",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 9,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/06-guide.md",
+    "bytes": 883,
+    "sha256": "4c885f6d06152ea72e2224e5a2f3f57b524afe9a9e2f7bf46d8e41eda9263e50",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 9,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/07-guide.md",
+    "bytes": 939,
+    "sha256": "b19c43d31093c0faf2b1b194c4279d410f9ae6285bdb2f47a73af7c632f6429e",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 10,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/08-guide.md",
+    "bytes": 827,
+    "sha256": "6bada7ec56adf76d257538b44606c494f0c0b4dbef42f149683a3d524ec3b258",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 8,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/09-guide.md",
+    "bytes": 725,
+    "sha256": "a8be70ca3480faa4c502ef6120f5903cfe4b3aad5b523fe5ff63131b457c36a5",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 8,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/10-guide.md",
+    "bytes": 791,
+    "sha256": "586f82c9de298ad4fb78669cc31f84a36fca9a01b0833cefad11db955c2411e5",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 11,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/11-guide.md",
+    "bytes": 661,
+    "sha256": "005aee7a9dc0a30c88fee657a0d265b900f3793018f2e1247cbaee605c9ca9af",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 8,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/resources/help/12-guide.md",
+    "bytes": 921,
+    "sha256": "4e877dd7bbe1dbf3fa33592eccbe32a26d886b60af128d2b8e096d0e6771d814",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 9,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/shared/CreditProtocol.cs",
+    "bytes": 2005,
+    "sha256": "56b8f5dc765212a4d8abd68ec251c3836adf223097f56f1af7906902611ee3fd",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 25,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/shared/EditionPolicy.cs",
+    "bytes": 597,
+    "sha256": "1829fdf10893f78f08d9ed123e254ffc265f46c58747288ffdfbcccc58a42d8f",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 10,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/shared/LicenseProtocol.cs",
+    "bytes": 9027,
+    "sha256": "a3625a122c9120c0546c788202596a60725bc7424b364b451c2b33592caf07bd",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 130,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/shared/LicenseText.cs",
+    "bytes": 1250,
+    "sha256": "6d2f3956edf559ed36eff4728b60f9edae337afef3e504d9ff91d8000a20eacd",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 19,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/AssemblyInfo.cs",
+    "bytes": 421,
+    "sha256": "dd2987911232c6e73613bd462472ec7b9d51a39a79162cad56f2e7da2219cc37",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 10,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Bot.cs",
+    "bytes": 41609,
+    "sha256": "24a658aa07b20491298fafbd05f735b7c72ca5d9fc924a30207df1979cfe537a",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 10,
+      "lf_without_cr_count": 861,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Brand.cs",
+    "bytes": 692,
+    "sha256": "5a544fa20830636abb5aac9671f131c9b34567a3a6f957ebd93db6c7629ba391",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 20,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/CategoryStore.cs",
+    "bytes": 3061,
+    "sha256": "09063feea9dc554d5fa446830056053afa2f4b9c93b2bb3d87826a47c555a3dd",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 81,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Design.cs",
+    "bytes": 30536,
+    "sha256": "00fe94b878427c3eae010144d3c5b0a0a9aafb75729f97229479951fa3395085",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 295,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/DiagnosticsForm.cs",
+    "bytes": 9970,
+    "sha256": "32f038e417a93eb01dd14a121a201dcb8aed8473cb1691d2cf41b6d4178ad48f",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 94,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/DriverManager.cs",
+    "bytes": 7856,
+    "sha256": "b41cdf5b0befb927e434798275a458f5214409e8cf87d8296b55159dfe3d4648",
+    "text_bytes": {
+      "utf8_bom_count": 2,
+      "crlf_count": 0,
+      "lf_without_cr_count": 185,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/EditForm.cs",
+    "bytes": 11264,
+    "sha256": "4186f48063d7e2de3003f5bd741fd5b9c9a83164df19949d3e4b0092d445ad43",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 163,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Guard.cs",
+    "bytes": 2092,
+    "sha256": "3eb49ca1263dc0cdd30df7a2d827f340c9d44f624c69add1ba8750d3d6eb535a",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 53,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Help/DocView.cs",
+    "bytes": 9418,
+    "sha256": "f813013c69ef58ee8569cdca47efdd7e66aacd2cf71d171f18e7a4f8d821b6eb",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 189,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Help/HelpService.cs",
+    "bytes": 6038,
+    "sha256": "e73455f93eef33cfd30bf0d3d13f872bf21db29f71b1fb57f3b152719b6ea902",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 120,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/License.cs",
+    "bytes": 2950,
+    "sha256": "a63509158af7f4fc8c87e14c9c2ec4a213af4d5f57fed8dba3f712a3b9435f45",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 53,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/LicenseForm.cs",
+    "bytes": 7812,
+    "sha256": "7106f288f2c5130ac31b5db0d14da6220a539a2457f4f4a36387c8c2e01d1a9d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 108,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Log.cs",
+    "bytes": 5147,
+    "sha256": "37266404561437ac58784d205a495424a37d13b6cf78209967e98dc8fe95312a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 115,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/MainForm.cs",
+    "bytes": 13663,
+    "sha256": "53c541a9a7d64507b8c2648a5f540f20e70414137225435582667c09f70af9f4",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 267,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Models.cs",
+    "bytes": 6640,
+    "sha256": "35bdc3cc65f1bc98d82f6384357205eb95d2246a5c630b11a14f017c870ca6a5",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 129,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Program.cs",
+    "bytes": 5595,
+    "sha256": "1be0353cc96cd974ff7000357ee1e0ea577dff5dd6e96f2dfbe1f0d29c7496e8",
+    "text_bytes": {
+      "utf8_bom_count": 2,
+      "crlf_count": 0,
+      "lf_without_cr_count": 107,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Runner.cs",
+    "bytes": 6650,
+    "sha256": "20ddecc71f2914047ad8e044b97332ed6ab18b942b3d017fe71c42ed562b47c5",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 154,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Schedule.cs",
+    "bytes": 6513,
+    "sha256": "f0963a789cf29fac27f09c9ca0a9432a253bc91ae79ae8b96b5fea39c388c876",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 151,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Security/LicenseClock.cs",
+    "bytes": 1884,
+    "sha256": "d9d6d83e39775ba3fda6f70f4e67d0731f98a796c627876b1c8eed978b5cdb9c",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 42,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Security/LicenseFiles.cs",
+    "bytes": 2140,
+    "sha256": "c3ac73384dd749ef43ccbd2750bedc46b730ede39d43e527a9faf0d61b7a6e40",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 40,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Security/TpmDevice.cs",
+    "bytes": 4685,
+    "sha256": "d9eda4961e869e85ca84be83b820f5f48059e3955ed07fba4bd93561f042ccd0",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 4,
+      "lf_without_cr_count": 73,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Security/TrustedKeys.cs",
+    "bytes": 315,
+    "sha256": "5c74c4dcc2cd02058d97a38ac80c4df2134df6b7f5fa72dfbb6035e8798e4f11",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": false,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Security/UsageQuota.cs",
+    "bytes": 10936,
+    "sha256": "efc12af10108d758dd66d06e92bc8319a7efedee3ebaa711601b30ec4f590e42",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 1,
+      "lf_without_cr_count": 141,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Selectors.cs",
+    "bytes": 6644,
+    "sha256": "8ad09421ed3dd3c5bd5452e55607ab34fddc00e2a7ddc9a72cde9e3d53d3ebff",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 123,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/SelfTest.cs",
+    "bytes": 17315,
+    "sha256": "396d6535b229a153bbd246e0bd66340f46f7f930acc3108b1119c5d27299189e",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 1,
+      "lf_without_cr_count": 262,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/SelfTestV2.cs",
+    "bytes": 17634,
+    "sha256": "f33edb2ae349d0b74e21292989d1eea069da3f116793bec827d8db3079c76e08",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 211,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/ServerClock.cs",
+    "bytes": 3367,
+    "sha256": "478ccfd84e6af37e45202fc8b1ed1c472b482a3ab92823efd6b6ae1a50db0120",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 37,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/ShippingEditor.cs",
+    "bytes": 3916,
+    "sha256": "1557fe3575534af1f02d04ffce62687c70bd1e66c0820dde915b55d2f4381956",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 43,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Storage.cs",
+    "bytes": 16673,
+    "sha256": "ac45de156518a4d97ce222e8f67d49f08b6a55da8cac578c15c71e4b6807efb9",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 1,
+      "lf_without_cr_count": 347,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Telemetry/CrashReportService.cs",
+    "bytes": 2109,
+    "sha256": "80fc6122fb7c315b40516e01a9c9b6b47e625cc2972b985bf56638e4e7627a9f",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 51,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Telemetry/LogClassifier.cs",
+    "bytes": 5336,
+    "sha256": "dbcbaeb14c8bd6149bf0395b0ee6ff5cb630047ef0826c87970a5a41dde762d4",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 67,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Telemetry/Redactor.cs",
+    "bytes": 5242,
+    "sha256": "79848664553527f196b19073914dd9fdf7d2a136e02d797334d0b0ca7a676bb6",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 95,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Telemetry/UsageMetricsService.cs",
+    "bytes": 2766,
+    "sha256": "e0c45495c0240e3ac5a2015d41f0be3c480465209f271bcb7102d192bb8e41d0",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 75,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Terms.cs",
+    "bytes": 7289,
+    "sha256": "75e10728a419d48159abe3195e595b494fc44287d6fdc4414a69c018c2ca4c4f",
+    "text_bytes": {
+      "utf8_bom_count": 2,
+      "crlf_count": 0,
+      "lf_without_cr_count": 103,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Theme.cs",
+    "bytes": 26011,
+    "sha256": "f265d00d2d29140eb1a2071d57c7056192829ee81f181c0d236f2e7c2db2689f",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 505,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/AppHost.cs",
+    "bytes": 3046,
+    "sha256": "c74e35c12a8e5f3bc5c4a1cd335bc4b6d7ad43cf1ee4bf201034d896f71e0ee6",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 57,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/AutomationController.cs",
+    "bytes": 12558,
+    "sha256": "bb5c3ac93355ff1c4af6ae99dbdf67a74fed3107658cdc90183067384f82232a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 262,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/Controls.cs",
+    "bytes": 23346,
+    "sha256": "42369d98d79e69295e17fc4c0177a745fbeaae313d15a6b1a0bf3ca409b1181d",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 341,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/FluentBox.cs",
+    "bytes": 761,
+    "sha256": "11abf5b5fbf74463500aa56fe6b886e7086a00c5b9bb8bdb81640a45289449d9",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 6,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": false,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/Pages/AutomationPage.cs",
+    "bytes": 9257,
+    "sha256": "80adc32cebcc2628ff0ec44639d8428f9ec1503dcb947058e752120fd17e3818",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 130,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/Pages/DashboardPage.cs",
+    "bytes": 10953,
+    "sha256": "b3a2781301be4c951d85daa989af95265ebe16a73ae8b3194716a4eef474c03b",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 134,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/Pages/HelpPage.cs",
+    "bytes": 4827,
+    "sha256": "e8a7f6f3f77499010351db2b42c4c57725831b3394f4bd2ab2a29cc6ff9e3b7f",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 89,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/Pages/LicensePage.cs",
+    "bytes": 10929,
+    "sha256": "a0bea343bc815db7787edf0fa4b1f80dfdd7baa015627762e3f77565670ff63e",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 163,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/Pages/LoginPage.cs",
+    "bytes": 2484,
+    "sha256": "03282ca257ce0181a3aa1717bc7929af1ec9c585f002cc9bcb9fc85d01657090",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 46,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/Pages/ProductsPage.cs",
+    "bytes": 13618,
+    "sha256": "6c6507846efb31e6442ac0955980598b783ba36b6e15865182fd7d74d5eeb344",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 236,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/Pages/SchedulePage.cs",
+    "bytes": 8326,
+    "sha256": "7604cc8b5e7040efc24e830c19cb391b6c847d8eca0ffd5ab9a7f6d7a1c9aa33",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 120,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/Pages/SettingsPage.cs",
+    "bytes": 2602,
+    "sha256": "77380d7e0425aab7301b70d0bb753a54ea58cbc5138f8fc1a5077b9637f6a7fb",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 33,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/ThemeService.cs",
+    "bytes": 3875,
+    "sha256": "df42d44e1d747ff428bab495498d859fc0766299f568612eb23ebd530bcb5ba8",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 87,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/UI/UiKit.cs",
+    "bytes": 9375,
+    "sha256": "14f527a44840fe3bf7aaa010575eca68766a28e862879d04e738d4524de60683",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 182,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/src/Vault.cs",
+    "bytes": 5807,
+    "sha256": "af313afb9beeb7827299d1f33c7bf4b988d4d0e61b963c6095b79fc07ffed564",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 124,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/AdminUiSmoke.cs",
+    "bytes": 1544,
+    "sha256": "a6fc9d450ef9345399a2d39768a5bf68e02ddcb5d613c09ec79f464ae30eeab3",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 29,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/DpiLayoutTests.cs",
+    "bytes": 10935,
+    "sha256": "218e8ea3c076f9d6659e166b21c357fa273c980c7d13cbe107885028ad25a56f",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 115,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/FreshInstallTests.cs",
+    "bytes": 2721,
+    "sha256": "54b83d07e9cafc3b579927704fb7184ef23135c6661a2404bb201640da3dffec",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 12,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": false,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/GateIntegration.cs",
+    "bytes": 2678,
+    "sha256": "1400709756ea65e05496617ce9fed6557413887968716c1877930ad94c84b522",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 38,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/ProductionSmoke.cs",
+    "bytes": 2123,
+    "sha256": "de3906b99e7c0384ea0aec6d87f6a227244adbda274f58a942c50f2cbcd9c900",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 1,
+      "lf_without_cr_count": 31,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/RedesignUiTests.cs",
+    "bytes": 12086,
+    "sha256": "817364e60ca94aa37e0d051265b2c749a8b6f8f34555db96ddf39d43cde2f513",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 123,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/ReleaseTests.cs",
+    "bytes": 10754,
+    "sha256": "aaf1508660b1c4f810efb46891976c18fbeb254cac6ee342207b1c9be95e06ef",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 90,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/ResetTests.cs",
+    "bytes": 4070,
+    "sha256": "f5e018a201472699bba23d6e060323acc6222b94c33fe50d3c0399557aeeff09",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 18,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/RevisionUi.cs",
+    "bytes": 6224,
+    "sha256": "2d9e55a0ee95dc944f4f57b3217af8456a69e94bfc3f4008918480b0c92d23cf",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 40,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/SecurityTests.cs",
+    "bytes": 11875,
+    "sha256": "f2fb5ca68e3d8b16cefe6b0471296dde833687d53fbab3452ee8c19e8886d005",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 124,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/ShippingFormTests.cs",
+    "bytes": 7182,
+    "sha256": "7f6eeb75efc4dead899e333d17c66cdd21b19fd861413377348fca55b655c9ef",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 1,
+      "lf_without_cr_count": 59,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/SurfaceUiTests.cs",
+    "bytes": 3106,
+    "sha256": "73d00e3b50a2c06fca5b3d131cb81c02295e413cf3c05068c8a7be5ac76a4685",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 16,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/UiSmoke.cs",
+    "bytes": 2279,
+    "sha256": "567b3f9e8921ce2b3a79126e7322c7a71d9ea6a6b66ce8de276f220f73a09e90",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 39,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/UsageRecoveryTests.cs",
+    "bytes": 4022,
+    "sha256": "1615bc0ba50bf9d076ee51c594847f1a10c54f4b971dffb85fd6d0773c9a7b1d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 46,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/WINDOWS_CHECKLIST.md",
+    "bytes": 796,
+    "sha256": "e6b2a48d04398f27bc519519c98d5bb4e1486d39db91d4cdc53db20d1c78d5de",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 11,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/build_preview.sh",
+    "bytes": 107,
+    "sha256": "4d5c4b1e729a25636a1fb55b71795c2ef1fe32d729e06f483fb000a5e0299749",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 3,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/migration/read_with_new.cs",
+    "bytes": 945,
+    "sha256": "d7ae752fd321e2e704f91cc1d640b3069b897ceb58b5c37ef08e5240c30f2e02",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 8,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/migration/write_with_old.cs",
+    "bytes": 771,
+    "sha256": "b8befbb269eba12e20c12720f40d1bcfc79d7300a3c3f1aec066b429b683b966",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 11,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tests/regression.sh",
+    "bytes": 107,
+    "sha256": "4d5c4b1e729a25636a1fb55b71795c2ef1fe32d729e06f483fb000a5e0299749",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 3,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tools/ResetAssemblyInfo.cs",
+    "bytes": 433,
+    "sha256": "29b7a0c1053f486a7e241070dd76140b70f998e0d22fd03f0ebc9a31611c85c0",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 10,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "소스코드/tools/ResetProgram.cs",
+    "bytes": 19513,
+    "sha256": "24259aa8ab3bd986adc944deed330bb2e441dffe1ca332a1978b594b77ff15df",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 205,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "읽어주세요.md",
+    "bytes": 2103,
+    "sha256": "1aef2fc6dcbaa1661b6b3ace78aec41f65a3566595c2deca6440610515f9fbc3",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 27,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  }
+]

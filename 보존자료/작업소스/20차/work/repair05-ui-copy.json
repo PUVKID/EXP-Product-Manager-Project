@@ -1,0 +1,9 @@
+{
+  "cause": "부모가실제새예약이미지에서분입력의단위문장이부자연스럽고현재선택값을직접요약하지않는것을확인",
+  "selection_reason": "선택UI의한정된표시보완으로같은디자인담당escalate Astra medium유지",
+  "role": "escalate",
+  "method": "현재선택값을포함한자연스러운간격/매시지정분요약으로수정하고UI값연결검사갱신. 배치/핵심기능변경없음",
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "new_observation": "repeat-after/Dark-1-batch-clock.png와SchedulePage.UpdateState의고정batchHint문구일치"
+}

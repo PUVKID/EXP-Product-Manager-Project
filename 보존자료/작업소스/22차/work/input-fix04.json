@@ -1,0 +1,17 @@
+{
+  "effort": "medium",
+  "selection_reason": "명령경로입력보정이며제품동작변경은아님,repair2범위의테스트환경수리와구분",
+  "before_argv": [
+    "Get-Content",
+    "shared/Paths.cs"
+  ],
+  "after_argv": [
+    "Get-Content",
+    "src/Models.cs"
+  ],
+  "role": "build",
+  "method": "확인된Models.cs의TESTBUILD경로선언과테스트Fixture만수정",
+  "new_observation": "build-path-input-failure.json과rg에서Models.cs95의실제선언확인",
+  "model": "gpt-6.1-sol",
+  "cause": "build담당이Paths선언을shared/Paths.cs로가정해조회"
+}

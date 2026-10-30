@@ -1,0 +1,93 @@
+warning CS1685: �̸� ���ǵ� ���� 'System.ObsoleteAttribute'��(��) ���� ��Ī�� ���� ��������� ���ǵǾ����ϴ�. 'c:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorlib.dll'�� ���Ǹ� ����մϴ�.
+Build completed: All -> C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\dist
+Inno Setup 6 Command-Line Compiler
+Copyright (C) 1997-2026 Jordan Russell. All rights reserved.
+Portions Copyright (C) 2000-2026 Martijn Laan. All rights reserved.
+Portions Copyright (C) 2001-2004 Alex Yackimoff. All rights reserved.
+https://www.innosetup.com
+
+Compiler engine version: Inno Setup 6.7.3
+Non-commercial use only
+
+Preprocessing
+   Reading file: C:\Users\PUVKID\Documents\Codex\2026-10-13\new-chat-2\work\round9\inno\ISPPBuiltins.iss
+Parsing [Setup] section, line 3
+Parsing [Setup] section, line 4
+Parsing [Setup] section, line 5
+Parsing [Setup] section, line 6
+Parsing [Setup] section, line 7
+Parsing [Setup] section, line 8
+Parsing [Setup] section, line 9
+Parsing [Setup] section, line 10
+Parsing [Setup] section, line 11
+Parsing [Setup] section, line 12
+Parsing [Setup] section, line 13
+Parsing [Setup] section, line 14
+Parsing [Setup] section, line 15
+Parsing [Setup] section, line 16
+Parsing [Setup] section, line 17
+Parsing [Setup] section, line 18
+Parsing [Setup] section, line 19
+Parsing [Setup] section, line 20
+Parsing [Setup] section, line 21
+Parsing [Setup] section, line 22
+Parsing [Setup] section, line 23
+Parsing [Setup] section, line 24
+Parsing [Setup] section, line 25
+Parsing [Setup] section, line 26
+Parsing [Setup] section, line 27
+Parsing [Setup] section, line 28
+Creating output directory: C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\dist\installer
+Reading file (WizardImageFile)
+Reading file (WizardSmallImageFile)
+Preparing Setup program executable
+   Verification successful
+   Updating icons (Setup.e32)
+   Updating version info (Setup.e32)
+Determining language code pages
+Parsing [Languages] section, line 31
+   Reading file: C:\Users\PUVKID\Documents\Codex\2026-10-13\new-chat-2\work\round9\inno\Languages\Korean.isl
+   Messages in script file
+Reading default messages from Default.isl
+Parsing [Languages] section, line 31
+   Reading file: C:\Users\PUVKID\Documents\Codex\2026-10-13\new-chat-2\work\round9\inno\Languages\Korean.isl
+Parsing [LangOptions], [Messages], and [CustomMessages] sections
+   Messages in script file
+Reading [Code] section
+Parsing [Tasks] section, line 34
+Parsing [Icons] section, line 56
+Parsing [Icons] section, line 57
+Parsing [InstallDelete] section, line 45
+Parsing [InstallDelete] section, line 46
+Parsing [InstallDelete] section, line 47
+Parsing [InstallDelete] section, line 48
+Parsing [InstallDelete] section, line 49
+Parsing [InstallDelete] section, line 50
+Parsing [InstallDelete] section, line 51
+Parsing [InstallDelete] section, line 52
+Parsing [InstallDelete] section, line 53
+Parsing [Run] section, line 60
+Parsing [Files] section, line 37
+   Reading version info: C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\installer\..\resources\fonts\NanumGothicBold.ttf
+Parsing [Files] section, line 38
+   Reading version info: C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\installer\..\dist\EXP.exe
+Parsing [Files] section, line 39
+Parsing [Files] section, line 40
+Parsing [Files] section, line 41
+Parsing [Files] section, line 42
+Compiling [Code] section
+Creating setup files
+   Verification successful
+   Updating icons (Setup.exe)
+   Compressing: C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\installer\..\resources\fonts\NanumGothicBold.ttf
+   Compressing: C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\installer\..\dist\EXP.exe   (2.2.8.0)
+   Compressing: C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\installer\..\resources\fonts\NanumGothic-OFL.txt
+   Compressing: C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\installer\..\licenses\BouncyCastle-LICENSE.txt
+   Compressing: C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\installer\..\licenses\Inno-Setup-LICENSE.txt
+   Compressing Setup program executable
+   Updating version info (Setup.exe)
+   Updating manifest (Setup.exe)
+
+
+Successful compile (2.937 sec). Resulting Setup program filename is:
+C:\Users\PUVKID\Desktop\번장\작업파일\17차_UI수정\source\dist\installer\EXP_Setup_2.2.8.exe

@@ -1,0 +1,29 @@
+{
+  "total_timeout_seconds": 90,
+  "schema_version": 1,
+  "checks": [
+    {
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "timeout_seconds": 15,
+      "cwd": ".",
+      "id": "git-index-whitespace"
+    },
+    {
+      "argv": [
+        "C:\\Users\\PUVKID\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "work/verify_public_sync.py"
+      ],
+      "timeout_seconds": 75,
+      "cwd": ".",
+      "id": "public-source-and-privacy"
+    }
+  ]
+}

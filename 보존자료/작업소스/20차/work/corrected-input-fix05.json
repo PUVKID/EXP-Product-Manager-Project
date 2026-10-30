@@ -1,0 +1,21 @@
+{
+  "new_observation": "input_fix1이후두번째기록이동일근거거부exit1,실패건별argv와관측을분리해야함",
+  "method": "제품코드는수정하지않고해당실패기록의실제인자/관측을별도로기록",
+  "role": "main",
+  "before_argv": [
+    "routing_state.py",
+    "input-fix",
+    "--assessment",
+    "work/input-fix02.json"
+  ],
+  "effort": "medium",
+  "selection_reason": "필수JSON필드와실제경로의확정된입력오류보정",
+  "after_argv": [
+    "routing_state.py",
+    "input-fix",
+    "--assessment",
+    "work/corrected-input-fix05.json"
+  ],
+  "cause": "별개경로오류기록에동일내용assessment를사용하여중복근거거부",
+  "model": "gpt-6.1-sol"
+}

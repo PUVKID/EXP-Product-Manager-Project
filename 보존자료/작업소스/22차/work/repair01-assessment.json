@@ -1,0 +1,9 @@
+{
+  "method": "제품quota원본은보존하고테스트예외원문/HResult보강,SoftTime전용IThemedTextBox로검증된테마경로보정",
+  "cause": "기존대량Batch검사에서파일교체오류발생,새시간입력은Theme가FixedSingle로재설정",
+  "effort": "medium",
+  "new_observation": "batch-first-failure.json 158PASS3FAIL 및 ledger같은seq16,UI직접렌더에서내부기본테두리확인",
+  "model": "gpt-6.1-sol",
+  "role": "build",
+  "selection_reason": "일반UI수리와테스트진단은기존구현담당build가맥락있으며보안코드변경은승인하지않음"
+}

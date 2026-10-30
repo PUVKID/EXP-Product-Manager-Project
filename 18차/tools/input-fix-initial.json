@@ -1,0 +1,22 @@
+{
+  "cause": "등록 전 준비 명령에서 Theme.cs 위치 오타와 셸 검사 명세 거부가 확인됨",
+  "role": "main",
+  "method": "확인된 src/Theme.cs를 조회하고 DPI 검사 실행파일을 DpiLayoutTests.exe 직접 호출로 변경",
+  "selection_reason": "구현 논리 변경 없이 실제 경로와 지원된 실행 형태로 옮기는 main 입력 보정",
+  "new_observation": "실제 Build.ps1은 src/Theme.cs를 사용하며 routing_stop.py는 검사 실행파일의 pwsh를 금지함",
+  "after_argv": [
+    "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\18차\\소스코드\\dist\\DpiLayoutTests.exe",
+    "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\18차\\work\\dpi-1.5",
+    "1.5"
+  ],
+  "effort": "medium",
+  "model": "gpt-6.1-sol",
+  "before_argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/Run-Dpi.ps1",
+    "-Scale",
+    "1.5"
+  ]
+}

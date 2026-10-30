@@ -1,0 +1,1078 @@
+[
+  {
+    "path": "BunjangAuto.csproj",
+    "bytes": 1925,
+    "sha256": "c8a021b4394222d924d9137bc976aa8c6b36c6fffec704ac52aaace9471f3e35",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 37,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "admin/LicenseAdmin.cs",
+    "bytes": 6051,
+    "sha256": "ba7bb68550f25544ed67d8b2c01f4234e9ef67821123d06a99c172f069568081",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 108,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "build.bat",
+    "bytes": 2058,
+    "sha256": "a87b070c89f20a1d7692210ef88c748c45e3a464fef08e68e3922e3a286d5a28",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 42,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "build.sh",
+    "bytes": 1848,
+    "sha256": "f31838c6c531d8e7a7b7a9d1c1e90ec36949ba9d899ed25f3c0bfd2d23975d7f",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 45,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "build_admin.sh",
+    "bytes": 257,
+    "sha256": "d1b1112b9bdf904f8778e31376b92ce8a8fb237b4b768485940e3b6f00f4725b",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 6,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "kg.cs",
+    "bytes": 253,
+    "sha256": "73a6a36f38b6835cbb0e5fd0226bd716abdca0cec8a3ff07270863faef0539b7",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 2,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "license_public.xml",
+    "bytes": 755,
+    "sha256": "2c860a309fef0b74b8b18f4c86305abb6581324118969aec5afd43ec1d72312d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 0,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": false,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/app.ico",
+    "bytes": 53065,
+    "sha256": "a152b57b63061b25fa178f4dd1737f92aff01f370a055e6ef5e58550db9d4a89"
+  },
+  {
+    "path": "resources/app.manifest",
+    "bytes": 1214,
+    "sha256": "60857527aa20185fb708d456f66665decdb5f3d6f9a611c07efc9a34c0d81e4a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 25,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/app.png",
+    "bytes": 64865,
+    "sha256": "705081e21b0fdcaa239afa4910f59c839dfa843593417d8f509864e73c98490c"
+  },
+  {
+    "path": "resources/help/01-start.md",
+    "bytes": 1439,
+    "sha256": "76426cdd286044bca769c777bb904db9b7eca43502b95337fbb96aaf787d577c",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 23,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/02-license.md",
+    "bytes": 952,
+    "sha256": "eab04f6215e858207d25b6df9dd5696db3646a0200002a91b14e186480ffabe8",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 17,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/03-login.md",
+    "bytes": 854,
+    "sha256": "2fe99090f30b7acc9c37b5480a69d580bd4231acc2f107c2fa528e2af03399c8",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 14,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/04-add.md",
+    "bytes": 957,
+    "sha256": "dd599a30aa9fe502d3cee17c896133167a01bbdaa8f24739212a268d7d2c30fc",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 15,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/05-csv.md",
+    "bytes": 1196,
+    "sha256": "07a56bde38caf232f1b7ab09a19353550d01a7d312c232da51037d656954601a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 18,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/06-data.md",
+    "bytes": 1120,
+    "sha256": "ee3eb1d119839ab177ca501da4911f406ba0b2a299ad39360d28daa2d448fdfd",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 22,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/07-images.md",
+    "bytes": 764,
+    "sha256": "28aa8f244a3c67c1089e142837bc73932400c6dbe614d3cae52609606f12482a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 9,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/08-auto.md",
+    "bytes": 927,
+    "sha256": "bf2df0b679b0a493723d5d18e66ed8f0af1504ee52445f81d5d7f40228598a9c",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 18,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/09-onebyone.md",
+    "bytes": 719,
+    "sha256": "09d46c561d9b29c48003a95757fe1913f8314aea16007f6298c386f3bfc5e670",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 14,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/10-repeat.md",
+    "bytes": 658,
+    "sha256": "a30f56ed98c6855507b78f0b9a665b75ef6cd955570634cff37b5d522ff5cfbf",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 12,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/11-timerules.md",
+    "bytes": 934,
+    "sha256": "c11a6bdb3df701b8e17980574fbda0aa9d97736f392d0850a81b3d4a17cca5f8",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 17,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/12-schedule.md",
+    "bytes": 822,
+    "sha256": "3addcdea537b1a8b08aedd71cdcb283edb2b4083e758d75330e0c3b8e6d66f76",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 14,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/13-logs.md",
+    "bytes": 808,
+    "sha256": "6b13c868c4ec1b3a3dfce8de8f83bd784004933fa20de0ddc47365fa16995fe2",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 17,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/14-errors.md",
+    "bytes": 968,
+    "sha256": "9830e15abf362b4d7a7db84007fbe596805952aec6693e88f4083dfaf8097c5f",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 12,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/15-chrome.md",
+    "bytes": 1060,
+    "sha256": "4b387912ae866ccf85c12dae005395882a2d826d604063cac17c9755b8754545",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 15,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/16-loginfix.md",
+    "bytes": 798,
+    "sha256": "fad65a0e64c78bfe917bafcc881622a5c14fb8ca2f452feec7cc345bcb7cafb5",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 8,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/17-licensefix.md",
+    "bytes": 1055,
+    "sha256": "c8f125eac592be8f5d7cde35aeef0fb03bfe1fabc0e9c5e7a4e3159193c54f2d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 13,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/18-theme.md",
+    "bytes": 586,
+    "sha256": "647e3d5732b583114c9268ac40663453ee7b5e8632e37304a6a087dcaa23c52a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 13,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/19-settings.md",
+    "bytes": 1436,
+    "sha256": "0c2d7cd8216b38309a3d19ba5780a54121b09090b3e92938711dde72adc3089d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 24,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "resources/help/20-faq.md",
+    "bytes": 1640,
+    "sha256": "a4e24059aa9390ff0531ac544abf821e5e4f53abb90629da7506ccc57d42f6be",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 28,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/AssemblyInfo.cs",
+    "bytes": 456,
+    "sha256": "f3fa7476d3db1feae7613093283b75d16773448b39cefb1c1566789de26e7e69",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 10,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Bot.cs",
+    "bytes": 37277,
+    "sha256": "ab5b37a968b8a20bab3bee1ad68d7479562db13044c2f1761d458729be3e149e",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 817,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/CategoryStore.cs",
+    "bytes": 3061,
+    "sha256": "09063feea9dc554d5fa446830056053afa2f4b9c93b2bb3d87826a47c555a3dd",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 81,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/DriverManager.cs",
+    "bytes": 7859,
+    "sha256": "516a679fe018989ca87e8a719a3339c11aa98c2df77b687a0672d25fb3e354c8",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 185,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/EditForm.cs",
+    "bytes": 9221,
+    "sha256": "1f8c55028968f4ab3ba7359e7c48f491bd8e2752590446c64e7812c453ac81fb",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 169,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Guard.cs",
+    "bytes": 2115,
+    "sha256": "a9124d5ff8b732c17b59b04d81e82363a05db5e566aa9bf2dadc6d9a1a7e0180",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 53,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Help/HelpService.cs",
+    "bytes": 7210,
+    "sha256": "15567ac407c50b959d35b7fb865a04ea4227e83491c868591ede9b53466bbe6f",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 133,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/License.cs",
+    "bytes": 7655,
+    "sha256": "8d39ba3a61984f71eac63292cf179c18e6a0526923c2ddf8153128d20dd0d9a7",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 140,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/LicenseForm.cs",
+    "bytes": 6651,
+    "sha256": "1789e7dee1fd96848af2b831637a4267f37d44af3d837d9bc3ffd41b73d5e408",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 126,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Log.cs",
+    "bytes": 5147,
+    "sha256": "37266404561437ac58784d205a495424a37d13b6cf78209967e98dc8fe95312a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 115,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/MainForm.cs",
+    "bytes": 13535,
+    "sha256": "5d801d02efb4f0d1d60c45dc993cd465254b0139bd0a7afdc09380e799650687",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 269,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Models.cs",
+    "bytes": 6213,
+    "sha256": "cce30c064831965586247b85631a6143c6fedd15a4e8b3cece193d4fb4b18287",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 120,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Program.cs",
+    "bytes": 5241,
+    "sha256": "39ca88b096fa8d46e53b820c49c9302b135952378f92c9b6e25854f82414b3b1",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 100,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Runner.cs",
+    "bytes": 6305,
+    "sha256": "2e469fad13552ef1f589d85daf443856d91c4e3ccd5778129f35ed5a2e66c97b",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 147,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Schedule.cs",
+    "bytes": 5718,
+    "sha256": "3a55dab11aac804911fcf11ca9a4f516c04b371343acb728ab2b0f2507398f50",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 139,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Selectors.cs",
+    "bytes": 6644,
+    "sha256": "8ad09421ed3dd3c5bd5452e55607ab34fddc00e2a7ddc9a72cde9e3d53d3ebff",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 123,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/SelfTest.cs",
+    "bytes": 17418,
+    "sha256": "19b809c31569b5ee4af6514d1782542b02d78140407c3f4c6f56cdf5302955af",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 259,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/SelfTestV2.cs",
+    "bytes": 22925,
+    "sha256": "f26d7818cdce4b9c770e553999ebe52fb2021342faed50bd67a193423fdd16a2",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 265,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Storage.cs",
+    "bytes": 16688,
+    "sha256": "58e89cd2ae9f94d84693a53f719770cde09520047d45f027081e07f81c18d3ac",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 347,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/AdminApiClient.cs",
+    "bytes": 4476,
+    "sha256": "b357e40bc28bb9cef9e94772f638172b77c6ae92d9c52905a3ac19efc5f17d90",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 101,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/BuildConfig.cs",
+    "bytes": 277,
+    "sha256": "e7d807646fc593a19c4913c3d60e9ea3931241024147255221ca654ccaf41360",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 9,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/CentralLogService.cs",
+    "bytes": 9210,
+    "sha256": "0e23db05309f0a433b4a8a3044f05121a011540dc5d1c2aee72e0f3c558560ed",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 219,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/ClientIdentityService.cs",
+    "bytes": 6521,
+    "sha256": "add0b5464bf0e9beb0daaa3ba01c19c7a957c8f2f104b983398a43d90f6dc415",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 151,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/CrashReportService.cs",
+    "bytes": 2250,
+    "sha256": "b87de11713a246b630a40f762564b606a418989edd1cdc24678db8ef9aaba0f8",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 52,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/LogClassifier.cs",
+    "bytes": 5336,
+    "sha256": "dbcbaeb14c8bd6149bf0395b0ee6ff5cb630047ef0826c87970a5a41dde762d4",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 67,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/LogQueue.cs",
+    "bytes": 4046,
+    "sha256": "680c47f4b5e50f205a053c9b801094c7aa1f916230c17c10d93bd165006c7241",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 104,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/Redactor.cs",
+    "bytes": 4730,
+    "sha256": "92303c6afaeeea3d9b108b97cca0f38d3f06d6cbb8bd478bd4fe76f8e13a067c",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 90,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/TelemetryConfig.cs",
+    "bytes": 2728,
+    "sha256": "1c381aba9245ac0b3d55382abe7de5a49114eaa69c794057a396e9126456543d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 62,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/TelemetryService.cs",
+    "bytes": 3875,
+    "sha256": "1f07b6db61b8efe74d150d4ce49590fe046107bba00ddfbfd17274caa39bdd8d",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 98,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Telemetry/UsageMetricsService.cs",
+    "bytes": 2766,
+    "sha256": "e0c45495c0240e3ac5a2015d41f0be3c480465209f271bcb7102d192bb8e41d0",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 75,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Terms.cs",
+    "bytes": 7913,
+    "sha256": "031feb33fe053771e5ab3932d210e23833bc9a9086480651ab6151ddc7d9cd6f",
+    "text_bytes": {
+      "utf8_bom_count": 1,
+      "crlf_count": 0,
+      "lf_without_cr_count": 103,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Theme.cs",
+    "bytes": 20538,
+    "sha256": "dd0ced77e66ad30664bc57365b44c0f68ba02260b7a47588c70f83d24eb0532e",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 418,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/AppHost.cs",
+    "bytes": 3352,
+    "sha256": "54066573b70ca8f29e7dcadfbfcb59491c423f285a99c9597d74deffebb553a6",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 69,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/AutomationController.cs",
+    "bytes": 11740,
+    "sha256": "390151473f98a8628d1913b9bc650a7ba73e92aa60bc1062e1a23979be8f1cc3",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 256,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Controls.cs",
+    "bytes": 21242,
+    "sha256": "3dae93c1b9733c84601bbeaac61ae23ae234fe28a80f66ce8a08f1a67255bdc9",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 320,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/FluentBox.cs",
+    "bytes": 4823,
+    "sha256": "42e7b4240ef501e5a59438880562d76e9544382b81ff852d002faa82a6c5688f",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 70,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/AdminPage.cs",
+    "bytes": 27227,
+    "sha256": "93eb4730bdef7f61587ade45c8095ba216b45fed68564311fdeaffaac28f02fe",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 360,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/AutomationPage.cs",
+    "bytes": 5807,
+    "sha256": "98166ebd1d05225fce32943b7c441a05faa81693c019306c1c6b628ca13fc65a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 92,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/DashboardPage.cs",
+    "bytes": 10178,
+    "sha256": "624b010f854eb83b20bf2c3746bce92ddc58922bd49c2f8ba16c4b94abc6bf2b",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 136,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/HelpPage.cs",
+    "bytes": 4860,
+    "sha256": "0b6c67d7bfe866f9443956ffadfe409bc06452a7cf75c4a1631295eebd26923a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 84,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/LicensePage.cs",
+    "bytes": 4537,
+    "sha256": "877121425ad68167b63bfb4ed894b9e27e7956c6e7667a68458b0377e87b39f5",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 74,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/LogPage.cs",
+    "bytes": 8655,
+    "sha256": "d7ab7f0363e4ee0737e91effa5e0767b8c4543fbf57689c4ffc4e48add5dc687",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 144,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/LoginPage.cs",
+    "bytes": 3082,
+    "sha256": "1202c08884f9a9600f74912889965a3bb8656acb8f92821ae761a045938255dd",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 52,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/ProductsPage.cs",
+    "bytes": 15703,
+    "sha256": "099b9e8cd9496aee23df974049755bb98b14d093b5e1fa40f5fda98f696d2c6a",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 269,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/SchedulePage.cs",
+    "bytes": 8002,
+    "sha256": "329696d6662ccee52c597eb162a9e622e06c307c92279ab51409f57849dcec7b",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 117,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/Pages/SettingsPage.cs",
+    "bytes": 12146,
+    "sha256": "137aeb928d6aad20d1200db4a6779e63d2af34d1b47ce82727e0be2b9823ace6",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 194,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/PreviewHarness.cs",
+    "bytes": 4699,
+    "sha256": "3f32e966c10151d5f79bb41cd8891555cdd9822d863bb115785cea4fe14827e4",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 77,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/ThemeService.cs",
+    "bytes": 3875,
+    "sha256": "df42d44e1d747ff428bab495498d859fc0766299f568612eb23ebd530bcb5ba8",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 87,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/UI/UiKit.cs",
+    "bytes": 5750,
+    "sha256": "0ac434cf2a60fbcb230aa36892af01b7e5cfe11aa0958f3c9b4dd746c867df20",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 126,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "src/Vault.cs",
+    "bytes": 5807,
+    "sha256": "af313afb9beeb7827299d1f33c7bf4b988d4d0e61b963c6095b79fc07ffed564",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 124,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tests/WINDOWS_CHECKLIST.md",
+    "bytes": 2630,
+    "sha256": "6ccf72f23a38d10e499bf9fb0ee7048a6e30d9f42757aeaca607b2d9627b7b21",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 26,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tests/migration/read_with_new.cs",
+    "bytes": 945,
+    "sha256": "d7ae752fd321e2e704f91cc1d640b3069b897ceb58b5c37ef08e5240c30f2e02",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 8,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tests/migration/write_with_old.cs",
+    "bytes": 771,
+    "sha256": "b8befbb269eba12e20c12720f40d1bcfc79d7300a3c3f1aec066b429b683b966",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 11,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  },
+  {
+    "path": "tests/regression.sh",
+    "bytes": 4842,
+    "sha256": "d09aeb96e9e6b4204bd1259322b45b46b17a6b84140442fcd07bad2ff1504458",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 56,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  }
+]

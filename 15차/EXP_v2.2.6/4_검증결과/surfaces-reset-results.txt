@@ -1,0 +1,7 @@
+2.2.6 clean-state verification
+Previous installation removed; new installer has NOT been run.
+Product list decrypts to 6 items; photos preserved.
+Client license, clock, terms, settings, usage file and registry cleared.
+Device and usage CNG keys absent.
+Master records/credits and settings cleared; 13th signing vault retained for issuing new licenses.
+App data directory contains products.json and photos only.

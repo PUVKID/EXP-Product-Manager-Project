@@ -1,0 +1,1 @@
+Restored and read back 6 products; all image files exist. Posting history is not present in the source.

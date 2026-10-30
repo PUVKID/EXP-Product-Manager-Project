@@ -1,0 +1,6 @@
+Reset completed: 2026-10-13T02:47:00.3731798+09:00
+Preserved files hash verified: 22
+Client authentication, trial/usage state, dedicated browser and settings cleared.
+Master settings and old vault archived. New 13th issuer retained.
+Both application-specific TPM credentials absent.
+Product file was already empty before reset; original source recovery pending.

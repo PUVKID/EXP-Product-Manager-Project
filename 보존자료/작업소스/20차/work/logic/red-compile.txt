@@ -1,0 +1,1 @@
+shared\CreditProtocol.cs(10,54): error CS0103: 'LicenseText' �̸��� ���� ���ؽ�Ʈ�� �����ϴ�.

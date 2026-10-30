@@ -1,0 +1,51 @@
+PASS signed edition Classic
+PASS whitespace paste Classic
+PASS unknown signed edition
+PASS edition tampering
+PASS signed edition Studio
+PASS whitespace paste Studio
+PASS unknown signed edition
+PASS edition tampering
+PASS signed edition Pro
+PASS whitespace paste Pro
+PASS unknown signed edition
+PASS edition tampering
+PASS trial exactly three hours
+PASS trial is Pro
+PASS trial expired at exact boundary
+PASS same device different email trial
+PASS same email trial
+PASS signed trial duration over three hours
+PASS trial activation
+PASS same trial can reopen without restarting
+PASS second validly signed trial blocked on client
+PASS regular Pro upgrade
+PASS Classic device total 25
+PASS Studio device total 50
+PASS registration 51 allowed without shop lookup
+PASS legacy account counter does not block or reset total
+PASS Pro allows total 100 across logins
+PASS Pro device total 100
+PASS blocked registration does not consume quota
+PASS top-up replay
+PASS one extra credit consumed
+PASS base allowance before credits next day
+PASS credit quantity tamper
+PASS persisted top-up replay
+PASS repeat classic denied
+PASS repeat Studio and Pro
+PASS Classic runtime repeat guard
+PASS DPAPI usage tamper
+PASS usage file deletion does not reset allowance
+PASS both usage copies deletion blocked by enrollment marker
+PASS restored usage remains valid
+PASS persisted next-day reset without base rollover
+PASS 30 inactive days do not accumulate base allowance
+PASS 08:50 plus 45 resets at 09:00
+PASS late completion runs immediately within active window
+PASS overnight reservation boundary
+PASS overlapping rules latest start wins
+PASS installer edition mapping
+PASS live HTTPS server clock
+PASS server clock advances monotonically
+RELEASE: 50 passed, 0 failed

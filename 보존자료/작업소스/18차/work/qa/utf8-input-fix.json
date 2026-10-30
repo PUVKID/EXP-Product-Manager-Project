@@ -1,0 +1,20 @@
+{
+  "selection_reason": "제품코드가 아닌 실행입력인코딩의확정오류이며 build유지",
+  "effort": "medium",
+  "new_observation": "All 빌드 subprocess exit0, UTF8로그저장후 print에서 UnicodeEncodeError 발생",
+  "after_argv": [
+    "번들python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-"
+  ],
+  "cause": "번들Python stdout 기본cp949가 수집문자의 출력불가",
+  "role": "build",
+  "before_argv": [
+    "번들python.exe",
+    "-"
+  ],
+  "method": "Python -B -X utf8 인자로 출력인코딩 명시 및 원본bytes 보존",
+  "model": "gpt-6.1-sol"
+}

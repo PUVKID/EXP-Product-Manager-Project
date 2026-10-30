@@ -1,0 +1,10 @@
+{
+  "new_observation": "registered-green-tests-result.json에서회차종료응답은PASS이나65개처리및다음상태FAIL,나머지80PASS",
+  "failure_evidence": "work/logic/registered-green-tests-result.json",
+  "effort": "xhigh",
+  "role": "deep",
+  "cause": "등록된빌드로확장82검사실행시65개전체처리와회차상태2검사가실패. 앞63검사통과와달라현재원인미확정",
+  "model": "gpt-6.1-sol",
+  "method": "실패시actual Attempts/Notice/BlockedReason/NextRun을추가출력하고65시나리오단독진단. 기대값불변. 원인확인후증거로최소수리,새근거없이동일전체검사반복금지",
+  "selection_reason": "실제Controller Runner와보안원장의비동기상호작용이므로동일deep xhigh가추가관측과원인분석수행"
+}

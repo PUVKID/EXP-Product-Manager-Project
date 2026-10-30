@@ -1,0 +1,49 @@
+PASS valid Ed25519 license
+PASS payload tamper
+PASS signature tamper
+PASS unsigned payload
+PASS public key cannot forge signature
+PASS different product
+PASS unsupported version
+PASS wrong field type
+PASS expired
+PASS issued in future
+PASS missing expiry
+PASS unsupported feature
+PASS missing automation entitlement
+PASS duplicate entitlement
+PASS inactive license
+PASS unknown issuer
+PASS invalid device point
+PASS invalid license ID
+PASS oversized name
+PASS oversized file
+PASS invalid base64
+PASS unknown field
+PASS duplicate JSON field
+PASS trailing JSON
+PASS perpetual license
+PASS original noncanonical bytes are verified
+PASS correct device proof
+PASS different device proof rejected
+PASS replayed proof rejected
+PASS registration request proof
+PASS request tamper rejected
+PASS stale request rejected
+PASS future request rejected
+PASS legacy license rejected
+PASS DPAPI private vault
+PASS no silent issuer overwrite
+PASS issuer round trip
+PASS issuance history export
+PASS wrong backup password
+PASS encrypted backup restore retains issuer
+PASS restored key verifies old licenses
+PASS tampered encrypted backup rejected
+PASS damaged private vault rejected
+SOFTWARE CRYPTOGRAPHY TESTS: 43 passed, 0 failed. Software device keys above are NOT physical TPM evidence.
+PASS platform provider device ownership proof
+PASS provider + nonexportable policy
+PASS TPM private export denied
+PASS persistent key reopen
+TOTAL: 47 passed, 0 failed

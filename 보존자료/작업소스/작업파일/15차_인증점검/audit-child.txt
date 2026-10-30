@@ -1,0 +1,10 @@
+Package=15700 
+Identity=DESKTOP-Q56I31F\PUVKID x64=True
+Root=C:\Users\PUVKID\AppData\Roaming\BunjangAuto
+usage.v1 exists=False
+license.key exists=True
+Registry32 exists=False
+Registry64 exists=False
+Lumivolt.Device.v3 exists=True
+Fingerprint=3A46A79F8E361A07959DA14BD12497321214B341537F602F63FBDB097BDD6008
+EXP.Usage.v1 exists=False

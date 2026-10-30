@@ -1,0 +1,3 @@
+PASS production EXE Ed25519 + TPM validation: 만료일 2026-11-13
+PASS production EXE tamper rejection
+PASS no issuer/signing helper/preview harness in customer assembly

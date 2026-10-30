@@ -1,0 +1,23 @@
+{
+  "role": "escalate",
+  "before_argv": [
+    "python",
+    "-B",
+    "-X",
+    "utf8",
+    "-"
+  ],
+  "cause": "python 명령은 Microsoft Store 실행 별칭",
+  "new_observation": "Get-Command에서 C:\\Users\\PUVKID\\.local\\bin\\python3.14.exe 실제 실행 파일 확인",
+  "model": "gpt-6-astra",
+  "after_argv": [
+    "C:\\Users\\PUVKID\\.local\\bin\\python3.14.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-"
+  ],
+  "effort": "medium",
+  "selection_reason": "모델 변경 없이 확정 실행 파일 경로만 보정",
+  "method": "python3.14.exe 절대경로로 기존 편집 스크립트 실행"
+}

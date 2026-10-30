@@ -1,0 +1,1471 @@
+--- 3차/src/Bot.cs
++++ 4차/src/Bot.cs
+@@ -113,7 +113,6 @@
+                 opt.AddArgument("--disable-dev-shm-usage");
+                 opt.AddArgument("--no-sandbox");
+             }
+-            if (_cfg.Headless) opt.AddArgument("--headless=new");
+ 
+             _driver = new ChromeDriver(_service, opt, TimeSpan.FromSeconds(120));
+             try { _driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(60); } catch { }
+@@ -154,7 +153,10 @@
+         public void Dispose() { Close(); }
+ 
+         // =============== 로그인 ===============
+-        public bool EnsureLogin(string id, string pw)
++        /// <summary>
++        /// 아이디/비밀번호는 받지 않는다. 번개장터 로그인 화면으로 이동해 두고 사용자가 열린 크롬 창에서 직접 로그인한다.
++        /// </summary>
++        public bool EnsureLogin()
+         {
+             Start();
+             Go(_sel.HomeUrl);
+@@ -166,39 +168,27 @@
+                 return true;
+             }
+ 
+-            // 1) 아이디/비밀번호 자동 입력 시도
+-            if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(pw))
+-            {
+-                Log.Write("로그인 시도 중...");
+-                try
+-                {
+-                    var open = Find(_sel.LoginOpenXPath, 4);
+-                    if (open != null) { Click(open); Sleep(1000); }
+-                    var idBox = Find(_sel.LoginIdXPath, 6);
+-                    var pwBox = Find(_sel.LoginPwXPath, 3);
+-                    if (idBox != null && pwBox != null)
+-                    {
+-                        SetText(idBox, id);
+-                        SetText(pwBox, pw);
+-                        var submit = Find(_sel.LoginSubmitXPath, 3);
+-                        if (submit != null) Click(submit); else pwBox.SendKeys(Keys.Enter);
+-                        if (WaitLoggedIn(25)) { Log.Write("로그인 성공"); return true; }
+-                    }
+-                }
+-                catch (StopRequestedException) { throw; }
+-                catch (Exception ex) { Log.Write("자동 로그인 실패: " + ex.Message); }
+-            }
+-
+-            // 2) 수동 로그인 (전화번호 인증/소셜 로그인 등) - 열린 브라우저에서 직접 로그인
+-            string msg = "열려 있는 크롬 창에서 번개장터에 로그인해 주세요.\r\n\r\n로그인을 마쳤으면 [예]를 누르세요.";
+-            Log.Write("열려 있는 크롬 창에서 직접 로그인해 주세요.");
++            // 번개장터 로그인 화면을 열어 준다
++            try
++            {
++                var open = Find(_sel.LoginOpenXPath, 4);
++                if (open != null) { Click(open); Sleep(1000); }
++            }
++            catch (StopRequestedException) { throw; }
++            catch (Exception ex) { Log.Write("로그인 화면을 자동으로 열지 못했습니다. 크롬 창에서 직접 로그인 화면을 열어 주세요. (" + ex.Message + ")"); }
++
++            string msg = "번개장터 로그인 화면이 열려 있는 크롬 창에서 직접 로그인해 주세요.\r\n(전화번호 인증·소셜 로그인도 그 창에서 하시면 됩니다.)\r\n\r\n로그인을 마쳤으면 [예]를 누르세요.";
++            Log.Write("열려 있는 크롬 창에서 번개장터에 직접 로그인해 주세요.");
+             if (Ask != null)
+             {
+                 if (Ask(msg))
+                 {
++                    bool seen = false;
++                    try { seen = WaitLoggedIn(5); } catch (StopRequestedException) { throw; } catch { }
+                     _cfg.AssumeLoggedIn = true;
+                     try { Storage.SaveSettings(_cfg); } catch { }
+-                    Log.Write("로그인 완료로 처리합니다. 다음부터는 이 확인을 다시 묻지 않습니다.");
++                    Log.Write(seen ? "로그인 확인됨. 다음부터는 이 확인을 다시 묻지 않습니다."
++                                   : "로그인 완료로 처리합니다. 다음부터는 이 확인을 다시 묻지 않습니다.");
+                     return true;
+                 }
+                 Log.Write("로그인을 취소했습니다.");
+@@ -618,111 +608,6 @@
+             catch (StopRequestedException) { throw; }
+             catch { }
+             return null;
+-        }
+-
+-        // =============== 끌올 ===============
+-        /// <summary>내 상품 관리의 'UP하기' 버튼을 눌러준다(비활성 버튼은 건너뜀). 처리한 개수를 돌려준다.</summary>
+-        public int BumpAll(int max)
+-        {
+-            Start();
+-            Log.Write("[끌올] 내 상품 관리 화면 여는 중...");
+-            int done = 0;
+-            for (int page = 0; page < 50 && done < max; page++)
+-            {
+-                CheckStop();
+-                Go(string.Format(_sel.ManageUrl, page));
+-                Sleep(2500);
+-                var rows = SafeFind(_sel.RowXPath);
+-                if (rows.Count == 0) break;
+-                int count = rows.Count;
+-                for (int i = 0; i < count && done < max; i++)
+-                {
+-                    CheckStop();
+-                    // 클릭 후 화면이 다시 그려질 수 있으므로 매번 행을 다시 찾는다
+-                    var cur = SafeFind(_sel.RowXPath);
+-                    if (i >= cur.Count) break;
+-                    var row = cur[i];
+-                    string title = "";
+-                    try { title = row.FindElement(By.XPath(_sel.RowTitleXPath)).Text.Trim(); } catch { }
+-                    try
+-                    {
+-                        var btn = row.FindElements(By.XPath(_sel.RowBumpXPath)).FirstOrDefault();
+-                        if (btn == null) continue;       // 판매완료/대기시간 중이라 비활성
+-                        Click(btn);
+-                        Sleep(900);
+-                        TryClick(_sel.DialogConfirmXPath, 2);
+-                        done++;
+-                        Log.Write("  끌올: " + title);
+-                        HumanPause();
+-                    }
+-                    catch (StopRequestedException) { throw; }
+-                    catch (Exception ex) { Log.Write("  끌올 실패(" + title + "): " + ex.Message); }
+-                }
+-                if (count < 10) break;                   // 마지막 페이지
+-            }
+-            Log.Write("[끌올] " + done + "건 처리" + (done == 0 ? " (UP하기가 활성화된 상품이 없습니다)" : ""));
+-            return done;
+-        }
+-
+-        // =============== 삭제 후 재등록 ===============
+-        /// <summary>내 상품 관리에서 상품번호로 행을 찾아 체크한 뒤 '상품삭제'를 누른다.</summary>
+-        public bool DeleteProduct(Product p)
+-        {
+-            Start();
+-            if (string.IsNullOrEmpty(p.ProductId)) { Log.Write("  상품번호가 없어 삭제를 건너뜀: " + p.Title); return false; }
+-            Log.Write("[삭제] " + p.Title + " (" + p.ProductId + ")");
+-            try
+-            {
+-                bool found = false;
+-                for (int page = 0; page < 50 && !found; page++)
+-                {
+-                    CheckStop();
+-                    Go(string.Format(_sel.ManageUrl, page));
+-                    Sleep(2500);
+-                    var rows = SafeFind(_sel.RowXPath);
+-                    if (rows.Count == 0) break;
+-                    var chk = Find(SelectorSet.Fill(_sel.RowCheckXPath, p.ProductId), 1);
+-                    if (chk != null)
+-                    {
+-                        Click(chk);
+-                        found = true;
+-                    }
+-                    else if (rows.Count < 10) break;
+-                }
+-                if (!found)
+-                {
+-                    p.ProductId = "";
+-                    p.Status = "이미 없음";
+-                    Log.Write("  → 내 상품 목록에 없어서(이미 삭제됨) 삭제를 건너뜁니다.");
+-                    return true;
+-                }
+-                Sleep(500);
+-                Click(Require(_sel.BulkDeleteXPath, "상품삭제 버튼"));
+-                Sleep(800);
+-                if (!TryClick(_sel.DialogConfirmXPath, 4)) Log.Write("  삭제 확인 창을 찾지 못했습니다. 화면을 확인하세요.");
+-                Sleep(2000);
+-                p.ProductId = "";
+-                p.Status = "삭제됨";
+-                return true;
+-            }
+-            catch (StopRequestedException) { throw; }
+-            catch (Exception ex)
+-            {
+-                p.Status = "삭제 실패: " + ex.Message;
+-                Log.Write("  → 삭제 실패: " + ex.Message);
+-                Shot("delete-error");
+-                return false;
+-            }
+-        }
+-
+-        public bool Repost(Product p)
+-        {
+-            if (!string.IsNullOrEmpty(p.ProductId))
+-            {
+-                if (!DeleteProduct(p)) return false;
+-                HumanPause();
+-            }
+-            return Register(p);
+         }
+ 
+         // =============== 점검 도구 ===============
+@@ -880,10 +765,13 @@
+             Log.Write("  [경고] 입력칸에 값이 정확히 들어가지 않았습니다. (넣으려던 글자 수 " + want.Length + ", 실제 " + got.Length + ")");
+         }
+ 
++        // 작업과 작업 사이에 쉬는 시간(초). 이 범위 안에서 매번 무작위로 정한다.
++        private const int PauseMinSec = 3;
++        private const int PauseMaxSec = 8;
++
+         public void HumanPause()
+         {
+-            int lo = Math.Max(0, _cfg.DelayMinSec), hi = Math.Max(lo, _cfg.DelayMaxSec);
+-            int ms = (lo + _rnd.Next(0, (hi - lo) + 1)) * 1000;
++            int ms = _rnd.Next(PauseMinSec * 1000, PauseMaxSec * 1000 + 1);
+             Sleep(ms);
+         }
+ 
+--- 3차/src/MainForm.cs
++++ 4차/src/MainForm.cs
+@@ -18,18 +18,20 @@
+         private readonly Runner _runner = new Runner();
+ 
+         // 계정/설정 탭
+-        private TextBox txtId, txtPw;
+-        private CheckBox chkSave, chkHeadless;
+-        private NumericUpDown numDelayMin, numDelayMax, numMax;
+ 
+         // 상품 탭
+         private DataGridView grid;
+ 
+         // 실행 탭
+-        private CheckBox chkRegister, chkBump, chkRepost, chkRepeat;
+-        private NumericUpDown numInterval;
+-        private CheckBox chkOneByOne, chkDup;
++        private CheckBox chkRegister, chkRepeat;
++        private NumericUpDown numRounds;
++        private CheckBox chkOneByOne, chkDup, chkWindows;
+         private NumericUpDown numGap;
++        private DataGridView gridRules;
++        private Button bRuleAdd, bRuleDel;
++        private BindingList<TimeRule> _rules = new BindingList<TimeRule>();
++        private List<TimeWindow> _wins;          // 시간대별 등록 중일 때만 값이 있음
++        private int _round = 1, _roundTotal = 1; // 반복 회차
+         private DateTime _runStart = DateTime.MinValue;
+         private readonly HashSet<Product> _skip = new HashSet<Product>();
+         private Button btnStart, btnStop;
+@@ -48,7 +50,7 @@
+             _guardTimer = new System.Windows.Forms.Timer { Interval = 120000 };
+             _guardTimer.Tick += delegate { Guard.Check(); };
+             _guardTimer.Start();
+-            Width = 1100; Height = 780;
++            Width = 1100; Height = 870;
+             StartPosition = FormStartPosition.CenterScreen;
+             Font = Theme.FontBase();
+ 
+@@ -83,7 +85,7 @@
+         // ============================ UI 구성 ============================
+         private void BuildUi()
+         {
+-            var split = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Horizontal, SplitterDistance = 460 };
++            var split = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Horizontal, SplitterDistance = 625 };
+             Controls.Add(split);
+             Controls.Add(Theme.BuildHeader("BunjangAuto", "프리미엄 번개장터 자동등록 솔루션   ·   © 음악천재"));
+ 
+@@ -116,84 +118,35 @@
+         private void BuildAccountTab(TabPage t)
+         {
+             t.Padding = new Padding(16);
+-            var tl = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 2 };
+-            tl.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170));
+-            tl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+-            t.Controls.Add(tl);
+-
+-            txtId = new TextBox { Width = 280 };
+-            txtPw = new TextBox { Width = 280, UseSystemPasswordChar = true };
+-            chkSave = new CheckBox { Text = "아이디/비밀번호 저장 (이 PC에서만 복호화되도록 암호화)", AutoSize = true };
+-            chkHeadless = new CheckBox { Text = "브라우저 창 숨기기 (로그인이 풀린 상태에서는 사용하지 마세요)", AutoSize = true };
+-            numDelayMin = new NumericUpDown { Minimum = 0, Maximum = 600, Width = 70 };
+-            numDelayMax = new NumericUpDown { Minimum = 0, Maximum = 600, Width = 70 };
+-            numMax = new NumericUpDown { Minimum = 1, Maximum = 500, Width = 70 };
+-
+-            AddRow(tl, "아이디", txtId);
+-            AddRow(tl, "비밀번호", txtPw);
+-            AddRow(tl, "", chkSave);
+-            AddRow(tl, "", chkHeadless);
+-            AddRow(tl, "작업 사이 대기(초) 최소", numDelayMin);
+-            AddRow(tl, "작업 사이 대기(초) 최대", numDelayMax);
+-            AddRow(tl, "1회 실행당 최대 처리 수", numMax);
+-
+-            var btns = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, Padding = new Padding(0, 14, 0, 0) };
++            var fl = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false };
++            t.Controls.Add(fl);
++
++            fl.Controls.Add(new Label { Text = "번개장터 로그인", AutoSize = true, Font = Theme.FontBold(), ForeColor = Theme.Gold });
++
++            var btns = new FlowLayoutPanel { AutoSize = true, Padding = new Padding(0, 10, 0, 0) };
+             var bLogin = new Button { Text = "로그인 테스트", AutoSize = true };
+-            var bCheck = new Button { Text = "화면 요소 점검", AutoSize = true };
+-            var bSel = new Button { Text = "selectors.json 열기", AutoSize = true };
+-            var bFolder = new Button { Text = "데이터 폴더 열기", AutoSize = true };
+-            var bDiag = new Button { Text = "진단 파일 만들기", AutoSize = true };
+             var bReset2 = new Button { Text = "로그인 상태 초기화", AutoSize = true };
+-            btns.Controls.AddRange(new Control[] { bLogin, bCheck, bDiag, bReset2, bSel, bFolder });
+-            t.Controls.Add(btns);
+-            btns.BringToFront();
+-
+-            var tip = new Label
+-            {
+-                Dock = DockStyle.Top,
++            btns.Controls.AddRange(new Control[] { bLogin, bReset2 });
++            fl.Controls.Add(btns);
++
++            fl.Controls.Add(new Label
++            {
+                 AutoSize = true,
+                 Padding = new Padding(0, 14, 0, 0),
+-                Text = "※ 로그인은 전용 크롬 프로필에 유지됩니다. 문자/소셜 로그인처럼 자동 입력이 안 되면\r\n   열린 크롬 창에서 한 번만 직접 로그인하면 다음부터는 자동으로 이어집니다."
+-            };
+-            t.Controls.Add(tip);
+-            tip.BringToFront();
+-
+-            bLogin.Click += delegate { RunBackground("로그인 테스트", delegate (Bot b) { b.EnsureLogin(txtId.Text.Trim(), txtPw.Text); }); };
+-            bCheck.Click += delegate
+-            {
+-                RunBackground("화면 요소 점검", delegate (Bot b)
+-                {
+-                    foreach (var line in b.CheckSelectors()) Log.Write("  " + line);
+-                    Log.Write("※ '없음' 항목은 selectors.json 의 XPath 를 사이트 화면에 맞게 고쳐 주세요.");
+-                });
+-            };
+-            bDiag.Click += delegate
+-            {
+-                RunBackground("진단 파일 만들기", delegate (Bot b)
+-                {
+-                    if (!b.EnsureLogin(txtId.Text.Trim(), txtPw.Text)) return;
+-                    string zip = b.DumpPages();
+-                    Log.Write("진단 파일 저장 완료: " + zip);
+-                    Log.Write("※ 화면에 개인정보(닉네임 등)가 보일 수 있으니 확인 후 전달하세요.");
+-                    try { Process.Start("explorer.exe", "/select,\"" + zip + "\""); } catch { }
+-                });
+-            };
++                ForeColor = Theme.TextMuted,
++                Text = "※ 아이디/비밀번호는 입력하지도, 저장하지도 않습니다.\r\n" +
++                       "   [로그인 테스트] 또는 [시작]을 누르면 크롬 창이 열리고 번개장터 로그인 화면으로 이동합니다.\r\n" +
++                       "   그 창에서 직접 로그인(문자·소셜 로그인 포함)한 뒤, 안내창의 [예]를 누르세요.\r\n" +
++                       "   로그인은 전용 크롬 프로필에 유지되어 다음부터는 자동으로 이어집니다.\r\n" +
++                       "   로그인이 풀린 것 같으면 [로그인 상태 초기화]를 누른 뒤 다시 로그인하세요."
++            });
++
++            bLogin.Click += delegate { RunBackground("로그인 테스트", delegate (Bot b) { b.EnsureLogin(); }); };
+             bReset2.Click += delegate
+             {
+                 _cfg.AssumeLoggedIn = false; Storage.SaveSettings(_cfg);
+                 Log.Write("로그인 상태를 초기화했습니다. 다음 실행 때 로그인을 다시 확인합니다.");
+             };
+-            bSel.Click += delegate { _sel.Save(); Process.Start("notepad.exe", Paths.Selectors); };
+-            bFolder.Click += delegate { Process.Start("explorer.exe", Paths.Root); };
+-        }
+-
+-        private static void AddRow(TableLayoutPanel tl, string label, Control c)
+-        {
+-            int r = tl.RowCount++;
+-            tl.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+-            tl.Controls.Add(new Label { Text = label, AutoSize = true, Anchor = AnchorStyles.Left, Padding = new Padding(0, 6, 0, 6) }, 0, r);
+-            c.Margin = new Padding(3, 4, 3, 4);
+-            tl.Controls.Add(c, 1, r);
+         }
+ 
+         private void BuildProductTab(TabPage t)
+@@ -297,66 +250,154 @@
+         private void BuildRunTab(TabPage t)
+         {
+             t.Padding = new Padding(16);
+-            var fl = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false };
++            var fl = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoScroll = true };
+             t.Controls.Add(fl);
+ 
+             fl.Controls.Add(new Label { Text = "실행할 작업", AutoSize = true, Font = Theme.FontBold(), ForeColor = Theme.Gold });
+-            chkRegister = new CheckBox { Text = "신규 등록 — 아직 등록되지 않은 상품을 올립니다", AutoSize = true };
+-            chkBump = new CheckBox { Text = "끌올 — 내 상점의 상품을 끌어올립니다", AutoSize = true };
+-            chkRepost = new CheckBox { Text = "삭제 후 재등록 — 등록된 상품을 지우고 새로 올립니다", AutoSize = true };
+-            fl.Controls.AddRange(new Control[] { chkRegister, chkBump, chkRepost });
+-
+-            var one = new FlowLayoutPanel { AutoSize = true, Padding = new Padding(0, 12, 0, 0) };
+-            chkOneByOne = new CheckBox { Text = "신규 등록을 1개씩", AutoSize = true, Padding = new Padding(0, 4, 0, 0) };
++            chkRegister = new CheckBox { Text = "등록 — 상품 목록의 상품을 올립니다", AutoSize = true };
++            fl.Controls.Add(chkRegister);
++
++            // ----- 1개씩 등록 + 간격 -----
++            chkOneByOne = new CheckBox { Text = "1개씩 등록 — 간격을 두고 한 개씩 올리고, 모두 올리면 자동 종료", AutoSize = true, Padding = new Padding(0, 4, 0, 0) };
++            fl.Controls.Add(chkOneByOne);
++
++            var one = new FlowLayoutPanel { AutoSize = true, Padding = new Padding(22, 0, 0, 0) };
+             numGap = new NumericUpDown { Minimum = 1, Maximum = 1440, Width = 70 };
+-            one.Controls.Add(chkOneByOne);
++            one.Controls.Add(new Label { Text = "기본 간격", AutoSize = true, Padding = new Padding(0, 6, 0, 0) });
+             one.Controls.Add(numGap);
+-            one.Controls.Add(new Label { Text = "분 간격으로 (모두 등록되면 자동 종료)", AutoSize = true, Padding = new Padding(0, 6, 0, 0) });
++            one.Controls.Add(new Label { Text = "분마다 1개씩", AutoSize = true, Padding = new Padding(0, 6, 0, 0) });
+             fl.Controls.Add(one);
+-            chkDup = new CheckBox { Text = "중복 등록 허용 — 이미 등록된 상품도 다시 등록합니다", AutoSize = true, Padding = new Padding(0, 6, 0, 0) };
++
++            chkWindows = new CheckBox { Text = "시간대별로 간격 지정 — 아래 표대로 등록 (기본 간격 대신 사용)", AutoSize = true, Padding = new Padding(22, 4, 0, 0) };
++            fl.Controls.Add(chkWindows);
++
++            var winRow = new FlowLayoutPanel { AutoSize = true, Padding = new Padding(22, 0, 0, 0) };
++            gridRules = new DataGridView
++            {
++                Width = 400,
++                Height = 110,
++                AutoGenerateColumns = false,
++                AllowUserToAddRows = false,
++                AllowUserToResizeRows = false,
++                RowHeadersVisible = false,
++                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
++                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
++                BackgroundColor = SystemColors.Window
++            };
++            gridRules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Start", HeaderText = "시작 (시:분)" });
++            gridRules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "End", HeaderText = "종료 (시:분)" });
++            gridRules.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Minutes", HeaderText = "간격 (분)" });
++            gridRules.DataSource = _rules;
++            gridRules.DataError += delegate (object s, DataGridViewDataErrorEventArgs e) { e.ThrowException = false; };
++            gridRules.CellEndEdit += delegate (object s, DataGridViewCellEventArgs e)
++            {
++                if (e.RowIndex < 0 || e.RowIndex >= _rules.Count) return;
++                var r = _rules[e.RowIndex];
++                int m;
++                if (e.ColumnIndex == 0 && Schedule.TryParseTime(r.Start, out m) && m < 1440) r.Start = Schedule.Format(m);
++                if (e.ColumnIndex == 1 && Schedule.TryParseTime(r.End, out m)) r.End = Schedule.Format(m);
++                gridRules.Refresh();
++            };
++            winRow.Controls.Add(gridRules);
++
++            var winBtns = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false };
++            bRuleAdd = new Button { Text = "시간대 추가", AutoSize = true };
++            bRuleDel = new Button { Text = "선택 삭제", AutoSize = true };
++            winBtns.Controls.AddRange(new Control[] { bRuleAdd, bRuleDel });
++            winRow.Controls.Add(winBtns);
++            fl.Controls.Add(winRow);
++
++            fl.Controls.Add(new Label
++            {
++                Text = "예) 00:00~09:00 은 40분, 09:00~18:00 은 60분 → 시간대마다 다른 간격으로 1개씩 올립니다. 시간대 밖에서는\r\n등록하지 않고 다음 시간대가 시작될 때까지 기다립니다. (자정을 넘기려면 22:00~06:00 처럼, 하루 끝은 24:00)",
++                AutoSize = true,
++                ForeColor = Theme.TextMuted,
++                Padding = new Padding(22, 0, 0, 0)
++            });
++
++            bRuleAdd.Click += delegate
++            {
++                // 마지막 시간대가 끝나는 시각부터 이어서 시작하도록 기본값을 채운다
++                var nr = new TimeRule("00:00", "09:00", 40);
++                int endMin;
++                if (_rules.Count > 0 && Schedule.TryParseTime(_rules[_rules.Count - 1].End, out endMin) && endMin < 1440)
++                {
++                    nr.Start = Schedule.Format(endMin);
++                    nr.End = Schedule.Format(Math.Min(1440, endMin + 540));
++                    nr.Minutes = Math.Max(1, _rules[_rules.Count - 1].Minutes);
++                }
++                _rules.Add(nr);
++            };
++            bRuleDel.Click += delegate
++            {
++                foreach (var r in gridRules.SelectedRows.Cast<DataGridViewRow>().OrderByDescending(x => x.Index))
++                    if (r.Index >= 0 && r.Index < _rules.Count) _rules.RemoveAt(r.Index);
++            };
++
++            chkDup = new CheckBox { Text = "중복 등록 허용 — 이미 등록된 상품도 다시 등록합니다", AutoSize = true, Padding = new Padding(0, 4, 0, 0) };
+             fl.Controls.Add(chkDup);
+ 
+-            var rep = new FlowLayoutPanel { AutoSize = true, Padding = new Padding(0, 12, 0, 0) };
+-            chkRepeat = new CheckBox { Text = "반복 실행", AutoSize = true, Padding = new Padding(0, 4, 0, 0) };
+-            numInterval = new NumericUpDown { Minimum = 1, Maximum = 10080, Width = 70 };
++            // ----- 반복: 목록을 다 올리면 처음부터 다시 -----
++            var rep = new FlowLayoutPanel { AutoSize = true, Padding = new Padding(0, 2, 0, 0) };
++            chkRepeat = new CheckBox { Text = "목록을 다 올리면 처음 상품부터 다시 올리기 — 총", AutoSize = true, Padding = new Padding(0, 4, 0, 0) };
++            numRounds = new NumericUpDown { Minimum = 1, Maximum = 999, Width = 70 };
+             rep.Controls.Add(chkRepeat);
+-            rep.Controls.Add(numInterval);
+-            rep.Controls.Add(new Label { Text = "분마다", AutoSize = true, Padding = new Padding(0, 6, 0, 0) });
++            rep.Controls.Add(numRounds);
++            rep.Controls.Add(new Label { Text = "회 (목록 전체를 한 번 올리면 1회)", AutoSize = true, Padding = new Padding(0, 6, 0, 0) });
+             fl.Controls.Add(rep);
+ 
+-            var btns = new FlowLayoutPanel { AutoSize = true, Padding = new Padding(0, 14, 0, 0) };
++            var btns = new FlowLayoutPanel { AutoSize = true, Padding = new Padding(0, 8, 0, 0) };
+             btnStart = new Button { Text = "▶  시작", Width = 120, Height = 38 };
+             btnStop = new Button { Text = "■  중지", Width = 120, Height = 38, Enabled = false };
+             btns.Controls.AddRange(new Control[] { btnStart, btnStop });
+             fl.Controls.Add(btns);
+ 
+-            lblState = new Label { Text = "대기 중", AutoSize = true, Padding = new Padding(0, 12, 0, 0), ForeColor = Theme.Gold, Font = Theme.FontBold() };
++            lblState = new Label { Text = "대기 중", AutoSize = true, Padding = new Padding(0, 6, 0, 0), ForeColor = Theme.Gold, Font = Theme.FontBold() };
+             lblNext = new Label { Text = "", AutoSize = true };
+             bar = new ProgressBar { Width = 420, Height = 18, Style = ProgressBarStyle.Continuous };
+             fl.Controls.AddRange(new Control[] { lblState, bar, lblNext });
+ 
++            chkOneByOne.CheckedChanged += delegate { UpdateRunEnabled(); };
++            chkWindows.CheckedChanged += delegate { UpdateRunEnabled(); };
++            chkRepeat.CheckedChanged += delegate { UpdateRunEnabled(); };
+             btnStart.Click += delegate { StartClicked(); };
+             btnStop.Click += delegate { StopClicked(); };
+         }
+ 
++        /// <summary>선택한 옵션에 맞지 않는 칸은 눌리지 않게 막는다.</summary>
++        private void UpdateRunEnabled()
++        {
++            bool one = chkOneByOne.Checked;
++            bool win = one && chkWindows.Checked;
++            numGap.Enabled = one && !chkWindows.Checked;
++            chkWindows.Enabled = one;
++            gridRules.Enabled = win;
++            bRuleAdd.Enabled = win;
++            bRuleDel.Enabled = win;
++            chkRepeat.Enabled = one;
++            numRounds.Enabled = one && chkRepeat.Checked;
++        }
++
+         // ============================ 설정 ↔ 화면 ============================
+         private void LoadSettingsToUi()
+         {
+-            txtId.Text = _cfg.Id;
+-            txtPw.Text = Storage.Unprotect(_cfg.PwProtected);
+-            chkSave.Checked = _cfg.SaveAccount;
+-            chkHeadless.Checked = _cfg.Headless;
+-            numDelayMin.Value = Clamp(_cfg.DelayMinSec, numDelayMin);
+-            numDelayMax.Value = Clamp(_cfg.DelayMaxSec, numDelayMax);
+-            numMax.Value = Clamp(_cfg.MaxPerRun, numMax);
+             chkRegister.Checked = _cfg.DoRegister;
+-            chkBump.Checked = _cfg.DoBump;
+-            chkRepost.Checked = _cfg.DoRepost;
+-            chkRepeat.Checked = _cfg.Repeat;
+-            numInterval.Value = Clamp(_cfg.IntervalMinutes, numInterval);
++            chkRepeat.Checked = _cfg.RepeatAll;
++            numRounds.Value = Clamp(_cfg.RepeatCount, numRounds);
+             chkOneByOne.Checked = _cfg.OneByOne;
+             chkDup.Checked = _cfg.AllowDuplicate;
+             numGap.Value = Clamp(_cfg.OneByOneMinutes, numGap);
++            chkWindows.Checked = _cfg.UseTimeRules;
++            _rules.Clear();
++            if (_cfg.TimeRules != null)
++                foreach (var r in _cfg.TimeRules) _rules.Add(new TimeRule(r.Start, r.End, r.Minutes));
++            if (_rules.Count == 0)
++            {
++                // 처음 쓰는 경우의 예시 시간대
++                _rules.Add(new TimeRule("00:00", "09:00", 40));
++                _rules.Add(new TimeRule("09:00", "18:00", 60));
++            }
++            UpdateRunEnabled();
+         }
+ 
+         private static decimal Clamp(int v, NumericUpDown n)
+@@ -366,28 +407,21 @@
+ 
+         private void ReadUiToSettings()
+         {
+-            _cfg.SaveAccount = chkSave.Checked;
+-            _cfg.Id = chkSave.Checked ? txtId.Text.Trim() : "";
+-            _cfg.PwProtected = chkSave.Checked ? Storage.Protect(txtPw.Text) : "";
+-            _cfg.Headless = chkHeadless.Checked;
+-            _cfg.DelayMinSec = (int)numDelayMin.Value;
+-            _cfg.DelayMaxSec = (int)numDelayMax.Value;
+-            _cfg.MaxPerRun = (int)numMax.Value;
+             _cfg.DoRegister = chkRegister.Checked;
+-            _cfg.DoBump = chkBump.Checked;
+-            _cfg.DoRepost = chkRepost.Checked;
+-            _cfg.Repeat = chkRepeat.Checked;
+-            _cfg.IntervalMinutes = (int)numInterval.Value;
++            _cfg.RepeatAll = chkRepeat.Checked;
++            _cfg.RepeatCount = (int)numRounds.Value;
+             _cfg.OneByOne = chkOneByOne.Checked;
+             _cfg.AllowDuplicate = chkDup.Checked;
+             _cfg.OneByOneMinutes = (int)numGap.Value;
++            _cfg.UseTimeRules = chkWindows.Checked;
++            _cfg.TimeRules = _rules.Select(r => new TimeRule(r.Start, r.End, r.Minutes)).ToList();
+             Storage.SaveSettings(_cfg);
+         }
+ 
+         // ============================ CSV ============================
+         private void ImportCsv()
+         {
+-            using (var d = new OpenFileDialog { Filter = "CSV|*.csv|모든 파일|*.*" })
++            using (var d = new OpenFileDialog { Filter = "CSV·텍스트 파일|*.csv;*.txt;*.tsv|모든 파일|*.*" })
+             {
+                 if (d.ShowDialog(this) != DialogResult.OK) return;
+                 try
+@@ -406,7 +440,7 @@
+                         Log.Write("[주의] 제목/설명에 '??' 가 있는 상품이 " + bad + "건 있습니다. 엑셀에서 'CSV(쉼표로 분리)'로 저장하면 이모지·특수기호가 '?'로 바뀌어 복구되지 않습니다. " +
+                                   "원본 엑셀에서 'CSV UTF-8(쉼표로 분리)'로 다시 저장해 불러오세요.");
+                 }
+-                catch (Exception ex) { MessageBox.Show(this, "불러오기 실패: " + ex.Message, "오류"); }
++                catch (Exception ex) { MessageBox.Show(this, "불러오기 실패: " + ex.Message, "CSV 불러오기", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+             }
+         }
+ 
+@@ -416,7 +450,7 @@
+             {
+                 if (d.ShowDialog(this) != DialogResult.OK) return;
+                 try { CsvIO.Write(d.FileName, _products); Log.Write("CSV 저장: " + d.FileName); }
+-                catch (Exception ex) { MessageBox.Show(this, "저장 실패: " + ex.Message, "오류"); }
++                catch (Exception ex) { MessageBox.Show(this, "저장 실패: " + ex.Message + (ex is IOException ? "\r\n\r\n엑셀 등에서 같은 파일을 열어 두었다면 닫고 다시 저장해 주세요." : ""), "오류"); }
+             }
+         }
+ 
+@@ -424,15 +458,40 @@
+         private void StartClicked()
+         {
+             ReadUiToSettings();
+-            if (!_cfg.DoRegister && !_cfg.DoBump && !_cfg.DoRepost)
+-            {
+-                MessageBox.Show(this, "실행할 작업을 하나 이상 선택해 주세요.", "안내");
++            if (!_cfg.DoRegister)
++            {
++                MessageBox.Show(this, "실행할 작업을 선택해 주세요.", "안내");
+                 return;
+             }
+             _skip.Clear();
+-            _scheduleOn = _cfg.Repeat || (_cfg.OneByOne && _cfg.DoRegister);
++            _round = 1;
++            _roundTotal = (_cfg.OneByOne && _cfg.RepeatAll) ? Math.Max(1, _cfg.RepeatCount) : 1;
++            _wins = null;
++            if (_cfg.OneByOne && _cfg.UseTimeRules)
++            {
++                string err;
++                List<TimeWindow> wins;
++                if (!Schedule.TryBuild(_cfg.TimeRules, out wins, out err))
++                {
++                    MessageBox.Show(this, err, "시간대 설정 확인");
++                    return;
++                }
++                _wins = wins;
++                Log.Write("[시간대별 등록] " + Schedule.Describe(_wins));
++            }
++            if (_roundTotal > 1) Log.Write("[반복] 목록을 총 " + _roundTotal + "회 올립니다. (1/" + _roundTotal + "회차 시작)");
++            _scheduleOn = _cfg.OneByOne;
+             btnStart.Enabled = false;
+             btnStop.Enabled = true;
++
++            if (_wins != null && Schedule.ActiveAt(_wins, DateTime.Now) == null)
++            {
++                // 지금은 등록 시간대가 아니므로 다음 시간대가 시작될 때까지 기다린다
++                _nextRun = Schedule.NextAllowed(_wins, DateTime.Now);
++                lblState.Text = "시간대 시작 대기 중";
++                Log.Write("[시간대별 등록] 지금은 등록 시간대가 아니어서 " + _nextRun.ToString("MM-dd HH:mm") + " 에 시작합니다.");
++                return;
++            }
+             LaunchRun();
+         }
+ 
+@@ -442,7 +501,8 @@
+             lblNext.Text = "";
+             bar.Value = 0;
+             _runStart = DateTime.Now;
+-            _runner.Run(_cfg, _sel, _products, () => _products.Where(p => !_skip.Contains(p)).ToList(), () => Storage.SaveProducts(_products));
++            bool includeRegistered = _cfg.AllowDuplicate || _round > 1;   // 2회차부터는 이미 등록된 상품도 처음부터 다시
++            _runner.Run(_cfg, _sel, _products, () => _products.Where(p => !_skip.Contains(p)).ToList(), () => Storage.SaveProducts(_products), includeRegistered);
+         }
+ 
+         private void StopClicked()
+@@ -454,39 +514,60 @@
+             if (!_runner.Running) FinishUi();
+         }
+ 
++        /// <summary>이번 회차에 아직 등록할 상품이 남았는지</summary>
++        private bool HasPending()
++        {
++            bool includeRegistered = _cfg.AllowDuplicate || _round > 1;
++            return _products.Any(p => p.IsValid && !_skip.Contains(p) &&
++                (includeRegistered || (string.IsNullOrEmpty(p.ProductId) && p.Status != "등록됨")));
++        }
++
++        private string RoundText()
++        {
++            return _roundTotal > 1 ? "  ·  " + _round + "/" + _roundTotal + "회차" : "";
++        }
++
+         private void OnRunnerFinished()
+         {
+             if (IsDisposed) return;
+             BeginInvoke((Action)(() =>
+             {
+                 grid.Refresh();
+-                if (_scheduleOn)
++                if (!_scheduleOn) { FinishUi(); return; }
++
++                // 이번 회차에 이미 시도한 상품(성공/실패)은 같은 회차 안에서 다시 시도하지 않는다
++                foreach (var p in _runner.LastRegistered) _skip.Add(p);
++                int failed = _skip.Count(p => (p.Status ?? "").StartsWith("실패"));
++
++                bool pending = HasPending();
++                if (!pending)
+                 {
+-                    if (_cfg.OneByOne && _cfg.DoRegister)
++                    if (_round < _roundTotal)
+                     {
+-                        // 이번에 실패한 상품은 이번 예약 동안 건너뛰어 다음 상품이 막히지 않게 한다
+-                        foreach (var p in _products)
+-                            if ((p.Status ?? "").StartsWith("실패")) _skip.Add(p);
+-                        if (_cfg.AllowDuplicate) foreach (var p in _runner.LastRegistered) _skip.Add(p);
+-                        bool pending = _cfg.AllowDuplicate
+-                            ? _products.Any(p => p.IsValid && !_skip.Contains(p))
+-                            : _products.Any(p => p.IsValid && string.IsNullOrEmpty(p.ProductId) && p.Status != "등록됨" && !_skip.Contains(p));
+-                        if (!pending && !_cfg.DoBump && !_cfg.DoRepost)
+-                        {
+-                            _scheduleOn = false;
+-                            _nextRun = DateTime.MinValue;
+-                            Log.Write("[1개씩 등록] 남은 등록 상품이 없어 종료합니다." + (_skip.Count > 0 ? " (실패해서 건너뛴 상품 " + _skip.Count + "건)" : ""));
+-                            FinishUi();
+-                            return;
+-                        }
+-                        _nextRun = _runStart.AddMinutes(_cfg.OneByOneMinutes);
+-                        if (_nextRun < DateTime.Now) _nextRun = DateTime.Now;
+-                        Log.Write("[1개씩 등록] 다음 등록 예정: " + _nextRun.ToString("HH:mm:ss"));
++                        _round++;
++                        _skip.Clear();
++                        Log.Write("[반복] " + _round + "/" + _roundTotal + "회차 시작 — 처음 상품부터 다시 등록합니다.");
++                        pending = HasPending();
+                     }
+-                    else _nextRun = DateTime.Now.AddMinutes(_cfg.IntervalMinutes);
+-                    lblState.Text = "다음 실행 대기 중";
++                    if (!pending)
++                    {
++                        _scheduleOn = false;
++                        _nextRun = DateTime.MinValue;
++                        Log.Write("[1개씩 등록] 모두 등록해 종료합니다." + (_roundTotal > 1 ? " (총 " + _roundTotal + "회 반복 완료)" : "") +
++                                  (failed > 0 ? " (이번 회차에 실패한 상품 " + failed + "건)" : ""));
++                        FinishUi();
++                        return;
++                    }
+                 }
+-                else FinishUi();
++
++                if (_wins != null) _nextRun = Schedule.NextRun(_wins, _runStart, DateTime.Now, _cfg.OneByOneMinutes);
++                else
++                {
++                    _nextRun = _runStart.AddMinutes(_cfg.OneByOneMinutes);
++                    if (_nextRun < DateTime.Now) _nextRun = DateTime.Now;
++                }
++                Log.Write("[1개씩 등록] 다음 등록 예정: " + _nextRun.ToString(_nextRun.Date == DateTime.Today ? "HH:mm:ss" : "MM-dd HH:mm:ss"));
++                lblState.Text = "다음 실행 대기 중" + RoundText();
+             }));
+         }
+ 
+@@ -505,7 +586,7 @@
+             {
+                 bar.Maximum = Math.Max(1, total);
+                 bar.Value = Math.Min(done, bar.Maximum);
+-                lblState.Text = "실행 중... (" + done + "/" + total + ")";
++                lblState.Text = "실행 중... (" + done + "/" + total + ")" + RoundText();
+                 grid.Refresh();
+             }));
+         }
+@@ -519,7 +600,13 @@
+                 _nextRun = DateTime.MinValue;
+                 LaunchRun();
+             }
+-            else lblNext.Text = "다음 실행까지 " + ((int)left.TotalMinutes) + "분 " + left.Seconds + "초";
++            else
++            {
++                string t = left.TotalHours >= 1
++                    ? ((int)left.TotalHours) + "시간 " + left.Minutes + "분 " + left.Seconds + "초"
++                    : left.Minutes + "분 " + left.Seconds + "초";
++                lblNext.Text = "다음 실행까지 " + t + "  (" + _nextRun.ToString("MM-dd HH:mm") + ")";
++            }
+         }
+ 
+         // ============================ 로그 / 보조 ============================
+--- 3차/src/Models.cs
++++ 4차/src/Models.cs
+@@ -52,26 +52,20 @@
+         }
+     }
+ 
+-    public enum JobKind { Register, Bump, Repost }
+-
+     public class AppSettings
+     {
+-        public string Id = "";
+-        /// <summary>DPAPI(현재 Windows 사용자)로 암호화한 비밀번호(Base64)</summary>
+-        public string PwProtected = "";
+-        public bool SaveAccount = true;
+-        public bool Headless = false;
+-        public int DelayMinSec = 3;
+-        public int DelayMaxSec = 7;
+-        public int MaxPerRun = 30;
+         public bool DoRegister = true;
+-        public bool DoBump = false;
+-        public bool DoRepost = false;
+-        public bool Repeat = false;
+-        public int IntervalMinutes = 60;
+-        /// <summary>true 이면 신규 등록을 1개씩, OneByOneMinutes 분 간격으로 진행하고 모두 끝나면 자동 종료한다.</summary>
++        /// <summary>true 이면 목록을 다 올린 뒤 처음 상품부터 다시 올린다(총 RepeatCount 회).</summary>
++        public bool RepeatAll = false;
++        /// <summary>목록 전체를 올리는 총 횟수(처음 1회 포함).</summary>
++        public int RepeatCount = 2;
++        /// <summary>true 이면 등록을 1개씩, OneByOneMinutes 분 간격(또는 시간대별 간격)으로 진행하고 모두 끝나면 자동 종료한다.</summary>
+         public bool OneByOne = true;
+         public int OneByOneMinutes = 20;
++        /// <summary>true 이면 OneByOneMinutes 대신 TimeRules(시간대별 간격)대로 등록한다.</summary>
++        public bool UseTimeRules = false;
++        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
++        public List<TimeRule> TimeRules = new List<TimeRule>();
+         /// <summary>true 이면 이미 등록된 상품도 (중복되더라도) 목록 순서대로 다시 등록한다.</summary>
+         public bool AllowDuplicate = false;
+         public string LastCsv = "";
+--- 3차/src/Runner.cs
++++ 4차/src/Runner.cs
+@@ -6,7 +6,7 @@
+ 
+ namespace BunjangAuto
+ {
+-    /// <summary>한 번의 실행(로그인 → 등록 → 끌올 → 재등록)을 백그라운드 스레드에서 수행한다.</summary>
++    /// <summary>한 번의 실행(로그인 → 등록)을 백그라운드 스레드에서 수행한다.</summary>
+     public class Runner
+     {
+         private Thread _thread;
+@@ -19,13 +19,17 @@
+         public event Action<string> ManualLoginNeeded;
+         public Func<string, bool> Ask;
+ 
++        /// <summary>'1개씩 등록'을 끈 일괄 모드에서 한 번에 등록할 최대 개수</summary>
++        private const int BatchLimit = 30;
++
+         public Bot CurrentBot { get { return _bot; } }
+-        /// <summary>이번 실행에서 등록을 시도한 상품(중복 허용 모드에서 다음 실행 때 제외하기 위함)</summary>
++        /// <summary>이번 실행에서 등록을 시도한 상품(같은 회차 안에서 다음 실행 때 제외하기 위함)</summary>
+         public List<Product> LastRegistered = new List<Product>();
+ 
+         /// <summary>브라우저를 계속 열어두고 재사용한다(예약 반복 실행 시 로그인 유지).</summary>
++        /// <param name="includeRegistered">true 이면 이미 등록된 상품도 목록 순서대로 다시 등록한다(중복 허용 / 2회차 이후 반복).</param>
+         public void Run(AppSettings cfg, SelectorSet sel, BindingList<Product> products,
+-                        Func<IList<Product>> snapshot, Action saveProducts)
++                        Func<IList<Product>> snapshot, Action saveProducts, bool includeRegistered)
+         {
+             Guard.Check();
+             lock (_gate)
+@@ -38,8 +42,6 @@
+             _bot.Ask = Ask;
+             _bot.NotifyManual = delegate (string m) { var h = ManualLoginNeeded; if (h != null) h(m); };
+ 
+-            string id = cfg.Id;
+-            string pw = Storage.Unprotect(cfg.PwProtected);
+             var bot = _bot;
+ 
+             _thread = new Thread(delegate ()
+@@ -48,44 +50,26 @@
+                 {
+                     Guard.Check();
+                     Log.Write("===== 작업 시작 =====");
+-                    if (!bot.EnsureLogin(id, pw)) { Log.Write("로그인에 실패해 작업을 중단합니다."); return; }
++                    if (!bot.EnsureLogin()) { Log.Write("로그인에 실패해 작업을 중단합니다."); return; }
+ 
+                     var list = snapshot();
+-                    int limit = Math.Max(1, cfg.MaxPerRun);
++                    int limit = BatchLimit;
+                     int regLimit = cfg.OneByOne ? 1 : limit;   // 1개씩 등록 모드면 한 번에 1개만
+                     int total = 0, done = 0;
+ 
+                     var toRegister = new List<Product>();
+-                    var toRepost = new List<Product>();
+                     if (cfg.DoRegister)
+-                        toRegister = (cfg.AllowDuplicate
++                        toRegister = (includeRegistered
+                             ? list.Where(p => p.IsValid)
+                             : list.Where(p => p.IsValid && string.IsNullOrEmpty(p.ProductId) && p.Status != "등록됨")).Take(regLimit).ToList();
+                     LastRegistered = new List<Product>(toRegister);
+-                    if (cfg.DoRepost)
+-                        toRepost = list.Where(p => p.IsValid && !string.IsNullOrEmpty(p.ProductId)).Take(limit).ToList();
+-                    total = toRegister.Count + toRepost.Count + (cfg.DoBump ? 1 : 0);
++                    total = toRegister.Count;
+                     Report(0, total);
+ 
+                     foreach (var p in toRegister)
+                     {
+                         p.Status = "진행중";
+                         bot.Register(p);
+-                        saveProducts();
+-                        Report(++done, total);
+-                        bot.HumanPause();
+-                    }
+-
+-                    if (cfg.DoBump)
+-                    {
+-                        bot.BumpAll(limit);
+-                        Report(++done, total);
+-                    }
+-
+-                    foreach (var p in toRepost)
+-                    {
+-                        p.Status = "재등록 중";
+-                        bot.Repost(p);
+                         saveProducts();
+                         Report(++done, total);
+                         bot.HumanPause();
+--- 3차/src/Schedule.cs
++++ 4차/src/Schedule.cs
+@@ -0,0 +1,139 @@
++using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++
++namespace BunjangAuto
++{
++    /// <summary>
++    /// 시간대 한 줄. "시작 ~ 종료 사이에는 Minutes 분마다 1개씩 등록".
++    /// 종료가 시작보다 이르면 자정을 넘기는 시간대(예: 22:00~06:00), 같으면 24시간 내내로 본다.
++    /// </summary>
++    public class TimeRule
++    {
++        public string Start { get; set; }
++        public string End { get; set; }
++        public int Minutes { get; set; }
++
++        public TimeRule() { Start = "00:00"; End = "09:00"; Minutes = 40; }
++        public TimeRule(string start, string end, int minutes) { Start = start; End = end; Minutes = minutes; }
++    }
++
++    /// <summary>검사가 끝난 시간대(분 단위).</summary>
++    public class TimeWindow
++    {
++        public int Start;     // 0 ~ 1439
++        public int End;       // 0 ~ 1440
++        public int Minutes;   // 등록 간격(분)
++
++        public bool Contains(double minuteOfDay)
++        {
++            if (Start == End) return true;                       // 24시간
++            if (Start < End) return minuteOfDay >= Start && minuteOfDay < End;
++            return minuteOfDay >= Start || minuteOfDay < End;    // 자정을 넘김
++        }
++
++        public override string ToString()
++        {
++            return Schedule.Format(Start) + "~" + Schedule.Format(End) + " " + Minutes + "분마다 1개";
++        }
++    }
++
++    public static class Schedule
++    {
++        /// <summary>"9", "9:30", "09:30", "24:00" 형태를 분으로 바꾼다.</summary>
++        public static bool TryParseTime(string s, out int minutes)
++        {
++            minutes = 0;
++            if (string.IsNullOrWhiteSpace(s)) return false;
++            s = s.Trim().Replace('：', ':').Replace('.', ':');
++            string[] parts = s.Split(':');
++            int h, m = 0;
++            if (parts.Length == 1)
++            {
++                if (!int.TryParse(parts[0], out h)) return false;
++            }
++            else if (parts.Length == 2)
++            {
++                if (!int.TryParse(parts[0], out h) || !int.TryParse(parts[1], out m)) return false;
++            }
++            else return false;
++            if (h < 0 || h > 24 || m < 0 || m > 59) return false;
++            if (h == 24 && m != 0) return false;
++            minutes = h * 60 + m;
++            return true;
++        }
++
++        public static string Format(int minutes)
++        {
++            return (minutes / 60).ToString("00") + ":" + (minutes % 60).ToString("00");
++        }
++
++        /// <summary>화면에서 입력한 시간대 목록을 검사해 계산용 목록으로 바꾼다. 문제가 있으면 false 와 안내 문구.</summary>
++        public static bool TryBuild(IList<TimeRule> rules, out List<TimeWindow> wins, out string error)
++        {
++            wins = new List<TimeWindow>();
++            error = null;
++            if (rules == null || rules.Count == 0)
++            {
++                error = "시간대가 하나도 없습니다. [시간대 추가]를 눌러 시간대를 넣어 주세요.";
++                return false;
++            }
++            for (int i = 0; i < rules.Count; i++)
++            {
++                var r = rules[i];
++                string no = (i + 1) + "번째 시간대: ";
++                int s, e;
++                if (!TryParseTime(r.Start, out s) || s >= 1440)
++                { error = no + "시작 시각을 'HH:mm' 형태로 넣어 주세요. (예: 00:00)"; return false; }
++                if (!TryParseTime(r.End, out e))
++                { error = no + "종료 시각을 'HH:mm' 형태로 넣어 주세요. (예: 09:00, 하루 끝은 24:00)"; return false; }
++                if (r.Minutes < 1 || r.Minutes > 1440)
++                { error = no + "간격은 1~1440분 사이로 넣어 주세요."; return false; }
++                wins.Add(new TimeWindow { Start = s, End = e, Minutes = r.Minutes });
++            }
++            return true;
++        }
++
++        public static TimeWindow ActiveAt(IList<TimeWindow> wins, DateTime t)
++        {
++            double m = t.TimeOfDay.TotalMinutes;
++            foreach (var w in wins) if (w.Contains(m)) return w;
++            return null;
++        }
++
++        /// <summary>t 가 어떤 시간대 안이면 t, 아니면 그 이후 가장 가까운 시간대 시작 시각.</summary>
++        public static DateTime NextAllowed(IList<TimeWindow> wins, DateTime t)
++        {
++            if (ActiveAt(wins, t) != null) return t;
++            DateTime best = DateTime.MaxValue;
++            foreach (var w in wins)
++            {
++                for (int d = 0; d <= 1; d++)
++                {
++                    DateTime s = t.Date.AddDays(d).AddMinutes(w.Start);
++                    if (s >= t && s < best) best = s;
++                }
++            }
++            return best;
++        }
++
++        /// <summary>
++        /// 직전 등록을 시작한 시각(lastStart)을 기준으로 다음 등록 시각을 구한다.
++        /// 직전 시각이 속한 시간대의 간격만큼 뒤로 잡고, 그 시각이 시간대 밖이면 다음 시간대가 시작될 때까지 기다린다.
++        /// </summary>
++        public static DateTime NextRun(IList<TimeWindow> wins, DateTime lastStart, DateTime now, int fallbackMinutes)
++        {
++            var w = ActiveAt(wins, lastStart);
++            int gap = w != null ? w.Minutes : fallbackMinutes;
++            DateTime cand = NextAllowed(wins, lastStart.AddMinutes(gap));
++            if (cand < now) cand = NextAllowed(wins, now);
++            return cand;
++        }
++
++        public static string Describe(IList<TimeWindow> wins)
++        {
++            return string.Join(" / ", wins.Select(w => w.ToString()).ToArray());
++        }
++    }
++}
+--- 3차/src/Selectors.cs
++++ 4차/src/Selectors.cs
+@@ -56,10 +56,6 @@
+         public string RowXPath = "//*[@role='row'][.//input[@type='checkbox' and not(@id='header-checkbox')]]";
+         public string RowLinkXPath = ".//a[contains(@href,'/products/')]";
+         public string RowTitleXPath = ".//a[contains(@href,'/products/')]/span";
+-        public string RowBumpXPath = ".//button[normalize-space(.)='UP하기' and not(@disabled)]";
+-        /// <summary>{0} = 상품번호. 행의 체크박스는 input id 가 상품번호이고 화면에는 label 로 보인다.</summary>
+-        public string RowCheckXPath = "//label[@for='{0}']";
+-        public string BulkDeleteXPath = "//button[.//span[normalize-space(.)='상품삭제'] and not(@disabled)]";
+         public string DialogConfirmXPath = "//button[normalize-space(.)='삭제' or normalize-space(.)='확인' or normalize-space(.)='끌어올리기']";
+         public string NextPageXPath = "//button[@aria-label='다음 페이지' and not(@disabled)]";
+ 
+--- 3차/src/SelfTest.cs
++++ 4차/src/SelfTest.cs
+@@ -2,6 +2,7 @@
+ using System.Collections.Generic;
+ using System.IO;
+ using System.Linq;
++using System.Text;
+ using OpenQA.Selenium;
+ using OpenQA.Selenium.Chrome;
+ 
+@@ -73,6 +74,75 @@
+             }
+             catch (Exception ex) { Check("CP949: " + ex.Message, false); }
+ 
++            // 2c) 여러 인코딩·구분자의 CSV 가 글자 깨짐 없이 읽히는지
++            try
++            {
++                string dir2 = Path.Combine(Path.GetTempPath(), "bj_enc_" + Guid.NewGuid().ToString("N"));
++                Directory.CreateDirectory(dir2);
++                Func<string, string, string> make = (delim, title) =>
++                    string.Join(delim, new string[] { "제목", "가격", "카테고리 (대>중>소)", "상태", "수량", "태그", "사진 경로(여러 장)", "상품설명", "배송비포함" }) + "\r\n" +
++                    string.Join(delim, new string[] { title, "\"₩1,050,000원\"", "디지털>휴대폰>애플", "새상품", "2", "\"a,b\"", "\"p1.jpg;p2.jpg\"", "\"첫째 줄\r\n둘째 줄\"", "Y" }) + "\r\n";
++                Func<string, Product, bool> okProduct = (label, p) =>
++                    p != null && p.Title.StartsWith("테스트") && p.Price == "1050000" && p.Quantity == "2" && p.Category == "디지털>휴대폰>애플" &&
++                    p.Description == "첫째 줄\n둘째 줄" && p.FreeShipping && p.Images.Split(';').Length == 2 && p.Tags == "a,b";
++
++                string uni = make(",", "테스트 상품 😀 가나다");
++                string kr = make(",", "테스트 상품 가나다").Replace("₩", "");   // CP949 에는 ₩ 기호가 없다
++                var cases = new List<KeyValuePair<string, byte[]>>();
++                Func<Encoding, string, bool, byte[]> enc = (e, t, bom) =>
++                {
++                    byte[] body = e.GetBytes(t);
++                    if (!bom) return body;
++                    byte[] pre = e.GetPreamble();
++                    byte[] all = new byte[pre.Length + body.Length];
++                    Buffer.BlockCopy(pre, 0, all, 0, pre.Length);
++                    Buffer.BlockCopy(body, 0, all, pre.Length, body.Length);
++                    return all;
++                };
++                cases.Add(new KeyValuePair<string, byte[]>("UTF-8 BOM", enc(new UTF8Encoding(true), uni, true)));
++                cases.Add(new KeyValuePair<string, byte[]>("UTF-8 BOM 없음", enc(new UTF8Encoding(false), uni, false)));
++                cases.Add(new KeyValuePair<string, byte[]>("UTF-16 LE BOM", enc(new UnicodeEncoding(false, true), uni, true)));
++                cases.Add(new KeyValuePair<string, byte[]>("UTF-16 LE BOM 없음", enc(new UnicodeEncoding(false, false), uni, false)));
++                cases.Add(new KeyValuePair<string, byte[]>("UTF-16 BE BOM", enc(new UnicodeEncoding(true, true), uni, true)));
++                cases.Add(new KeyValuePair<string, byte[]>("UTF-16 BE BOM 없음", enc(new UnicodeEncoding(true, false), uni, false)));
++                cases.Add(new KeyValuePair<string, byte[]>("UTF-32 BOM", enc(new UTF32Encoding(false, true), uni, true)));
++                cases.Add(new KeyValuePair<string, byte[]>("CP949(엑셀 기본 CSV)", Encoding.GetEncoding(949).GetBytes(kr)));
++                cases.Add(new KeyValuePair<string, byte[]>("탭 구분 UTF-16(엑셀 유니코드 텍스트)", enc(new UnicodeEncoding(false, true), make("\t", "테스트 상품"), true)));
++                cases.Add(new KeyValuePair<string, byte[]>("세미콜론 구분 CP949", Encoding.GetEncoding(949).GetBytes(make(";", "테스트 상품").Replace("₩", ""))));
++                foreach (var c in cases)
++                {
++                    string fp = Path.Combine(dir2, "c.csv");
++                    File.WriteAllBytes(fp, c.Value);
++                    List<Product> got = null; string why = "";
++                    try { got = CsvIO.Read(fp); } catch (Exception ex) { why = ex.Message; }
++                    Check("CSV 인코딩: " + c.Key + why, got != null && got.Count == 1 && okProduct(c.Key, got[0]) &&
++                        (!c.Key.StartsWith("UTF-") || got[0].Title.Contains("😀") || c.Key.Contains("UTF-32") && got[0].Title.Contains("😀")));
++                }
++
++                // 엑셀 등에서 파일을 열어 둔 상태에서도 읽히는지
++                string lockedPath = Path.Combine(dir2, "locked.csv");
++                File.WriteAllBytes(lockedPath, enc(new UTF8Encoding(true), uni, true));
++                using (var hold = new FileStream(lockedPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
++                {
++                    var lockedRead = CsvIO.Read(lockedPath);
++                    Check("CSV 다른 프로그램이 열어 둔 파일 읽기", lockedRead.Count == 1);
++                }
++
++                // 머리글에 '제목'이 없으면 안내 문구와 함께 실패해야 한다
++                string badPath = Path.Combine(dir2, "bad.csv");
++                File.WriteAllText(badPath, "foo,bar\r\n1,2\r\n", new UTF8Encoding(true));
++                bool threw = false; try { CsvIO.Read(badPath); } catch (InvalidDataException) { threw = true; }
++                Check("CSV 머리글 없으면 안내 오류", threw);
++
++                // 영문 머리글 / 순서 바뀐 머리글
++                string altPath = Path.Combine(dir2, "alt.csv");
++                File.WriteAllText(altPath, "price,title,qty\r\n\"10,000\",영문 머리글 상품,\r\n", new UTF8Encoding(true));
++                var alt = CsvIO.Read(altPath);
++                Check("CSV 영문·순서 다른 머리글", alt.Count == 1 && alt[0].Title == "영문 머리글 상품" && alt[0].Price == "10000" && alt[0].Quantity == "1");
++                Directory.Delete(dir2, true);
++            }
++            catch (Exception ex) { Check("CSV 인코딩 시험: " + ex.GetType().Name + " " + ex.Message, false); }
++
+             // 3) XPath 템플릿 채우기
+             Check("XPath 값 채우기(일반)", SelectorSet.Fill("//a[text()='{0}']", "티셔츠") == "//a[text()='티셔츠']");
+             Check("XPath 값 채우기(작은따옴표)", SelectorSet.Fill("//a[text()='{0}']", "Levi's") == "//a[text()=\"Levi's\"]");
+@@ -87,6 +157,53 @@
+                 Check("selectors JSON 왕복", s2.TitleXPath == s.TitleXPath && s2.NewProductUrl == s.NewProductUrl);
+             }
+             catch (Exception ex) { Check("selectors JSON: " + ex.Message, false); }
++
++            // 5) 시간대별 등록 간격 계산
++            try
++            {
++                int m;
++                Check("시간 해석 09:30 / 24:00 / 잘못된 값", Schedule.TryParseTime("09:30", out m) && m == 570 && Schedule.TryParseTime("24:00", out m) && m == 1440 && !Schedule.TryParseTime("25:00", out m) && !Schedule.TryParseTime("ab", out m));
++
++                List<TimeWindow> w; string err;
++                var rules = new List<TimeRule> { new TimeRule("00:00", "09:00", 40), new TimeRule("09:00", "18:00", 60) };
++                Check("시간대 검사(정상)", Schedule.TryBuild(rules, out w, out err) && w.Count == 2);
++                Check("시간대 검사(빈 목록/잘못된 값 거부)",
++                    !Schedule.TryBuild(new List<TimeRule>(), out w, out err) &&
++                    !Schedule.TryBuild(new List<TimeRule> { new TimeRule("aa", "09:00", 40) }, out w, out err) &&
++                    !Schedule.TryBuild(new List<TimeRule> { new TimeRule("00:00", "09:00", 0) }, out w, out err));
++                Schedule.TryBuild(rules, out w, out err);
++
++                var d = new DateTime(2026, 10, 7);
++                Check("00~09시는 40분 간격", Schedule.NextRun(w, d.AddHours(0), d, 20) == d.AddMinutes(40));
++                Check("09~18시는 60분 간격", Schedule.NextRun(w, d.AddHours(10), d.AddHours(10), 20) == d.AddHours(11));
++                Check("시간대 경계를 넘어가도 다음 시간대 간격 적용", Schedule.NextRun(w, d.AddHours(8).AddMinutes(30), d.AddHours(8).AddMinutes(30), 20) == d.AddHours(9).AddMinutes(10));
++                Check("마지막 시간대 이후엔 다음날 첫 시간대 시작까지 대기", Schedule.NextRun(w, d.AddHours(17).AddMinutes(30), d.AddHours(17).AddMinutes(30), 20) == d.AddDays(1));
++                Check("작업이 오래 걸려 늦으면 즉시", Schedule.NextRun(w, d.AddHours(10), d.AddHours(12), 20) == d.AddHours(12));
++
++                var only = new List<TimeWindow> { new TimeWindow { Start = 0, End = 540, Minutes = 40 } };
++                Check("시간대 밖에서 시작하면 다음 시작 시각까지 대기(다음날)", Schedule.NextAllowed(only, d.AddHours(12)) == d.AddDays(1));
++                Check("시간대 밖(새벽 전)에서 시작하면 당일 시작 시각", Schedule.NextAllowed(new List<TimeWindow> { new TimeWindow { Start = 600, End = 720, Minutes = 30 } }, d.AddHours(8)) == d.AddHours(10));
++
++                var night = new TimeWindow { Start = 22 * 60, End = 6 * 60, Minutes = 30 };
++                Check("자정을 넘는 시간대(22~06)", night.Contains(23 * 60) && night.Contains(3 * 60) && !night.Contains(12 * 60));
++                Check("시작=종료는 24시간", new TimeWindow { Start = 0, End = 0, Minutes = 10 }.Contains(777));
++            }
++            catch (Exception ex) { Check("시간대 계산: " + ex.Message, false); }
++
++            // 6) 설정 저장·읽기 (시간대가 중복으로 늘어나지 않는지, 예전 설정 파일의 지운 항목이 있어도 읽히는지)
++            try
++            {
++                var c = new AppSettings();
++                c.UseTimeRules = true; c.RepeatAll = true; c.RepeatCount = 3;
++                c.TimeRules.Add(new TimeRule("00:00", "09:00", 40));
++                c.TimeRules.Add(new TimeRule("09:00", "18:00", 60));
++                string js = Newtonsoft.Json.JsonConvert.SerializeObject(c);
++                var c2 = Newtonsoft.Json.JsonConvert.DeserializeObject<AppSettings>(js);
++                Check("설정 왕복(시간대 2개 유지)", c2.TimeRules.Count == 2 && c2.TimeRules[1].Minutes == 60 && c2.RepeatCount == 3 && c2.UseTimeRules);
++                var old = Newtonsoft.Json.JsonConvert.DeserializeObject<AppSettings>("{\"DoBump\":true,\"DoRepost\":true,\"Repeat\":true,\"IntervalMinutes\":60,\"OneByOneMinutes\":25}");
++                Check("예전 설정 파일 읽기(끌올/재등록 항목 무시)", old != null && old.OneByOneMinutes == 25 && !old.RepeatAll);
++            }
++            catch (Exception ex) { Check("설정 왕복: " + ex.Message, false); }
+ 
+             Console.WriteLine(_fail == 0 ? "ALL PASSED" : (_fail + " FAILED"));
+             return _fail == 0 ? 0 : 1;
+--- 3차/src/Storage.cs
++++ 4차/src/Storage.cs
+@@ -2,6 +2,7 @@
+ using System.Collections.Generic;
+ using System.ComponentModel;
+ using System.IO;
++using System.Linq;
+ using System.Security.Cryptography;
+ using System.Text;
+ using Newtonsoft.Json;
+@@ -31,29 +32,6 @@
+             File.WriteAllText(Paths.Settings, JsonConvert.SerializeObject(s, Formatting.Indented), Encoding.UTF8);
+         }
+ 
+-        // ---------- 비밀번호 보호 (Windows DPAPI: 이 PC, 이 사용자에서만 복호화 가능) ----------
+-        public static string Protect(string plain)
+-        {
+-            if (string.IsNullOrEmpty(plain)) return "";
+-            try
+-            {
+-                byte[] enc = ProtectedData.Protect(Encoding.UTF8.GetBytes(plain), null, DataProtectionScope.CurrentUser);
+-                return Convert.ToBase64String(enc);
+-            }
+-            catch { return ""; }
+-        }
+-
+-        public static string Unprotect(string b64)
+-        {
+-            if (string.IsNullOrEmpty(b64)) return "";
+-            try
+-            {
+-                byte[] dec = ProtectedData.Unprotect(Convert.FromBase64String(b64), null, DataProtectionScope.CurrentUser);
+-                return Encoding.UTF8.GetString(dec);
+-            }
+-            catch { return ""; }
+-        }
+-
+         // ---------- 상품 목록 자동 저장/복원 ----------
+         public static BindingList<Product> LoadProducts()
+         {
+@@ -83,7 +61,10 @@
+         }
+     }
+ 
+-    /// <summary>엑셀에서 열 수 있는 CSV(UTF-8 BOM) 읽기/쓰기. 따옴표, 줄바꿈 포함 필드를 지원한다.</summary>
++    /// <summary>
++    /// 엑셀·구글시트·메모장 등 어디서 저장한 CSV 든 글자가 깨지지 않게 읽고,
++    /// 엑셀에서 바로 열리는 CSV(UTF-8 BOM)로 저장한다. 따옴표, 줄바꿈 포함 필드를 지원한다.
++    /// </summary>
+     public static class CsvIO
+     {
+         public static readonly string[] Headers = new string[]
+@@ -91,17 +72,42 @@
+             "제목", "가격", "카테고리", "상태", "수량", "태그", "이미지", "설명", "배송비포함"
+         };
+ 
++        // 머리글 이름이 조금 달라도(상품명/판매가/영문 등) 같은 열로 인식한다.
++        private static readonly Dictionary<string, string[]> Aliases = new Dictionary<string, string[]>
++        {
++            { "제목",      new string[] { "제목", "상품명", "상품제목", "이름", "title", "name", "productname" } },
++            { "가격",      new string[] { "가격", "판매가", "판매가격", "금액", "price" } },
++            { "카테고리",  new string[] { "카테고리", "카테고리명", "분류", "category" } },
++            { "상태",      new string[] { "상태", "상품상태", "condition" } },
++            { "수량",      new string[] { "수량", "재고", "재고수량", "quantity", "qty" } },
++            { "태그",      new string[] { "태그", "키워드", "해시태그", "tags", "tag" } },
++            { "이미지",    new string[] { "이미지", "이미지경로", "사진", "사진경로", "images", "image", "photo", "photos" } },
++            { "설명",      new string[] { "설명", "상품설명", "내용", "본문", "description", "desc" } },
++            { "배송비포함", new string[] { "배송비포함", "배송비", "택배비포함", "무료배송", "shipping", "freeshipping" } }
++        };
++
+         public static List<Product> Read(string path)
+         {
+             string text = ReadAllTextAuto(path);
+-            var rows = Parse(text);
++            var rows = Parse(text, DetectDelimiter(text));
+             var result = new List<Product>();
+             if (rows.Count == 0) return result;
+ 
+-            // 헤더 이름으로 열 위치를 찾는다(순서가 달라도 OK)
++            // 머리글 이름으로 열 위치를 찾는다(순서가 달라도 OK)
+             var head = rows[0];
+             var idx = new Dictionary<string, int>();
+-            for (int i = 0; i < head.Count; i++) idx[head[i].Trim()] = i;
++            foreach (var kv in Aliases)
++            {
++                for (int i = 0; i < head.Count; i++)
++                {
++                    string h = NormHeader(head[i]);
++                    if (Array.IndexOf(kv.Value, h) >= 0) { idx[kv.Key] = i; break; }
++                }
++            }
++            if (!idx.ContainsKey("제목"))
++                throw new InvalidDataException("CSV 첫 줄(머리글)에서 '제목' 열을 찾지 못했습니다.\r\n" +
++                    "양식(CSV 양식 만들기)과 같은 머리글인지 확인해 주세요.\r\n" +
++                    "글자가 깨져 보인다면 엑셀에서 'CSV UTF-8(쉼표로 분리)'로 다시 저장해 주세요.");
+             Func<List<string>, string, string> get = (r, name) =>
+             {
+                 int k;
+@@ -113,27 +119,27 @@
+             for (int i = 1; i < rows.Count; i++)
+             {
+                 var r = rows[i];
+-                if (r.Count == 0 || (r.Count == 1 && string.IsNullOrWhiteSpace(r[0]))) continue;
++                if (r.Count == 0 || r.All(x => string.IsNullOrWhiteSpace(x))) continue;
+                 var p = new Product();
+-                p.Title = get(r, "제목").Trim();
+-                p.Price = get(r, "가격").Replace(",", "").Replace("원", "").Trim();
+-                p.Category = get(r, "카테고리").Trim();
+-                string cond = get(r, "상태").Trim();
+-                p.Condition = cond;
+-                string qty = get(r, "수량").Trim();
++                p.Title = Clean(get(r, "제목")).Trim();
++                p.Price = CleanNumber(get(r, "가격"));
++                p.Category = Clean(get(r, "카테고리")).Trim();
++                p.Condition = Clean(get(r, "상태")).Trim();
++                string qty = CleanNumber(get(r, "수량"));
+                 p.Quantity = qty.Length > 0 ? qty : "1";
+-                p.Tags = get(r, "태그").Trim();
+-                p.Description = get(r, "설명");
+-                string ship = get(r, "배송비포함").Trim().ToUpperInvariant();
+-                p.FreeShipping = ship == "Y" || ship == "O" || ship == "TRUE" || ship == "1" || ship == "예";
++                p.Tags = Clean(get(r, "태그")).Trim();
++                p.Description = Clean(get(r, "설명")).Replace("\r\n", "\n").Replace('\r', '\n');
++                string ship = Clean(get(r, "배송비포함")).Trim().ToUpperInvariant();
++                p.FreeShipping = ship == "Y" || ship == "O" || ship == "TRUE" || ship == "1" || ship == "예" || ship == "포함";
+ 
+                 // 이미지 경로는 CSV 파일 위치 기준 상대경로도 허용
+                 var imgs = new List<string>();
+-                foreach (var part in get(r, "이미지").Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries))
++                foreach (var part in Clean(get(r, "이미지")).Split(new char[] { ';', '|', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
+                 {
+                     string t = part.Trim().Trim('"');
+                     if (t.Length == 0) continue;
+-                    imgs.Add(Path.IsPathRooted(t) ? t : Path.GetFullPath(Path.Combine(baseDir, t)));
++                    try { imgs.Add(Path.IsPathRooted(t) ? t : Path.GetFullPath(Path.Combine(baseDir, t))); }
++                    catch { imgs.Add(t); }
+                 }
+                 p.Images = string.Join(";", imgs.ToArray());
+                 result.Add(p);
+@@ -141,34 +147,125 @@
+             return result;
+         }
+ 
++        /// <summary>눈에 안 보이는 글자(BOM, 폭 없는 공백, 줄바꿈 아닌 NUL 등)를 없앤다.</summary>
++        private static string Clean(string s)
++        {
++            if (string.IsNullOrEmpty(s)) return "";
++            return s.Replace("\uFEFF", "").Replace("\u200B", "").Replace("\0", "");
++        }
++
++        private static string NormHeader(string h)
++        {
++            h = Clean(h).Trim().Trim('"');
++            h = System.Text.RegularExpressions.Regex.Replace(h, @"[\(（\[].*?[\)）\]]", "");   // "카테고리 (대>중>소)" → "카테고리"
++            h = System.Text.RegularExpressions.Regex.Replace(h, @"\s+", "");
++            return h.ToLowerInvariant();
++        }
++
++        /// <summary>"₩1,050,000원", "1.050.000", "1050000.0" 처럼 적혀 있어도 숫자만 남긴다.</summary>
++        private static string CleanNumber(string s)
++        {
++            s = Clean(s).Trim();
++            if (s.Length == 0) return "";
++            string t = s.Replace(",", "").Replace("원", "").Replace("₩", "").Replace("￦", "").Replace("\\", "").Replace(" ", "").Replace("\u00A0", "");
++            if (System.Text.RegularExpressions.Regex.IsMatch(t, @"^\d{1,3}(\.\d{3})+$")) t = t.Replace(".", "");   // 1.050.000
++            var m = System.Text.RegularExpressions.Regex.Match(t, @"^(\d+)(\.0+)?$");                                   // 1050000.0
++            return m.Success ? m.Groups[1].Value : s;
++        }
++
+         /// <summary>
+-        /// 엑셀 'CSV(쉼표로 분리)'는 CP949, 'CSV UTF-8'은 UTF-8 이라 둘 다 읽을 수 있게 인코딩을 자동 판별한다.
++        /// 파일을 읽어 인코딩을 자동 판별한다.
++        /// UTF-8(BOM 있음/없음), UTF-16·UTF-32(엑셀 '유니코드 텍스트'), CP949/EUC-KR(엑셀 기본 'CSV') 모두 지원.
++        /// 엑셀에서 열어 둔 파일도 읽을 수 있게 공유 읽기로 연다.
+         /// </summary>
+         public static string ReadAllTextAuto(string path)
+         {
+-            byte[] b = File.ReadAllBytes(path);
++            byte[] b;
++            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
++            using (var ms = new MemoryStream())
++            {
++                fs.CopyTo(ms);
++                b = ms.ToArray();
++            }
++            return DecodeAuto(b);
++        }
++
++        public static string DecodeAuto(byte[] b)
++        {
++            if (b == null || b.Length == 0) return "";
++            string text = DecodeCore(b);
++            return text.Length > 0 && text[0] == '\uFEFF' ? text.Substring(1) : text;
++        }
++
++        private static string DecodeCore(byte[] b)
++        {
++            // 1) BOM 이 있으면 그대로 따른다
++            if (b.Length >= 4 && b[0] == 0xFF && b[1] == 0xFE && b[2] == 0 && b[3] == 0) return new UTF32Encoding(false, false).GetString(b, 4, b.Length - 4);
++            if (b.Length >= 4 && b[0] == 0 && b[1] == 0 && b[2] == 0xFE && b[3] == 0xFF) return new UTF32Encoding(true, false).GetString(b, 4, b.Length - 4);
+             if (b.Length >= 3 && b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF) return Encoding.UTF8.GetString(b, 3, b.Length - 3);
+             if (b.Length >= 2 && b[0] == 0xFF && b[1] == 0xFE) return Encoding.Unicode.GetString(b, 2, b.Length - 2);
+             if (b.Length >= 2 && b[0] == 0xFE && b[1] == 0xFF) return Encoding.BigEndianUnicode.GetString(b, 2, b.Length - 2);
+-            try { return new UTF8Encoding(false, true).GetString(b); }   // 올바른 UTF-8 이면 그대로
++
++            // 2) BOM 없는 UTF-16: 쉼표·줄바꿈 같은 영문 글자 옆에 0x00 이 규칙적으로 나온다
++            int n = Math.Min(b.Length, 4000), zeroEven = 0, zeroOdd = 0;
++            for (int i = 0; i < n; i++) if (b[i] == 0) { if (i % 2 == 0) zeroEven++; else zeroOdd++; }
++            if (zeroEven + zeroOdd > n / 10)
++                return (zeroOdd >= zeroEven ? Encoding.Unicode : Encoding.BigEndianUnicode).GetString(b);
++
++            // 3) 올바른 UTF-8 이면 UTF-8
++            try { return new UTF8Encoding(false, true).GetString(b); }
+             catch (DecoderFallbackException) { }
+-            try { return Encoding.GetEncoding(949).GetString(b); }        // 아니면 한국어 Windows(CP949)
+-            catch { return Encoding.Default.GetString(b); }
++
++            // 4) 아니면 한국어 Windows(CP949 / EUC-KR). 일부 글자가 안 읽히는 파일이면 깨진 글자가 더 적은 쪽을 고른다
++            string kr = null;
++            try { kr = Encoding.GetEncoding(949).GetString(b); } catch { }
++            string u8 = Encoding.UTF8.GetString(b);
++            if (kr == null) return u8;
++            return CountBad(kr) <= CountBad(u8) ? kr : u8;
++        }
++
++        private static int CountBad(string s)
++        {
++            int c = 0;
++            foreach (char ch in s) if (ch == '\uFFFD') c++;
++            return c;
++        }
++
++        /// <summary>첫 줄에서 쉼표 / 탭 / 세미콜론 중 가장 많이 쓰인 구분 글자를 고른다.</summary>
++        private static char DetectDelimiter(string text)
++        {
++            int comma = 0, tab = 0, semi = 0;
++            bool inQ = false;
++            for (int i = 0; i < text.Length; i++)
++            {
++                char c = text[i];
++                if (c == '"') inQ = !inQ;
++                else if (!inQ)
++                {
++                    if (c == '\n' || c == '\r') break;
++                    if (c == ',') comma++;
++                    else if (c == '\t') tab++;
++                    else if (c == ';') semi++;
++                }
++            }
++            if (tab > comma && tab >= semi) return '\t';
++            if (semi > comma && semi > tab) return ';';
++            return ',';
+         }
+ 
+         public static void Write(string path, IEnumerable<Product> items)
+         {
+             var sb = new StringBuilder();
+-            sb.AppendLine(string.Join(",", Headers));
++            sb.Append(string.Join(",", Headers)).Append("\r\n");
+             foreach (var p in items)
+             {
+-                sb.AppendLine(string.Join(",", new string[]
++                sb.Append(string.Join(",", new string[]
+                 {
+                     Q(p.Title), Q(p.Price), Q(p.Category), Q(p.Condition), Q(p.Quantity),
+                     Q(p.Tags), Q(p.Images), Q(p.Description), p.FreeShipping ? "Y" : "N"
+-                }));
+-            }
+-            File.WriteAllText(path, sb.ToString(), new UTF8Encoding(true));
++                })).Append("\r\n");
++            }
++            File.WriteAllText(path, sb.ToString(), new UTF8Encoding(true));   // 엑셀이 한글을 바로 인식하는 UTF-8 BOM
+         }
+ 
+         public static void WriteTemplate(string path)
+@@ -196,7 +293,7 @@
+             return s;
+         }
+ 
+-        private static List<List<string>> Parse(string text)
++        private static List<List<string>> Parse(string text, char delim)
+         {
+             var rows = new List<List<string>>();
+             var row = new List<string>();
+@@ -217,7 +314,7 @@
+                 else
+                 {
+                     if (c == '"') inQ = true;
+-                    else if (c == ',') { row.Add(cur.ToString()); cur.Length = 0; }
++                    else if (c == delim) { row.Add(cur.ToString()); cur.Length = 0; }
+                     else if (c == '\r') { }
+                     else if (c == '\n') { row.Add(cur.ToString()); cur.Length = 0; rows.Add(row); row = new List<string>(); }
+                     else cur.Append(c);

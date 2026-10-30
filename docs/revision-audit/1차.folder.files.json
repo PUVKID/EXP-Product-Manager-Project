@@ -1,0 +1,15 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 177,
+    "sha256": "c3a5b8a61052538f18de2be83df41f9d52ab77f0340880b3c402aba44cd53a31",
+    "text_bytes": {
+      "utf8_bom_count": 0,
+      "crlf_count": 0,
+      "lf_without_cr_count": 5,
+      "cr_without_lf_count": 0,
+      "ends_with_newline": true,
+      "empty_file": false
+    }
+  }
+]

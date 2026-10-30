@@ -1,0 +1,2 @@
+Build completed: Reset -> C:\Users\PUVKID\Desktop\번장\작업파일\최종_배포검증\source\dist
+warning CS1685: �̸� ���ǵ� ���� 'System.ObsoleteAttribute'��(��) ���� ��Ī�� ���� ��������� ���ǵǾ����ϴ�. 'c:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorlib.dll'�� ���Ǹ� ����մϴ�.

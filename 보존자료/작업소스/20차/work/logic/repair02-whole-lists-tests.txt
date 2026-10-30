@@ -1,0 +1,13 @@
+PASS 회차 종료 응답
+목록 진단 {"count":0,"attempts":0,"running":false,"active":false,"notice":"등록할 유효한 상품이 없어 전체 목록 반복을 종료했습니다.","blockedReason":"","nextRun":"0001-01-01T00:00:00.0000000","lastRegistered":0,"success":0,"failure":0,"edition":"Pro","quota":"오늘 0 / 100개  ·  추가 등록권 0개","fixtureRoot":"C:\\Users\\PUVKID\\AppData\\Local\\Temp\\Lumivolt-tests-83764","ledgerFile":true,"registry":"Software\\EXP\\Tests\\83764"}
+PASS 0개 전체 목록 첫 회차 기존 상품 포함
+PASS 0개 회차 상태
+PASS 회차 종료 응답
+목록 진단 {"count":31,"attempts":31,"running":false,"active":true,"notice":"","blockedReason":"","nextRun":"2026-10-26T16:02:00.0000000","lastRegistered":31,"success":31,"failure":0,"edition":"Pro","quota":"오늘 31 / 100개  ·  추가 등록권 0개","fixtureRoot":"C:\\Users\\PUVKID\\AppData\\Local\\Temp\\Lumivolt-tests-83764","ledgerFile":true,"registry":"Software\\EXP\\Tests\\83764"}
+PASS 31개 전체 목록 첫 회차 기존 상품 포함
+PASS 31개 회차 상태
+PASS 회차 종료 응답
+목록 진단 {"count":65,"attempts":65,"running":false,"active":true,"notice":"","blockedReason":"","nextRun":"2026-10-26T16:02:00.0000000","lastRegistered":65,"success":65,"failure":0,"edition":"Pro","quota":"오늘 65 / 100개  ·  추가 등록권 0개","fixtureRoot":"C:\\Users\\PUVKID\\AppData\\Local\\Temp\\Lumivolt-tests-83764","ledgerFile":true,"registry":"Software\\EXP\\Tests\\83764"}
+PASS 65개 전체 목록 첫 회차 기존 상품 포함
+PASS 65개 회차 상태
+BATCH: 9 passed, 0 failed

@@ -1,0 +1,17 @@
+{
+  "role": "build",
+  "new_observation": "도구skillcatalog의실제0.1.56경로확인",
+  "effort": "medium",
+  "cause": "build담당이ProductDesign audit스킬버전경로를1.0.56으로오기",
+  "before_argv": [
+    "Get-Content",
+    "product-design/1.0.56/skills/audit/SKILL.md"
+  ],
+  "after_argv": [
+    "Get-Content",
+    "product-design/0.1.56/skills/audit/SKILL.md"
+  ],
+  "method": "카탈로그에있는정확한SKILL.md로읽기보정",
+  "model": "gpt-6.1-sol",
+  "selection_reason": "입력경로오기이며제품코드/기대값변경없음,같은담당이근거기반보정"
+}

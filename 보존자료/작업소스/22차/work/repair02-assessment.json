@@ -1,0 +1,9 @@
+{
+  "new_observation": "동일WriteThrough/Flush/Replace 300회두조건D작업폴더PASS,Temp는index121/52실패.지연5ms로도재현되어무작정대기추가로해결안됨",
+  "selection_reason": "새IO재현으로검사환경경로문제확인.보안모듈수리없이TESTBUILD fixture만build담당범위로변경",
+  "role": "build",
+  "cause": "Temp경로에서제품과무관한직접File.Replace도Win32 1175로실패",
+  "effort": "medium",
+  "method": "격리Batch검사ledger저장만명시적프로젝트work/PID로이동하고정확한삭제대상guard유지.실제UsageQuota와모든기대값보존",
+  "model": "gpt-6.1-sol"
+}

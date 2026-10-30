@@ -1,0 +1,549 @@
+--- 18차/admin/AssemblyInfo.cs
++++ 19차/admin/AssemblyInfo.cs
+@@ -2,8 +2,8 @@
+ [assembly: AssemblyTitle("EXP Master")]
+ [assembly: AssemblyProduct("EXP Master")]
+ [assembly: AssemblyDescription("EXP 오프라인 라이선스 및 추가 등록권 발급")]
+-[assembly: AssemblyVersion("2.3.0.0")]
+-[assembly: AssemblyFileVersion("2.3.0.0")]
++[assembly: AssemblyVersion("2.3.1.0")]
++[assembly: AssemblyFileVersion("2.3.1.0")]
+ 
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+--- 18차/installer/EXP.iss
++++ 19차/installer/EXP.iss
+@@ -1,4 +1,4 @@
+-#define AppVersion "2.3.0"
++#define AppVersion "2.3.1"
+ [Setup]
+ AppId={{BBD63563-5422-4DA7-93C6-2F0D98E87E3F}
+ AppName={code:ProductName}
+@@ -21,7 +21,7 @@
+ CloseApplications=no
+ RestartApplications=no
+ AppMutex=BunjangAuto_SingleInstance
+-VersionInfoVersion=2.3.0.0
++VersionInfoVersion=2.3.1.0
+ VersionInfoCompany=EXPMASTER
+ VersionInfoDescription=EXP 통합 설치 프로그램
+ VersionInfoProductName=EXP
+--- 18차/src/AssemblyInfo.cs
++++ 19차/src/AssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyProduct("EXP")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+-[assembly: AssemblyVersion("2.3.0.0")]
+-[assembly: AssemblyFileVersion("2.3.0.0")]
+-[assembly: AssemblyInformationalVersion("2.3.0")]
++[assembly: AssemblyVersion("2.3.1.0")]
++[assembly: AssemblyFileVersion("2.3.1.0")]
++[assembly: AssemblyInformationalVersion("2.3.1")]
+--- 18차/src/Brand.cs
++++ 19차/src/Brand.cs
+@@ -4,7 +4,7 @@
+     {
+         public const string Name = "EXP";
+         public const string Master = "EXP Master";
+-        public const string Version = "2.3.0";
++        public const string Version = "2.3.1";
+         public static string Email
+         {
+             get
+--- 18차/src/Design.cs
++++ 19차/src/Design.cs
+@@ -147,7 +147,7 @@
+         }
+     }
+ 
+-    /// <summary>대화상자 공통 제목 띠. 오프화이트·네이비·코랄 체계를 따릅니다.</summary>
++    /// <summary>대화상자 공통 제목 띠. 흑백과 중립 회색 체계를 따릅니다.</summary>
+     public class HeroBanner : Control, IThemed
+     {
+         public string Eyebrow = "", Title = "", Subtitle = "", ActionText = "";
+@@ -228,8 +228,9 @@
+         {
+             var g = e.Graphics; g.Clear(Parent == null ? Theme.Sidebar : Parent.BackColor); g.SmoothingMode = SmoothingMode.AntiAlias;
+             using (var p = Theme.RoundedRect(new Rectangle(0,0,Width-1,Height-1), Math.Max(5,Width/3))) using (var b = new SolidBrush(Theme.Accent)) g.FillPath(b,p);
+-            // 외부 그림 없이 그리는 EXP의 E 표식입니다.
+-            using (var pen = new Pen(Theme.Current.OnAccent, Math.Max(2,Width/13f))) { pen.StartCap = pen.EndCap = LineCap.Round; g.DrawLine(pen,Width*.29f,Height*.29f,Width*.70f,Height*.29f); g.DrawLine(pen,Width*.29f,Height*.50f,Width*.60f,Height*.50f); g.DrawLine(pen,Width*.29f,Height*.71f,Width*.70f,Height*.71f); }
++            // 첫 번째 시안의 EXP 문자 표식을 나눔고딕 Bold로 그립니다.
++            TextRenderer.DrawText(g,"EXP",Theme.Font(Math.Max(7f,Width*.23f),FontStyle.Bold),ClientRectangle,Theme.Current.OnAccent,
++                TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|TextFormatFlags.NoPadding|TextFormatFlags.SingleLine);
+         }
+     }
+     public class SoftCombo : ComboBox
+--- 18차/src/MainForm.cs
++++ 19차/src/MainForm.cs
+@@ -44,7 +44,7 @@
+         {
+             Text = Brand.Name;
+             AutoScaleMode = AutoScaleMode.None;   // 배율은 Ui.ScaleTree 가 직접 처리(나중에 만든 화면에도 똑같이 적용하기 위해)
+-            Width = Ui.S(1320); Height = Ui.S(940); MinimumSize = new Size(Ui.S(980), Ui.S(640));
++            Width = Ui.S(1320); Height = Ui.S(1000); MinimumSize = new Size(Ui.S(980), Ui.S(640));
+             StartPosition = FormStartPosition.CenterScreen;
+             Font = Theme.FontBase();
+             try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
+--- 18차/src/Theme.cs
++++ 19차/src/Theme.cs
+@@ -110,22 +110,22 @@
+ 
+         public static readonly ThemePalette Light = new ThemePalette
+         {
+-            Dark = false, Bg = Color.FromArgb(247,248,250), Sidebar = Color.FromArgb(240,243,248),
+-            Card = Color.White, CardAlt = Color.FromArgb(247,248,250), Field = Color.FromArgb(247,249,252),
+-            FieldBorder = Color.FromArgb(207,216,227), Border = Color.FromArgb(225,230,238),
+-            Hover = Color.FromArgb(233,238,245), Selected = Color.FromArgb(252,228,223),
+-            Accent = Color.FromArgb(244,119,101), AccentHover = Color.FromArgb(250,144,128), AccentPressed = Color.FromArgb(229,99,81), OnAccent = Color.FromArgb(24,36,58),
+-            Text = Color.FromArgb(24,36,58), TextMuted = Color.FromArgb(96,112,134),
++            Dark = false, Bg = Color.FromArgb(247,247,247), Sidebar = Color.FromArgb(241,241,241),
++            Card = Color.White, CardAlt = Color.FromArgb(247,247,247), Field = Color.FromArgb(250,250,250),
++            FieldBorder = Color.FromArgb(205,205,205), Border = Color.FromArgb(223,223,223),
++            Hover = Color.FromArgb(235,235,235), Selected = Color.FromArgb(225,225,225),
++            Accent = Color.FromArgb(22,22,22), AccentHover = Color.FromArgb(48,48,48), AccentPressed = Color.Black, OnAccent = Color.White,
++            Text = Color.FromArgb(20,20,20), TextMuted = Color.FromArgb(100,100,100),
+             Danger = Color.FromArgb(177,48,65), Success = Color.FromArgb(38,113,101), Warn = Color.FromArgb(137,97,27)
+         };
+         public static readonly ThemePalette DarkPal = new ThemePalette
+         {
+-            Dark = true, Bg = Color.FromArgb(17,27,45), Sidebar = Color.FromArgb(20,32,51),
+-            Card = Color.FromArgb(24,38,59), CardAlt = Color.FromArgb(28,43,66), Field = Color.FromArgb(28,43,66),
+-            FieldBorder = Color.FromArgb(65,83,108), Border = Color.FromArgb(47,64,87),
+-            Hover = Color.FromArgb(37,55,80), Selected = Color.FromArgb(71,51,58),
+-            Accent = Color.FromArgb(244,119,101), AccentHover = Color.FromArgb(255,147,131), AccentPressed = Color.FromArgb(225,101,85), OnAccent = Color.FromArgb(24,36,58),
+-            Text = Color.FromArgb(240,244,250), TextMuted = Color.FromArgb(166,183,205),
++            Dark = true, Bg = Color.FromArgb(17,17,17), Sidebar = Color.FromArgb(20,20,20),
++            Card = Color.FromArgb(25,25,25), CardAlt = Color.FromArgb(31,31,31), Field = Color.FromArgb(30,30,30),
++            FieldBorder = Color.FromArgb(70,70,70), Border = Color.FromArgb(53,53,53),
++            Hover = Color.FromArgb(39,39,39), Selected = Color.FromArgb(51,51,51),
++            Accent = Color.FromArgb(242,242,242), AccentHover = Color.White, AccentPressed = Color.FromArgb(210,210,210), OnAccent = Color.FromArgb(17,17,17),
++            Text = Color.FromArgb(245,245,245), TextMuted = Color.FromArgb(170,170,170),
+             Danger = Color.FromArgb(255,157,165), Success = Color.FromArgb(124,207,183), Warn = Color.FromArgb(236,196,124)
+         };
+     }
+@@ -368,7 +368,13 @@
+                 return cb.BackColor;
+             }
+             if (c is ListBox) { c.BackColor = Current.Field; c.ForeColor = Current.Text; return c.BackColor; }
+-            if (c is CheckBox) { c.ForeColor = Current.Text; c.BackColor = parentBg; return parentBg; }
++            if (c is CheckBox || c is RadioButton)
++            {
++                var choice=(ButtonBase)c;choice.FlatStyle=FlatStyle.Flat;choice.ForeColor=Current.Text;choice.BackColor=parentBg;
++                choice.FlatAppearance.BorderColor=Current.FieldBorder;choice.FlatAppearance.CheckedBackColor=Current.Selected;
++                choice.FlatAppearance.MouseOverBackColor=Current.Hover;choice.FlatAppearance.MouseDownBackColor=Current.Selected;
++                return parentBg;
++            }
+             if (c is Label)
+             {
+                 var l = (Label)c;
+--- 18차/src/UI/Controls.cs
++++ 19차/src/UI/Controls.cs
+@@ -263,6 +263,45 @@
+         }
+     }
+ 
++    /// <summary>실제 현재 실행의 완료/전체 수를 큰 숫자로 표시합니다.</summary>
++    public class RunFraction : FluentControl
++    {
++        private int done,total;
++        public int Done {get{return done;}}
++        public int Total {get{return total;}}
++        public string DisplayText {get{return done+" / "+total;}}
++        public void SetProgress(int current,int maximum){done=Math.Max(0,current);total=Math.Max(0,maximum);AccessibleName="등록 진행 "+DisplayText;Invalidate();}
++        protected override void OnPaint(PaintEventArgs e)
++        {
++            var g=e.Graphics;g.Clear(ParentBg);var p=Theme.Current;string left=done.ToString(),right="/ "+total;
++            float size=56f;Font big,small;int first,second;
++            do{big=Theme.Font(size,FontStyle.Bold);small=Theme.Font(size*.62f,FontStyle.Bold);first=TextRenderer.MeasureText(g,left,big,Size.Empty,TextFormatFlags.NoPadding).Width;second=TextRenderer.MeasureText(g,right,small,Size.Empty,TextFormatFlags.NoPadding).Width;if(first+second+S(16)<=Width||size<=12f)break;size-=1f;}while(true);
++            var flags=TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.NoPadding|TextFormatFlags.SingleLine;
++            TextRenderer.DrawText(g,left,big,new Rectangle(0,0,first+S(2),Height),p.Text,flags);
++            TextRenderer.DrawText(g,right,small,new Rectangle(first+S(12),S(12),Math.Max(1,Width-first-S(12)),Height-S(12)),p.TextMuted,flags);
++        }
++    }
++
++    /// <summary>진행률을 네이티브 벡터로 그리며 공통 가시성·Dispose 수명 관리를 사용합니다.</summary>
++    public class CircularProgress : FluentControl, IPreScaled
++    {
++        private int value,maximum=1;
++        public CircularProgress(){Size=new Size(S(164),S(164));TabStop=false;AccessibleRole=AccessibleRole.ProgressBar;}
++        public int Maximum {get{return maximum;}set{maximum=Math.Max(1,value);AnimateTo((double)this.value/maximum);Invalidate();}}
++        public int Value {get{return value;}set{this.value=Math.Max(0,Math.Min(value,maximum));AnimateTo((double)this.value/maximum);AccessibleName="등록 진행 "+Percentage+"%";Invalidate();}}
++        public int Percentage {get{return (int)Math.Round(value*100.0/maximum);}}
++        protected override void OnPaint(PaintEventArgs e)
++        {
++            var g=e.Graphics;g.Clear(ParentBg);Smooth(g);int line=S(12),edge=line/2+S(2),diameter=Math.Min(Width,Height)-edge*2;
++            if(diameter<2)return;var circle=new Rectangle((Width-diameter)/2,(Height-diameter)/2,diameter,diameter);
++            using(var track=new Pen(Theme.Current.Border,line))g.DrawEllipse(track,circle);
++            float sweep=(float)(360*Math.Max(0,Math.Min(1,MotionValue)));
++            if(sweep>.01f)using(var arc=new Pen(Theme.Accent,line)){arc.StartCap=arc.EndCap=LineCap.Round;g.DrawArc(arc,circle,-90,sweep);}
++            TextRenderer.DrawText(g,Percentage+"%",Theme.Font(20f,FontStyle.Bold),ClientRectangle,Theme.TextPrimary,
++                TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|TextFormatFlags.NoPadding|TextFormatFlags.SingleLine);
++        }
++    }
++
+     /// <summary>작은 알약 모양 상태 표시(라이선스 상태, 로그인 상태 등).</summary>
+     public class Chip : FluentControl, IPreScaled
+     {
+--- 18차/src/UI/Pages/DashboardPage.cs
++++ 19차/src/UI/Pages/DashboardPage.cs
+@@ -1,134 +1,120 @@
+-using System;
+-using System.Collections.Generic;
+-using System.ComponentModel;
+-using System.Drawing;
+-using System.Linq;
+-using System.Windows.Forms;
+-
+-namespace BunjangAuto
+-{
+-    /// <summary>상품의 실제 집계와 현재 자동 등록 상태를 읽는 대시보드입니다. 인증·일일 사용량을 새로 조회하지 않습니다.</summary>
+-    public class DashboardPage : PageBase, IDpiLayout
+-    {
+-        private readonly Label title, subtitle, jobTitle, jobState, jobCurrent, jobNext, progressText, activityTitle;
+-        private readonly Label[] statusCaptions, statusValues;
+-        private readonly StatCard cPending, cDone, cFail, cTotal;
+-        private readonly CardPanel job, status, activity;
+-        private readonly FlatList lstActivity;
+-        private readonly FluentButton openAutomation;
+-        private readonly FluentProgress progress;
+-        private readonly Timer refresh = new Timer { Interval = 2000 };
+-        private readonly TableLayoutPanel grid;
+-        private readonly Action usageChanged;
+-        private bool ready, placing;
+-
+-        public DashboardPage(AppHost host) : base(host)
+-        {
+-            Key = "dashboard"; PageTitle = "한눈에 보기";
+-            title = Ui.Title("한눈에 보기"); title.Font=Theme.Font(28f,FontStyle.Bold); title.Name = "dashboardTitle";
+-            subtitle = Ui.Muted("등록 현황과 최근 활동을 한눈에 확인하세요.");
+-            grid = new TableLayoutPanel { Name="dashboardStats", ColumnCount=4, RowCount=1, BackColor=Theme.BgDark, Margin=Padding.Empty, Padding=Padding.Empty };
+-            for(int i=0;i<4;i++)grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,25));
+-            grid.RowStyles.Add(new RowStyle(SizeType.Percent,100));
+-            Func<string, StatCard> make = caption => {var card=new StatCard {Caption=caption,Dock=DockStyle.Fill,Margin=new Padding(0,0,Ui.S(12),0)};grid.Controls.Add(card);return card;};
+-            cPending=make("등록 대기"); cDone=make("등록 성공"); cFail=make("등록 실패"); cTotal=make("전체 상품");
+-            cDone.Tone=()=>Theme.TextPrimary; cFail.Tone=()=>Theme.Danger;
+-            job=new CardPanel {Name="dashboardAutomation",Tinted=true};
+-            jobTitle=Ui.Heading("자동 등록");jobTitle.Font=Theme.Font(18f,FontStyle.Bold);
+-            jobState=Ui.Text("대기 중",18f,true);jobState.Name="dashboardState";
+-            jobCurrent=Ui.Muted("현재 상품: -");jobNext=Ui.Muted("다음 예정  —");progressText=Ui.Muted("0 / 0");
+-            progress=new FluentProgress {Name="dashboardProgress"};
+-            openAutomation=Ui.Button("자동 등록 열기", "\uE768", BtnStyle.Primary,180);
+-            openAutomation.Name="openAutomation";openAutomation.Click+=delegate{Host.Navigate("automation");};
+-            job.Controls.AddRange(new Control[]{jobTitle,jobState,jobCurrent,progress,progressText,jobNext,openAutomation});
+-            status=new CardPanel {Name="dashboardStatus"};
+-            statusCaptions=new[]{Ui.Muted("로그인"),Ui.Muted("프로그램"),Ui.Muted("남은 기간")};
+-            statusValues=new[]{Ui.Heading("미확인"),Ui.Heading("확인 필요"),Ui.Heading("—")};
+-            for(int i=0;i<3;i++){status.Controls.Add(statusCaptions[i]);status.Controls.Add(statusValues[i]);}
+-            activityTitle=Ui.Heading("최근 활동");activityTitle.Font=Theme.Font(16f,FontStyle.Bold);
+-            activity=new CardPanel {Name="dashboardActivity"};
+-            lstActivity=new FlatList {Name="dashboardActivityList",DrawMode=DrawMode.OwnerDrawFixed,ItemHeight=Ui.S(40),Font=Theme.FontBase()};
+-            lstActivity.DrawItem+=DrawRow;activity.Controls.Add(lstActivity);
+-            Controls.AddRange(new Control[]{title,subtitle,grid,job,status,activityTitle,activity});
+-            ready=true;Resize+=delegate{LayoutForDpi();};
+-            refresh.Tick+=delegate{if(Visible)Refresh2();};
+-            Host.Products.ListChanged+=OnProductsChanged;
+-            usageChanged=delegate{try{if(Visible&&IsHandleCreated)BeginInvoke((Action)Refresh2);}catch(InvalidOperationException){}};
+-            UsageMetricsService.Changed+=usageChanged;
+-            LayoutForDpi();
+-        }
+-
+-        private void OnProductsChanged(object sender,ListChangedEventArgs e){if(Visible)Refresh2();}
+-        private class Row {public string Time,Text;public Color? Tone;}
+-        private void DrawRow(object sender,DrawItemEventArgs e)
+-        {
+-            var p=Theme.Current;using(var b=new SolidBrush(p.Card))e.Graphics.FillRectangle(b,e.Bounds);
+-            if(e.Index<0)return;var row=(Row)lstActivity.Items[e.Index];
+-            var flags=TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.NoPadding|TextFormatFlags.SingleLine|TextFormatFlags.EndEllipsis;
+-            TextRenderer.DrawText(e.Graphics,row.Time,Theme.Font(9f,FontStyle.Bold),new Rectangle(e.Bounds.X+Ui.S(16),e.Bounds.Y,Ui.S(108),e.Bounds.Height),p.TextMuted,flags);
+-            TextRenderer.DrawText(e.Graphics,row.Text,Theme.FontBase(),new Rectangle(e.Bounds.X+Ui.S(132),e.Bounds.Y,Math.Max(1,e.Bounds.Width-Ui.S(148)),e.Bounds.Height),row.Tone??p.Text,flags);
+-            using(var pen=new Pen(p.Border))e.Graphics.DrawLine(pen,e.Bounds.Left+Ui.S(16),e.Bounds.Bottom-1,e.Bounds.Right-Ui.S(16),e.Bounds.Bottom-1);
+-        }
+-        private static void TextBounds(Label label,int x,int y,int width,int height){label.AutoSize=false;label.AutoEllipsis=true;label.SetBounds(x,y,Math.Max(1,width),height);}
+-        public void LayoutForDpi()
+-        {
+-            if(!ready||placing)return;placing=true;SuspendLayout();
+-            try{
+-                Padding=new Padding(Ui.S(32),Ui.S(26),Ui.S(32),Ui.S(26));
+-                int x=Padding.Left+AutoScrollPosition.X,y=Padding.Top+AutoScrollPosition.Y;
+-                int w=Math.Max(Ui.S(420),ClientSize.Width-Padding.Horizontal),pad=Ui.S(24),gap=Ui.S(16);
+-                TextBounds(title,x,y,w,Ui.S(44));TextBounds(subtitle,x,title.Bottom+Ui.S(5),w,Ui.S(28));
+-                grid.SetBounds(x,subtitle.Bottom+Ui.S(18),w+Ui.S(12),Ui.S(112));
+-                job.SetBounds(x,grid.Bottom+gap,w,Ui.S(218));
+-                TextBounds(jobTitle,pad,Ui.S(22),w-pad*2,Ui.S(32));
+-                bool wide=w>=Ui.S(660);int contentWidth=wide?w-pad*3-openAutomation.Width:w-pad*2;
+-                TextBounds(jobState,pad,Ui.S(66),contentWidth,Ui.S(34));
+-                TextBounds(jobCurrent,pad,Ui.S(106),contentWidth,Ui.S(24));
+-                progress.SetBounds(pad,Ui.S(142),contentWidth,Ui.S(8));
+-                TextBounds(progressText,pad,Ui.S(158),contentWidth,Ui.S(24));
+-                TextBounds(jobNext,pad,Ui.S(186),w-pad*2,Ui.S(24));
+-                openAutomation.Location=wide?new Point(w-pad-openAutomation.Width,Ui.S(108)):new Point(pad,Ui.S(232));
+-                job.Height=wide?Ui.S(218):openAutomation.Bottom+pad;
+-                status.SetBounds(x,job.Bottom+gap,w,Ui.S(80));
+-                int col=(w-pad*2)/3;
+-                for(int i=0;i<3;i++){TextBounds(statusCaptions[i],pad+i*col,Ui.S(16),col-Ui.S(12),Ui.S(24));TextBounds(statusValues[i],pad+i*col,Ui.S(44),col-Ui.S(12),Ui.S(26));}
+-                TextBounds(activityTitle,x,status.Bottom+Ui.S(20),w,Ui.S(32));
+-                activity.SetBounds(x,activityTitle.Bottom+Ui.S(12),w,Ui.S(164));
+-                lstActivity.SetBounds(1,Ui.S(8),w-2,activity.Height-Ui.S(16));
+-                AutoScrollMinSize=new Size(0,activity.Bottom-AutoScrollPosition.Y+Padding.Bottom);
+-            }finally{ResumeLayout(false);placing=false;}
+-        }
+-        public override void OnActivated(){Refresh2();refresh.Start();}
+-        public override void OnDeactivated(){refresh.Stop();}
+-        protected override void OnVisibleChanged(EventArgs e){base.OnVisibleChanged(e);if(!Visible)refresh.Stop();}
+-        public override void OnThemeChanged(){grid.BackColor=Theme.BgDark;lstActivity.Invalidate();}
+-        protected override void Dispose(bool disposing)
+-        {
+-            if(disposing){refresh.Dispose();Host.Products.ListChanged-=OnProductsChanged;UsageMetricsService.Changed-=usageChanged;}
+-            base.Dispose(disposing);
+-        }
+-        public void Refresh2()
+-        {
+-            cPending.Value=Host.CountPending().ToString();cDone.Value=Host.CountDone().ToString();cFail.Value=Host.CountFail().ToString();cTotal.Value=Host.Products.Count.ToString();
+-            cPending.Hint="준비된 상품";cDone.Hint="목록의 등록 완료";cFail.Hint="상태 확인 필요";cTotal.Hint="저장한 상품";
+-            foreach(Control c in grid.Controls)c.Invalidate();
+-            var a=Host.Auto;jobState.Text=a.StateText;jobCurrent.Text="현재 상품: "+(Host.Runner.CurrentProduct==null?"—":Host.Runner.CurrentProduct.Title);
+-            progress.Maximum=Math.Max(1,a.Total);progress.Value=a.Total>0?a.Done:0;
+-            progressText.Text=a.Total>0?a.Done+" / "+a.Total+" 완료"+a.RoundText():"등록을 시작하면 진행 상황이 표시됩니다.";
+-            jobNext.Text=string.IsNullOrEmpty(a.NextText)?"다음 예정  —":a.NextText;
+-            statusValues[0].Text=Host.Cfg.AssumeLoggedIn?"확인됨":"미확인";
+-            var li=LicenseGate.LastInfo;bool ok=li!=null&&li.Valid;
+-            statusValues[1].Text=ok?"EXP "+li.Edition:"확인 필요";
+-            statusValues[2].Text=!ok?"—":li.Expires==DateTime.MaxValue?"무기한":Math.Max(0,(int)Math.Ceiling((li.Expires.ToUniversalTime()-ServerClock.UtcNow).TotalDays))+"일";
+-            var u=UsageMetricsService.Data;var rows=new List<Row>();
+-            if(!string.IsNullOrEmpty(u.LastRun))rows.Add(new Row{Time=Short(u.LastRun),Text="최근 자동 등록 시작"});
+-            if(!string.IsNullOrEmpty(u.LastSuccess))rows.Add(new Row{Time=Short(u.LastSuccess),Text="최근 성공 · 누적 "+u.Success+"건",Tone=Theme.Success});
+-            if(!string.IsNullOrEmpty(u.LastFail))rows.Add(new Row{Time=Short(u.LastFail),Text="최근 실패 · 누적 "+u.Fail+"건",Tone=Theme.Danger});
+-            if(!string.IsNullOrEmpty(u.LastError))rows.Add(new Row{Time=Short(u.LastError),Text="최근 오류 · 누적 "+u.Errors+"건",Tone=Theme.Danger});
+-            foreach(var p in Host.Products.Where(v=>!string.IsNullOrEmpty(v.LastPosted)).OrderByDescending(v=>v.LastPosted).Take(5))rows.Add(new Row{Time=Short(p.LastPosted),Text="등록: "+p.Title});
+-            if(rows.Count==0)rows.Add(new Row{Time="—",Text="아직 활동이 없습니다. 상품을 준비하고 자동 등록을 시작하세요.",Tone=Theme.TextMuted});
+-            lstActivity.BeginUpdate();lstActivity.Items.Clear();foreach(var row in rows)lstActivity.Items.Add(row);lstActivity.EndUpdate();
+-        }
+-        private static string Short(string s){DateTime d;return DateTime.TryParse(s,out d)?d.ToString(d.Date==DateTime.Today?"HH:mm:ss":"MM-dd HH:mm"):s;}
+-    }
++using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Drawing;
++using System.Linq;
++using System.Windows.Forms;
++
++namespace BunjangAuto
++{
++    /// <summary>현재 자동 등록 진행과 목록 집계를 표시합니다. 일일 사용량과 인증을 추가로 조회하지 않습니다.</summary>
++    public class DashboardPage : PageBase, IDpiLayout
++    {
++        private readonly Label title, jobTitle, description, jobState, jobCurrent, jobNext, activityTitle;
++        private readonly Label[] statCaptions, statValues, statusCaptions, statusValues;
++        private readonly Label activityTime, activityText;
++        private readonly CardPanel overview, activity;
++        private readonly FlatList lstActivity;
++        private readonly FluentButton openAutomation;
++        private readonly RunFraction fraction;
++        private readonly CircularProgress progress;
++        private readonly Timer refresh = new Timer { Interval = 2000 };
++        private readonly Action usageChanged;
++        private bool ready, placing;
++
++        public DashboardPage(AppHost host) : base(host)
++        {
++            Key="dashboard";PageTitle="한눈에 보기";
++            title=Ui.Title("한눈에 보기");title.Font=Theme.Font(26f,FontStyle.Bold);title.Name="dashboardTitle";
++            overview=new CardPanel {Name="dashboardOverview"};overview.Paint+=DrawOverviewLines;
++            jobTitle=Ui.Text("등록 진행",22f,true);jobTitle.Name="dashboardProgressTitle";
++            description=Ui.Muted("현재 자동 등록의 진행 상황입니다.");
++            fraction=new RunFraction {Name="dashboardFraction"};
++            progress=new CircularProgress {Name="dashboardProgress"};
++            jobState=Ui.Text("대기 중",11f,true);jobState.Name="dashboardState";
++            jobCurrent=Ui.Muted("현재 상품: —");jobNext=Ui.Muted("다음 예정  —");
++            statCaptions=new[]{Ui.Muted("등록 대기"),Ui.Muted("등록 성공"),Ui.Muted("등록 실패")};
++            statValues=new[]{Ui.Text("0",24f,true,"t"),Ui.Text("0",24f,true,"s"),Ui.Text("0",24f,true,"d")};
++            string[] statNames={"dashboardPending","dashboardDone","dashboardFail"};
++            for(int i=0;i<3;i++){statValues[i].Name=statNames[i];statCaptions[i].TextAlign=ContentAlignment.MiddleCenter;statValues[i].TextAlign=ContentAlignment.MiddleCenter;overview.Controls.Add(statCaptions[i]);overview.Controls.Add(statValues[i]);}
++            openAutomation=Ui.Button("자동 등록 열기  ›","\uE768",BtnStyle.Primary,180);openAutomation.Name="openAutomation";openAutomation.Height=Ui.S(44);
++            openAutomation.Click+=delegate{Host.Navigate("automation");};
++            statusCaptions=new[]{Ui.Muted("로그인"),Ui.Muted("프로그램"),Ui.Muted("남은 기간")};
++            statusValues=new[]{Ui.Heading("미확인"),Ui.Heading("확인 필요"),Ui.Heading("—")};
++            for(int i=0;i<3;i++){overview.Controls.Add(statusCaptions[i]);overview.Controls.Add(statusValues[i]);}
++            overview.Controls.AddRange(new Control[]{jobTitle,description,fraction,progress,jobState,jobCurrent,jobNext,openAutomation});
++            activityTitle=Ui.Heading("최근 활동");activityTitle.Font=Theme.Font(16f,FontStyle.Bold);
++            activity=new CardPanel {Name="dashboardActivity"};activityTime=Ui.Muted("시간");activityText=Ui.Muted("작업 내용");
++            lstActivity=new FlatList {Name="dashboardActivityList",DrawMode=DrawMode.OwnerDrawFixed,ItemHeight=Ui.S(34),Font=Theme.FontBase()};
++            lstActivity.DrawItem+=DrawRow;activity.Controls.AddRange(new Control[]{activityTime,activityText,lstActivity});
++            Controls.AddRange(new Control[]{title,overview,activityTitle,activity});
++            ready=true;Resize+=delegate{LayoutForDpi();};refresh.Tick+=delegate{if(Visible)Refresh2();};
++            Host.Products.ListChanged+=OnProductsChanged;
++            usageChanged=delegate{try{if(Visible&&IsHandleCreated)BeginInvoke((Action)Refresh2);}catch(InvalidOperationException){}};
++            UsageMetricsService.Changed+=usageChanged;LayoutForDpi();
++        }
++        private void OnProductsChanged(object sender,ListChangedEventArgs e){if(Visible)Refresh2();}
++        private class Row {public string Time,Text;public Color? Tone;}
++        private void DrawRow(object sender,DrawItemEventArgs e)
++        {
++            var p=Theme.Current;using(var b=new SolidBrush(p.Card))e.Graphics.FillRectangle(b,e.Bounds);
++            if(e.Index<0)return;var row=(Row)lstActivity.Items[e.Index];var flags=TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.NoPadding|TextFormatFlags.SingleLine|TextFormatFlags.EndEllipsis;
++            TextRenderer.DrawText(e.Graphics,row.Time,Theme.Font(9f,FontStyle.Bold),new Rectangle(e.Bounds.X+Ui.S(16),e.Bounds.Y,Ui.S(108),e.Bounds.Height),p.TextMuted,flags);
++            TextRenderer.DrawText(e.Graphics,row.Text,Theme.FontBase(),new Rectangle(e.Bounds.X+Ui.S(132),e.Bounds.Y,Math.Max(1,e.Bounds.Width-Ui.S(148)),e.Bounds.Height),row.Tone??p.Text,flags);
++            using(var pen=new Pen(p.Border))e.Graphics.DrawLine(pen,e.Bounds.Left+Ui.S(16),e.Bounds.Bottom-1,e.Bounds.Right-Ui.S(16),e.Bounds.Bottom-1);
++        }
++        private void DrawOverviewLines(object sender,PaintEventArgs e)
++        {
++            if(!ready)return;int pad=Ui.S(24),w=overview.Width;using(var pen=new Pen(Theme.Border)){
++                e.Graphics.DrawLine(pen,pad,Ui.S(280),w-pad,Ui.S(280));
++                e.Graphics.DrawLine(pen,0,Ui.S(432),w,Ui.S(432));
++                int col=(w-pad*2)/3;for(int i=1;i<3;i++){int x=pad+i*col;e.Graphics.DrawLine(pen,x,Ui.S(296),x,Ui.S(352));e.Graphics.DrawLine(pen,x,Ui.S(450),x,Ui.S(488));}
++            }
++        }
++        private static void TextBounds(Label label,int x,int y,int width,int height){label.AutoSize=false;label.AutoEllipsis=true;label.SetBounds(x,y,Math.Max(1,width),height);}
++        public void LayoutForDpi()
++        {
++            if(!ready||placing)return;placing=true;SuspendLayout();
++            try{
++                Padding=new Padding(Ui.S(32),Ui.S(26),Ui.S(32),Ui.S(26));int x=Padding.Left+AutoScrollPosition.X,y=Padding.Top+AutoScrollPosition.Y;
++                int w=Math.Max(Ui.S(420),ClientSize.Width-Padding.Horizontal),pad=Ui.S(24),ring=w>=Ui.S(650)?Ui.S(164):Ui.S(120),leftWidth=w-ring-pad*3;
++                TextBounds(title,x,y,w,Ui.S(40));overview.SetBounds(x,title.Bottom+Ui.S(16),w,Ui.S(508));
++                TextBounds(jobTitle,pad,Ui.S(20),leftWidth,Ui.S(38));TextBounds(description,pad,Ui.S(64),leftWidth,Ui.S(24));
++                fraction.SetBounds(pad,Ui.S(92),leftWidth,Ui.S(92));progress.SetBounds(w-pad-ring,Ui.S(54),ring,ring);
++                TextBounds(jobState,pad,Ui.S(190),leftWidth,Ui.S(26));TextBounds(jobCurrent,pad,Ui.S(220),w-pad*2,Ui.S(24));TextBounds(jobNext,pad,Ui.S(248),w-pad*2,Ui.S(24));
++                int col=(w-pad*2)/3;
++                for(int i=0;i<3;i++){
++                    TextBounds(statCaptions[i],pad+i*col,Ui.S(292),col-Ui.S(8),Ui.S(24));TextBounds(statValues[i],pad+i*col,Ui.S(320),col-Ui.S(8),Ui.S(36));
++                    TextBounds(statusCaptions[i],pad+i*col,Ui.S(442),col-Ui.S(8),Ui.S(22));TextBounds(statusValues[i],pad+i*col,Ui.S(470),col-Ui.S(8),Ui.S(24));
++                }
++                openAutomation.SetBounds(pad,Ui.S(372),w-pad*2,Ui.S(44));
++                TextBounds(activityTitle,x,overview.Bottom+Ui.S(20),w,Ui.S(32));activity.SetBounds(x,activityTitle.Bottom+Ui.S(12),w,Ui.S(210));
++                TextBounds(activityTime,Ui.S(16),Ui.S(8),Ui.S(108),Ui.S(26));TextBounds(activityText,Ui.S(132),Ui.S(8),w-Ui.S(148),Ui.S(26));
++                lstActivity.SetBounds(1,Ui.S(40),w-2,activity.Height-Ui.S(48));AutoScrollMinSize=new Size(0,activity.Bottom-AutoScrollPosition.Y+Padding.Bottom);
++            }finally{ResumeLayout(false);placing=false;}
++        }
++        public override void OnActivated(){Refresh2();refresh.Start();}
++        public override void OnDeactivated(){refresh.Stop();}
++        protected override void OnVisibleChanged(EventArgs e){base.OnVisibleChanged(e);if(!Visible)refresh.Stop();}
++        public override void OnThemeChanged(){lstActivity.Invalidate();overview.Invalidate();}
++        protected override void Dispose(bool disposing){if(disposing){refresh.Dispose();Host.Products.ListChanged-=OnProductsChanged;UsageMetricsService.Changed-=usageChanged;}base.Dispose(disposing);}
++        public void Refresh2()
++        {
++            statValues[0].Text=Host.CountPending().ToString();statValues[1].Text=Host.CountDone().ToString();statValues[2].Text=Host.CountFail().ToString();
++            var a=Host.Auto;jobState.Text=a.StateText;jobCurrent.Text="현재 상품: "+(Host.Runner.CurrentProduct==null?"—":Host.Runner.CurrentProduct.Title);
++            fraction.SetProgress(a.Done,a.Total);progress.Maximum=Math.Max(1,a.Total);progress.Value=a.Total>0?a.Done:0;
++            jobNext.Text=string.IsNullOrEmpty(a.NextText)?"다음 예정  —":a.NextText;
++            statusValues[0].Text=Host.Cfg.AssumeLoggedIn?"확인됨":"미확인";var li=LicenseGate.LastInfo;bool ok=li!=null&&li.Valid;
++            statusValues[1].Text=ok?"EXP "+li.Edition:"확인 필요";statusValues[2].Text=!ok?"—":li.Expires==DateTime.MaxValue?"무기한":Math.Max(0,(int)Math.Ceiling((li.Expires.ToUniversalTime()-ServerClock.UtcNow).TotalDays))+"일";
++            var u=UsageMetricsService.Data;var rows=new List<Row>();
++            if(!string.IsNullOrEmpty(u.LastRun))rows.Add(new Row{Time=Short(u.LastRun),Text="최근 자동 등록 시작"});
++            if(!string.IsNullOrEmpty(u.LastSuccess))rows.Add(new Row{Time=Short(u.LastSuccess),Text="최근 성공 · 누적 "+u.Success+"건",Tone=Theme.Success});
++            if(!string.IsNullOrEmpty(u.LastFail))rows.Add(new Row{Time=Short(u.LastFail),Text="최근 실패 · 누적 "+u.Fail+"건",Tone=Theme.Danger});
++            if(!string.IsNullOrEmpty(u.LastError))rows.Add(new Row{Time=Short(u.LastError),Text="최근 오류 · 누적 "+u.Errors+"건",Tone=Theme.Danger});
++            foreach(var p in Host.Products.Where(v=>!string.IsNullOrEmpty(v.LastPosted)).OrderByDescending(v=>v.LastPosted).Take(5))rows.Add(new Row{Time=Short(p.LastPosted),Text="등록: "+p.Title});
++            if(rows.Count==0)rows.Add(new Row{Time="—",Text="아직 활동이 없습니다. 상품을 준비하고 자동 등록을 시작하세요.",Tone=Theme.TextMuted});
++            lstActivity.BeginUpdate();lstActivity.Items.Clear();foreach(var row in rows)lstActivity.Items.Add(row);lstActivity.EndUpdate();
++        }
++        private static string Short(string s){DateTime d;return DateTime.TryParse(s,out d)?d.ToString(d.Date==DateTime.Today?"HH:mm:ss":"MM-dd HH:mm"):s;}
++    }
+ }
+--- 18차/tests/RedesignUiTests.cs
++++ 19차/tests/RedesignUiTests.cs
+@@ -37,17 +37,31 @@
+     static void ValidateDashboard(MainForm form,string mode)
+     {
+         var page=(DashboardPage)All(form).First(c=>c is DashboardPage);page.LayoutForDpi();
+-        var stats=All(page).OfType<StatCard>().ToArray();
+-        Check(stats.Length==4,"가로 통계 네 개 "+mode);
+-        Check(stats.Select(c=>c.Top).Distinct().Count()==1,"통계 한 줄 "+mode);
+-        Check(stats.Select(c=>c.Value).SequenceEqual(new[]{"1","1","1","3"}),"실제 상품 집계 "+mode);
++        Check(!All(page).OfType<StatCard>().Any(),"분리된 네 카드 대신 통합 진행 패널 "+mode);
++        Check(All(page).Count(c=>c.Name=="dashboardOverview")==1,"큰 등록 현황 영역 한 개 "+mode);
++        Check(All(page).OfType<Label>().Single(c=>c.Name=="dashboardProgressTitle").Text=="등록 진행","현재 진행으로 명확히 구분 "+mode);
++        var values=new[]{"dashboardPending","dashboardDone","dashboardFail"}.Select(name=>All(page).Single(c=>c.Name==name)).ToArray();
++        Check(values.Select(c=>c.Text).SequenceEqual(new[]{"1","1","1"}),"실제 대기 성공 실패 집계 "+mode);
++        Check(values.Select(c=>c.Top).Distinct().Count()==1,"하단 통계 한 줄 "+mode);
++        var palette=Theme.Current;
++        foreach(var color in new[]{palette.Bg,palette.Sidebar,palette.Card,palette.CardAlt,palette.Field,palette.FieldBorder,palette.Border,palette.Hover,palette.Selected,palette.Accent,palette.AccentHover,palette.AccentPressed,palette.OnAccent,palette.Text,palette.TextMuted})
++            Check(color.R==color.G&&color.G==color.B,"색조 없는 중립 팔레트 "+mode);
++        Check(palette.Dark?palette.Accent.R>palette.OnAccent.R:palette.Accent.R<palette.OnAccent.R,"흑백 기본 버튼 대비 방향 "+mode);
+         var panels=page.Controls.Cast<Control>().Where(c=>c.Visible).ToArray();
+         for(int i=0;i<panels.Length;i++)for(int j=i+1;j<panels.Length;j++)Check(!panels[i].Bounds.IntersectsWith(panels[j].Bounds),"대시보드 영역 분리 "+i+"/"+j+" "+mode);
+-        var job=All(page).Single(c=>c.Name=="dashboardAutomation");var children=job.Controls.Cast<Control>().ToArray();
++        var job=All(page).Single(c=>c.Name=="dashboardOverview");var children=job.Controls.Cast<Control>().ToArray();
+         Check(children.All(c=>c.Left>=0&&c.Top>=0&&c.Right<=job.Width&&c.Bottom<=job.Height),"작업 패널 내부 배치 "+mode);
+         for(int i=0;i<children.Length;i++)for(int j=i+1;j<children.Length;j++)Check(!children[i].Bounds.IntersectsWith(children[j].Bounds),"작업 패널 겹침 없음 "+i+"/"+j+" "+mode);
+         var host=Field<AppHost>(form,"host");host.Auto.StateText="실행 중 (99999/99999) · 2147483647/2147483647회차";host.Auto.NextText="다음 실행까지 999시간 59분 59초 (12-31 23:59)";host.Auto.Total=99999;host.Auto.Done=33333;
+-        page.Refresh2();page.LayoutForDpi();Check(All(page).OfType<Label>().Where(c=>c.Name=="dashboardState").All(c=>c.AutoEllipsis),"긴 상태의 안전한 말줄임 "+mode);
++        page.Refresh2();page.LayoutForDpi();
++        var ring=All(page).OfType<CircularProgress>().Single();var fraction=All(page).OfType<RunFraction>().Single();
++        Check(ring.Maximum==99999&&ring.Value==33333&&ring.Percentage==33,"실제 현재 실행의 원형 진행률 "+mode);
++        Check(fraction.DisplayText=="33333 / 99999","큰 진행 숫자는 실제 Done Total "+mode);
++        Check(All(page).Single(c=>c.Name=="openAutomation").Width==job.Width-Ui.S(48),"가로 전체 폭 자동 등록 버튼 "+mode);
++        Check(All(page).OfType<Label>().Where(c=>c.Name=="dashboardState").All(c=>c.AutoEllipsis),"긴 상태의 안전한 말줄임 "+mode);
++        host.Auto.Total=int.MaxValue;host.Auto.Done=int.MaxValue-1;page.Refresh2();
++        Check(fraction.Done==int.MaxValue-1&&fraction.Total==int.MaxValue,"최대 정수 진행값 보존 "+mode);
++        Check(fraction.Bounds.Right<ring.Left,"긴 숫자와 원형 영역 분리 "+mode);
+     }
+     static string RegistrySnapshot(string path)
+     {
+@@ -69,18 +83,18 @@
+     static void MotionTests()
+     {
+         using(var form=new Form {ClientSize=new Size(520,180),ShowInTaskbar=false,Opacity=0}){
+-            var button=new MotionButton{Left=12,Top=12,Text="상태 전환",Style=BtnStyle.Primary};var nav=new MotionNav{Left=12,Top=60,Width=220,Text="선택 전환"};var bar=new FluentProgress{Left=12,Top=120,Width=420};var soft=new SoftButton{Left=250,Top=12,Width=200,Text="공통 버튼"};
++            var button=new MotionButton{Left=12,Top=12,Text="상태 전환",Style=BtnStyle.Primary};var nav=new MotionNav{Left=12,Top=60,Width=220,Text="선택 전환"};var bar=new FluentProgress{Left=12,Top=120,Width=220};var ring=new CircularProgress{Left=450,Top=115,Width=50,Height=50};var soft=new SoftButton{Left=250,Top=12,Width=200,Text="공통 버튼"};
+             var input=new SoftInput{Left=250,Top=60,Width=220,Height=50,Multiline=true,ScrollBars=ScrollBars.Vertical};
+-            form.Controls.AddRange(new Control[]{button,nav,bar,soft,input});form.Show();Pump(30);
++            form.Controls.AddRange(new Control[]{button,nav,bar,ring,soft,input});form.Show();Pump(30);
+             typeof(SoftButton).GetMethod("OnMouseEnter",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(soft,new object[]{EventArgs.Empty});
+             var slim=input.Controls.OfType<SlimTextScroll>().Single();
+             Check(Field<Timer>(soft,"motion").Enabled&&Field<Timer>(slim,"refresh").Enabled,"공통 버튼과 스크롤 타이머 시작");
+-            button.Hover();nav.SelectNow();bar.Value=90;
+-            Check(button.AnimationRunning&&nav.AnimationRunning&&bar.AnimationRunning,"호버 선택 진행 모션 시작");
++            button.Hover();nav.SelectNow();bar.Value=90;ring.Maximum=100;ring.Value=75;
++            Check(button.AnimationRunning&&nav.AnimationRunning&&bar.AnimationRunning&&ring.AnimationRunning,"호버 선택 진행 모션 시작");
+             Pump(48);Save(form,"motion-running");
+-            form.Hide();Check(!button.AnimationRunning&&!nav.AnimationRunning&&!bar.AnimationRunning,"숨김 시 모션 중지");
++            form.Hide();Check(!button.AnimationRunning&&!nav.AnimationRunning&&!bar.AnimationRunning&&!ring.AnimationRunning,"숨김 시 모션 중지");
+             Check(!Field<Timer>(soft,"motion").Enabled&&!Field<Timer>(slim,"refresh").Enabled,"숨김 시 공통 버튼과 스크롤 중지");
+-            form.Show();button.Hover();bar.Value=30;form.Dispose();Pump(30);Check(button.IsDisposed&&nav.IsDisposed&&bar.IsDisposed,"닫힌 컨트롤 및 타이머 정리");
++            form.Show();button.Hover();bar.Value=30;form.Dispose();Pump(30);Check(button.IsDisposed&&nav.IsDisposed&&bar.IsDisposed&&ring.IsDisposed,"닫힌 컨트롤 및 타이머 정리");
+         }
+     }
+     [STAThread]static int Main(string[] args)
+@@ -98,7 +112,7 @@
+         Check(Paths.Root.Contains("Lumivolt-tests-"),"운영 자료와 다른 테스트 경로");Check(AppFont.Active&&Theme.FontBase().Bold,"나눔고딕 Bold 활성");
+         string before=ProductionState();
+         if(args.Contains("--preview")){
+-            var form=Make(args.Contains("--dark")?"Dark":"Light");LockActions(form);form.Text="EXP 18차 · 격리 UI 미리보기 (실행·인증 비활성)";form.ShowInTaskbar=true;
++            var form=Make(args.Contains("--dark")?"Dark":"Light");LockActions(form);form.Text="EXP 19차 · 흑백 격리 UI 미리보기 (실행·인증 비활성)";form.ShowInTaskbar=true;
+             var timeout=new Timer{Interval=60000};timeout.Tick+=delegate{timeout.Stop();timeout.Dispose();form.Dispose();Application.ExitThread();};form.Shown+=delegate{timeout.Start();};form.FormClosed+=delegate{timeout.Dispose();};Application.Run(form);Check(before==ProductionState(),"미리보기 운영 인증 기록 보존");return 0;
+         }
+         foreach(string mode in new[]{"Light","Dark"})using(var form=Make(mode)){
+@@ -106,10 +120,18 @@
+             Check(All(form).OfType<NavItem>().Count()==8,"메뉴 여덟 개 "+mode);
+             Check(All(form).OfType<Segmented>().First().Items.SequenceEqual(new[]{"라이트","다크","시스템"}),"세 테마 유지 "+mode);
+             foreach(string key in keys){form.Navigate(key);Pump(300);Theme.Apply(form);Save(form,mode+"-"+key);Check(All(form).OfType<PageBase>().Any(p=>p.Key==key&&p.Visible),"화면 열림 "+key+" "+mode);}
+-            form.Navigate("dashboard");ValidateDashboard(form,mode+" 넓음");Pump(300);Save(form,mode+"-dashboard");
++            form.Navigate("dashboard");ValidateDashboard(form,mode+" 넓음");Pump(300);Save(form,mode+"-dashboard-long-values");
+             form.Size=new Size(Ui.S(980),Ui.S(700));Pump(30);ValidateDashboard(form,mode+" 좁음");Pump(300);Save(form,mode+"-dashboard-narrow");
+             form.Navigate("products");Pump(25);Save(form,mode+"-products-narrow");
+             var host=Field<AppHost>(form,"host");using(var edit=new EditForm(host.Products[0])){edit.ShowInTaskbar=false;edit.Opacity=0;edit.Show();Pump(20);Save(edit,mode+"-editor");Check(All(edit).Any(c=>c.Name=="productPhotos")&&All(edit).Any(c=>c.Name=="shippingFee"),"사진과 배송 편집 유지 "+mode);edit.Dispose();}
++            using(var narrow=new Form{AutoScaleMode=AutoScaleMode.None,ClientSize=new Size(Ui.S(540),Ui.S(1000)),Font=Theme.FontBase(),ShowInTaskbar=false,Opacity=0}){
++                var page=new DashboardPage(host);narrow.Controls.Add(page);page.Refresh2();Ui.ScaleTree(page);Theme.Apply(narrow);narrow.StartPosition=FormStartPosition.Manual;narrow.Location=new Point(-20000,-20000);narrow.Show();Pump(300);page.LayoutForDpi();
++                var overview=All(page).Single(c=>c.Name=="dashboardOverview");var widgets=overview.Controls.Cast<Control>().ToArray();
++                Check(widgets.All(c=>c.Left>=0&&c.Top>=0&&c.Right<=overview.Width&&c.Bottom<=overview.Height),"540 폭 현황 내부 배치 "+mode);
++                for(int i=0;i<widgets.Length;i++)for(int j=i+1;j<widgets.Length;j++)Check(!widgets[i].Bounds.IntersectsWith(widgets[j].Bounds),"540 폭 현황 겹침 없음 "+i+"/"+j+" "+mode);
++                Check(All(page).OfType<RunFraction>().Single().DisplayText=="2147483646 / 2147483647","540 폭에서도 큰 정수 그대로 유지 "+mode);
++                Save(narrow,mode+"-dashboard-540");
++            }
+             using(var diagnostic=new DiagnosticPreview(host.Cfg,host.Products)){
+                 // Shown을 발생시키지 않고 공통 시각 상태만 렌더합니다. 실제 진단과 인증은 실행하지 않습니다.
+                 diagnostic.ShowInTaskbar=false;diagnostic.Opacity=0;diagnostic.StartPosition=FormStartPosition.Manual;diagnostic.Location=new Point(-20000,-20000);diagnostic.Show();Application.DoEvents();Save(diagnostic,mode+"-diagnostics-visual");Check(All(diagnostic).OfType<DiagnosticRow>().Count()==6,"자가진단 여섯 시각 행 "+mode);
+--- 18차/tools/ResetAssemblyInfo.cs
++++ 19차/tools/ResetAssemblyInfo.cs
+@@ -5,6 +5,6 @@
+ [assembly: AssemblyCompany("EXPMASTER")]
+ [assembly: AssemblyProduct("EXP Reset")]
+ [assembly: AssemblyCopyright("Copyright © EXPMASTER. All rights reserved.")]
+-[assembly: AssemblyVersion("2.3.0.0")]
+-[assembly: AssemblyFileVersion("2.3.0.0")]
+-[assembly: AssemblyInformationalVersion("2.3.0")]
++[assembly: AssemblyVersion("2.3.1.0")]
++[assembly: AssemblyFileVersion("2.3.1.0")]
++[assembly: AssemblyInformationalVersion("2.3.1")]

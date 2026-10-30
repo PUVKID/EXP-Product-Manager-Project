@@ -1,0 +1,10 @@
+<!doctype html><meta charset='utf-8'><style>body{padding:30px}button,input,label{margin:8px}section{padding:20px}</style>
+<button id='method' aria-haspopup='listbox' onclick='document.getElementById("methods").hidden=false'><span>배송비 포함</span></button>
+<ul id='methods' hidden><li role='option' onclick='method(true)'>배송비 포함</li><li role='option' onclick='method(false)'>배송비 별도</li></ul>
+<section id='scroll-trade-shippingSpecs' style='display:none'>일반택배 <input id='normal' type='text' inputmode='numeric' placeholder='100~30,000'>
+<label><input type='radio' name='isPossible' value='0' checked hidden onchange='half(false)'>불가능</label><label><input type='radio' name='isPossible' value='1' hidden onchange='half(true)'>가능</label>
+<div id='half' hidden><button id='carrier' aria-haspopup='listbox' onclick='document.getElementById("carriers").hidden=false'>둘 다 가능</button>
+<ul id='carriers' hidden><li role='option' onclick='carrier(this)'>둘 다 가능</li><li role='option' onclick='carrier(this)'>GS25 만</li><li role='option' onclick='carrier(this)'>CU만</li></ul>
+<input id='halfFee' type='text' inputmode='numeric' placeholder='100~3,000'></div></section>
+<label><input id='default-shipping-fee' type='checkbox'>다음 등록시에도 사용</label>
+<script>function method(v){document.getElementById('method').innerHTML='<span>배송비 '+(v?'포함':'별도')+'</span>';document.getElementById('methods').hidden=true;document.getElementById('scroll-trade-shippingSpecs').style.display=v?'none':'block';}function half(v){document.getElementById('half').hidden=!v;}function carrier(e){document.getElementById('carrier').textContent=e.textContent;document.getElementById('carriers').hidden=true;}</script>

@@ -1,0 +1,64 @@
+FAIL 60분은 시작 시각 15:02 기준
+FAIL 매시 0분
+FAIL 매시 20분
+FAIL 지정분에 끝나면 다음 미래 시간
+FAIL 느린 회차의 지난 간격 건너뜀
+FAIL 간격 경계와 같아도 미래 슬롯
+FAIL 날짜 경계 간격
+FAIL 날짜 경계 지정분
+FAIL 1440분 간격
+PASS 회차 종료 응답
+PASS 0개 전체 목록 첫 회차 기존 상품 포함
+PASS 0개 회차 상태
+PASS 회차 종료 응답
+FAIL 31개 전체 목록 첫 회차 기존 상품 포함
+FAIL 31개 회차 상태
+PASS 회차 종료 응답
+FAIL 65개 전체 목록 첫 회차 기존 상품 포함
+FAIL 65개 회차 상태
+PASS 회차 종료 응답
+PASS 유효하지 않은 상품 제외
+FAIL 설정 변경에도 시작 설정으로 전체 회차
+FAIL 설정 동결의 다음 60분 슬롯
+PASS 회차 종료 응답
+FAIL Controller 지정분 연결
+FAIL 대기 중 일시정지로 회차 방지
+FAIL 일시정지 후 지연 회차 한 번만
+FAIL 지연 회차 후 몰아 실행 금지
+FAIL 예약 중지 후 재시작 없음
+PASS 회차 종료 응답
+FAIL 서버 시각 오래되면 예약 게시 금지
+FAIL 시각 복구 후 한 회차
+FAIL 시각 복구 뒤 미래 슬롯
+PASS 시각 미확인 시작 차단
+FAIL 잘못된 간격 0 차단
+FAIL 잘못된 간격 1441 차단
+FAIL 잘못된 지정분 -1 차단
+FAIL 잘못된 지정분 60 차단
+FAIL Classic은 첫 전체 회차부터 실제 RequireMode 차단
+PASS 회차 종료 응답
+PASS 실제 Pro 한도 소진 후 회차와 예약 중단
+PASS 회차 종료 응답
+PASS 로그인 실패도 종료 응답
+FAIL 로그인 실패에 낡은 시도 재집계 없음
+PASS 회차 종료 응답
+PASS 일부 실패에도 남은 상품 시도
+FAIL 실패 회차 뒤 무한 반복 차단
+PASS 진행 중 진입
+PASS 중복 Start가 새 Runner/집계 초기화 안 함
+PASS 실행 중 일시정지
+PASS 일시정지 중 중지 반응
+PASS 중지 후 남은 상품 게시 없음
+PASS 회차 종료 응답
+FAIL 느린 실제 회차 뒤 다음 미래 슬롯
+System.Reflection.TargetInvocationException: 호출 대상이 예외를 Throw했습니다. ---> System.IO.IOException: PC 시간이 이전으로 변경되었습니다.
+   위치: BunjangAuto.UsageQuota.Read(String device, DateTime now)
+   --- 내부 예외 스택 추적의 끝 ---
+   위치: System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   위치: System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   위치: System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   위치: BatchRepeatTests.Seed(Int32 used)
+   위치: BatchRepeatTests.Fixture..ctor(Int32 count, AppSettings cfg, Boolean registered)
+   위치: BatchRepeatTests.RunChecks()
+   위치: BatchRepeatTests.Execute()
+BATCH: 22 passed, 32 failed

@@ -1,0 +1,13 @@
+{
+  "task": "EXP GitHub 반영 누락 복구",
+  "argv": [
+    "gh",
+    "auth",
+    "status"
+  ],
+  "cwd": "C:\\Users\\PUVKID",
+  "changes": "없음",
+  "time": "2026-10-29T08:30:31.6592252+09:00",
+  "error": "The term 'gh' is not recognized",
+  "exit_code": 1
+}

@@ -1,0 +1,55 @@
+{
+  "korean_time": "2026-10-26 15:51:16 +09:00",
+  "role": "deep",
+  "configured_model_file": "C:\\Users\\PUVKID\\.codex\\agents\\deep.toml",
+  "configured_model": "gpt-6.1-sol",
+  "configured_effort": "xhigh",
+  "assignment_evidence": "부모 NEW_TASK native deep 지정",
+  "native_role_discovery": "부모에게 전달받은 배정이며 본 작업자는 spawn 요청 원문/서버 신원을 독립 조회하지 못함",
+  "server_runtime_identity": "확인 불가",
+  "stronger_fixed_effort": "deep/xhigh보다 높은 강도는 사용자 고정 표에 없음",
+  "files": [
+    {
+      "path": "소스코드\\src\\Models.cs",
+      "bytes": 7118,
+      "strict_utf8": true,
+      "replacement_character": false,
+      "sha256": "923DCC4E950ADC013FA0CDE1D16358C3BDD096AC91F0E1FBF9A1A7C26616408C"
+    },
+    {
+      "path": "소스코드\\src\\Runner.cs",
+      "bytes": 7894,
+      "strict_utf8": true,
+      "replacement_character": false,
+      "sha256": "E710FB5144FFBD49EFAF9221EA76BC0786C497A0FD569835A775AB674E618C37"
+    },
+    {
+      "path": "소스코드\\src\\UI\\AutomationController.cs",
+      "bytes": 16016,
+      "strict_utf8": true,
+      "replacement_character": false,
+      "sha256": "D7EE2003BCB21345B9104B62F4F67C6037F1C4FD17A97935DDE92306A8EF3C88"
+    },
+    {
+      "path": "소스코드\\src\\BatchRepeatSchedule.cs",
+      "bytes": 1724,
+      "strict_utf8": true,
+      "replacement_character": false,
+      "sha256": "B00E178F1B24D46900025358E1EFB71489343561772804FF84E97935163929C8"
+    },
+    {
+      "path": "소스코드\\tests\\BatchRepeatTests.cs",
+      "bytes": 22407,
+      "strict_utf8": true,
+      "replacement_character": false,
+      "sha256": "7E3DEF0F99EC2295A9EFCF0A9F27FE90CA4AEB689C3216490B54343AE2868FA4"
+    },
+    {
+      "path": "소스코드\\build\\Build.ps1",
+      "bytes": 6977,
+      "strict_utf8": true,
+      "replacement_character": false,
+      "sha256": "7210B35B77D995C00F574C691835DDD1F904A23745E49441F29F01D463CEF11B"
+    }
+  ]
+}

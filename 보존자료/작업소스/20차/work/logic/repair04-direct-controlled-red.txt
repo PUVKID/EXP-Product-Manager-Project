@@ -1,0 +1,6 @@
+PASS 제어된 Finished 지연 진입
+PASS Running 해제와 UI 회차 완료는 다른 시점
+FAIL UI 콜백 전 회차 완료로 판단하지 않음
+실패 상태 {"check":"UI 콜백 전 회차 완료로 판단하지 않음","attempts":1,"running":false,"active":true,"round":1,"nextRun":"0001-01-01T00:00:00.0000000","notice":"","blockedReason":"","now":"2026-10-26T15:02:00.0000000","fresh":true,"paused":false,"state":"실행 중... (1/1)  ·  전체 목록 1회차","success":0,"failure":0,"lastRegistered":1,"threadAlive":true,"threadState":"Background, WaitSleepJoin","uiHandle":true,"uiDisposed":false,"edition":"Pro","allowed":true,"runnerError":"","ledger":{"file":{"seq":3,"used":1,"day":"2026-10-26","lastUtc":"2026-10-26T06:02:00Z","previous":"A78504CAB6E4D4A44D796F164A0794A1F861DE9691C1D62135FD696C8D6F6060","bytes":454},"registry":{"seq":3,"used":1,"day":"2026-10-26","lastUtc":"2026-10-26T06:02:00Z","previous":"A78504CAB6E4D4A44D796F164A0794A1F861DE9691C1D62135FD696C8D6F6060","bytes":454}}}
+PASS 지연 해제 후 실제 다음 예약 생성
+BATCH: 3 passed, 1 failed

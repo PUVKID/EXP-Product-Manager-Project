@@ -1,0 +1,1690 @@
+[
+  {
+    "path": "BunjangAuto_v2.0.0/1_배포용_앱/상품양식.csv",
+    "status": "이전만 존재",
+    "before_bytes": 346,
+    "after_bytes": null,
+    "before_sha256": "bd7bf97c2f09fc99a19165295935adb7adff22b094cc524d37e11bbab3a4b144",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/2_관리자용_발급툴/issued_licenses.csv",
+    "status": "이전만 존재",
+    "before_bytes": 45,
+    "after_bytes": null,
+    "before_sha256": "3d3b46570b5dffa8ca4a9f5fc48417aac9fd02363ab4447587d5e3b4fa312d5a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/BunjangAuto.csproj",
+    "status": "이전만 존재",
+    "before_bytes": 1925,
+    "after_bytes": null,
+    "before_sha256": "c8a021b4394222d924d9137bc976aa8c6b36c6fffec704ac52aaace9471f3e35",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/admin/LicenseAdmin.cs",
+    "status": "이전만 존재",
+    "before_bytes": 6051,
+    "after_bytes": null,
+    "before_sha256": "ba7bb68550f25544ed67d8b2c01f4234e9ef67821123d06a99c172f069568081",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/build.bat",
+    "status": "이전만 존재",
+    "before_bytes": 2058,
+    "after_bytes": null,
+    "before_sha256": "a87b070c89f20a1d7692210ef88c748c45e3a464fef08e68e3922e3a286d5a28",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/build.sh",
+    "status": "이전만 존재",
+    "before_bytes": 1848,
+    "after_bytes": null,
+    "before_sha256": "f31838c6c531d8e7a7b7a9d1c1e90ec36949ba9d899ed25f3c0bfd2d23975d7f",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/build_admin.sh",
+    "status": "이전만 존재",
+    "before_bytes": 257,
+    "after_bytes": null,
+    "before_sha256": "d1b1112b9bdf904f8778e31376b92ce8a8fb237b4b768485940e3b6f00f4725b",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/kg.cs",
+    "status": "이전만 존재",
+    "before_bytes": 253,
+    "after_bytes": null,
+    "before_sha256": "73a6a36f38b6835cbb0e5fd0226bd716abdca0cec8a3ff07270863faef0539b7",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/license_public.xml",
+    "status": "이전만 존재",
+    "before_bytes": 755,
+    "after_bytes": null,
+    "before_sha256": "2c860a309fef0b74b8b18f4c86305abb6581324118969aec5afd43ec1d72312d",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/app.ico",
+    "status": "이전만 존재",
+    "before_bytes": 53065,
+    "after_bytes": null,
+    "before_sha256": "a152b57b63061b25fa178f4dd1737f92aff01f370a055e6ef5e58550db9d4a89",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/app.manifest",
+    "status": "이전만 존재",
+    "before_bytes": 1214,
+    "after_bytes": null,
+    "before_sha256": "60857527aa20185fb708d456f66665decdb5f3d6f9a611c07efc9a34c0d81e4a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/app.png",
+    "status": "이전만 존재",
+    "before_bytes": 64865,
+    "after_bytes": null,
+    "before_sha256": "705081e21b0fdcaa239afa4910f59c839dfa843593417d8f509864e73c98490c",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/01-start.md",
+    "status": "이전만 존재",
+    "before_bytes": 1439,
+    "after_bytes": null,
+    "before_sha256": "76426cdd286044bca769c777bb904db9b7eca43502b95337fbb96aaf787d577c",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/02-license.md",
+    "status": "이전만 존재",
+    "before_bytes": 952,
+    "after_bytes": null,
+    "before_sha256": "eab04f6215e858207d25b6df9dd5696db3646a0200002a91b14e186480ffabe8",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/03-login.md",
+    "status": "이전만 존재",
+    "before_bytes": 854,
+    "after_bytes": null,
+    "before_sha256": "2fe99090f30b7acc9c37b5480a69d580bd4231acc2f107c2fa528e2af03399c8",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/04-add.md",
+    "status": "이전만 존재",
+    "before_bytes": 957,
+    "after_bytes": null,
+    "before_sha256": "dd599a30aa9fe502d3cee17c896133167a01bbdaa8f24739212a268d7d2c30fc",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/05-csv.md",
+    "status": "이전만 존재",
+    "before_bytes": 1196,
+    "after_bytes": null,
+    "before_sha256": "07a56bde38caf232f1b7ab09a19353550d01a7d312c232da51037d656954601a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/06-data.md",
+    "status": "이전만 존재",
+    "before_bytes": 1120,
+    "after_bytes": null,
+    "before_sha256": "ee3eb1d119839ab177ca501da4911f406ba0b2a299ad39360d28daa2d448fdfd",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/07-images.md",
+    "status": "이전만 존재",
+    "before_bytes": 764,
+    "after_bytes": null,
+    "before_sha256": "28aa8f244a3c67c1089e142837bc73932400c6dbe614d3cae52609606f12482a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/08-auto.md",
+    "status": "이전만 존재",
+    "before_bytes": 927,
+    "after_bytes": null,
+    "before_sha256": "bf2df0b679b0a493723d5d18e66ed8f0af1504ee52445f81d5d7f40228598a9c",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/09-onebyone.md",
+    "status": "이전만 존재",
+    "before_bytes": 719,
+    "after_bytes": null,
+    "before_sha256": "09d46c561d9b29c48003a95757fe1913f8314aea16007f6298c386f3bfc5e670",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/10-repeat.md",
+    "status": "이전만 존재",
+    "before_bytes": 658,
+    "after_bytes": null,
+    "before_sha256": "a30f56ed98c6855507b78f0b9a665b75ef6cd955570634cff37b5d522ff5cfbf",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/11-timerules.md",
+    "status": "이전만 존재",
+    "before_bytes": 934,
+    "after_bytes": null,
+    "before_sha256": "c11a6bdb3df701b8e17980574fbda0aa9d97736f392d0850a81b3d4a17cca5f8",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/12-schedule.md",
+    "status": "이전만 존재",
+    "before_bytes": 822,
+    "after_bytes": null,
+    "before_sha256": "3addcdea537b1a8b08aedd71cdcb283edb2b4083e758d75330e0c3b8e6d66f76",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/13-logs.md",
+    "status": "이전만 존재",
+    "before_bytes": 808,
+    "after_bytes": null,
+    "before_sha256": "6b13c868c4ec1b3a3dfce8de8f83bd784004933fa20de0ddc47365fa16995fe2",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/14-errors.md",
+    "status": "이전만 존재",
+    "before_bytes": 968,
+    "after_bytes": null,
+    "before_sha256": "9830e15abf362b4d7a7db84007fbe596805952aec6693e88f4083dfaf8097c5f",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/15-chrome.md",
+    "status": "이전만 존재",
+    "before_bytes": 1060,
+    "after_bytes": null,
+    "before_sha256": "4b387912ae866ccf85c12dae005395882a2d826d604063cac17c9755b8754545",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/16-loginfix.md",
+    "status": "이전만 존재",
+    "before_bytes": 798,
+    "after_bytes": null,
+    "before_sha256": "fad65a0e64c78bfe917bafcc881622a5c14fb8ca2f452feec7cc345bcb7cafb5",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/17-licensefix.md",
+    "status": "이전만 존재",
+    "before_bytes": 1055,
+    "after_bytes": null,
+    "before_sha256": "c8f125eac592be8f5d7cde35aeef0fb03bfe1fabc0e9c5e7a4e3159193c54f2d",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/18-theme.md",
+    "status": "이전만 존재",
+    "before_bytes": 586,
+    "after_bytes": null,
+    "before_sha256": "647e3d5732b583114c9268ac40663453ee7b5e8632e37304a6a087dcaa23c52a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/19-settings.md",
+    "status": "이전만 존재",
+    "before_bytes": 1436,
+    "after_bytes": null,
+    "before_sha256": "0c2d7cd8216b38309a3d19ba5780a54121b09090b3e92938711dde72adc3089d",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/resources/help/20-faq.md",
+    "status": "이전만 존재",
+    "before_bytes": 1640,
+    "after_bytes": null,
+    "before_sha256": "a4e24059aa9390ff0531ac544abf821e5e4f53abb90629da7506ccc57d42f6be",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/AssemblyInfo.cs",
+    "status": "이전만 존재",
+    "before_bytes": 456,
+    "after_bytes": null,
+    "before_sha256": "f3fa7476d3db1feae7613093283b75d16773448b39cefb1c1566789de26e7e69",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Bot.cs",
+    "status": "이전만 존재",
+    "before_bytes": 37277,
+    "after_bytes": null,
+    "before_sha256": "ab5b37a968b8a20bab3bee1ad68d7479562db13044c2f1761d458729be3e149e",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/CategoryStore.cs",
+    "status": "이전만 존재",
+    "before_bytes": 3061,
+    "after_bytes": null,
+    "before_sha256": "09063feea9dc554d5fa446830056053afa2f4b9c93b2bb3d87826a47c555a3dd",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/DriverManager.cs",
+    "status": "이전만 존재",
+    "before_bytes": 7859,
+    "after_bytes": null,
+    "before_sha256": "516a679fe018989ca87e8a719a3339c11aa98c2df77b687a0672d25fb3e354c8",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/EditForm.cs",
+    "status": "이전만 존재",
+    "before_bytes": 9221,
+    "after_bytes": null,
+    "before_sha256": "1f8c55028968f4ab3ba7359e7c48f491bd8e2752590446c64e7812c453ac81fb",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Guard.cs",
+    "status": "이전만 존재",
+    "before_bytes": 2115,
+    "after_bytes": null,
+    "before_sha256": "a9124d5ff8b732c17b59b04d81e82363a05db5e566aa9bf2dadc6d9a1a7e0180",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Help/HelpService.cs",
+    "status": "이전만 존재",
+    "before_bytes": 7210,
+    "after_bytes": null,
+    "before_sha256": "15567ac407c50b959d35b7fb865a04ea4227e83491c868591ede9b53466bbe6f",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/License.cs",
+    "status": "이전만 존재",
+    "before_bytes": 7655,
+    "after_bytes": null,
+    "before_sha256": "8d39ba3a61984f71eac63292cf179c18e6a0526923c2ddf8153128d20dd0d9a7",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/LicenseForm.cs",
+    "status": "이전만 존재",
+    "before_bytes": 6651,
+    "after_bytes": null,
+    "before_sha256": "1789e7dee1fd96848af2b831637a4267f37d44af3d837d9bc3ffd41b73d5e408",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Log.cs",
+    "status": "이전만 존재",
+    "before_bytes": 5147,
+    "after_bytes": null,
+    "before_sha256": "37266404561437ac58784d205a495424a37d13b6cf78209967e98dc8fe95312a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/MainForm.cs",
+    "status": "이전만 존재",
+    "before_bytes": 13535,
+    "after_bytes": null,
+    "before_sha256": "5d801d02efb4f0d1d60c45dc993cd465254b0139bd0a7afdc09380e799650687",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Models.cs",
+    "status": "이전만 존재",
+    "before_bytes": 6213,
+    "after_bytes": null,
+    "before_sha256": "cce30c064831965586247b85631a6143c6fedd15a4e8b3cece193d4fb4b18287",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Program.cs",
+    "status": "이전만 존재",
+    "before_bytes": 5241,
+    "after_bytes": null,
+    "before_sha256": "39ca88b096fa8d46e53b820c49c9302b135952378f92c9b6e25854f82414b3b1",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Runner.cs",
+    "status": "이전만 존재",
+    "before_bytes": 6305,
+    "after_bytes": null,
+    "before_sha256": "2e469fad13552ef1f589d85daf443856d91c4e3ccd5778129f35ed5a2e66c97b",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Schedule.cs",
+    "status": "이전만 존재",
+    "before_bytes": 5718,
+    "after_bytes": null,
+    "before_sha256": "3a55dab11aac804911fcf11ca9a4f516c04b371343acb728ab2b0f2507398f50",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Selectors.cs",
+    "status": "이전만 존재",
+    "before_bytes": 6644,
+    "after_bytes": null,
+    "before_sha256": "8ad09421ed3dd3c5bd5452e55607ab34fddc00e2a7ddc9a72cde9e3d53d3ebff",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/SelfTest.cs",
+    "status": "이전만 존재",
+    "before_bytes": 17418,
+    "after_bytes": null,
+    "before_sha256": "19b809c31569b5ee4af6514d1782542b02d78140407c3f4c6f56cdf5302955af",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/SelfTestV2.cs",
+    "status": "이전만 존재",
+    "before_bytes": 22925,
+    "after_bytes": null,
+    "before_sha256": "f26d7818cdce4b9c770e553999ebe52fb2021342faed50bd67a193423fdd16a2",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Storage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 16688,
+    "after_bytes": null,
+    "before_sha256": "58e89cd2ae9f94d84693a53f719770cde09520047d45f027081e07f81c18d3ac",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/AdminApiClient.cs",
+    "status": "이전만 존재",
+    "before_bytes": 4476,
+    "after_bytes": null,
+    "before_sha256": "b357e40bc28bb9cef9e94772f638172b77c6ae92d9c52905a3ac19efc5f17d90",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/BuildConfig.cs",
+    "status": "이전만 존재",
+    "before_bytes": 277,
+    "after_bytes": null,
+    "before_sha256": "e7d807646fc593a19c4913c3d60e9ea3931241024147255221ca654ccaf41360",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/CentralLogService.cs",
+    "status": "이전만 존재",
+    "before_bytes": 9210,
+    "after_bytes": null,
+    "before_sha256": "0e23db05309f0a433b4a8a3044f05121a011540dc5d1c2aee72e0f3c558560ed",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/ClientIdentityService.cs",
+    "status": "이전만 존재",
+    "before_bytes": 6521,
+    "after_bytes": null,
+    "before_sha256": "add0b5464bf0e9beb0daaa3ba01c19c7a957c8f2f104b983398a43d90f6dc415",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/CrashReportService.cs",
+    "status": "이전만 존재",
+    "before_bytes": 2250,
+    "after_bytes": null,
+    "before_sha256": "b87de11713a246b630a40f762564b606a418989edd1cdc24678db8ef9aaba0f8",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/LogClassifier.cs",
+    "status": "이전만 존재",
+    "before_bytes": 5336,
+    "after_bytes": null,
+    "before_sha256": "dbcbaeb14c8bd6149bf0395b0ee6ff5cb630047ef0826c87970a5a41dde762d4",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/LogQueue.cs",
+    "status": "이전만 존재",
+    "before_bytes": 4046,
+    "after_bytes": null,
+    "before_sha256": "680c47f4b5e50f205a053c9b801094c7aa1f916230c17c10d93bd165006c7241",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/Redactor.cs",
+    "status": "이전만 존재",
+    "before_bytes": 4730,
+    "after_bytes": null,
+    "before_sha256": "92303c6afaeeea3d9b108b97cca0f38d3f06d6cbb8bd478bd4fe76f8e13a067c",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/TelemetryConfig.cs",
+    "status": "이전만 존재",
+    "before_bytes": 2728,
+    "after_bytes": null,
+    "before_sha256": "1c381aba9245ac0b3d55382abe7de5a49114eaa69c794057a396e9126456543d",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/TelemetryService.cs",
+    "status": "이전만 존재",
+    "before_bytes": 3875,
+    "after_bytes": null,
+    "before_sha256": "1f07b6db61b8efe74d150d4ce49590fe046107bba00ddfbfd17274caa39bdd8d",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Telemetry/UsageMetricsService.cs",
+    "status": "이전만 존재",
+    "before_bytes": 2766,
+    "after_bytes": null,
+    "before_sha256": "e0c45495c0240e3ac5a2015d41f0be3c480465209f271bcb7102d192bb8e41d0",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Terms.cs",
+    "status": "이전만 존재",
+    "before_bytes": 7913,
+    "after_bytes": null,
+    "before_sha256": "031feb33fe053771e5ab3932d210e23833bc9a9086480651ab6151ddc7d9cd6f",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Theme.cs",
+    "status": "이전만 존재",
+    "before_bytes": 20538,
+    "after_bytes": null,
+    "before_sha256": "dd0ced77e66ad30664bc57365b44c0f68ba02260b7a47588c70f83d24eb0532e",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/AppHost.cs",
+    "status": "이전만 존재",
+    "before_bytes": 3352,
+    "after_bytes": null,
+    "before_sha256": "54066573b70ca8f29e7dcadfbfcb59491c423f285a99c9597d74deffebb553a6",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/AutomationController.cs",
+    "status": "이전만 존재",
+    "before_bytes": 11740,
+    "after_bytes": null,
+    "before_sha256": "390151473f98a8628d1913b9bc650a7ba73e92aa60bc1062e1a23979be8f1cc3",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Controls.cs",
+    "status": "이전만 존재",
+    "before_bytes": 21242,
+    "after_bytes": null,
+    "before_sha256": "3dae93c1b9733c84601bbeaac61ae23ae234fe28a80f66ce8a08f1a67255bdc9",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/FluentBox.cs",
+    "status": "이전만 존재",
+    "before_bytes": 4823,
+    "after_bytes": null,
+    "before_sha256": "42e7b4240ef501e5a59438880562d76e9544382b81ff852d002faa82a6c5688f",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/AdminPage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 27227,
+    "after_bytes": null,
+    "before_sha256": "93eb4730bdef7f61587ade45c8095ba216b45fed68564311fdeaffaac28f02fe",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/AutomationPage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 5807,
+    "after_bytes": null,
+    "before_sha256": "98166ebd1d05225fce32943b7c441a05faa81693c019306c1c6b628ca13fc65a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/DashboardPage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 10178,
+    "after_bytes": null,
+    "before_sha256": "624b010f854eb83b20bf2c3746bce92ddc58922bd49c2f8ba16c4b94abc6bf2b",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/HelpPage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 4860,
+    "after_bytes": null,
+    "before_sha256": "0b6c67d7bfe866f9443956ffadfe409bc06452a7cf75c4a1631295eebd26923a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/LicensePage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 4537,
+    "after_bytes": null,
+    "before_sha256": "877121425ad68167b63bfb4ed894b9e27e7956c6e7667a68458b0377e87b39f5",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/LogPage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 8655,
+    "after_bytes": null,
+    "before_sha256": "d7ab7f0363e4ee0737e91effa5e0767b8c4543fbf57689c4ffc4e48add5dc687",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/LoginPage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 3082,
+    "after_bytes": null,
+    "before_sha256": "1202c08884f9a9600f74912889965a3bb8656acb8f92821ae761a045938255dd",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/ProductsPage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 15703,
+    "after_bytes": null,
+    "before_sha256": "099b9e8cd9496aee23df974049755bb98b14d093b5e1fa40f5fda98f696d2c6a",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/SchedulePage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 8002,
+    "after_bytes": null,
+    "before_sha256": "329696d6662ccee52c597eb162a9e622e06c307c92279ab51409f57849dcec7b",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/Pages/SettingsPage.cs",
+    "status": "이전만 존재",
+    "before_bytes": 12146,
+    "after_bytes": null,
+    "before_sha256": "137aeb928d6aad20d1200db4a6779e63d2af34d1b47ce82727e0be2b9823ace6",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/PreviewHarness.cs",
+    "status": "이전만 존재",
+    "before_bytes": 4699,
+    "after_bytes": null,
+    "before_sha256": "3f32e966c10151d5f79bb41cd8891555cdd9822d863bb115785cea4fe14827e4",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/ThemeService.cs",
+    "status": "이전만 존재",
+    "before_bytes": 3875,
+    "after_bytes": null,
+    "before_sha256": "df42d44e1d747ff428bab495498d859fc0766299f568612eb23ebd530bcb5ba8",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/UI/UiKit.cs",
+    "status": "이전만 존재",
+    "before_bytes": 5750,
+    "after_bytes": null,
+    "before_sha256": "0ac434cf2a60fbcb230aa36892af01b7e5cfe11aa0958f3c9b4dd746c867df20",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/src/Vault.cs",
+    "status": "이전만 존재",
+    "before_bytes": 5807,
+    "after_bytes": null,
+    "before_sha256": "af313afb9beeb7827299d1f33c7bf4b988d4d0e61b963c6095b79fc07ffed564",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+    "status": "이전만 존재",
+    "before_bytes": 2630,
+    "after_bytes": null,
+    "before_sha256": "6ccf72f23a38d10e499bf9fb0ee7048a6e30d9f42757aeaca607b2d9627b7b21",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/tests/migration/read_with_new.cs",
+    "status": "이전만 존재",
+    "before_bytes": 945,
+    "after_bytes": null,
+    "before_sha256": "d7ae752fd321e2e704f91cc1d640b3069b897ceb58b5c37ef08e5240c30f2e02",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/tests/migration/write_with_old.cs",
+    "status": "이전만 존재",
+    "before_bytes": 771,
+    "after_bytes": null,
+    "before_sha256": "b8befbb269eba12e20c12720f40d1bcfc79d7300a3c3f1aec066b429b683b966",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/3_소스코드/tests/regression.sh",
+    "status": "이전만 존재",
+    "before_bytes": 4842,
+    "after_bytes": null,
+    "before_sha256": "d09aeb96e9e6b4204bd1259322b45b46b17a6b84140442fcd07bad2ff1504458",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/Caddyfile.example",
+    "status": "이전만 존재",
+    "before_bytes": 181,
+    "after_bytes": null,
+    "before_sha256": "24d4f397c6c3268a60810ca8331d27c6440b244180cb3799a428c4b13ccf9921",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/Dockerfile",
+    "status": "이전만 존재",
+    "before_bytes": 324,
+    "after_bytes": null,
+    "before_sha256": "bf2687538c12583cbfd878518f59fc0bb348fff75670c150cde2be51c5bdd999",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/README.md",
+    "status": "이전만 존재",
+    "before_bytes": 5134,
+    "after_bytes": null,
+    "before_sha256": "6969a3c9f8f57c25a47352c08d6c3f0605f34537068a0475345523edb5273da4",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/docker-compose.yml",
+    "status": "이전만 존재",
+    "before_bytes": 346,
+    "after_bytes": null,
+    "before_sha256": "0237039008d8a3865cf5c273d7bd33218102a940ac676f954f299a2731a063b7",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/schema.sql",
+    "status": "이전만 존재",
+    "before_bytes": 2599,
+    "after_bytes": null,
+    "before_sha256": "5c4d7c1550e6c3ef4b30a42a5aa4dc9cdc722b2c23746cf0d5eb0b9d39b3e601",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/server.py",
+    "status": "이전만 존재",
+    "before_bytes": 29422,
+    "after_bytes": null,
+    "before_sha256": "bb9bf07e8c487933278d3d8eeb8784d1095836abcb64c52df98055ac6e7f3eb6",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/static/app.js",
+    "status": "이전만 존재",
+    "before_bytes": 20821,
+    "after_bytes": null,
+    "before_sha256": "af91dbd299bfe25a5559effd0fee4c86770af6d89642ac646eac65930268b1b9",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/static/index.html",
+    "status": "이전만 존재",
+    "before_bytes": 1201,
+    "after_bytes": null,
+    "before_sha256": "16f3f23bdec3146966662fbce59a2c2a13afa3f9f74f89634729f0b9860583b8",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/static/style.css",
+    "status": "이전만 존재",
+    "before_bytes": 4301,
+    "after_bytes": null,
+    "before_sha256": "570f503c78d426d6b78839849fb03a6301fb067ad3447d3b2ecedd047fdcd2ae",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/tests/dashboard_smoke.js",
+    "status": "이전만 존재",
+    "before_bytes": 2166,
+    "after_bytes": null,
+    "before_sha256": "6204186b493246e5276c98277586f94956b4b6e0ec1e0bbf137ab6c1e511dbcf",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/tests/seed_demo.py",
+    "status": "이전만 존재",
+    "before_bytes": 2138,
+    "after_bytes": null,
+    "before_sha256": "4be56b7495035b7a03e48844a9eb3098e6dfaf38101e0b86ce20b0bc8dfa6e56",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/4_중앙로그서버/tests/test_server.py",
+    "status": "이전만 존재",
+    "before_bytes": 8671,
+    "after_bytes": null,
+    "before_sha256": "aff5b819781ae33e95d722a22caabe54d9f7134685ec752fe13787e20bcfc651",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/5_기준선_원본소스/MainForm.v1.cs",
+    "status": "이전만 존재",
+    "before_bytes": 32486,
+    "after_bytes": null,
+    "before_sha256": "29f4e2fe5663eadf3b4ba8bc41330fe17f8dbe75e6da3f848cf3d1e3375a7a8c",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/BunjangAuto.sln",
+    "status": "이전만 존재",
+    "before_bytes": 815,
+    "after_bytes": null,
+    "before_sha256": "ee4f7a0c3896a96d33313f36748c1df531c5605a08847daf4672cba156d97ada",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/README.md",
+    "status": "이전만 존재",
+    "before_bytes": 11628,
+    "after_bytes": null,
+    "before_sha256": "4c8b7d923b3847970f9c5c9a80737ba73cf4929fb524dafb8df42e6f5f5d7360",
+    "after_sha256": null
+  },
+  {
+    "path": "BunjangAuto_v2.0.0/README_v1_원본설명서.txt",
+    "status": "이전만 존재",
+    "before_bytes": 3207,
+    "after_bytes": null,
+    "before_sha256": "7f7a5ffcdd254f7b46163b5d5afdb7c696516ee21f632cc084fae921693996ff",
+    "after_sha256": null
+  },
+  {
+    "path": "Lumivolt_v2.0.0/1_배포용_앱/상품양식.csv",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 346,
+    "before_sha256": null,
+    "after_sha256": "bd7bf97c2f09fc99a19165295935adb7adff22b094cc524d37e11bbab3a4b144"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/2_관리자용_발급툴/issued_licenses.csv",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 45,
+    "before_sha256": null,
+    "after_sha256": "3d3b46570b5dffa8ca4a9f5fc48417aac9fd02363ab4447587d5e3b4fa312d5a"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/Lumivolt.csproj",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2032,
+    "before_sha256": null,
+    "after_sha256": "a6737d4951cc0b458ff09bb4ec5f55acd795f93783217b943bfd904f05f512c4"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/admin/LicenseAdmin.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6048,
+    "before_sha256": null,
+    "after_sha256": "bc3121fb8ce161db8c56c32e51bea2946932cbbf26a73528e06e3e83b19406ba"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/build.bat",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2177,
+    "before_sha256": null,
+    "after_sha256": "858a831ddd2c5b4bb35119c22a341de809b27ffad20aee82ba331f86d533fea1"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/build.sh",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2008,
+    "before_sha256": null,
+    "after_sha256": "b55d1c48322aea92861f8311d546148d51d86ebf9f92ae8538cfbfac6fcf12cf"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/build_admin.sh",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 357,
+    "before_sha256": null,
+    "after_sha256": "79151157dbfcfc03ad2f507323d2ce5cb733ba1c67b29bde737df1e2108f4292"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/kg.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 253,
+    "before_sha256": null,
+    "after_sha256": "73a6a36f38b6835cbb0e5fd0226bd716abdca0cec8a3ff07270863faef0539b7"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/license_public.xml",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 755,
+    "before_sha256": null,
+    "after_sha256": "2c860a309fef0b74b8b18f4c86305abb6581324118969aec5afd43ec1d72312d"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/app.ico",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 53065,
+    "before_sha256": null,
+    "after_sha256": "a152b57b63061b25fa178f4dd1737f92aff01f370a055e6ef5e58550db9d4a89"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/app.manifest",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1167,
+    "before_sha256": null,
+    "after_sha256": "52089e46251618139ce152e17979308511aff51b488a4c9ecd2f98bcab56865e"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/app.png",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 64865,
+    "before_sha256": null,
+    "after_sha256": "705081e21b0fdcaa239afa4910f59c839dfa843593417d8f509864e73c98490c"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/fonts/NanumGothic-OFL.txt",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5393,
+    "before_sha256": null,
+    "after_sha256": "a90f671a7f9dccd2862bdd75318ed34a22f13edfb764a1602444402aeff3370d"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/fonts/NanumGothicBold.ttf",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4642244,
+    "before_sha256": null,
+    "after_sha256": "454eb3f503f377782a99eb84fc4bb7dde22a0f075d41b47427737f2985053bc9"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/01-start.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1436,
+    "before_sha256": null,
+    "after_sha256": "d2954e213165e8b64f37b15d2037d07c2614da8e47dc679e38cc20559320ba19"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/02-license.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 952,
+    "before_sha256": null,
+    "after_sha256": "eab04f6215e858207d25b6df9dd5696db3646a0200002a91b14e186480ffabe8"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/03-login.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 854,
+    "before_sha256": null,
+    "after_sha256": "2fe99090f30b7acc9c37b5480a69d580bd4231acc2f107c2fa528e2af03399c8"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/04-add.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 957,
+    "before_sha256": null,
+    "after_sha256": "dd599a30aa9fe502d3cee17c896133167a01bbdaa8f24739212a268d7d2c30fc"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/05-csv.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1196,
+    "before_sha256": null,
+    "after_sha256": "07a56bde38caf232f1b7ab09a19353550d01a7d312c232da51037d656954601a"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/06-data.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1120,
+    "before_sha256": null,
+    "after_sha256": "ee3eb1d119839ab177ca501da4911f406ba0b2a299ad39360d28daa2d448fdfd"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/07-images.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 764,
+    "before_sha256": null,
+    "after_sha256": "28aa8f244a3c67c1089e142837bc73932400c6dbe614d3cae52609606f12482a"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/08-auto.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 927,
+    "before_sha256": null,
+    "after_sha256": "bf2df0b679b0a493723d5d18e66ed8f0af1504ee52445f81d5d7f40228598a9c"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/09-onebyone.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 719,
+    "before_sha256": null,
+    "after_sha256": "09d46c561d9b29c48003a95757fe1913f8314aea16007f6298c386f3bfc5e670"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/10-repeat.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 658,
+    "before_sha256": null,
+    "after_sha256": "a30f56ed98c6855507b78f0b9a665b75ef6cd955570634cff37b5d522ff5cfbf"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/11-timerules.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 934,
+    "before_sha256": null,
+    "after_sha256": "c11a6bdb3df701b8e17980574fbda0aa9d97736f392d0850a81b3d4a17cca5f8"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/12-schedule.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 822,
+    "before_sha256": null,
+    "after_sha256": "3addcdea537b1a8b08aedd71cdcb283edb2b4083e758d75330e0c3b8e6d66f76"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/13-logs.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 808,
+    "before_sha256": null,
+    "after_sha256": "6b13c868c4ec1b3a3dfce8de8f83bd784004933fa20de0ddc47365fa16995fe2"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/14-errors.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 968,
+    "before_sha256": null,
+    "after_sha256": "9830e15abf362b4d7a7db84007fbe596805952aec6693e88f4083dfaf8097c5f"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/15-chrome.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1060,
+    "before_sha256": null,
+    "after_sha256": "4b387912ae866ccf85c12dae005395882a2d826d604063cac17c9755b8754545"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/16-loginfix.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 798,
+    "before_sha256": null,
+    "after_sha256": "fad65a0e64c78bfe917bafcc881622a5c14fb8ca2f452feec7cc345bcb7cafb5"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/17-licensefix.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1055,
+    "before_sha256": null,
+    "after_sha256": "c8f125eac592be8f5d7cde35aeef0fb03bfe1fabc0e9c5e7a4e3159193c54f2d"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/18-theme.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 586,
+    "before_sha256": null,
+    "after_sha256": "647e3d5732b583114c9268ac40663453ee7b5e8632e37304a6a087dcaa23c52a"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/19-settings.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1532,
+    "before_sha256": null,
+    "after_sha256": "7c2c3ffc6784685f43af1e00b757ae6ec356572448637a15c27428ff1b09a48b"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/resources/help/20-faq.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1640,
+    "before_sha256": null,
+    "after_sha256": "a4e24059aa9390ff0531ac544abf821e5e4f53abb90629da7506ccc57d42f6be"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/AssemblyInfo.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 455,
+    "before_sha256": null,
+    "after_sha256": "278026c6f048da25347052dbf70971dae916d9708c020a46b0bbfd6d90ebca97"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Bot.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 37277,
+    "before_sha256": null,
+    "after_sha256": "ab5b37a968b8a20bab3bee1ad68d7479562db13044c2f1761d458729be3e149e"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/CategoryStore.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 3061,
+    "before_sha256": null,
+    "after_sha256": "09063feea9dc554d5fa446830056053afa2f4b9c93b2bb3d87826a47c555a3dd"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/DriverManager.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 7856,
+    "before_sha256": null,
+    "after_sha256": "b41cdf5b0befb927e434798275a458f5214409e8cf87d8296b55159dfe3d4648"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/EditForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 9253,
+    "before_sha256": null,
+    "after_sha256": "4a8bc722e2b72e278225d24f6b569f802b009c3527c450dde6edc064119ff638"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Guard.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2098,
+    "before_sha256": null,
+    "after_sha256": "c9e2018cf69f0af064c373ad34f9b7a84447a9e64f9324a36c547da7804fb436"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Help/DocView.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 9412,
+    "before_sha256": null,
+    "after_sha256": "1220a96ec465b4ea001909de0515a6087360b2e193cefb90eaf9217e6965aca9"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Help/HelpService.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6038,
+    "before_sha256": null,
+    "after_sha256": "e73455f93eef33cfd30bf0d3d13f872bf21db29f71b1fb57f3b152719b6ea902"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/License.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 7655,
+    "before_sha256": null,
+    "after_sha256": "8d39ba3a61984f71eac63292cf179c18e6a0526923c2ddf8153128d20dd0d9a7"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/LicenseForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6672,
+    "before_sha256": null,
+    "after_sha256": "cfc06fbe0d7149f9809049774c6edab050b04cf44a9f23d9a4cdcdf56c68464d"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Log.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5147,
+    "before_sha256": null,
+    "after_sha256": "37266404561437ac58784d205a495424a37d13b6cf78209967e98dc8fe95312a"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/MainForm.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 13845,
+    "before_sha256": null,
+    "after_sha256": "85dd2145b537eac7003ed7d6e76d63c0234a5a60e8a977b103b451d2e7163dd8"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Models.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6213,
+    "before_sha256": null,
+    "after_sha256": "cce30c064831965586247b85631a6143c6fedd15a4e8b3cece193d4fb4b18287"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Program.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5345,
+    "before_sha256": null,
+    "after_sha256": "c84493226aa64226bef22a1d45dad0681c5c75c458c239127d0fad2ed6ee1f11"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Runner.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6305,
+    "before_sha256": null,
+    "after_sha256": "2e469fad13552ef1f589d85daf443856d91c4e3ccd5778129f35ed5a2e66c97b"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Schedule.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5718,
+    "before_sha256": null,
+    "after_sha256": "3a55dab11aac804911fcf11ca9a4f516c04b371343acb728ab2b0f2507398f50"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Selectors.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6644,
+    "before_sha256": null,
+    "after_sha256": "8ad09421ed3dd3c5bd5452e55607ab34fddc00e2a7ddc9a72cde9e3d53d3ebff"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/SelfTest.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 17418,
+    "before_sha256": null,
+    "after_sha256": "e5ffb564115549099a23f839207f4e68b848325a37ba5528df92e2ab5a82f60f"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/SelfTestV2.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 29148,
+    "before_sha256": null,
+    "after_sha256": "4d7ddf4646306aca3ee9cc64306a73c7fc4358bc9a8a58fba60eb0fbb93ba2e4"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Storage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 16688,
+    "before_sha256": null,
+    "after_sha256": "58e89cd2ae9f94d84693a53f719770cde09520047d45f027081e07f81c18d3ac"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/AdminApiClient.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4476,
+    "before_sha256": null,
+    "after_sha256": "b357e40bc28bb9cef9e94772f638172b77c6ae92d9c52905a3ac19efc5f17d90"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/BuildConfig.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 277,
+    "before_sha256": null,
+    "after_sha256": "e7d807646fc593a19c4913c3d60e9ea3931241024147255221ca654ccaf41360"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/CentralLogService.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 9242,
+    "before_sha256": null,
+    "after_sha256": "139907c76a34a680344502e4e61e936ff272004bc9d81dd4ab8656c4cf8acf65"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/ClientIdentityService.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6521,
+    "before_sha256": null,
+    "after_sha256": "add0b5464bf0e9beb0daaa3ba01c19c7a957c8f2f104b983398a43d90f6dc415"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/CrashReportService.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2247,
+    "before_sha256": null,
+    "after_sha256": "5892f9fa137bf163812f7d1d73ed9f754b003bf1989587ee26477ef5e586ccf3"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/LogClassifier.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5336,
+    "before_sha256": null,
+    "after_sha256": "dbcbaeb14c8bd6149bf0395b0ee6ff5cb630047ef0826c87970a5a41dde762d4"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/LogQueue.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4046,
+    "before_sha256": null,
+    "after_sha256": "680c47f4b5e50f205a053c9b801094c7aa1f916230c17c10d93bd165006c7241"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/Redactor.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5242,
+    "before_sha256": null,
+    "after_sha256": "79848664553527f196b19073914dd9fdf7d2a136e02d797334d0b0ca7a676bb6"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/TelemetryConfig.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2728,
+    "before_sha256": null,
+    "after_sha256": "1c381aba9245ac0b3d55382abe7de5a49114eaa69c794057a396e9126456543d"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/TelemetryService.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 3875,
+    "before_sha256": null,
+    "after_sha256": "1f07b6db61b8efe74d150d4ce49590fe046107bba00ddfbfd17274caa39bdd8d"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Telemetry/UsageMetricsService.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2766,
+    "before_sha256": null,
+    "after_sha256": "e0c45495c0240e3ac5a2015d41f0be3c480465209f271bcb7102d192bb8e41d0"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Terms.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 7955,
+    "before_sha256": null,
+    "after_sha256": "0f87f94f06d6e710cd8b4f5cd7cd663a154086a2bd8bcf7c188ef2ae89a1dba5"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Theme.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 25255,
+    "before_sha256": null,
+    "after_sha256": "e94b708d492b085177c9a43115afa2c233ec54d5dfaef14d918356527351e190"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/AppHost.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 3352,
+    "before_sha256": null,
+    "after_sha256": "54066573b70ca8f29e7dcadfbfcb59491c423f285a99c9597d74deffebb553a6"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/AutomationController.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 11740,
+    "before_sha256": null,
+    "after_sha256": "390151473f98a8628d1913b9bc650a7ba73e92aa60bc1062e1a23979be8f1cc3"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Controls.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 21546,
+    "before_sha256": null,
+    "after_sha256": "614e78836263666d3da307eb9e409ae4186b49334f804c4f006e3a632cf6216e"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/FluentBox.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4944,
+    "before_sha256": null,
+    "after_sha256": "c0ffb4d86958164c50b91dec907d1417721ed53ca872dadd15bed0329fc41153"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/AdminPage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 27756,
+    "before_sha256": null,
+    "after_sha256": "25a36f805e38266da40a106f9e9d270122c9397bd5008c0caa3e891b972c7903"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/AutomationPage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5831,
+    "before_sha256": null,
+    "after_sha256": "816b74fb342fbf2654cd7664a38b8904bebb653058d694cdd86ccdc1923bbb97"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/DashboardPage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 10374,
+    "before_sha256": null,
+    "after_sha256": "89b51bbe8fa565b063c856d6b916e14c8b57ae2b4eb1d6097d4a0e7193fa684f"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/HelpPage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4963,
+    "before_sha256": null,
+    "after_sha256": "a021e825db650880989014969addf402ea17e5cc5be597c1703f7cbd485b8263"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/LicensePage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4549,
+    "before_sha256": null,
+    "after_sha256": "ec95288d50aab3c2a2d0cdee11908bc8e5cfbd60c68c43a44fe649d4956c041a"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/LogPage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 8661,
+    "before_sha256": null,
+    "after_sha256": "8999cf6e06a858c9b461de46710629a2ae3a7c16f400b173857bf3a0a7119319"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/LoginPage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 3088,
+    "before_sha256": null,
+    "after_sha256": "6d2318bfe1e4b1c9ba852a663ea9f823090968c27ee8baf1febf66a7feb260dc"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/ProductsPage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 15703,
+    "before_sha256": null,
+    "after_sha256": "099b9e8cd9496aee23df974049755bb98b14d093b5e1fa40f5fda98f696d2c6a"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/SchedulePage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 8137,
+    "before_sha256": null,
+    "after_sha256": "635e2f07ecf8b15fd1a2d1f43253f23e61258643b2b56d4e8e5c9d5487d3fcf4"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/Pages/SettingsPage.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 12362,
+    "before_sha256": null,
+    "after_sha256": "f2baa018de30380988e672ab06e10aad83e36325f03d6800e65499df447f24ff"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/PreviewHarness.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4699,
+    "before_sha256": null,
+    "after_sha256": "3f32e966c10151d5f79bb41cd8891555cdd9822d863bb115785cea4fe14827e4"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/ThemeService.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 3875,
+    "before_sha256": null,
+    "after_sha256": "df42d44e1d747ff428bab495498d859fc0766299f568612eb23ebd530bcb5ba8"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/UiKit.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 9002,
+    "before_sha256": null,
+    "after_sha256": "048e4ed112b14bd32e7c570fc349005edaf2c6ed087217c2fb514f66eaeb52f6"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/UiLayoutCheck.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 8945,
+    "before_sha256": null,
+    "after_sha256": "89539bb1736aead0e9f9f2d99c7a672ebe8b68079998377bd1345b4c27a62820"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/UI/UiSelfTest.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 14954,
+    "before_sha256": null,
+    "after_sha256": "26b918a5b426679508cde380ed3a6d12e37b455197e59444f8b1cce6a07ad819"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/src/Vault.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5807,
+    "before_sha256": null,
+    "after_sha256": "af313afb9beeb7827299d1f33c7bf4b988d4d0e61b963c6095b79fc07ffed564"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/tests/WINDOWS_CHECKLIST.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2947,
+    "before_sha256": null,
+    "after_sha256": "a34cc072fe9fcdac3132a799a81398d8b04082fa36abf177acec31bdc6346bba"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/tests/build_preview.sh",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1037,
+    "before_sha256": null,
+    "after_sha256": "4baf470e85521968f1060473015e53bd674b5f1373203c7879ffa59eff19af19"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/tests/migration/read_with_new.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 945,
+    "before_sha256": null,
+    "after_sha256": "d7ae752fd321e2e704f91cc1d640b3069b897ceb58b5c37ef08e5240c30f2e02"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/tests/migration/write_with_old.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 771,
+    "before_sha256": null,
+    "after_sha256": "b8befbb269eba12e20c12720f40d1bcfc79d7300a3c3f1aec066b429b683b966"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/3_소스코드/tests/regression.sh",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 6915,
+    "before_sha256": null,
+    "after_sha256": "668b2ef8c530e07de6cb9203601c5d233f2bdc1131a1be8671c2417e25ff23a8"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/Caddyfile.example",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 181,
+    "before_sha256": null,
+    "after_sha256": "24d4f397c6c3268a60810ca8331d27c6440b244180cb3799a428c4b13ccf9921"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/Dockerfile",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 324,
+    "before_sha256": null,
+    "after_sha256": "bf2687538c12583cbfd878518f59fc0bb348fff75670c150cde2be51c5bdd999"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/README.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 5125,
+    "before_sha256": null,
+    "after_sha256": "996b1ecf3e0fff2436f5b1040a0234332a7bb702e1894b1e02308096468b4d1e"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/docker-compose.yml",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 346,
+    "before_sha256": null,
+    "after_sha256": "0237039008d8a3865cf5c273d7bd33218102a940ac676f954f299a2731a063b7"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/schema.sql",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2599,
+    "before_sha256": null,
+    "after_sha256": "5c4d7c1550e6c3ef4b30a42a5aa4dc9cdc722b2c23746cf0d5eb0b9d39b3e601"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/server.py",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 29908,
+    "before_sha256": null,
+    "after_sha256": "e302f51cd16776a8ea57fe0ecd80623223fa13c1313c1d32fe432a10e061263d"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/static/app.js",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 20818,
+    "before_sha256": null,
+    "after_sha256": "9bf91a1b4a387462580d13f3f8d089e0a445529d0122cd9287ff23e6a0283585"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/static/index.html",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 1192,
+    "before_sha256": null,
+    "after_sha256": "637b1c3c3f4f7f51a0f0567fce484f074ebb319554f0d41a6790e2a4e7bd8ea2"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/static/style.css",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4301,
+    "before_sha256": null,
+    "after_sha256": "570f503c78d426d6b78839849fb03a6301fb067ad3447d3b2ecedd047fdcd2ae"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/tests/dashboard_smoke.js",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2166,
+    "before_sha256": null,
+    "after_sha256": "6204186b493246e5276c98277586f94956b4b6e0ec1e0bbf137ab6c1e511dbcf"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/tests/hardening_checks.py",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 9059,
+    "before_sha256": null,
+    "after_sha256": "6db771a90282130e6777021a6550c9e72c4fa2845a587245db70fa213decea9b"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/tests/seed_demo.py",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 2138,
+    "before_sha256": null,
+    "after_sha256": "4be56b7495035b7a03e48844a9eb3098e6dfaf38101e0b86ce20b0bc8dfa6e56"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/4_중앙로그서버/tests/test_server.py",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 8671,
+    "before_sha256": null,
+    "after_sha256": "aff5b819781ae33e95d722a22caabe54d9f7134685ec752fe13787e20bcfc651"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/5_기준선_원본소스/MainForm.v1.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 32486,
+    "before_sha256": null,
+    "after_sha256": "29f4e2fe5663eadf3b4ba8bc41330fe17f8dbe75e6da3f848cf3d1e3375a7a8c"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/Lumivolt.sln",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 809,
+    "before_sha256": null,
+    "after_sha256": "0a1abc6e6b6f40d515490b0234b81bb061ef8c9ced282bd11aa0bfcb66a52704"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/README.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 16339,
+    "before_sha256": null,
+    "after_sha256": "3bcb76175f4ad7cdca59775ce84f8740afd1f00a55de335e804e3333b22928f3"
+  },
+  {
+    "path": "Lumivolt_v2.0.0/README_v1_원본설명서.txt",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 3207,
+    "before_sha256": null,
+    "after_sha256": "7f7a5ffcdd254f7b46163b5d5afdb7c696516ee21f632cc084fae921693996ff"
+  }
+]

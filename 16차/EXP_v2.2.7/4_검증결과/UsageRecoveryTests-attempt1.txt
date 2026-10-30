@@ -1,0 +1,25 @@
+PASS injected file replacement failure 0
+PASS interrupted charge retained 0
+PASS both copies repaired before next write 0
+PASS injected file replacement failure 1
+PASS interrupted charge retained 1
+PASS both copies repaired before next write 1
+PASS injected file replacement failure 2
+PASS interrupted charge retained 2
+PASS both copies repaired before next write 2
+PASS credits/trial/redemption retained
+PASS older registry recovers newest file
+PASS wrong device rejected before repair
+PASS wrong device does not alter copies
+System.Reflection.TargetInvocationException: 호출 대상이 예외를 Throw했습니다. ---> System.IO.IOException: 바꿀 파일을 제거할 수 없습니다.
+
+   위치: System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   위치: System.IO.File.InternalReplace(String sourceFileName, String destinationFileName, String destinationBackupFileName, Boolean ignoreMetadataErrors)
+   위치: BunjangAuto.UsageQuota.Write(JObject state)
+   --- 내부 예외 스택 추적의 끝 ---
+   위치: System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   위치: System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   위치: System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   위치: UsageRecoveryTests.Write(JObject state)
+   위치: UsageRecoveryTests.Run()
+RECOVERY: 13 passed, 1 failed

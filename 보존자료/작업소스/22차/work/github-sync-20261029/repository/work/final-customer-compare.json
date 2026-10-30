@@ -1,0 +1,44 @@
+[
+  {
+    "item": "EXP_Setup_2.2.8.exe",
+    "matching_count": 2,
+    "matching_paths": [
+      "EXP_Setup_2.2.8.exe",
+      "EXP_v2.2.8\\1_고객배포\\EXP_Setup_2.2.8.exe"
+    ]
+  },
+  {
+    "item": "시작하기.txt",
+    "matching_count": 1,
+    "matching_paths": [
+      "EXP_v2.2.8\\1_고객배포\\시작하기.txt"
+    ]
+  },
+  {
+    "item": "licenses/BouncyCastle-LICENSE.txt",
+    "matching_count": 3,
+    "matching_paths": [
+      "EXP_v2.2.8\\1_고객배포\\licenses\\BouncyCastle-LICENSE.txt",
+      "EXP_v2.2.8\\2_윤석님용\\licenses\\BouncyCastle-LICENSE.txt",
+      "EXP_v2.2.8\\3_소스코드\\licenses\\BouncyCastle-LICENSE.txt"
+    ]
+  },
+  {
+    "item": "licenses/Inno-Setup-LICENSE.txt",
+    "matching_count": 3,
+    "matching_paths": [
+      "EXP_v2.2.8\\1_고객배포\\licenses\\Inno-Setup-LICENSE.txt",
+      "EXP_v2.2.8\\2_윤석님용\\licenses\\Inno-Setup-LICENSE.txt",
+      "EXP_v2.2.8\\3_소스코드\\licenses\\Inno-Setup-LICENSE.txt"
+    ]
+  },
+  {
+    "item": "licenses/NanumGothic-OFL.txt",
+    "matching_count": 3,
+    "matching_paths": [
+      "EXP_v2.2.8\\1_고객배포\\licenses\\NanumGothic-OFL.txt",
+      "EXP_v2.2.8\\2_윤석님용\\licenses\\NanumGothic-OFL.txt",
+      "EXP_v2.2.8\\3_소스코드\\resources\\fonts\\NanumGothic-OFL.txt"
+    ]
+  }
+]

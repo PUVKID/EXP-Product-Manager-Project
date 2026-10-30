@@ -1,0 +1,410 @@
+[
+  {
+    "path": "README.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 216,
+    "before_sha256": null,
+    "after_sha256": "d42ec908349ce222715b46ca3fd179cfb8c16817112bc29a6e94e08e3717da00"
+  },
+  {
+    "path": "SHA256SUMS.txt",
+    "status": "수정",
+    "before_bytes": 481,
+    "after_bytes": 481,
+    "before_sha256": "1c0ad62f945ffa5e1ad7887bd145557e6ae85599996f6e21c753aaea15a6b733",
+    "after_sha256": "343cf92453d2b104b6a91f59a72e0b6c820f9a656f674496f228513a64aefe33"
+  },
+  {
+    "path": "docs/20차_명세와_구현계획.md",
+    "status": "이전만 존재",
+    "before_bytes": 5854,
+    "after_bytes": null,
+    "before_sha256": "76f49f75ce2cbb12b056840fd970492daed350baf32cd7a3137954a6d1ae8c24",
+    "after_sha256": null
+  },
+  {
+    "path": "docs/22차_시간대_설계와_구현계획.md",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 4850,
+    "before_sha256": null,
+    "after_sha256": "901117f9f7864a47c0242edb0854cd1b51678793d1bc432644527ca1651c5036"
+  },
+  {
+    "path": "tools/apply_reviewed_checks.py",
+    "status": "이전만 존재",
+    "before_bytes": 799,
+    "after_bytes": null,
+    "before_sha256": "f182203b9eb4e4b42a54e99ae75a933a1f3536e3921eed28ce041e662cd5fb7d",
+    "after_sha256": null
+  },
+  {
+    "path": "tools/checks-final-reviewed.json",
+    "status": "이전만 존재",
+    "before_bytes": 1674,
+    "after_bytes": null,
+    "before_sha256": "cbd13904dd5c48033977f6d5b50f6769f5761445783a73f0b089aa27f68bfdb0",
+    "after_sha256": null
+  },
+  {
+    "path": "tools/checks-reviewed.json",
+    "status": "이전만 존재",
+    "before_bytes": 1319,
+    "after_bytes": null,
+    "before_sha256": "50af4d3272da04feba739e0478a4ffba7f49a9b1bd73e3bf08aba633744415ed",
+    "after_sha256": null
+  },
+  {
+    "path": "tools/logic-baseline19.json",
+    "status": "수정",
+    "before_bytes": 2563,
+    "after_bytes": 2534,
+    "before_sha256": "6ea4903cba38b6290fcc3a1f95fd40a5cc78c401f18b3fed52de90ab99093ad2",
+    "after_sha256": "44181876936951a95239c47aa26a85b753c99fc4e52f895f220aeceeda66f58b"
+  },
+  {
+    "path": "tools/package_release.py",
+    "status": "수정",
+    "before_bytes": 1509,
+    "after_bytes": 1509,
+    "before_sha256": "7521dfa05dd3a9887f1e10e556a75df6d6affb98b055641057ffae8ebe3833dc",
+    "after_sha256": "86fddcd3473862f63d741584f2b1831b872bc83dff5432e3fe762a4c4760b34b"
+  },
+  {
+    "path": "tools/verify_scope.py",
+    "status": "수정",
+    "before_bytes": 875,
+    "after_bytes": 875,
+    "before_sha256": "4efc48dd139ea2a1dff6ffa24781ae6e5ea738d359cf419a492ee56145a47f35",
+    "after_sha256": "89a3144058bad8239556d07efe55847bf4053634559e89fd035837b19b3a325e"
+  },
+  {
+    "path": "검증결과/검증_범위.md",
+    "status": "수정",
+    "before_bytes": 1999,
+    "after_bytes": 1145,
+    "before_sha256": "ebe180f8135a495a475a5baa547cb86ae761dc3f3b0ee19821f11521c9dd846f",
+    "after_sha256": "505ab97c9318d8bf40b2e0f368ed077f9d23f5118c4dc9ffe255bf3f540f82ff"
+  },
+  {
+    "path": "검증결과/디자인_점검.md",
+    "status": "이전만 존재",
+    "before_bytes": 3893,
+    "after_bytes": null,
+    "before_sha256": "2ac9bd7bf46bf6a724988d03294613e2d261eebcb58e85eb4e5fe5e9ccac8d1d",
+    "after_sha256": null
+  },
+  {
+    "path": "소스코드/admin/AssemblyInfo.cs",
+    "status": "수정",
+    "before_bytes": 402,
+    "after_bytes": 402,
+    "before_sha256": "69fc6705190f78b87c200a108a76fc5e273205aa1713602217d077238905eb07",
+    "after_sha256": "8af0ed81fbb19e4f6acb9797ec1d2f0c85bed97a94c65c1263d2f9793d414d00"
+  },
+  {
+    "path": "소스코드/admin/IssuerService.cs",
+    "status": "수정",
+    "before_bytes": 10790,
+    "after_bytes": 10783,
+    "before_sha256": "d5306dfb8605c6753654f373f569c226dee228be883cb470675d52c88efab2d8",
+    "after_sha256": "56cc83f38438a70e03e9eaefa4c86b5967b9305d5cb86d1ba3ae4f1a703570c7"
+  },
+  {
+    "path": "소스코드/admin/LicenseAdmin.cs",
+    "status": "수정",
+    "before_bytes": 14202,
+    "after_bytes": 14056,
+    "before_sha256": "7799a47d326e48a2d5ac04edb2138141c8d2316fc13c42cacf12c0dcc325b786",
+    "after_sha256": "68c5556b7a36b322b2034bfee4fc0c3aec185109634b57904836c662696c3e19"
+  },
+  {
+    "path": "소스코드/build.bat",
+    "status": "수정",
+    "before_bytes": 112,
+    "after_bytes": 109,
+    "before_sha256": "2c453b1b1505a2d6433e4837bc5c1a87bb97914d43a297ac32fda6577e72b4cb",
+    "after_sha256": "81a9a14e7de53f5c1cb1dc42e4b72d351c60fd7a2bc4db14a41a10dcf4e02107"
+  },
+  {
+    "path": "소스코드/build/Build.ps1",
+    "status": "수정",
+    "before_bytes": 6970,
+    "after_bytes": 6987,
+    "before_sha256": "8d87c4c707267665aee6c1e02e707d4c3e40b20f301b3e9d25eb436743df1bbe",
+    "after_sha256": "cc71fe80f6ca3f4036cd8af70997e8a71af30f6c9f2082c3d089ad0096d02719"
+  },
+  {
+    "path": "소스코드/installer/EXP.iss",
+    "status": "수정",
+    "before_bytes": 5385,
+    "after_bytes": 5385,
+    "before_sha256": "a268b8c68d86f791e4b8eb2175b3892afcefa47b7c248b585f1f1d5539b7ca81",
+    "after_sha256": "98d80eea22a21e4491acc9188aa846ad716149f68302b093b45bf7307cd48846"
+  },
+  {
+    "path": "소스코드/resources/brand/LICENSE.txt",
+    "status": "수정",
+    "before_bytes": 181,
+    "after_bytes": 179,
+    "before_sha256": "42be68726997926a308181bf4ae57569978941aff525fff7d7bb42c69b12dd09",
+    "after_sha256": "dc1f811259d0abeee9eaa690791f44d879db809290f4826300f8a1ce3d4da613"
+  },
+  {
+    "path": "소스코드/resources/help/06-guide.md",
+    "status": "수정",
+    "before_bytes": 2249,
+    "after_bytes": 4292,
+    "before_sha256": "8a96fc80ef63633c32094b86bc31852765f38b553557d7ec038b27613c2e1e5e",
+    "after_sha256": "da69a020b86363fa4a8c5717966f63be0c9e11ae3acb9bc49f903e0259191f07"
+  },
+  {
+    "path": "소스코드/src/AssemblyInfo.cs",
+    "status": "수정",
+    "before_bytes": 421,
+    "after_bytes": 421,
+    "before_sha256": "94e3052a4019e644ffa64cdb71660cfb64b1284810dcfd9ab46e1a6d9e704f2d",
+    "after_sha256": "aa46ed47a352026d4693fb8b9f18414f6981abda21222e2f138ada64c8e4cad8"
+  },
+  {
+    "path": "소스코드/src/BatchRepeatSchedule.cs",
+    "status": "수정",
+    "before_bytes": 1724,
+    "after_bytes": 6532,
+    "before_sha256": "b00e178f1b24d46900025358e1efb71489343561772804ff84e97935163929c8",
+    "after_sha256": "c79b08811df0ecc17fbfedcb4f6b1abfefbe9355510c7efe809d546ecf672bb2"
+  },
+  {
+    "path": "소스코드/src/Bot.cs",
+    "status": "수정",
+    "before_bytes": 41609,
+    "after_bytes": 41599,
+    "before_sha256": "24a658aa07b20491298fafbd05f735b7c72ca5d9fc924a30207df1979cfe537a",
+    "after_sha256": "84b7e9a60ece2e037341b78f8766197f7460f5835c72d188a4603d676116b8ac"
+  },
+  {
+    "path": "소스코드/src/Brand.cs",
+    "status": "수정",
+    "before_bytes": 692,
+    "after_bytes": 692,
+    "before_sha256": "8e88e9ad7d2d0da1388a35d0132ba69c6d4e0b6245a9b86bcea6278c0e868e89",
+    "after_sha256": "b45329b45e671651de84cb66728e90e72732e8e4930fbe8c20363c1b16a6a142"
+  },
+  {
+    "path": "소스코드/src/Design.cs",
+    "status": "수정",
+    "before_bytes": 34472,
+    "after_bytes": 34143,
+    "before_sha256": "550626c09a990e6fce9a19d20d6628d6910343a68f7fc9bf8ad14dfeec1af900",
+    "after_sha256": "02419d6d49717acbafd510725d3acb90b212759f6e8ebc2aa3c02d802e98d589"
+  },
+  {
+    "path": "소스코드/src/DiagnosticsForm.cs",
+    "status": "수정",
+    "before_bytes": 9970,
+    "after_bytes": 9876,
+    "before_sha256": "32f038e417a93eb01dd14a121a201dcb8aed8473cb1691d2cf41b6d4178ad48f",
+    "after_sha256": "81a7d6f471b1254e87a7a5e6de459f8cdaf7534956fe680a013abd42b94b2caf"
+  },
+  {
+    "path": "소스코드/src/EditForm.cs",
+    "status": "수정",
+    "before_bytes": 11264,
+    "after_bytes": 11101,
+    "before_sha256": "4186f48063d7e2de3003f5bd741fd5b9c9a83164df19949d3e4b0092d445ad43",
+    "after_sha256": "f9ddb5c35b16f201ebc88a8ef0224e110c414e96cfa86794e02f79e0334d8e12"
+  },
+  {
+    "path": "소스코드/src/MainForm.cs",
+    "status": "수정",
+    "before_bytes": 13682,
+    "after_bytes": 13415,
+    "before_sha256": "e8eb3528ee1ce80bb8b903a9e4233cc152607f031c6323648ebe715031263300",
+    "after_sha256": "5c4a5a7400a1f34bef4afe6375a5f2bcaf79fa2ed2c5b2841c96d805bbf2476e"
+  },
+  {
+    "path": "소스코드/src/Models.cs",
+    "status": "수정",
+    "before_bytes": 7118,
+    "after_bytes": 8281,
+    "before_sha256": "923dcc4e950adc013fa0cde1d16358c3bdd096ac91f0e1fbf9a1a7c26616408c",
+    "after_sha256": "9ede0126926857b5e747eb26fcb197a13bc3910e52963e7fc30bbc51aa188b59"
+  },
+  {
+    "path": "소스코드/src/Runner.cs",
+    "status": "수정",
+    "before_bytes": 7894,
+    "after_bytes": 8697,
+    "before_sha256": "e710fb5144ffbd49efaf9221ea76bc0786c497a0fd569835a775ab674e618c37",
+    "after_sha256": "56a3dfda20f395da6f6cb1f274f4501a63d52f6453a4af25662cd946c3828eb5"
+  },
+  {
+    "path": "소스코드/src/Security/TpmDevice.cs",
+    "status": "수정",
+    "before_bytes": 4685,
+    "after_bytes": 4681,
+    "before_sha256": "d9eda4961e869e85ca84be83b820f5f48059e3955ed07fba4bd93561f042ccd0",
+    "after_sha256": "2b079b99d08c7041b41721c3b5506b1f4c072c2aa583e36e362c3b5de0c8c651"
+  },
+  {
+    "path": "소스코드/src/Security/UsageQuota.cs",
+    "status": "수정",
+    "before_bytes": 10936,
+    "after_bytes": 10935,
+    "before_sha256": "efc12af10108d758dd66d06e92bc8319a7efedee3ebaa711601b30ec4f590e42",
+    "after_sha256": "75499ba8272abee5ebd5f6da5863693073277a06e416afe33a51c7d687268da7"
+  },
+  {
+    "path": "소스코드/src/SelfTest.cs",
+    "status": "수정",
+    "before_bytes": 17315,
+    "after_bytes": 17314,
+    "before_sha256": "396d6535b229a153bbd246e0bd66340f46f7f930acc3108b1119c5d27299189e",
+    "after_sha256": "2fd8125c016dedaa6a2c88d362c6ea5db0bfc7d4697181669b8f14b226f007eb"
+  },
+  {
+    "path": "소스코드/src/Storage.cs",
+    "status": "수정",
+    "before_bytes": 16673,
+    "after_bytes": 16671,
+    "before_sha256": "ac45de156518a4d97ce222e8f67d49f08b6a55da8cac578c15c71e4b6807efb9",
+    "after_sha256": "aa49ce5f56216933b0c4ecb534aa95530dbad5d6bb71310449780a9ad0151014"
+  },
+  {
+    "path": "소스코드/src/Theme.cs",
+    "status": "수정",
+    "before_bytes": 26364,
+    "after_bytes": 25853,
+    "before_sha256": "733e5b100ca50f81a84e31a96c9afad4b536eee1baf9f8f18977e26d2b261e48",
+    "after_sha256": "834913818f83ea92ea34fcf26fc5f20a310d429ab682e3e58ca726b736455374"
+  },
+  {
+    "path": "소스코드/src/UI/AutomationController.cs",
+    "status": "수정",
+    "before_bytes": 16016,
+    "after_bytes": 18500,
+    "before_sha256": "d7ee2003bcb21345b9104b62f4f67c6037f1c4fd17a97935dde92306a8ef3c88",
+    "after_sha256": "669f2c0fa7d18f6bcdc89e7b8c0876d5d42bee23d1fe28308ddbdf23af74d350"
+  },
+  {
+    "path": "소스코드/src/UI/Controls.cs",
+    "status": "수정",
+    "before_bytes": 27781,
+    "after_bytes": 27394,
+    "before_sha256": "66a6e323e764c8901c3210d85c7ef76c80d4609861a53e38999cec530cfb9234",
+    "after_sha256": "7b88e3f93c2f1e5d7dd8214aaff5ca70006a359dee9cea17cdc1743c3d72318d"
+  },
+  {
+    "path": "소스코드/src/UI/Pages/AutomationPage.cs",
+    "status": "수정",
+    "before_bytes": 9540,
+    "after_bytes": 9610,
+    "before_sha256": "1bcec3a3343b209853416c51b3fac2af1b26854189489c323701b08b64b4e0e2",
+    "after_sha256": "bd801f6ef6a7f5b8c9bb5b22aea3356b04d552a27cc253083d99cf50b7b8c866"
+  },
+  {
+    "path": "소스코드/src/UI/Pages/DashboardPage.cs",
+    "status": "수정",
+    "before_bytes": 10871,
+    "after_bytes": 10751,
+    "before_sha256": "6ded1369dbed32b2ae45516429a95a1c1cd55ef24df70a0daa3bc7ed0183470f",
+    "after_sha256": "da2f343bcb1cac32558df0545279fce4b19ef3b561367491805bc04965c6a125"
+  },
+  {
+    "path": "소스코드/src/UI/Pages/ProductsPage.cs",
+    "status": "수정",
+    "before_bytes": 13618,
+    "after_bytes": 13382,
+    "before_sha256": "6c6507846efb31e6442ac0955980598b783ba36b6e15865182fd7d74d5eeb344",
+    "after_sha256": "d34c95015247b8fb11abddca49b98f051537c13beeacb06f9d7bf38350cbe8d7"
+  },
+  {
+    "path": "소스코드/src/UI/Pages/SchedulePage.cs",
+    "status": "수정",
+    "before_bytes": 9542,
+    "after_bytes": 12995,
+    "before_sha256": "c6471414311b4d544fca824b483551f90310a410cf014ee252fee0c749b871e6",
+    "after_sha256": "51e46768b1cf96ff05d477903ae4890c340a11aa08b316894c429cab3d5984ef"
+  },
+  {
+    "path": "소스코드/src/UI/SoftTime.cs",
+    "status": "추가",
+    "before_bytes": null,
+    "after_bytes": 3844,
+    "before_sha256": null,
+    "after_sha256": "a47f7bf2d4bba2967ba1bcffc187711d5c780d6f8f3faa8760558c05052b34d2"
+  },
+  {
+    "path": "소스코드/src/UI/UiKit.cs",
+    "status": "수정",
+    "before_bytes": 9375,
+    "after_bytes": 9193,
+    "before_sha256": "d0cf8645c164ea571f52d543009a423418300c4988c8c671f916469c49501dc3",
+    "after_sha256": "9a3fc8e876d34d1fe3c4d0aeb24d8045d9ad22e1f0d691fc4097101af810d7ee"
+  },
+  {
+    "path": "소스코드/tests/BatchRepeatTests.cs",
+    "status": "수정",
+    "before_bytes": 27285,
+    "after_bytes": 38014,
+    "before_sha256": "2f938123d7ddf9b14f73f559c2b6db6753afa89afd592597b8eab720dd744b92",
+    "after_sha256": "80b373af80ed3b07d988238c5aa5869fa8cdc3477db4e888330a9a11714a21da"
+  },
+  {
+    "path": "소스코드/tests/ProductionSmoke.cs",
+    "status": "수정",
+    "before_bytes": 2123,
+    "after_bytes": 2121,
+    "before_sha256": "de3906b99e7c0384ea0aec6d87f6a227244adbda274f58a942c50f2cbcd9c900",
+    "after_sha256": "9bb8ef32867624ae75e912e6e32e5d6bc6369c0d3560760fd5087244c8879e93"
+  },
+  {
+    "path": "소스코드/tests/RedesignUiTests.cs",
+    "status": "수정",
+    "before_bytes": 15167,
+    "after_bytes": 15090,
+    "before_sha256": "32b4b4524c6f0975128674ae7abc836fba96c6696a44bf924f5d092896a3c1de",
+    "after_sha256": "d22ddfbede9c2a63ab087a5b1ebb998f667b987fb872f08de256b25ea388563a"
+  },
+  {
+    "path": "소스코드/tests/RepeatDesignUiTests.cs",
+    "status": "수정",
+    "before_bytes": 9205,
+    "after_bytes": 12662,
+    "before_sha256": "471edc8959651a73e5bdd49ce62d2610e2b2b1b1d38f4bb548a0cd85c938d8e6",
+    "after_sha256": "f5115b557ddd877bc1771299927662ca863de06004a50e11d0e9b680ce09211a"
+  },
+  {
+    "path": "소스코드/tests/ShippingFormTests.cs",
+    "status": "수정",
+    "before_bytes": 7182,
+    "after_bytes": 7181,
+    "before_sha256": "7f6eeb75efc4dead899e333d17c66cdd21b19fd861413377348fca55b655c9ef",
+    "after_sha256": "5e790dc105c2c84f7a203b17a1f526dc3c7a1f4ccd91724dbb0f1784ed0adc99"
+  },
+  {
+    "path": "소스코드/tools/ResetAssemblyInfo.cs",
+    "status": "수정",
+    "before_bytes": 433,
+    "after_bytes": 433,
+    "before_sha256": "968d849abe51b0dbacbdea6c5b5456e4ec0385bca99820dd73118604484ed703",
+    "after_sha256": "d26819097b2c5dda23488cccafd163f32a72dee885e8116ff1d2cb34cd1d1183"
+  },
+  {
+    "path": "소스코드/tools/ResetProgram.cs",
+    "status": "수정",
+    "before_bytes": 19513,
+    "after_bytes": 19308,
+    "before_sha256": "24259aa8ab3bd986adc944deed330bb2e441dffe1ca332a1978b594b77ff15df",
+    "after_sha256": "fef156da1be07d44ba4dd53c3ae0252ed17fdedcd7ae254e9d580d20dfbc8ed6"
+  },
+  {
+    "path": "읽어주세요.md",
+    "status": "수정",
+    "before_bytes": 2457,
+    "after_bytes": 2561,
+    "before_sha256": "8a04fd83ce9ae6079cdc46101da0ef2de99c90c7ba32c65a972dc52a499af522",
+    "after_sha256": "f9ce5e30540e59e9d701b6cc1071be4a636ab176347ad4aecd4213a42c9b67a9"
+  }
+]

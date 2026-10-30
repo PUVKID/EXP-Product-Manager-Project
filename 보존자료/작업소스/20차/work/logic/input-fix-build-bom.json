@@ -1,0 +1,17 @@
+{
+  "cause": "Build.ps1 실제 첫줄 UTF-8 BOM EF BB BF를 patch 삭제/추가 문맥에 누락",
+  "new_observation": "파일 바이트 직접검사 EF-BB-BF-70-61-72, Get-Content 첫줄 본문은 요청과동일. 파일내용변화나경쟁편집이아님.",
+  "method": "원래 BOM을 보존하도록 patch 첫줄 이전/이후 문맥에 U+FEFF를 명시. 코드변경범위/검사기준/기대값은원래요청과동일.",
+  "selection_reason": "실제파일바이트로확정된패치입력인용누락이므로같은 deep gpt-6.1-sol/xhigh담당자가사전위임범위에서보정",
+  "role": "deep",
+  "model": "gpt-6.1-sol",
+  "effort": "xhigh",
+  "before_argv": [
+    "apply_patch",
+    "*** Begin Patch\n*** Update File: D:/2026/EXP 프로젝트(번장 상품 등록 매크로)/20차/소스코드/build/Build.ps1\n@@\n-param([ValidateSet('All','App','Admin','Tests','Reset')][string]$Target = 'All', [string]$PublicKeyFile)\n+param([ValidateSet('All','App','Admin','Tests','Reset','BatchRepeat')][string]$Target = 'All', [string]$PublicKeyFile)\n@@\n     $compilerArgs += '/resource:resources\\app.ico,brand.app.ico'\n+    $compilerArgs += '/resource:resources\\brand\\exp-prism-sheet.png,brand.exp-prism-sheet.png'\n+    $compilerArgs += '/resource:resources\\brand\\exp-prism-still.png,brand.exp-prism-still.png'\n@@\n if ($Target -eq 'Tests') {\n+    Compile 'RepeatDesignUiTests' ($app + $shared + @('tests\\RepeatDesignUiTests.cs')) @('/target:exe','/define:TESTBUILD','/main:RepeatDesignUiTests') $true\n@@\n }\n+if ($Target -in @('Tests','BatchRepeat')) {\n+    $batchSources = @('src\\Models.cs','src\\Schedule.cs','src\\BatchRepeatSchedule.cs','src\\Runner.cs','src\\UI\\AutomationController.cs','src\\Security\\UsageQuota.cs','tests\\BatchRepeatTests.cs')\n+    Compile 'BatchRepeatTests' ($batchSources + $shared) @('/target:exe','/define:TESTBUILD','/main:BatchRepeatTests') $false\n+}\n*** End Patch"
+  ],
+  "after_argv": [
+    "apply_patch",
+    "*** Begin Patch\n*** Update File: D:/2026/EXP 프로젝트(번장 상품 등록 매크로)/20차/소스코드/build/Build.ps1\n@@\n-﻿param([ValidateSet('All','App','Admin','Tests','Reset')][string]$Target = 'All', [string]$PublicKeyFile)\n+﻿param([ValidateSet('All','App','Admin','Tests','Reset','BatchRepeat')][string]$Target = 'All', [string]$PublicKeyFile)\n@@\n     $compilerArgs += '/resource:resources\\app.ico,brand.app.ico'\n+    $compilerArgs += '/resource:resources\\brand\\exp-prism-sheet.png,brand.exp-prism-sheet.png'\n+    $compilerArgs += '/resource:resources\\brand\\exp-prism-still.png,brand.exp-prism-still.png'\n@@\n if ($Target -eq 'Tests') {\n+    Compile 'RepeatDesignUiTests' ($app + $shared + @('tests\\RepeatDesignUiTests.cs')) @('/target:exe','/define:TESTBUILD','/main:RepeatDesignUiTests') $true\n@@\n }\n+if ($Target -in @('Tests','BatchRepeat')) {\n+    $batchSources = @('src\\Models.cs','src\\Schedule.cs','src\\BatchRepeatSchedule.cs','src\\Runner.cs','src\\UI\\AutomationController.cs','src\\Security\\UsageQuota.cs','tests\\BatchRepeatTests.cs')\n+    Compile 'BatchRepeatTests' ($batchSources + $shared) @('/target:exe','/define:TESTBUILD','/main:BatchRepeatTests') $false\n+}\n*** End Patch"
+  ]
+}

@@ -1,0 +1,12 @@
+PASS activation stores verified license
+PASS saved activation recheck
+PASS copied diagnostic ID grants no bypass
+PASS corrupt license fails closed
+PASS restore valid license
+PASS clock tamper blocks recheck
+PASS clock tamper blocks activation
+PASS clock rollback blocks activation
+PASS restored valid clock
+PASS clock write failure cannot authorize
+PASS other device signed license rejected
+GATE FAILURES: 0

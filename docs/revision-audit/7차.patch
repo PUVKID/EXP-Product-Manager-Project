@@ -1,0 +1,2286 @@
+--- 6차/BunjangAuto.csproj
++++ 7차/BunjangAuto.csproj
+@@ -1,37 +0,0 @@
+-<Project Sdk="Microsoft.NET.Sdk">
+-  <!--
+-    Windows 에서 `dotnet build -c Release` / Visual Studio 로 빌드하기 위한 SDK 스타일 프로젝트입니다.
+-    (build.bat / build.sh 와 같은 소스·리소스를 사용합니다.)
+-    주의: 이 프로젝트 파일은 제작 환경(NuGet 접근 불가)에서는 실행해 보지 못했습니다. 검증된 빌드는 build.sh(Mono) 입니다.
+-  -->
+-  <PropertyGroup>
+-    <OutputType>WinExe</OutputType>
+-    <TargetFramework>net472</TargetFramework>
+-    <UseWindowsForms>true</UseWindowsForms>
+-    <AssemblyName>BunjangAuto</AssemblyName>
+-    <RootNamespace>BunjangAuto</RootNamespace>
+-    <LangVersion>7.3</LangVersion>
+-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+-    <ApplicationIcon>resources\app.ico</ApplicationIcon>
+-    <ApplicationManifest>resources\app.manifest</ApplicationManifest>
+-    <PlatformTarget>AnyCPU</PlatformTarget>
+-    <Prefer32Bit>false</Prefer32Bit>
+-    <Nullable>disable</Nullable>
+-    <NoWarn>1701;1702;0618;0168;0219;0414;0649;0169;0108</NoWarn>
+-  </PropertyGroup>
+-  <ItemGroup>
+-    <Compile Include="src\**\*.cs" />
+-    <Reference Include="System.Management" />
+-    <Reference Include="System.Security" />
+-    <Reference Include="System.IO.Compression" />
+-    <Reference Include="System.IO.Compression.FileSystem" />
+-  </ItemGroup>
+-  <!-- lib\*.dll: 컴파일 참조 + exe 안에 'lib.<이름>.dll' 로 내장 (Program.cs 의 AssemblyResolve 가 꺼내 쓴다. 단일 exe 유지) -->
+-  <ItemGroup>
+-    <LibDll Include="lib\*.dll" />
+-    <Reference Include="%(LibDll.Filename)"><HintPath>%(LibDll.Identity)</HintPath><Private>false</Private></Reference>
+-    <EmbeddedResource Include="@(LibDll)" LogicalName="lib.%(Filename)%(Extension)" />
+-    <EmbeddedResource Include="resources\help\*.md" LogicalName="help.%(Filename)%(Extension)" />
+-  </ItemGroup>
+-</Project>
+--- 6차/Lumivolt.csproj
++++ 7차/Lumivolt.csproj
+@@ -0,0 +1,38 @@
++<Project Sdk="Microsoft.NET.Sdk">
++  <!--
++    Windows 에서 `dotnet build -c Release` / Visual Studio 로 빌드하기 위한 SDK 스타일 프로젝트입니다.
++    (build.bat / build.sh 와 같은 소스·리소스를 사용합니다.)
++    주의: 이 프로젝트 파일은 제작 환경(NuGet 접근 불가)에서는 실행해 보지 못했습니다. 검증된 빌드는 build.sh(Mono) 입니다.
++  -->
++  <PropertyGroup>
++    <OutputType>WinExe</OutputType>
++    <TargetFramework>net472</TargetFramework>
++    <UseWindowsForms>true</UseWindowsForms>
++    <AssemblyName>Lumivolt</AssemblyName>
++    <RootNamespace>BunjangAuto</RootNamespace>
++    <LangVersion>7.3</LangVersion>
++    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
++    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
++    <ApplicationIcon>resources\app.ico</ApplicationIcon>
++    <ApplicationManifest>resources\app.manifest</ApplicationManifest>
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <Prefer32Bit>false</Prefer32Bit>
++    <Nullable>disable</Nullable>
++    <NoWarn>1701;1702;0618;0168;0219;0414;0649;0169;0108</NoWarn>
++  </PropertyGroup>
++  <ItemGroup>
++    <Compile Include="src\**\*.cs" />
++    <Reference Include="System.Management" />
++    <Reference Include="System.Security" />
++    <Reference Include="System.IO.Compression" />
++    <Reference Include="System.IO.Compression.FileSystem" />
++  </ItemGroup>
++  <!-- lib\*.dll: 컴파일 참조 + exe 안에 'lib.<이름>.dll' 로 내장 (Program.cs 의 AssemblyResolve 가 꺼내 쓴다. 단일 exe 유지) -->
++  <ItemGroup>
++    <LibDll Include="lib\*.dll" />
++    <Reference Include="%(LibDll.Filename)"><HintPath>%(LibDll.Identity)</HintPath><Private>false</Private></Reference>
++    <EmbeddedResource Include="@(LibDll)" LogicalName="lib.%(Filename)%(Extension)" />
++    <EmbeddedResource Include="resources\fonts\NanumGothicBold.ttf" LogicalName="font.NanumGothicBold.ttf" />
++    <EmbeddedResource Include="resources\help\*.md" LogicalName="help.%(Filename)%(Extension)" />
++  </ItemGroup>
++</Project>
+--- 6차/admin/LicenseAdmin.cs
++++ 7차/admin/LicenseAdmin.cs
+@@ -29,7 +29,7 @@
+ 
+     public AdminForm()
+     {
+-        Text = "BunjangAuto - 라이선스 발급 (관리자 전용)";
++        Text = "Lumivolt - 라이선스 발급 (관리자 전용)";
+         Width = 600; Height = 600;
+         StartPosition = FormStartPosition.CenterScreen;
+         Font = Theme.FontBase();
+--- 6차/build.bat
++++ 7차/build.bat
+@@ -1,6 +1,6 @@
+ @echo off
+ rem ============================================================================
+-rem  BunjangAuto 2.0  -  Windows 에서 직접 빌드 (Visual Studio / .NET SDK 불필요)
++rem  Lumivolt 2.0  -  Windows 에서 직접 빌드 (Visual Studio / .NET SDK 불필요)
+ rem  Windows 10/11 에 기본 포함된 .NET Framework 4.x 의 csc.exe 를 사용합니다.
+ rem
+ rem  중앙 로그 서버 주소/등록 키를 exe 안에 넣고 싶으면 빌드 전에 지정하세요:
+@@ -24,6 +24,7 @@
+   set REFS=!REFS! /r:%%f
+   set RES=!RES! /resource:%%f,lib.%%~nf.dll
+ )
++if exist resources\fonts\NanumGothicBold.ttf set RES=!RES! /resource:resources\fonts\NanumGothicBold.ttf,font.NanumGothicBold.ttf
+ for %%f in (resources\help\*.md) do (
+   set RES=!RES! /resource:%%f,help.%%~nxf
+ )
+@@ -32,11 +33,11 @@
+ if not exist dist mkdir dist
+ "%CSC%" /target:winexe /optimize+ /platform:anycpu /nowarn:1701,1702,0618,0168,0219,0414,0649,0169,0108 ^
+   /win32icon:resources\app.ico /win32manifest:resources\app.manifest ^
+-  /out:dist\BunjangAuto.exe !REFS! !RES! ^
++  /out:dist\Lumivolt.exe !REFS! !RES! ^
+   /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.Security.dll ^
+   /r:System.IO.Compression.dll /r:System.IO.Compression.FileSystem.dll /r:System.Core.dll /r:Microsoft.CSharp.dll /r:System.Management.dll ^
+   !SRC!
+ echo.
+-if exist dist\BunjangAuto.exe (echo 빌드 성공: dist\BunjangAuto.exe) else (echo 빌드 실패)
++if exist dist\Lumivolt.exe (echo 빌드 성공: dist\Lumivolt.exe) else (echo 빌드 실패)
+ :end
+ pause
+--- 6차/build.sh
++++ 7차/build.sh
+@@ -11,7 +11,8 @@
+   REFS="$REFS -r:$f"
+   RES="$RES -resource:$f,lib.$n.dll"
+ done
+-# 도움말 문서(오프라인)를 exe 안에 내장
++# 글꼴(나눔고딕 Bold, SIL OFL)과 도움말 문서(오프라인)를 exe 안에 내장
++[ -f resources/fonts/NanumGothicBold.ttf ] && RES="$RES -resource:resources/fonts/NanumGothicBold.ttf,font.NanumGothicBold.ttf"
+ for f in resources/help/*.md; do
+   [ -f "$f" ] && RES="$RES -resource:$f,help.$(basename "$f")"
+ done
+@@ -37,9 +38,9 @@
+ mkdir -p dist
+ SRC=$(find src -name '*.cs' | sort)
+ mcs -target:winexe -sdk:4.7.2 -optimize+ -langversion:latest -nowarn:1701,1702,0618,0168,0219,0414,0649,0169 $DEFS $EXTRA \
+-  -out:dist/BunjangAuto.exe \
++  -out:dist/Lumivolt.exe \
+   $REFS $RES \
+   -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Security.dll \
+   -r:System.IO.Compression.dll -r:System.IO.Compression.FileSystem.dll -r:System.Core.dll -r:Microsoft.CSharp.dll -r:System.Management.dll \
+   $SRC
+-ls -la dist/BunjangAuto.exe
++ls -la dist/Lumivolt.exe
+--- 6차/build_admin.sh
++++ 7차/build_admin.sh
+@@ -2,5 +2,5 @@
+ set -e
+ cd "$(dirname "$0")"
+ mkdir -p dist
+-mcs -target:winexe -sdk:4.7.2 -optimize+ -out:dist/LicenseAdmin.exe -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Security.dll admin/LicenseAdmin.cs src/License.cs src/Theme.cs
++mcs -target:winexe -sdk:4.7.2 -optimize+ -win32icon:resources/app.ico -resource:resources/fonts/NanumGothicBold.ttf,font.NanumGothicBold.ttf -out:dist/LicenseAdmin.exe -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Security.dll admin/LicenseAdmin.cs src/License.cs src/Theme.cs
+ ls -la dist
+--- 6차/resources/app.manifest
++++ 7차/resources/app.manifest
+@@ -16,9 +16,8 @@
+   </compatibility>
+   <application xmlns="urn:schemas-microsoft-com:asm.v3">
+     <windowsSettings>
+-      <!-- 고DPI: 100~200% 에서 흐릿하게 늘어나지 않고 또렷하게 그린다 -->
+-      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+-      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2,PerMonitor</dpiAwareness>
++      <!-- 고DPI(시스템 DPI 인식): 100~200% 에서 흐릿하게 늘어나지 않고 또렷하게 그린다. 화면 배율은 Ui.ScaleTree 가 직접 적용한다 -->
++      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
+       <longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+     </windowsSettings>
+   </application>
+--- 6차/resources/fonts/NanumGothic-OFL.txt
++++ 7차/resources/fonts/NanumGothic-OFL.txt
+@@ -0,0 +1,126 @@
++Nanum Gothic Bold — Copyright (c) 2010, NAVER Corporation. SIL Open Font License 1.1
++http://hangeul.naver.com/
++
++Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
++Upstream-Name: NanumFontSetup_TTF_ALL
++Upstream-Contact: http://hangeul.naver.com/
++Source: http://hangeul.naver.com/
++
++Files: *
++Copyright: 2010, NAVER Corporation (http://www.nhncorp.com)
++License: OFL-1.1
++ Copyright (c) 2010, NAVER Corporation (http://www.nhncorp.com),
++ .
++ with Reserved Font Name Nanum, Naver Nanum, NanumGothic, Naver
++ NanumGothic, NanumMyeongjo, Naver NanumMyeongjo, NanumBrush, Naver
++ NanumBrush, NanumPen, Naver NanumPen, Naver NanumGothicEco,
++ NanumGothicEco, Naver NanumMyeongjoEco, NanumMyeongjoEco, Naver
++ NanumGothicLight, NanumGothicLight, NanumBarunGothic, Naver
++ NanumBarunGothic,
++ .
++ This Font Software is licensed under the SIL Open Font License, Version 1.1.
++ .
++ This license is copied below, and is also available with a FAQ at:
++ http://scripts.sil.org/OFL
++ .
++ SIL OPEN FONT LICENSE
++ .
++ Version 1.1 - 26 February 2007
++ .
++ PREAMBLE
++ .
++ The goals of the Open Font License (OFL) are to stimulate worldwide
++ development of collaborative font projects, to support the font creation
++ efforts of academic and linguistic communities, and to provide a free and
++ open framework in which fonts may be shared and improved in partnership
++ with others.
++ .
++ The OFL allows the licensed fonts to be used, studied, modified and
++ redistributed freely as long as they are not sold by themselves. The
++ fonts, including any derivative works, can be bundled, embedded,
++ redistributed and/or sold with any software provided that any reserved
++ names are not used by derivative works. The fonts and derivatives,
++ however, cannot be released under any other type of license. The
++ requirement for fonts to remain under this license does not apply
++ to any document created using the fonts or their derivatives.
++ .
++ DEFINITIONS
++ .
++ "Font Software" refers to the set of files released by the Copyright
++ Holder(s) under this license and clearly marked as such. This may
++ include source files, build scripts and documentation.
++ .
++ "Reserved Font Name" refers to any names specified as such after the
++ copyright statement(s).
++ .
++ "Original Version" refers to the collection of Font Software components as
++ distributed by the Copyright Holder(s).
++ .
++ "Modified Version" refers to any derivative made by adding to, deleting,
++ or substituting -- in part or in whole -- any of the components of the
++ Original Version, by changing formats or by porting the Font Software to a
++ new environment.
++ .
++ "Author" refers to any designer, engineer, programmer, technical
++ writer or other person who contributed to the Font Software.
++ .
++ PERMISSION & CONDITIONS
++ .
++ Permission is hereby granted, free of charge, to any person obtaining
++ a copy of the Font Software, to use, study, copy, merge, embed, modify,
++ redistribute, and sell modified and unmodified copies of the Font
++ Software, subject to the following conditions:
++ .
++ 1) Neither the Font Software nor any of its individual components,
++ in Original or Modified Versions, may be sold by itself.
++ .
++ 2) Original or Modified Versions of the Font Software may be bundled,
++ redistributed and/or sold with any software, provided that each copy
++ contains the above copyright notice and this license. These can be
++ included either as stand-alone text files, human-readable headers or
++ in the appropriate machine-readable metadata fields within text or
++ binary files as long as those fields can be easily viewed by the user.
++ .
++ 3) No Modified Version of the Font Software may use the Reserved Font
++ Name(s) unless explicit written permission is granted by the corresponding
++ Copyright Holder. This restriction only applies to the primary font name as
++ presented to the users.
++ .
++ 4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
++ Software shall not be used to promote, endorse or advertise any
++ Modified Version, except to acknowledge the contribution(s) of the
++ Copyright Holder(s) and the Author(s) or with their explicit written
++ permission.
++ .
++ 5) The Font Software, modified or unmodified, in part or in whole,
++ must be distributed entirely under this license, and must not be
++ distributed under any other license. The requirement for fonts to
++ remain under this license does not apply to any document created
++ using the Font Software.
++ .
++ TERMINATION
++ .
++ This license becomes null and void if any of the above conditions are
++ not met.
++ .
++ DISCLAIMER
++ .
++ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
++ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
++ OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
++ COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
++ DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
++ OTHER DEALINGS IN THE FONT SOFTWARE.
++
++Files: debian/*
++Copyright: 2010-2018, Changwoo Ryu <cwryu@debian.org>
++License: GPL-3+
++ See /usr/share/common-licenses/GPL-3 for the full license.
++
++Files: debian/*.metainfo.xml
++Copyright: 2018, Changwoo Ryu
++License: CC0-1.0
++ See /usr/share/common-licenses/CC0-1.0 for the full license.
+--- 6차/resources/help/01-start.md
++++ 7차/resources/help/01-start.md
+@@ -1,6 +1,6 @@
+ # 프로그램 시작하기
+ 
+-번개장터 자동등록은 번개장터에 올릴 상품 목록을 만들어 두면, 크롬 창을 자동으로 조작해 한 개씩 등록해 주는 프로그램입니다.
++Lumivolt(루미볼트)는 번개장터에 올릴 상품 목록을 만들어 두면, 크롬 창을 자동으로 조작해 한 개씩 등록해 주는 프로그램입니다.
+ 
+ ## 처음 실행하면
+ 1. **이용약관**이 나타납니다. 내용을 읽고 동의해야 다음 단계로 넘어갑니다.
+--- 6차/resources/help/19-settings.md
++++ 7차/resources/help/19-settings.md
+@@ -4,7 +4,7 @@
+ 
+ - **테마**: 라이트 / 다크 / 시스템
+ - **Chrome 경로**: 크롬을 자동으로 못 찾을 때 `chrome.exe` 위치를 직접 지정
+-- **데이터 폴더 열기**: `%AppData%\BunjangAuto` 를 엽니다
++- **데이터 폴더 열기**: `%AppData%\BunjangAuto` 를 엽니다 (이전 버전 데이터를 그대로 쓰기 위해 폴더 이름은 예전 그대로입니다)
+ - **운영 로그 전송 상태**: 중앙 서버로 운영 로그가 전송되는지 확인
+ 
+ ## 데이터 폴더의 파일
+--- 6차/src/AssemblyInfo.cs
++++ 7차/src/AssemblyInfo.cs
+@@ -1,9 +1,9 @@
+ using System.Reflection;
+ 
+-[assembly: AssemblyTitle("번개장터 자동등록")]
+-[assembly: AssemblyDescription("번개장터 자동등록 (BunjangAuto)")]
++[assembly: AssemblyTitle("루미볼트 Lumivolt")]
++[assembly: AssemblyDescription("Lumivolt — 마켓 자동등록 스튜디오")]
+ [assembly: AssemblyCompany("음악천재")]
+-[assembly: AssemblyProduct("BunjangAuto")]
++[assembly: AssemblyProduct("Lumivolt")]
+ [assembly: AssemblyCopyright("Copyright © 음악천재. All rights reserved.")]
+ [assembly: AssemblyVersion("2.0.0.0")]
+ [assembly: AssemblyFileVersion("2.0.0.0")]
+--- 6차/src/DriverManager.cs
++++ 7차/src/DriverManager.cs
+@@ -1,4 +1,4 @@
+-using System;
++﻿using System;
+ using System.Collections.Generic;
+ using System.Diagnostics;
+ using System.IO;
+@@ -97,7 +97,7 @@
+             string zip = Path.Combine(Path.GetTempPath(), "chromedriver-" + Guid.NewGuid().ToString("N") + ".zip");
+             using (var wc = new WebClient())
+             {
+-                wc.Headers["User-Agent"] = "BunjangAuto/1.0";
++                wc.Headers["User-Agent"] = "Lumivolt/2.0";
+                 wc.DownloadFile(url, zip);
+             }
+             try
+@@ -128,7 +128,7 @@
+             using (var wc = new WebClient())
+             {
+                 wc.Encoding = Encoding.UTF8;
+-                wc.Headers["User-Agent"] = "BunjangAuto/1.0";
++                wc.Headers["User-Agent"] = "Lumivolt/2.0";
+                 // 빌드(앞 3자리)까지 같은 가장 최신 패치
+                 try
+                 {
+--- 6차/src/EditForm.cs
++++ 7차/src/EditForm.cs
+@@ -84,6 +84,7 @@
+             Controls.Add(tl); Controls.Add(bot); Controls.Add(header);
+             AcceptButton = null; CancelButton = cancel;
+             Theme.MarkPrimary(ok);
++            Ui.ScaleForm(this);
+             Theme.Apply(this);
+ 
+             bAddImg.Click += delegate
+--- 6차/src/Guard.cs
++++ 7차/src/Guard.cs
+@@ -39,7 +39,7 @@
+ 
+         public static void Die(string msg)
+         {
+-            try { MessageBox.Show(msg, "번개장터 자동등록", MessageBoxButtons.OK, MessageBoxIcon.Stop); } catch { }
++            try { MessageBox.Show(msg, "Lumivolt", MessageBoxButtons.OK, MessageBoxIcon.Stop); } catch { }
+             Environment.Exit(1);
+         }
+ 
+--- 6차/src/Help/DocView.cs
++++ 7차/src/Help/DocView.cs
+@@ -0,0 +1,189 @@
++using System;
++using System.Collections.Generic;
++using System.Drawing;
++using System.Windows.Forms;
++
++namespace BunjangAuto
++{
++    public class DocRun
++    {
++        public string Text; public float Size; public string Tone;     // Tone: t=본문, m=보조, a=강조
++        public DocRun(string text, float size, string tone) { Text = text; Size = size; Tone = tone; }
++    }
++
++    public class DocBlock
++    {
++        public List<DocRun> Runs = new List<DocRun>();
++        public int Indent, Hang, Before, After;        // 96dpi 기준 픽셀
++    }
++
++    /// <summary>
++    /// 사용 설명서 본문을 직접 그리는 읽기 전용 뷰어(줄바꿈, 스크롤, 검색어 강조, 전체 복사).
++    /// RichTextBox 를 쓰지 않아 환경(글꼴, Windows/Mono)과 상관없이 같은 모양으로 나오고 테마를 그대로 따른다.
++    /// </summary>
++    public class DocView : FluentControl
++    {
++        private class Item { public int X, Y, W, H; public string T; public Font F; public Color C; public bool Hl; }
++        private List<DocBlock> _blocks = new List<DocBlock>();
++        private readonly List<Item> _items = new List<Item>();
++        private readonly VScrollBar _sb = new VScrollBar();
++        private int _total, _layoutW = -1;
++        private string _hl = "", _plain = "";
++
++        public DocView()
++        {
++            TabStop = true;
++            _sb.Dock = DockStyle.Right; _sb.Scroll += delegate { Invalidate(); };
++            Controls.Add(_sb);
++            var cm = new ContextMenu();
++            cm.MenuItems.Add("전체 복사", delegate { CopyAll(); });
++            ContextMenu = cm;
++        }
++
++        public void SetContent(List<DocBlock> blocks, string plain, string highlight)
++        {
++            _blocks = blocks; _plain = plain ?? ""; _hl = (highlight ?? "").Trim(); _layoutW = -1;
++            _sb.Value = 0; Relayout(); Invalidate();
++        }
++
++        public void CopyAll() { try { if (_plain.Length > 0) Clipboard.SetText(_plain); } catch { } }
++
++        public int ContentHeight { get { return _total; } }
++        public int ScrollPos { get { return _sb.Value; } }
++
++        private int ViewW { get { return Math.Max(100, Width - _sb.Width - S(28)); } }
++
++        protected override void OnResize(EventArgs e) { base.OnResize(e); Relayout(); }
++        protected override void OnMouseWheel(MouseEventArgs e) { Scroll(-e.Delta / 120 * S(54)); base.OnMouseWheel(e); }
++        protected override void OnMouseDown(MouseEventArgs e) { Focus(); base.OnMouseDown(e); }
++        protected override bool IsInputKey(Keys k) { return k == Keys.PageDown || k == Keys.PageUp || k == Keys.Home || k == Keys.End || k == Keys.Down || k == Keys.Up || base.IsInputKey(k); }
++        protected override void OnKeyDown(KeyEventArgs e)
++        {
++            switch (e.KeyCode)
++            {
++                case Keys.Down: Scroll(S(40)); break; case Keys.Up: Scroll(-S(40)); break;
++                case Keys.PageDown: Scroll(Height - S(40)); break; case Keys.PageUp: Scroll(-(Height - S(40))); break;
++                case Keys.Home: Scroll(-_total); break; case Keys.End: Scroll(_total); break;
++                case Keys.C: if (e.Control) CopyAll(); break;
++            }
++            base.OnKeyDown(e);
++        }
++
++        public void Scroll(int delta)
++        {
++            int max = Math.Max(0, _total - Height + S(20));
++            _sb.Value = Math.Max(0, Math.Min(Math.Min(max, _sb.Maximum), _sb.Value + delta));
++            Invalidate();
++        }
++
++        // ---------------------------------------------------------------- 배치
++        private static readonly TextFormatFlags Flags = TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine | TextFormatFlags.Left | TextFormatFlags.Top;
++
++        private static int Measure(string t, Font f)
++        {
++            if (t.Length == 0) return 0;
++            // 끝의 공백도 폭에 넣기 위해 앞뒤에 기준 글자를 붙여 재고 뺀다
++            int a = TextRenderer.MeasureText("|" + t + "|", f, new Size(int.MaxValue / 4, 200), Flags).Width;
++            int b = TextRenderer.MeasureText("||", f, new Size(int.MaxValue / 4, 200), Flags).Width;
++            return Math.Max(1, a - b);
++        }
++
++        private Color ToneColor(string tone) { var p = Theme.Current; return tone == "m" ? p.TextMuted : tone == "a" ? p.Accent : p.Text; }
++
++        private void Relayout()
++        {
++            if (Width <= 0 || _blocks == null) return;
++            int w = ViewW;
++            _items.Clear();
++            int left = S(14), y = S(10);
++            foreach (var b in _blocks)
++            {
++                y += S(b.Before);
++                int firstX = left + S(b.Indent - b.Hang), restX = left + S(b.Indent);
++                int maxW = left + w;
++                int x = firstX, lineTop = y, lineH = 0; bool first = true; int lineStartIdx = _items.Count;
++                Action<int> newLine = null;
++                newLine = h => { y = lineTop + lineH; lineTop = y; x = restX; lineH = 0; first = false; lineStartIdx = _items.Count; };
++                foreach (var r in b.Runs)
++                {
++                    var f = Theme.Font(r.Size, FontStyle.Regular); var c = ToneColor(r.Tone);
++                    int fh = f.Height + S(5);
++                    if (fh > lineH) lineH = fh;
++                    foreach (var tok in Tokens(r.Text))
++                    {
++                        bool space = tok.Trim().Length == 0;
++                        int tw = Measure(tok, f);
++                        if (x + tw > maxW && x > (first ? firstX : restX) && !space)
++                        {
++                            newLine(0); if (fh > lineH) lineH = fh;
++                        }
++                        if (space && x == (first ? firstX : restX) && !first) continue;   // 줄 맨 앞 공백 생략
++                        if (!space && tw > maxW - x)
++                        {
++                            // 한 단어가 한 줄보다 길면 글자 단위로 자른다(긴 경로 등)
++                            string rest = tok;
++                            while (rest.Length > 0)
++                            {
++                                int n = rest.Length; while (n > 1 && x + Measure(rest.Substring(0, n), f) > maxW) n--;
++                                string part = rest.Substring(0, n); Emit(part, x, lineTop, f, c, Measure(part, f), fh);
++                                x += Measure(part, f); rest = rest.Substring(n);
++                                if (rest.Length > 0) { newLine(0); if (fh > lineH) lineH = fh; }
++                            }
++                            continue;
++                        }
++                        Emit(tok, x, lineTop, f, c, tw, fh); x += tw;
++                    }
++                }
++                y = lineTop + lineH + S(b.After);
++            }
++            _total = y + S(10);
++            _layoutW = w;
++            int visible = Height;
++            _sb.Maximum = Math.Max(0, _total); _sb.LargeChange = Math.Max(1, visible); _sb.SmallChange = S(40);
++            _sb.Enabled = _total > visible;
++            if (_sb.Value > Math.Max(0, _total - visible)) _sb.Value = Math.Max(0, _total - visible);
++        }
++
++        private void Emit(string text, int x, int y, Font f, Color c, int w, int h)
++        {
++            if (_hl.Length == 0) { _items.Add(new Item { X = x, Y = y, W = w, H = h, T = text, F = f, C = c }); return; }
++            int pos = 0, i, cx = x;
++            while ((i = text.IndexOf(_hl, pos, StringComparison.OrdinalIgnoreCase)) >= 0)
++            {
++                if (i > pos) { string a = text.Substring(pos, i - pos); int aw = Measure(a, f); _items.Add(new Item { X = cx, Y = y, W = aw, H = h, T = a, F = f, C = c }); cx += aw; }
++                string m = text.Substring(i, _hl.Length); int mw = Measure(m, f);
++                _items.Add(new Item { X = cx, Y = y, W = mw, H = h, T = m, F = f, C = c, Hl = true }); cx += mw; pos = i + _hl.Length;
++            }
++            if (pos < text.Length) { string a = text.Substring(pos); _items.Add(new Item { X = cx, Y = y, W = Measure(a, f), H = h, T = a, F = f, C = c }); }
++        }
++
++        /// <summary>공백/비공백 덩어리로 나눈다(한글은 띄어쓰기 단위로 줄바꿈).</summary>
++        private static IEnumerable<string> Tokens(string t)
++        {
++            int i = 0;
++            while (i < t.Length)
++            {
++                int j = i; bool sp = char.IsWhiteSpace(t[i]);
++                while (j < t.Length && char.IsWhiteSpace(t[j]) == sp) j++;
++                yield return t.Substring(i, j - i); i = j;
++            }
++        }
++
++        // ---------------------------------------------------------------- 그리기
++        protected override void OnPaint(PaintEventArgs pe)
++        {
++            var g = pe.Graphics; var p = Theme.Current;
++            g.Clear(p.Card);
++            int off = _sb.Value; Color hlBg = p.Dark ? Color.FromArgb(102, 92, 0) : Color.FromArgb(255, 241, 150);
++            foreach (var it in _items)
++            {
++                int y = it.Y - off;
++                if (y + it.H < 0 || y > Height) continue;
++                if (it.Hl) using (var b = new SolidBrush(hlBg)) g.FillRectangle(b, it.X, y, it.W, it.H - S(3));
++                TextRenderer.DrawText(g, it.T, it.F, new Point(it.X, y), it.C, Flags);
++            }
++        }
++
++        public override void ApplyTheme() { BackColor = Theme.Current.Card; _layoutW = -1; Relayout(); }
++    }
++}
+--- 6차/src/Help/HelpService.cs
++++ 7차/src/Help/HelpService.cs
+@@ -59,75 +59,62 @@
+ 
+         private static readonly Regex Inline = new Regex(@"(\*\*[^*]+\*\*|`[^`]+`)", RegexOptions.Compiled);
+ 
+-        // RichTextBox 의 선택 영역(SelectionFont/SelectionColor)에 서식을 지정하며 한 조각씩 이어 붙인다.
+-        public static void Render(RichTextBox rtb, HelpTopic t, string highlight)
++        /// <summary>마크다운 한 문서를 DocView 가 그릴 블록 목록으로 바꾼다.</summary>
++        public static List<DocBlock> Build(HelpTopic t)
+         {
+-            var p = Theme.Current;
+-            rtb.SuspendLayout();
+-            rtb.Clear();
+-            rtb.BackColor = p.Card; rtb.ForeColor = p.Text;
+-            if (t == null) { rtb.ResumeLayout(); return; }
+-
++            var list = new List<DocBlock>();
++            if (t == null) return list;
+             string[] lines = t.Markdown.Split('\n');
+             for (int i = 0; i < lines.Length; i++)
+             {
+                 string line = lines[i].TrimEnd();
+-                if (line.Length == 0) { Append(rtb, "\n", Theme.Font(5f, FontStyle.Regular), p.Text); continue; }
+-                if (line.StartsWith("# ")) { Append(rtb, line.Substring(2) + "\n", Theme.Font(20f, FontStyle.Bold), p.Text); continue; }
+-                if (line.StartsWith("## ")) { Append(rtb, "\n", Theme.Font(4f, FontStyle.Regular), p.Text); Append(rtb, line.Substring(3) + "\n", Theme.Font(13f, FontStyle.Bold), p.Accent); continue; }
+-                if (line.StartsWith("> ")) { Append(rtb, "  \u258C ", Theme.Font(10.5f, FontStyle.Bold), p.Accent); AppendInline(rtb, line.Substring(2), p.TextMuted, 10.5f); Append(rtb, "\n", Theme.FontBase(), p.Text); continue; }
+-                if (line.StartsWith("- ")) { Append(rtb, "   \u2022  ", Theme.Font(10.5f, FontStyle.Regular), p.Accent); AppendInline(rtb, line.Substring(2), p.Text, 10.5f); Append(rtb, "\n", Theme.FontBase(), p.Text); continue; }
+-                var num = Regex.Match(line, @"^(\d+)\.\s+(.*)$");
+-                if (num.Success) { Append(rtb, "   " + num.Groups[1].Value + ".  ", Theme.Font(10.5f, FontStyle.Bold), p.Accent); AppendInline(rtb, num.Groups[2].Value, p.Text, 10.5f); Append(rtb, "\n", Theme.FontBase(), p.Text); continue; }
+-                if (line.StartsWith("|"))
++                if (line.Length == 0) continue;
++                var b = new DocBlock();
++                if (line.StartsWith("# ")) { b.After = 10; b.Runs.Add(new DocRun(line.Substring(2), 20f, "t")); }
++                else if (line.StartsWith("## ")) { b.Before = 18; b.After = 6; b.Runs.Add(new DocRun(line.Substring(3), 13f, "a")); }
++                else if (line.StartsWith("> ")) { b.Indent = 26; b.Hang = 16; b.Before = 2; b.After = 6; b.Runs.Add(new DocRun("\u258C ", 10.5f, "a")); Inl(b, line.Substring(2), 10.5f, "m"); }
++                else if (line.StartsWith("- ")) { b.Indent = 34; b.Hang = 18; b.After = 4; b.Runs.Add(new DocRun("\u2022 ", 10.5f, "a")); Inl(b, line.Substring(2), 10.5f, "t"); }
++                else
+                 {
+-                    var cells = line.Trim('|').Split('|').Select(c => c.Trim()).ToArray();
+-                    if (cells.All(c => Regex.IsMatch(c, @"^:?-{2,}:?$"))) continue;                                  // 구분선
+-                    if (i + 1 < lines.Length && Regex.IsMatch(lines[i + 1], @"^\|[\s:\-|]+\|\s*$")) continue;           // 표 머리글 줄(각 행에서 설명)
+-                    Append(rtb, "   \u25B8  ", Theme.Font(10.5f, FontStyle.Regular), p.Accent);
+-                    Append(rtb, cells[0], Theme.Font(10.5f, FontStyle.Bold), p.Text);
+-                    if (cells.Length > 1) { Append(rtb, "   \u2014   ", Theme.FontBase(), p.TextMuted); AppendInline(rtb, string.Join("   \u00B7   ", cells.Skip(1).ToArray()), p.Text, 10.5f); }
+-                    Append(rtb, "\n", Theme.FontBase(), p.Text);
+-                    continue;
++                    var num = Regex.Match(line, @"^(\d+)\.\s+(.*)$");
++                    if (num.Success) { b.Indent = 36; b.Hang = 22; b.After = 5; b.Runs.Add(new DocRun(num.Groups[1].Value + ". ", 10.5f, "a")); Inl(b, num.Groups[2].Value, 10.5f, "t"); }
++                    else if (line.StartsWith("|"))
++                    {
++                        var cells = line.Trim('|').Split('|').Select(c => c.Trim()).ToArray();
++                        if (cells.All(c => Regex.IsMatch(c, @"^:?-{2,}:?$"))) continue;                                  // 구분선
++                        if (i + 1 < lines.Length && Regex.IsMatch(lines[i + 1], @"^\|[\s:\-|]+\|\s*$")) continue;           // 머리글 줄(각 행에서 설명)
++                        b.Indent = 34; b.Hang = 18; b.After = 5;
++                        b.Runs.Add(new DocRun("\u25B8 ", 10.5f, "a"));
++                        b.Runs.Add(new DocRun(cells[0], 10.5f, "t"));
++                        if (cells.Length > 1) { b.Runs.Add(new DocRun("  \u2014  ", 10.5f, "m")); Inl(b, string.Join("  |  ", cells.Skip(1).ToArray()), 10.5f, "t"); }
++                    }
++                    else { b.After = 7; Inl(b, line, 10.5f, "t"); }
+                 }
+-                AppendInline(rtb, line, p.Text, 10.5f);
+-                Append(rtb, "\n", Theme.FontBase(), p.Text);
++                list.Add(b);
+             }
+-
+-            if (!string.IsNullOrWhiteSpace(highlight))
+-            {
+-                string text = rtb.Text; int idx = 0; string h = highlight.Trim();
+-                Color bg = p.Dark ? Color.FromArgb(102, 92, 0) : Color.FromArgb(255, 241, 150);
+-                while ((idx = text.IndexOf(h, idx, StringComparison.OrdinalIgnoreCase)) >= 0)
+-                {
+-                    rtb.Select(idx, h.Length); rtb.SelectionBackColor = bg;
+-                    idx += Math.Max(1, h.Length);
+-                }
+-            }
+-            rtb.Select(0, 0);
+-            try { rtb.ScrollToCaret(); } catch { }
+-            rtb.ResumeLayout();
++            return list;
+         }
+ 
+-        private static void Append(RichTextBox rtb, string text, Font f, Color c)
+-        {
+-            rtb.SelectionStart = rtb.TextLength; rtb.SelectionLength = 0;
+-            rtb.SelectionFont = f; rtb.SelectionColor = c; rtb.SelectionBackColor = rtb.BackColor;
+-            rtb.SelectedText = text;
+-        }
+-
+-        private static void AppendInline(RichTextBox rtb, string text, Color c, float size)
++        private static void Inl(DocBlock b, string text, float size, string tone)
+         {
+             int pos = 0;
+             foreach (Match m in Inline.Matches(text))
+             {
+-                if (m.Index > pos) Append(rtb, text.Substring(pos, m.Index - pos), Theme.Font(size, FontStyle.Regular), c);
++                if (m.Index > pos) b.Runs.Add(new DocRun(text.Substring(pos, m.Index - pos), size, tone));
+                 string tok = m.Value;
+-                if (tok.StartsWith("**")) Append(rtb, tok.Substring(2, tok.Length - 4), Theme.Font(size, FontStyle.Bold), Theme.Current.Text);
+-                else Append(rtb, tok.Substring(1, tok.Length - 2), Theme.FontMono(size - 0.5f), Theme.Current.Accent);
++                if (tok.StartsWith("**")) b.Runs.Add(new DocRun(tok.Substring(2, tok.Length - 4), size, "t"));
++                else b.Runs.Add(new DocRun(tok.Substring(1, tok.Length - 2), size - 0.5f, "a"));
+                 pos = m.Index + m.Length;
+             }
+-            if (pos < text.Length) Append(rtb, text.Substring(pos), Theme.Font(size, FontStyle.Regular), c);
++            if (pos < text.Length) b.Runs.Add(new DocRun(text.Substring(pos), size, tone));
++        }
++
++        /// <summary>문서의 평문(복사용)</summary>
++        public static string PlainText(HelpTopic t)
++        {
++            var sb = new StringBuilder();
++            foreach (var b in Build(t)) { foreach (var r in b.Runs) sb.Append(r.Text); sb.AppendLine(); }
++            return sb.ToString();
+         }
+     }
+ }
+--- 6차/src/LicenseForm.cs
++++ 7차/src/LicenseForm.cs
+@@ -97,7 +97,7 @@
+             FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false;
+             Font = Theme.FontBase();
+ 
+-            var header = Theme.BuildHeader("라이선스 인증", "BunjangAuto   ·   © 음악천재");
++            var header = Theme.BuildHeader("라이선스 인증", "Lumivolt   ·   © 음악천재");
+             var lblMsg = new Label { Left = 20, Top = 76, Width = 510, Height = 36, ForeColor = Theme.Danger, Font = Theme.FontBold(), Text = message };
+             var lbl1 = new Label { Left = 20, Top = 116, AutoSize = true, ForeColor = Theme.TextMuted, Text = "이 PC의 고유번호 (관리자에게 전달해 주세요)" };
+             var txtId = new TextBox { Left = 20, Top = 138, Width = 374, ReadOnly = true, Text = machineId, Font = Theme.FontMono(11f) };
+@@ -106,10 +106,11 @@
+             var txtKey = new TextBox { Left = 20, Top = 202, Width = 510, Height = 110, Multiline = true, ScrollBars = ScrollBars.Vertical, Font = Theme.FontMono(9.5f) };
+             var ok = new Button { Left = 320, Top = 330, Width = 100, Height = 32, Text = "인증" };
+             var cancel = new Button { Left = 430, Top = 330, Width = 100, Height = 32, Text = "종료", DialogResult = DialogResult.Cancel };
+-            var lblCopy = new Label { Left = 20, Top = 372, Width = 510, Height = 20, ForeColor = Theme.TextMuted, Font = new Font(Theme.FontBase().FontFamily, 7.8f), Text = "Copyright © 음악천재. All rights reserved. 무단 복제·유포 시 법적 책임이 따릅니다." };
++            var lblCopy = new Label { Left = 20, Top = 372, Width = 510, Height = 20, ForeColor = Theme.TextMuted, Font = Theme.Font(7.8f, FontStyle.Regular), Text = "Copyright © 음악천재. All rights reserved. 무단 복제·유포 시 법적 책임이 따릅니다." };
+             Controls.AddRange(new Control[] { lblCopy, lblMsg, lbl1, txtId, bCopy, lbl2, txtKey, ok, cancel, header });
+             CancelButton = cancel;
+             Theme.MarkPrimary(ok);
++            Ui.ScaleForm(this);
+             Theme.Apply(this);
+ 
+             bCopy.Click += delegate { try { Clipboard.SetText(machineId); } catch { } };
+--- 6차/src/MainForm.cs
++++ 7차/src/MainForm.cs
+@@ -44,9 +44,9 @@
+ 
+         public MainForm()
+         {
+-            Text = "번개장터 자동등록  |  BunjangAuto  ·  © 음악천재";
+-            AutoScaleMode = AutoScaleMode.Dpi; AutoScaleDimensions = new SizeF(96F, 96F);
+-            Width = 1240; Height = 820; MinimumSize = new Size(980, 640);
++            Text = "Lumivolt 루미볼트  ·  © 음악천재";
++            AutoScaleMode = AutoScaleMode.None;   // 배율은 Ui.ScaleTree 가 직접 처리(나중에 만든 화면에도 똑같이 적용하기 위해)
++            Width = Ui.S(1240); Height = Ui.S(820); MinimumSize = new Size(Ui.S(980), Ui.S(640));
+             StartPosition = FormStartPosition.CenterScreen;
+             Font = Theme.FontBase();
+             try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
+@@ -73,12 +73,12 @@
+ 
+             // ---- 화면 뼈대
+             content = new Panel { Dock = DockStyle.Fill, BackColor = Theme.BgDark };
+-            header = new HeaderPanel { Dock = DockStyle.Top, Height = 60 };
+-            sidebar = new SidebarPanel { Dock = DockStyle.Left, Width = 248 };
++            header = new HeaderPanel { Dock = DockStyle.Top, Height = Ui.S(60) };
++            sidebar = new SidebarPanel { Dock = DockStyle.Left, Width = Ui.S(248) };
+             Controls.Add(content); Controls.Add(header); Controls.Add(sidebar);
+ 
+-            lblBrand = new Label { Text = "BunjangAuto", AutoSize = true, Font = Theme.Font(15f, FontStyle.Bold), Location = new Point(20, 18), Tag = "t", BackColor = Theme.Sidebar };
+-            lblBrandSub = new Label { Text = "번개장터 자동등록", AutoSize = true, Font = Theme.FontSub(), Location = new Point(22, 48), Tag = "m", BackColor = Theme.Sidebar };
++            lblBrand = new Label { Text = "Lumivolt", AutoSize = true, Font = Theme.Font(15f, FontStyle.Bold), Location = new Point(20, 18), Tag = "t", BackColor = Theme.Sidebar };
++            lblBrandSub = new Label { Text = "마켓 자동등록 스튜디오", AutoSize = true, Font = Theme.FontSub(), Location = new Point(22, 48), Tag = "m", BackColor = Theme.Sidebar };
+             sidebar.Controls.Add(lblBrand); sidebar.Controls.Add(lblBrandSub);
+             lblFoot = new Label { Text = "v" + ClientIdentityService.AppVersion + "  ·  © 음악천재", AutoSize = true, Font = Theme.Font(8.5f, FontStyle.Regular), Tag = "m", BackColor = Theme.Sidebar };
+             sidebar.Controls.Add(lblFoot);
+@@ -94,7 +94,7 @@
+             }
+ 
+             lblPage = new Label { Text = "", AutoSize = true, Font = Theme.Font(12f, FontStyle.Bold), Location = new Point(24, 17), Tag = "t", BackColor = Theme.BgDark };
+-            segTheme = new Segmented { Width = 216, Height = 32 };
++            segTheme = new Segmented { Width = Ui.S(216), Height = Ui.S(32) };
+             segTheme.Items.AddRange(new[] { "라이트", "다크", "시스템" });
+             segTheme.SetIndexSilently((int)ThemeService.Mode);
+             segTheme.SelectedIndexChanged += delegate { ThemeService.SetMode((ThemeMode)segTheme.SelectedIndex); };
+@@ -127,6 +127,7 @@
+             Shown += delegate { Log.Write("프로그램을 시작했습니다. 데이터 폴더: " + Paths.Root); };
+             HandleCreated += delegate { Dwm.Apply(this, Theme.Current); };
+ 
++            Ui.ScaleTree(sidebar); Ui.ScaleTree(header);   // 위치는 96dpi 기준으로 적고 한 번에 현재 배율로
+             ApplyAll();
+             SyncChips(); SyncRole();
+             Navigate("dashboard");
+@@ -142,6 +143,7 @@
+             {
+                 page = factories[key]();
+                 page.Visible = false;
++                Ui.ScaleTree(page);
+                 content.Controls.Add(page);
+                 pages[key] = page;
+                 Theme.Apply(page);
+@@ -152,7 +154,7 @@
+             page.Visible = true; page.BringToFront();
+             foreach (var kv in navs) kv.Value.Selected = kv.Key == key;
+             string title = MenuDef.First(m => m[0] == key)[1];
+-            lblPage.Text = "BunjangAuto   ›   " + title;
++            lblPage.Text = "Lumivolt   ›   " + title;
+             page.OnActivated();
+             LayoutHeader();
+         }
+@@ -180,7 +182,7 @@
+         // ============================ 레이아웃 / 테마 ============================
+         private void UpdateCompact()
+         {
+-            bool c = ClientSize.Width < 1060 && Theme.HasIconFont;
++            bool c = ClientSize.Width < Ui.S(1060) && Theme.HasIconFont;
+             if (c == _compact) return;
+             _compact = c; LayoutSidebar();
+         }
+@@ -197,18 +199,18 @@
+                 it.Top = y; y += step;
+             }
+             lblFoot.Visible = !_compact;
+-            lblFoot.Location = new Point(20, sidebar.Height - lblFoot.Height - 14);
++            lblFoot.Location = new Point(Ui.S(20), sidebar.Height - lblFoot.Height - Ui.S(14));
+             sidebar.Resize -= OnSidebarResize; sidebar.Resize += OnSidebarResize;
+         }
+-        private void OnSidebarResize(object s, EventArgs e) { lblFoot.Location = new Point(20, sidebar.Height - lblFoot.Height - 14); }
++        private void OnSidebarResize(object s, EventArgs e) { lblFoot.Location = new Point(Ui.S(20), sidebar.Height - lblFoot.Height - Ui.S(14)); }
+ 
+         private void LayoutHeader()
+         {
+-            int pad = 20; int x = header.ClientSize.Width - pad;
+-            segTheme.Location = new Point(x - segTheme.Width, (header.Height - segTheme.Height) / 2); x = segTheme.Left - 14;
+-            chipUser.Location = new Point(x - chipUser.Width, (header.Height - chipUser.Height) / 2); x = chipUser.Left - 8;
++            int pad = Ui.S(20); int x = header.ClientSize.Width - pad;
++            segTheme.Location = new Point(x - segTheme.Width, (header.Height - segTheme.Height) / 2); x = segTheme.Left - Ui.S(14);
++            chipUser.Location = new Point(x - chipUser.Width, (header.Height - chipUser.Height) / 2); x = chipUser.Left - Ui.S(8);
+             chipLic.Location = new Point(x - chipLic.Width, (header.Height - chipLic.Height) / 2);
+-            lblPage.Location = new Point(24, (header.Height - lblPage.Height) / 2);
++            lblPage.Location = new Point(Ui.S(24), (header.Height - lblPage.Height) / 2);
+         }
+ 
+         private void OnThemeChanged() { if (!IsDisposed) ApplyAll(); }
+--- 6차/src/Program.cs
++++ 7차/src/Program.cs
+@@ -1,4 +1,4 @@
+-using System;
++﻿using System;
+ using System.Collections.Generic;
+ using System.IO;
+ using System.Reflection;
+@@ -33,16 +33,13 @@
+                 }
+             }
+         }
+-
+-        [System.Runtime.InteropServices.DllImport("user32.dll")] private static extern bool SetProcessDpiAwarenessContext(IntPtr value);
+         [System.Runtime.InteropServices.DllImport("user32.dll")] private static extern bool SetProcessDPIAware();
+ 
+         /// <summary>고DPI(125~200%)에서 흐릿하게 늘어나지 않도록 창을 만들기 전에 DPI 인식을 켠다. (매니페스트와 같은 효과 — 매니페스트가 없는 빌드에서도 동작)</summary>
+         private static void EnableDpiAwareness()
+         {
+             if (Environment.OSVersion.Platform != PlatformID.Win32NT) return;
+-            try { if (!SetProcessDpiAwarenessContext(new IntPtr(-4))) SetProcessDPIAware(); }   // -4 = PER_MONITOR_AWARE_V2 (Windows 10 1703+)
+-            catch (EntryPointNotFoundException) { try { SetProcessDPIAware(); } catch { } }
++            try { SetProcessDPIAware(); }   // 시스템 DPI 인식: WinForms 레이아웃을 가장 예측 가능하게 키울 수 있는 방식
+             catch { }
+         }
+ 
+@@ -50,11 +47,14 @@
+         static void Main(string[] args)
+         {
+             EnableDpiAwareness();
++            AppFont.Init();   // 글꼴 객체가 만들어지기 전에 내장 나눔고딕 Bold 를 등록
+             AppDomain.CurrentDomain.AssemblyResolve += OnResolve;
+             if (args.Length > 0 && args[0] == "--selftest") { Environment.ExitCode = SelfTest.Run(); return; }
+             if (args.Length > 2 && args[0] == "--selftest-central") { Environment.ExitCode = SelfTestV2.RunCentral(args[1], args[2]); return; }
+ #if UIPREVIEW
+             if (args.Length > 0 && args[0] == "--ui-preview") { PreviewHarness.Run(args); return; }
++            if (args.Length > 0 && args[0] == "--ui-layout") { Environment.ExitCode = UiLayoutCheck.Run(args); return; }
++            if (args.Length > 0 && args[0] == "--ui-selftest") { Environment.ExitCode = UiSelfTest.Run(); return; }
+ #endif
+             RunApp();
+         }
+@@ -68,7 +68,7 @@
+             {
+                 if (!created)
+                 {
+-                    MessageBox.Show("이미 실행 중입니다.", "번개장터 자동등록", MessageBoxButtons.OK, MessageBoxIcon.Information);   // 아직 아무것도 시작하지 않은 상태라 기본 상자를 쓴다
++                    MessageBox.Show("이미 실행 중입니다.", "Lumivolt", MessageBoxButtons.OK, MessageBoxIcon.Information);   // 아직 아무것도 시작하지 않은 상태라 기본 상자를 쓴다
+                     return;
+                 }
+                 Application.EnableVisualStyles();
+--- 6차/src/SelfTest.cs
++++ 7차/src/SelfTest.cs
+@@ -1,4 +1,4 @@
+-using System;
++﻿using System;
+ using System.Collections.Generic;
+ using System.IO;
+ using System.Linq;
+@@ -8,7 +8,7 @@
+ 
+ namespace BunjangAuto
+ {
+-    /// <summary>"BunjangAuto.exe --selftest" : 화면 없이 핵심 부품이 로드/동작하는지 확인</summary>
++    /// <summary>"Lumivolt.exe --selftest" : 화면 없이 핵심 부품이 로드/동작하는지 확인</summary>
+     public static class SelfTest
+     {
+         internal static int _fail;
+--- 6차/src/SelfTestV2.cs
++++ 7차/src/SelfTestV2.cs
+@@ -25,7 +25,7 @@
+ 
+         public static void Run()
+         {
+-            ThemeTest(); StorageMigrationTest(); TelemetrySerializationTest(); RedactionTest(); LogQueueTest(); ClientIdTest(); CsvCompatTest(); TransportTest();
++            ThemeTest(); FontTest(); HelpTest(); PauseTest(); StorageMigrationTest(); TelemetrySerializationTest(); RedactionTest(); LogQueueTest(); ClientIdTest(); CsvCompatTest(); TransportTest();
+         }
+ 
+         // ---------------------------------------------------------------- Theme
+@@ -51,6 +51,76 @@
+             catch (Exception ex) { Check("[Theme] 예외: " + ex.Message, false); }
+         }
+ 
++
++        // ---------------------------------------------------------------- Font
++        private static void FontTest()
++        {
++            try
++            {
++                using (var st = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("font.NanumGothicBold.ttf"))
++                {
++                    byte[] head = new byte[4]; int n = st == null ? 0 : st.Read(head, 0, 4);
++                    Check("[Font] 나눔고딕 Bold TTF 가 exe 안에 내장됨(TrueType 시그니처, 1MB 이상)", st != null && n == 4 && head[0] == 0 && head[1] == 1 && head[2] == 0 && head[3] == 0 && st.Length > 1000000);
++                }
++                Check("[Font] 나눔고딕 Bold 를 실제로 쓸 수 있음(" + (AppFont.Active ? "적용" : "대체: " + AppFont.Status) + ")", AppFont.Active);
++                Check("[Font] 모든 글꼴 요청이 나눔고딕 Bold 로 만들어짐", !AppFont.Active || (Theme.Font(9f, System.Drawing.FontStyle.Regular).Name == "NanumGothic" && Theme.Font(9f, System.Drawing.FontStyle.Regular).Bold && Theme.FontMono(9f).Name == "NanumGothic"));
++            }
++            catch (Exception ex) { Check("[Font] 예외: " + ex.Message, false); }
++        }
++
++        // ---------------------------------------------------------------- 사용 설명서
++        private static void HelpTest()
++        {
++            try
++            {
++                var topics = HelpService.Topics();
++                string[] must = { "프로그램 시작하기", "라이선스 등록", "로그인", "상품 추가", "CSV 사용법", "상품 데이터 작성법", "이미지 등록", "자동 등록", "1개씩 등록", "반복 등록", "시간대별 등록", "예약 기능", "로그 확인", "오류 해결", "Chrome 문제 해결", "로그인 문제 해결", "라이선스 문제 해결", "Light / Dark Mode", "설정", "FAQ" };
++                Check("[Help] 요청한 20개 목차가 모두 내장되어 있음", topics.Count == 20 && must.All(m => topics.Any(t => t.Title == m)));
++                Check("[Help] 모든 문서가 비어 있지 않고 블록으로 변환됨", topics.All(t => t.Markdown.Length > 150 && HelpService.Build(t).Count >= 3));
++                Check("[Help] 검색(제목/본문, 대소문자 무시)", HelpService.Search("csv").Count >= 2 && HelpService.Search("csv").Count < 20 && HelpService.Search("").Count == 20 && HelpService.Search("zzzz-없음").Count == 0 && HelpService.Search("CSV 사용법")[0].Title == "CSV 사용법");
++                DocView dv;
++                try { dv = new DocView { Width = 760, Height = 400 }; }
++                catch (TypeInitializationException) { Console.WriteLine("SKIP  [Help] 본문 뷰어 검사: 화면(디스플레이)이 없는 환경"); return; }
++                var blocks = HelpService.Build(topics.First(t => t.Title == "CSV 사용법"));
++                dv.SetContent(blocks, HelpService.PlainText(topics[0]), "");
++                int wide = dv.ContentHeight; dv.Width = 380; int narrow = dv.ContentHeight;
++                Check("[Help] 본문 뷰어: 폭이 좁아지면 줄바꿈으로 높이가 늘어남", wide > 200 && narrow > wide);
++                Check("[Help] 본문 뷰어: 평문 복사 텍스트 생성", HelpService.PlainText(topics[0]).Contains("프로그램 시작하기"));
++            }
++            catch (Exception ex) { Check("[Help] 예외: " + ex.Message, false); }
++        }
++
++        // ---------------------------------------------------------------- 일시정지 (신규 기능)
++        private static void PauseTest()
++        {
++            try
++            {
++                var bot = new Bot(new AppSettings(), SelectorSet.Load());
++                var m = typeof(Bot).GetMethod("CheckStop", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
++                Exception err = null; var done = new System.Threading.ManualResetEvent(false);
++                System.Threading.ThreadStart body = delegate { try { m.Invoke(bot, null); } catch (System.Reflection.TargetInvocationException e) { err = e.InnerException; } done.Set(); };
++
++                bot.PauseRequested = false;
++                var t0 = new System.Threading.Thread(body); t0.Start();
++                Check("[Pause] 일시정지가 아니면 단계 점검이 바로 통과", done.WaitOne(1000) && err == null);
++
++                done.Reset(); bot.PauseRequested = true;
++                var t1 = new System.Threading.Thread(body); t1.Start();
++                bool blocked = !done.WaitOne(700);
++                bot.PauseRequested = false;
++                bool released = done.WaitOne(2000) && err == null;
++                Check("[Pause] 일시정지 중에는 멈춰 있다가, 해제하면 이어서 진행", blocked && released);
++
++                done.Reset(); err = null; bot.PauseRequested = true;
++                var t2 = new System.Threading.Thread(body); t2.Start();
++                System.Threading.Thread.Sleep(300); bot.StopRequested = true;
++                bool ended = done.WaitOne(2000);
++                Check("[Pause] 일시정지 중에 중지하면 바로 중지 처리됨", ended && err != null && err.GetType().Name == "StopRequestedException");
++                bot.PauseRequested = false; bot.StopRequested = false;
++            }
++            catch (Exception ex) { Check("[Pause] 예외: " + ex.Message, false); }
++        }
++
+         // ---------------------------------------------------------------- Storage Migration (형식 수준)
+         private static void StorageMigrationTest()
+         {
+@@ -131,6 +201,14 @@
+                 Check("[Redaction] 이메일", !S("계정 hong@example.com 로그인").Contains("hong@example.com"));
+                 string[] ok = { "[등록] 아이폰 15 프로 256GB (1/30)", "  → 등록 완료", "가격 1050000원, 수량 3", "[1개씩 등록] 다음 등록 예정: 14:20:05", "크롬 데이터 폴더: C:\\ProgramData\\BunjangAuto\\chrome-profile" };
+                 Check("[Redaction] 일반 운영 로그는 그대로 보존", ok.All(x => S(x) == x));
++                string[] real = {
++                    "https://m.bunjang.co.kr/products/123456789 등록 확인",
++                    "ChromeDriver 다운로드: https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.85/win64/chromedriver-win64.zip",
++                    "크롬 데이터 폴더: C:\\ProgramData\\BunjangAuto\\chrome-profile\\Default",
++                    "[등록] 나이키 에어포스 270 화이트 새상품 (12/30)",
++                    "  → 등록 완료 (상품번호 1234567890)",
++                    "화면 캡처: C:\\Users\\<user>\\AppData\\Roaming\\BunjangAuto\\screenshots\\20261009-142005.png" };
++                Check("[Redaction] 실제 로그 형태(URL·경로·상품번호·드라이버 주소)는 과하게 지워지지 않음", real.All(x => S(x) == x));
+                 var en = new LogEntry { Message = "token=abc123 실패", Module = "M", Action = "a" }; Redactor.ScrubEntry(en);
+                 Check("[Redaction] LogEntry 단위 처리", !en.Message.Contains("abc123") && en.Message.Contains("실패"));
+             }
+--- 6차/src/Telemetry/CentralLogService.cs
++++ 7차/src/Telemetry/CentralLogService.cs
+@@ -37,7 +37,7 @@
+                 var req = (HttpWebRequest)WebRequest.Create(url);
+                 req.Method = method;
+                 req.Timeout = timeoutMs; req.ReadWriteTimeout = timeoutMs;
+-                req.UserAgent = "BunjangAuto/" + ClientIdentityService.AppVersion;
++                req.UserAgent = "Lumivolt/" + ClientIdentityService.AppVersion;
+                 req.Proxy = WebRequest.DefaultWebProxy;
+                 if (headers != null) foreach (var kv in headers) req.Headers[kv.Key] = kv.Value;
+                 if (jsonBody != null)
+@@ -139,7 +139,7 @@
+         public bool FlushOnce()
+         {
+             if (_queue.Count == 0) return true;
+-            if (!EnsureRegistered()) return Fail("등록 실패");
++            if (!EnsureRegistered()) return Fail(LastError.Length > 0 ? LastError : "등록 실패");
+ 
+             var batch = _queue.Take(_cfg.BatchSize);
+             if (batch.Count == 0) return true;
+--- 6차/src/Telemetry/CrashReportService.cs
++++ 7차/src/Telemetry/CrashReportService.cs
+@@ -38,7 +38,7 @@
+                 {
+                     Directory.CreateDirectory(Paths.Logs);
+                     File.WriteAllText(Path.Combine(Paths.Logs, name),
+-                        "BunjangAuto " + ClientIdentityService.AppVersion + "\r\n" + DateTime.Now.ToString("o") + "\r\n" + ClientIdentityService.OsDescription() + "\r\n\r\n" + stack, Encoding.UTF8);
++                        "Lumivolt " + ClientIdentityService.AppVersion + "\r\n" + DateTime.Now.ToString("o") + "\r\n" + ClientIdentityService.OsDescription() + "\r\n\r\n" + stack, Encoding.UTF8);
+                 }
+                 catch { }
+                 string first = ex != null ? ex.Message : "";
+--- 6차/src/Telemetry/Redactor.cs
++++ 7차/src/Telemetry/Redactor.cs
+@@ -65,8 +65,13 @@
+             return s;
+         }
+ 
++        // 실제 카드 번호는 발급사 번호(IIN)로 시작한다: Visa 4, Mastercard 51-55·2221-2720, Amex/Diners/JCB 3x, Discover/UnionPay/국내 BC 6
++        private static readonly Regex CardPrefix = new Regex(@"^(4|5[1-5]|2(22[1-9]|2[3-9]\d|[3-6]\d\d|7[01]\d|720)|3\d|6)", RegexOptions.Compiled);
++
+         private static bool LuhnOk(string raw)
+         {
++            string digits = Regex.Replace(raw, @"\D", "");
++            if (!CardPrefix.IsMatch(digits)) return false;      // 20261009-142005 같은 날짜·시각 숫자는 카드로 보지 않는다
+             int sum = 0, n = 0; bool alt = false;
+             for (int i = raw.Length - 1; i >= 0; i--)
+             {
+--- 6차/src/Terms.cs
++++ 7차/src/Terms.cs
+@@ -1,4 +1,4 @@
+-using System;
++﻿using System;
+ using System.Drawing;
+ using System.IO;
+ using System.Text;
+@@ -8,9 +8,9 @@
+ {
+     public static class TermsText
+     {
+-        public const string Version = "2026-10-v2";
++        public const string Version = "2026-10-v3";
+         public const string Body =
+-@"번개장터 자동등록 프로그램 이용약관 및 저작권 안내
++@"Lumivolt(루미볼트) 프로그램 이용약관 및 저작권 안내
+ 
+ Copyright © 음악천재. All rights reserved.
+ 
+@@ -87,7 +87,7 @@
+             FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false;
+             Font = Theme.FontBase();
+ 
+-            var header = Theme.BuildHeader("이용약관 동의", "BunjangAuto   ·   Copyright © 음악천재. All rights reserved.");
++            var header = Theme.BuildHeader("이용약관 동의", "Lumivolt 루미볼트   ·   Copyright © 음악천재. All rights reserved.");
+             var box = new TextBox { Left = 16, Top = 78, Width = 592, Height = 440, Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical, BackColor = Theme.Field, ForeColor = Theme.TextPrimary, Text = TermsText.Body.Replace("\r\n", "\n").Replace("\n", "\r\n") };
+             var chk = new CheckBox { Left = 16, Top = 528, Width = 590, Height = 24, ForeColor = Theme.TextPrimary, Text = "위 약관을 모두 읽었으며, 무단 복제·유포·분석 시 법적 책임이 따름에 동의합니다." };
+             var ok = new Button { Left = 398, Top = 564, Width = 100, Height = 32, Text = "동의", Enabled = false, DialogResult = DialogResult.OK };
+@@ -95,6 +95,7 @@
+             Controls.AddRange(new Control[] { box, chk, ok, no, header });
+             CancelButton = no;
+             Theme.MarkPrimary(ok);
++            Ui.ScaleForm(this);
+             Theme.Apply(this);
+             chk.CheckedChanged += delegate { ok.Enabled = chk.Checked; ok.Invalidate(); };
+             box.Select(0, 0);
+--- 6차/src/Theme.cs
++++ 7차/src/Theme.cs
+@@ -7,6 +7,84 @@
+ 
+ namespace BunjangAuto
+ {
++    /// <summary>화면 배율(DPI) 계산. 관리자 발급툴에서도 쓰도록 Theme.cs 안에 둔다.</summary>
++    public static class Dpi
++    {
++        private static double _scale;
++        /// <summary>개발/검증 전용: 0 이 아니면 이 배율을 쓴다(Windows 가 아닌 환경에서 125~200% 를 흉내 내는 용도). 실제 실행에서는 0.</summary>
++        public static double ForcedScale;
++        /// <summary>개발/검증 전용: 글꼴 크기도 배율만큼 키운다(Windows 에서는 글꼴이 DPI 에 따라 저절로 커지므로 false).</summary>
++        public static bool EmulateFontScale;
++
++        /// <summary>화면 배율(100%=1.0, 150%=1.5 ...). 시스템 DPI 기준으로 한 번만 계산한다.</summary>
++        public static double Scale
++        {
++            get
++            {
++                if (ForcedScale > 0) return ForcedScale;
++                if (_scale > 0) return _scale;
++                try { using (var g = Graphics.FromHwnd(IntPtr.Zero)) _scale = g.DpiX / 96.0; } catch { _scale = 1.0; }
++                if (_scale < 1.0) _scale = 1.0;
++                return _scale;
++            }
++        }
++
++        /// <summary>96dpi 기준 픽셀을 현재 배율로 환산</summary>
++        public static int S(int px) { return (int)Math.Round(px * Scale); }
++    }
++
++    /// <summary>
++    /// 앱 전용 글꼴: 나눔고딕 Bold(SIL OFL 1.1, NAVER). TTF 가 exe 안에 내장되어 있어 따로 설치하지 않아도 된다.
++    /// 시작할 때(어떤 글꼴 객체보다 먼저) 파일로 꺼내 이 프로세스에만 보이도록 등록(AddFontResourceEx FR_PRIVATE)하므로
++    /// GDI+(Font)와 GDI(TextRenderer) 양쪽에서 쓸 수 있다. 등록에 실패하면 시스템 글꼴(Segoe UI 등)로 자동 대체된다.
++    /// 내장 글꼴이 Bold 한 종류뿐이라서, 이 글꼴을 쓰는 동안에는 항상 Bold 스타일로 만든다.
++    /// </summary>
++    public static class AppFont
++    {
++        public const string Family = "NanumGothic";
++        public static bool Active;
++        public static string Status = "";
++        private static bool _init;
++
++        [DllImport("gdi32.dll", EntryPoint = "AddFontResourceExW", CharSet = CharSet.Unicode)]
++        private static extern int AddFontResourceEx(string lpszFilename, uint fl, IntPtr pdv);
++
++        public static void Init()
++        {
++            if (_init) return;
++            _init = true;
++            try
++            {
++                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
++                {
++                    using (var s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("font.NanumGothicBold.ttf"))
++                    {
++                        if (s != null)
++                        {
++                            string dir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Lumivolt", "fonts");
++                            System.IO.Directory.CreateDirectory(dir);
++                            string path = System.IO.Path.Combine(dir, "NanumGothicBold.ttf");
++                            if (!System.IO.File.Exists(path) || new System.IO.FileInfo(path).Length != s.Length)
++                                using (var o = System.IO.File.Create(path)) s.CopyTo(o);
++                            int n = AddFontResourceEx(path, 0x10 /* FR_PRIVATE */, IntPtr.Zero);
++                            if (n == 0) Status = "AddFontResourceEx 실패";
++                        }
++                        else Status = "글꼴 리소스 없음";
++                    }
++                }
++            }
++            catch (Exception ex) { Status = ex.GetType().Name + ": " + ex.Message; }
++            Active = Probe();
++            if (!Active && Status.Length == 0) Status = "글꼴을 찾을 수 없음";
++        }
++
++        private static bool Probe()
++        {
++            try { using (var f = new Font(Family, 10f, FontStyle.Bold, GraphicsUnit.Point)) return string.Equals(f.Name, Family, StringComparison.OrdinalIgnoreCase); }
++            catch { return false; }
++        }
++    }
++
+     /// <summary>한 가지 테마(Light 또는 Dark)의 색 토큰 모음. Windows 11 Fluent 의 계층(바탕 → 사이드바 → 카드 → 입력칸)을 따른다.</summary>
+     public class ThemePalette
+     {
+@@ -93,6 +171,8 @@
+     /// </summary>
+     public static class Theme
+     {
++        static Theme() { AppFont.Init(); }   // 관리자 발급툴처럼 Main 에서 Init 을 못 부르는 곳을 위한 안전장치
++
+         public static ThemePalette Current = ThemePalette.Light;
+         public static event Action Changed;
+ 
+@@ -135,6 +215,8 @@
+             get
+             {
+                 if (_family != null) return _family;
++                AppFont.Init();
++                if (AppFont.Active) { _family = AppFont.Family; return _family; }
+                 string[] want = { "Segoe UI Variable Text", "Segoe UI", "맑은 고딕", "Malgun Gothic" };
+                 var installed = new HashSet<string>();
+                 try { foreach (var f in FontFamily.Families) installed.Add(f.Name); } catch { }
+@@ -146,6 +228,8 @@
+ 
+         public static Font Font(float size, FontStyle style)
+         {
++            if (AppFont.Active) style = FontStyle.Bold;      // 나눔고딕은 Bold 한 종류만 내장
++            if (Dpi.EmulateFontScale) size = size * (float)Dpi.Scale;   // (검증 전용) Windows 에서는 DPI 에 따라 글꼴이 저절로 커진다
+             string key = size.ToString("0.0") + "|" + (int)style;
+             lock (_fonts)
+             {
+@@ -161,6 +245,7 @@
+         public static Font FontSub() { return Font(9f, FontStyle.Regular); }
+         public static Font FontMono(float size)
+         {
++            if (AppFont.Active) return Font(size, FontStyle.Bold);
+             string key = "mono|" + size.ToString("0.0");
+             lock (_fonts)
+             {
+@@ -248,7 +333,7 @@
+                 b.UseVisualStyleBackColor = false;
+                 b.Cursor = Cursors.Hand;
+                 b.Font = FontBase();
+-                if (b.Height < 32) b.Height = 32;
++                if (b.Height < Dpi.S(32)) b.Height = Dpi.S(32);
+                 if (primary)
+                 {
+                     b.BackColor = Current.Accent; b.ForeColor = Current.OnAccent;
+@@ -361,21 +446,21 @@
+             g.ColumnHeadersDefaultCellStyle.ForeColor = p.TextMuted;
+             g.ColumnHeadersDefaultCellStyle.Font = FontBold();
+             g.ColumnHeadersDefaultCellStyle.SelectionBackColor = p.CardAlt;
+-            g.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 0, 0, 0);
+-            g.ColumnHeadersHeight = 38;
++            g.ColumnHeadersDefaultCellStyle.Padding = new Padding(Dpi.S(8), 0, 0, 0);
++            g.ColumnHeadersHeight = Dpi.S(38);
+             g.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+             g.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+             g.DefaultCellStyle.BackColor = p.Card;
+             g.DefaultCellStyle.ForeColor = p.Text;
+             g.DefaultCellStyle.Font = FontBase();
+-            g.DefaultCellStyle.Padding = new Padding(8, 0, 4, 0);
++            g.DefaultCellStyle.Padding = new Padding(Dpi.S(8), 0, Dpi.S(4), 0);
+             Color sel = p.Dark ? Color.FromArgb(52, 66, 78) : Color.FromArgb(221, 236, 250);
+             g.DefaultCellStyle.SelectionBackColor = sel;
+             g.DefaultCellStyle.SelectionForeColor = p.Text;
+             g.AlternatingRowsDefaultCellStyle.BackColor = p.Card;
+             g.AlternatingRowsDefaultCellStyle.SelectionBackColor = sel;
+             g.AlternatingRowsDefaultCellStyle.SelectionForeColor = p.Text;
+-            g.RowTemplate.Height = 36;
++            g.RowTemplate.Height = Dpi.S(36);
+             g.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+         }
+ 
+--- 6차/src/UI/Controls.cs
++++ 7차/src/UI/Controls.cs
+@@ -71,12 +71,14 @@
+ 
+     public enum BtnStyle { Standard, Primary, Subtle, Danger }
+ 
+-    public class FluentButton : FluentControl
++    public class FluentButton : FluentControl, IPreScaled
+     {
+         public BtnStyle Style = BtnStyle.Standard;
+         public string Glyph = "";
+         private bool _hot, _down;
+-        public FluentButton() { Height = 34; Width = 110; Cursor = Cursors.Hand; }
++        public FluentButton() { Height = S(34); Width = S(110); Cursor = Cursors.Hand; }
++        /// <summary>마우스로 누른 것과 같은 효과(키보드·자동화 테스트용)</summary>
++        public void PerformClick() { OnClick(EventArgs.Empty); }
+ 
+         [Browsable(true)] public override string Text { get { return base.Text; } set { base.Text = value; Invalidate(); } }
+ 
+@@ -130,13 +132,13 @@
+     }
+ 
+     /// <summary>사이드바 항목: 아이콘 + 글자, 선택 시 왼쪽에 강조 막대.</summary>
+-    public class NavItem : FluentControl
++    public class NavItem : FluentControl, IPreScaled
+     {
+         public string Glyph = "";
+         public string Key = "";
+         private bool _sel, _hot;
+         public bool Selected { get { return _sel; } set { _sel = value; Invalidate(); } }
+-        public NavItem() { Height = 40; Cursor = Cursors.Hand; TabStop = true; }
++        public NavItem() { Height = S(40); Cursor = Cursors.Hand; TabStop = true; }
+         protected override void OnMouseEnter(EventArgs e) { _hot = true; Invalidate(); base.OnMouseEnter(e); }
+         protected override void OnMouseLeave(EventArgs e) { _hot = false; Invalidate(); base.OnMouseLeave(e); }
+         protected override bool IsInputKey(Keys k) { return k == Keys.Enter || k == Keys.Space || base.IsInputKey(k); }
+@@ -162,12 +164,12 @@
+     }
+ 
+     /// <summary>Windows 11 스타일 켬/끔 스위치(글자 포함).</summary>
+-    public class ToggleSwitch : FluentControl
++    public class ToggleSwitch : FluentControl, IPreScaled
+     {
+         private bool _checked;
+         private bool _hot;
+         public event EventHandler CheckedChanged;
+-        public ToggleSwitch() { Height = 28; Width = 360; Cursor = Cursors.Hand; }
++        public ToggleSwitch() { Height = S(28); Width = S(360); Cursor = Cursors.Hand; }
+         public bool Checked { get { return _checked; } set { if (_checked == value) return; _checked = value; Invalidate(); var h = CheckedChanged; if (h != null) h(this, EventArgs.Empty); } }
+         public override string Text { get { return base.Text; } set { base.Text = value; Invalidate(); } }
+         protected override void OnMouseEnter(EventArgs e) { _hot = true; Invalidate(); base.OnMouseEnter(e); }
+@@ -197,12 +199,12 @@
+     }
+ 
+     /// <summary>라이트 | 다크 | 시스템 같은 상호 배타적 선택 막대.</summary>
+-    public class Segmented : FluentControl
++    public class Segmented : FluentControl, IPreScaled
+     {
+         public List<string> Items = new List<string>();
+         private int _idx; private int _hot = -1;
+         public event EventHandler SelectedIndexChanged;
+-        public Segmented() { Height = 32; Width = 260; Cursor = Cursors.Hand; }
++        public Segmented() { Height = S(32); Width = S(260); Cursor = Cursors.Hand; }
+         public int SelectedIndex { get { return _idx; } set { if (_idx == value) return; _idx = value; Invalidate(); var h = SelectedIndexChanged; if (h != null) h(this, EventArgs.Empty); } }
+         public void SetIndexSilently(int i) { _idx = i; Invalidate(); }
+         private int Hit(Point pt) { if (Items.Count == 0) return -1; int i = pt.X * Items.Count / Math.Max(1, Width); return i < 0 || i >= Items.Count ? -1 : i; }
+@@ -227,11 +229,11 @@
+         }
+     }
+ 
+-    public class FluentProgress : FluentControl
++    public class FluentProgress : FluentControl, IPreScaled
+     {
+         private int _v, _max = 100;
+         public bool Indeterminate;
+-        public FluentProgress() { Height = 6; Width = 300; TabStop = false; }
++        public FluentProgress() { Height = S(6); Width = S(300); TabStop = false; }
+         public int Maximum { get { return _max; } set { _max = Math.Max(1, value); Invalidate(); } }
+         public int Value { get { return _v; } set { _v = Math.Max(0, Math.Min(value, _max)); Invalidate(); } }
+         protected override void OnPaint(PaintEventArgs pe)
+@@ -246,10 +248,10 @@
+     }
+ 
+     /// <summary>작은 알약 모양 상태 표시(라이선스 상태, 로그인 상태 등).</summary>
+-    public class Chip : FluentControl
++    public class Chip : FluentControl, IPreScaled
+     {
+         public Color? Tone;     // null 이면 팔레트의 TextMuted
+-        public Chip() { Height = 26; TabStop = false; }
++        public Chip() { Height = S(26); TabStop = false; }
+         public override string Text { get { return base.Text; } set { base.Text = value; Width = TextRenderer.MeasureText(value ?? "", Theme.Font(9f, FontStyle.Regular)).Width + S(28); Invalidate(); } }
+         protected override void OnPaint(PaintEventArgs pe)
+         {
+@@ -288,16 +290,16 @@
+         protected override void OnPaint(PaintEventArgs pe)
+         {
+             var g = pe.Graphics; var p = Theme.Current; g.Clear(p.Card); Smooth(g);
+-            int L = 34, B = 22, T = 6, W = Width - L - 6, H = Height - B - T;
++            int L = S(34), B = S(22), T = S(6), W = Width - L - S(6), H = Height - B - T;
+             double max = 1; foreach (var s in Series) foreach (var v in s) max = Math.Max(max, v);
+             using (var pen = new Pen(p.Border))
+                 for (int k = 0; k <= 2; k++)
+                 {
+                     int y = T + (int)(H * (1 - k / 2.0)); g.DrawLine(pen, L, y, Width - 4, y);
+-                    TextRenderer.DrawText(g, ((int)Math.Round(max * k / 2.0)).ToString(), Theme.Font(8f, FontStyle.Regular), new Rectangle(0, y - 8, L - 4, 16), p.TextMuted, TextFormatFlags.Right | TextFormatFlags.NoPadding);
++                    TextRenderer.DrawText(g, ((int)Math.Round(max * k / 2.0)).ToString(), Theme.Font(8f, FontStyle.Regular), new Rectangle(0, y - S(8), L - S(4), S(16)), p.TextMuted, TextFormatFlags.Right | TextFormatFlags.NoPadding);
+                 }
+             int n = Labels.Count; if (n == 0) return;
+-            double gw = (double)W / n; int ns = Math.Max(1, Series.Count); double bw = Math.Max(3, gw / (ns + 1));
++            double gw = (double)W / n; int ns = Math.Max(1, Series.Count); double bw = Math.Max(S(3), gw / (ns + 1));
+             for (int i = 0; i < n; i++)
+             {
+                 for (int k = 0; k < Series.Count; k++)
+@@ -306,7 +308,7 @@
+                     var c = k < Colors.Count ? Colors[k]() : p.Accent;
+                     using (var b = new SolidBrush(c)) g.FillRectangle(b, (float)(L + i * gw + k * bw + bw / 2), T + H - bh, (float)bw - 1, bh);
+                 }
+-                TextRenderer.DrawText(g, Labels[i], Theme.Font(8f, FontStyle.Regular), new Rectangle((int)(L + i * gw), Height - B + 4, (int)gw, 16), p.TextMuted, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPadding);
++                TextRenderer.DrawText(g, Labels[i], Theme.Font(8f, FontStyle.Regular), new Rectangle((int)(L + i * gw), Height - B + S(4), (int)gw, S(16)), p.TextMuted, TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPadding);
+             }
+         }
+     }
+--- 6차/src/UI/FluentBox.cs
++++ 7차/src/UI/FluentBox.cs
+@@ -25,22 +25,22 @@
+                 Text = caption; Font = Theme.FontBase();
+                 FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false; ShowInTaskbar = false;
+                 StartPosition = FormStartPosition.CenterParent;
+-                AutoScaleMode = AutoScaleMode.Dpi;
+-                int textW = 420;
++                AutoScaleMode = AutoScaleMode.None;
++                int textW = Ui.S(420);
+                 var sz = TextRenderer.MeasureText(text, Theme.FontBase(), new Size(textW, 2000), TextFormatFlags.WordBreak | TextFormatFlags.NoPadding);
+-                int glyphW = icon != MessageBoxIcon.None ? 44 : 0;
+-                int h = Math.Max(60, sz.Height) + 24;
+-                ClientSize = new Size(Math.Max(380, textW + glyphW + 48), h + 90);
++                int glyphW = icon != MessageBoxIcon.None ? Ui.S(44) : 0;
++                int h = Math.Max(Ui.S(60), sz.Height) + Ui.S(24);
++                ClientSize = new Size(Math.Max(Ui.S(380), textW + glyphW + Ui.S(48)), h + Ui.S(90));
+                 var body = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Panel };
+-                var bar = new Panel { Dock = DockStyle.Bottom, Height = 62, BackColor = Theme.BgDark };
++                var bar = new Panel { Dock = DockStyle.Bottom, Height = Ui.S(62), BackColor = Theme.BgDark };
+                 Controls.Add(body); Controls.Add(bar);
+                 if (glyphW > 0)
+                 {
+                     string g = icon == MessageBoxIcon.Error ? "\uEA39" : icon == MessageBoxIcon.Warning ? "\uE7BA" : icon == MessageBoxIcon.Question ? "\uE897" : "\uE946";
+                     Color c = icon == MessageBoxIcon.Error ? Theme.Danger : icon == MessageBoxIcon.Warning ? Theme.Warn : Theme.Accent;
+-                    body.Controls.Add(new Label { Left = 20, Top = 20, Width = 36, Height = 36, Text = Theme.HasIconFont ? g : "!", Font = Theme.HasIconFont ? Theme.IconFont(20f) : Theme.FontTitle(), ForeColor = c, BackColor = Theme.Panel });
++                    body.Controls.Add(new Label { Left = Ui.S(20), Top = Ui.S(20), Width = Ui.S(36), Height = Ui.S(36), Text = Theme.HasIconFont ? g : "!", Font = Theme.HasIconFont ? Theme.IconFont(20f) : Theme.FontTitle(), ForeColor = c, BackColor = Theme.Panel });
+                 }
+-                body.Controls.Add(new Label { Left = 24 + glyphW, Top = 20, Width = textW, Height = h - 8, Text = text, ForeColor = Theme.TextPrimary, BackColor = Theme.Panel, Font = Theme.FontBase() });
++                body.Controls.Add(new Label { Left = Ui.S(24) + glyphW, Top = Ui.S(20), Width = textW, Height = h - Ui.S(8), Text = text, ForeColor = Theme.TextPrimary, BackColor = Theme.Panel, Font = Theme.FontBase() });
+ 
+                 string[] names; DialogResult[] results;
+                 switch (buttons)
+@@ -50,11 +50,11 @@
+                     case MessageBoxButtons.YesNoCancel: names = new[] { "예", "아니오", "취소" }; results = new[] { DialogResult.Yes, DialogResult.No, DialogResult.Cancel }; break;
+                     default: names = new[] { "확인" }; results = new[] { DialogResult.OK }; break;
+                 }
+-                int x = ClientSize.Width - 16;
++                int x = ClientSize.Width - Ui.S(16);
+                 for (int i = names.Length - 1; i >= 0; i--)
+                 {
+-                    var b = new FluentButton { Text = names[i], Width = 96, Height = 34, Style = i == 0 ? BtnStyle.Primary : BtnStyle.Standard };
+-                    b.Left = x - b.Width; b.Top = 14; x = b.Left - 8;
++                    var b = new FluentButton { Text = names[i], Width = Ui.S(96), Height = Ui.S(34), Style = i == 0 ? BtnStyle.Primary : BtnStyle.Standard };
++                    b.Left = x - b.Width; b.Top = Ui.S(14); x = b.Left - Ui.S(8);
+                     var res = results[i];
+                     b.Click += delegate { DialogResult = res; Close(); };
+                     bar.Controls.Add(b);
+--- 6차/src/UI/Pages/AdminPage.cs
++++ 7차/src/UI/Pages/AdminPage.cs
+@@ -30,9 +30,9 @@
+             var top = new Panel { Dock = DockStyle.Top, Height = 118, BackColor = Theme.BgDark };
+             var title = Ui.Title("관리자 센터"); title.Location = new Point(0, 0);
+             lblInfo = Ui.Muted(""); lblInfo.Location = new Point(2, 38);
+-            tabs = new Segmented { Location = new Point(0, 70), Width = 560, Height = 34 };
++            tabs = new Segmented { Location = new Point(0, 70), Width = Ui.S(560), Height = Ui.S(34) };
+             tabs.Items.AddRange(new[] { "Dashboard", "Users", "Live Logs", "Errors", "Statistics" });
+-            var bOut = Ui.Button("로그아웃", "\uE7E8", BtnStyle.Standard, 120); bOut.Location = new Point(580, 69); bOut.Height = 34;
++            var bOut = Ui.Button("로그아웃", "\uE7E8", BtnStyle.Standard, 120); bOut.Location = new Point(580, 69); bOut.Height = Ui.S(34);
+             top.Controls.AddRange(new Control[] { title, lblInfo, tabs, bOut });
+             body = new Panel { Dock = DockStyle.Fill, BackColor = Theme.BgDark };
+             Controls.Add(body); Controls.Add(top);
+@@ -81,7 +81,7 @@
+             foreach (var c in cols)
+             {
+                 var col = new DataGridViewTextBoxColumn { Name = c[0], HeaderText = c[1] };
+-                if (c.Length > 2 && c[2] == "fill") { col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill; col.MinimumWidth = 200; } else col.Width = c.Length > 2 ? int.Parse(c[2]) : 110;
++                if (c.Length > 2 && c[2] == "fill") { col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill; col.MinimumWidth = Ui.S(200); } else col.Width = Ui.S(c.Length > 2 ? int.Parse(c[2]) : 110);
+                 g.Columns.Add(col);
+             }
+             Theme.StyleGrid(g);
+@@ -121,10 +121,11 @@
+                 var ch2 = Chart("최근 7일 등록 성공/실패", labels, new[] { col("success"), col("fail") }, new Func<Color>[] { () => Theme.Success, () => Theme.Danger });
+                 var ch3 = Chart("최근 7일 오류", labels, new[] { col("errors") }, new Func<Color>[] { () => Theme.Danger });
+                 host.Controls.AddRange(new Control[] { ch1, ch2, ch3 });
++                Ui.ScaleTree(host);
+                 Action lay = () =>
+                 {
+-                    int w = Math.Max(480, host.ClientSize.Width - 18); grid.SetBounds(0, 0, w, 216);
+-                    int half = (w - 12) / 2; ch1.SetBounds(0, 228, half, 230); ch2.SetBounds(half + 12, 228, w - half - 12, 230); ch3.SetBounds(0, 470, half, 230);
++                    int w = Math.Max(Ui.S(480), host.ClientSize.Width - Ui.S(18)); int g = Ui.S(12); grid.SetBounds(0, 0, w, Ui.S(216));
++                    int half = (w - g) / 2; int ch = Ui.S(230); ch1.SetBounds(0, Ui.S(228), half, ch); ch2.SetBounds(half + g, Ui.S(228), w - half - g, ch); ch3.SetBounds(0, Ui.S(470), half, ch);
+                 };
+                 host.Resize += delegate { lay(); }; lay();
+             });
+@@ -137,7 +138,7 @@
+             var bc = new BarChart { Location = new Point(12, 44), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom };
+             bc.Labels = labels; bc.Series = data.ToList(); bc.Colors = colors.ToList();
+             card.Controls.Add(h); card.Controls.Add(bc);
+-            card.Resize += delegate { bc.SetBounds(12, 44, card.Width - 24, card.Height - 56); };
++            card.Resize += delegate { bc.SetBounds(Ui.S(12), Ui.S(44), card.Width - Ui.S(24), card.Height - Ui.S(56)); };
+             return card;
+         }
+ 
+@@ -147,8 +148,8 @@
+             var bar = new Panel { Dock = DockStyle.Top, Height = 52, BackColor = Theme.BgDark };
+             var q = Ui.Input(250); q.Location = new Point(0, 8);
+             var ver = Ui.Input(100); ver.Location = new Point(260, 8);
+-            var on = Ui.Toggle("온라인만"); on.Location = new Point(372, 8); on.Width = 130;
+-            var er = Ui.Toggle("오류 발생"); er.Location = new Point(510, 8); er.Width = 130;
++            var on = Ui.Toggle("온라인만"); on.Location = new Point(372, 8); on.Width = Ui.S(130);
++            var er = Ui.Toggle("오류 발생"); er.Location = new Point(510, 8); er.Width = Ui.S(130);
+             var recent = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 130, Location = new Point(650, 7), Font = Theme.FontBase() };
+             recent.Items.AddRange(new object[] { "최근 접속: 전체", "1시간 이내", "24시간 이내", "7일 이내" }); recent.SelectedIndex = 0;
+             var go = Ui.Button("검색", "\uE721", BtnStyle.Primary, 90); go.Location = new Point(790, 5);
+@@ -158,6 +159,7 @@
+             var g = MakeGrid(new[] { "id", "Client ID", "250" }, new[] { "name", "이름", "110" }, new[] { "ver", "버전", "80" }, new[] { "os", "OS", "fill" },
+                 new[] { "on", "상태", "70" }, new[] { "seen", "마지막 접속", "140" }, new[] { "n1", "실행", "56" }, new[] { "n2", "자동등록", "70" }, new[] { "n3", "성공", "56" }, new[] { "n4", "실패", "56" }, new[] { "n5", "오류", "56" });
+             var card = new CardPanel { Dock = DockStyle.Fill, Padding = new Padding(1) }; card.Controls.Add(g);
++            Ui.ScaleTree(bar); bar.Height = Ui.S(bar.Height);
+             body.Controls.Add(card); body.Controls.Add(bar);
+             Action load = () =>
+             {
+@@ -192,13 +194,14 @@
+             var cid = Ui.Input(250); cid.Location = new Point(230, 8);
+             var lv = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 120, Location = new Point(490, 7), Font = Theme.FontBase() };
+             lv.Items.AddRange(new object[] { "전체 Level", "ERROR,FATAL", "WARN", "INFO" }); lv.SelectedIndex = 0;
+-            var pause = Ui.Toggle("실시간", true); pause.Location = new Point(620, 8); pause.Width = 120;
++            var pause = Ui.Toggle("실시간", true); pause.Location = new Point(620, 8); pause.Width = Ui.S(120);
+             var bCsv = Ui.Button("CSV", "\uE74E", BtnStyle.Standard, 80); bCsv.Location = new Point(750, 5);
+             var bJson = Ui.Button("JSON", "\uE74E", BtnStyle.Standard, 90); bJson.Location = new Point(838, 5);
+             var ph = Ui.Muted("검색어 / Client ID 전체 입력 / Level"); ph.Location = new Point(2, 36);
+             bar.Controls.AddRange(new Control[] { q, cid, lv, pause, bCsv, bJson, ph }); bar.Height = 64;
+             var g = MakeGrid(new[] { "t", "시간", "140" }, new[] { "c", "Client", "80" }, new[] { "l", "Level", "70" }, new[] { "m", "Module", "110" }, new[] { "a", "Action", "150" }, new[] { "msg", "Message", "fill" }, new[] { "r", "Result", "60" });
+             var card = new CardPanel { Dock = DockStyle.Fill, Padding = new Padding(1) }; card.Controls.Add(g);
++            Ui.ScaleTree(bar); bar.Height = Ui.S(bar.Height);
+             body.Controls.Add(card); body.Controls.Add(bar);
+             _liveGrid = g; _liveRows = new List<JObject>(); _lastId = 0;
+             Func<IDictionary<string, string>> filt = () => new Dictionary<string, string> { { "q", q.Text.Trim() }, { "client_id", cid.Text.Trim() }, { "level", lv.SelectedIndex == 0 ? "" : (string)lv.SelectedItem } };
+@@ -240,6 +243,7 @@
+             bar.Controls.AddRange(new Control[] { bR, bCsv, bJson });
+             var g = MakeGrid(new[] { "t", "발생시간", "140" }, new[] { "c", "Client ID", "250" }, new[] { "v", "Version", "80" }, new[] { "m", "Module", "110" }, new[] { "x", "Exception Type", "200" }, new[] { "msg", "Message", "fill" });
+             var card = new CardPanel { Dock = DockStyle.Fill, Padding = new Padding(1) }; card.Controls.Add(g);
++            Ui.ScaleTree(bar); bar.Height = Ui.S(bar.Height);
+             body.Controls.Add(card); body.Controls.Add(bar);
+             Action load = () => Ui.Background(this, () => Api.Errors(300), r =>
+             {
+@@ -269,12 +273,13 @@
+                 var c3 = Chart("오류", labels, new[] { col("errors") }, new Func<Color>[] { () => Theme.Danger });
+                 var l1 = ListCard("버전별 사용자", (JArray)st["versions"]); var l2 = ListCard("OS별 사용자", (JArray)st["os"]); var l3 = ListCard("기능별 사용량", (JArray)st["features"]);
+                 host.Controls.AddRange(new Control[] { c1, c2, c3, l1, l2, l3 });
++                Ui.ScaleTree(host);
+                 Action lay = () =>
+                 {
+-                    int w = Math.Max(480, host.ClientSize.Width - 18); int half = (w - 12) / 2;
+-                    c1.SetBounds(0, 0, half, 230); c2.SetBounds(half + 12, 0, w - half - 12, 230);
+-                    c3.SetBounds(0, 242, half, 230); l3.SetBounds(half + 12, 242, w - half - 12, 230);
+-                    l1.SetBounds(0, 484, half, 260); l2.SetBounds(half + 12, 484, w - half - 12, 260);
++                    int w = Math.Max(Ui.S(480), host.ClientSize.Width - Ui.S(18)); int g = Ui.S(12); int half = (w - g) / 2; int ch = Ui.S(230);
++                    c1.SetBounds(0, 0, half, ch); c2.SetBounds(half + g, 0, w - half - g, ch);
++                    c3.SetBounds(0, Ui.S(242), half, ch); l3.SetBounds(half + g, Ui.S(242), w - half - g, ch);
++                    l1.SetBounds(0, Ui.S(484), half, Ui.S(260)); l2.SetBounds(half + g, Ui.S(484), w - half - g, Ui.S(260));
+                 };
+                 host.Resize += delegate { lay(); }; lay();
+             });
+@@ -286,7 +291,7 @@
+             var g = MakeGrid(new[] { "n", "이름", "fill" }, new[] { "v", "수", "70" });
+             g.Location = new Point(8, 44); g.Dock = DockStyle.None; g.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+             foreach (var i in items) g.Rows.Add(S(i, "name"), S(i, "n"));
+-            card.Controls.Add(g); card.Resize += delegate { g.SetBounds(8, 44, card.Width - 16, card.Height - 52); };
++            card.Controls.Add(g); card.Resize += delegate { g.SetBounds(Ui.S(8), Ui.S(44), card.Width - Ui.S(16), card.Height - Ui.S(52)); };
+             return card;
+         }
+ 
+@@ -321,6 +326,7 @@
+             var bCsv = new Button { Text = "이 사용자 로그 CSV", Width = 170, Height = 34 }; var bJson = new Button { Text = "JSON", Width = 90, Height = 34 };
+             bar.Controls.Add(bCsv); bar.Controls.Add(bJson);
+             Controls.Add(tabs); Controls.Add(bar); Controls.Add(info);
++            Ui.ScaleForm(this);
+             Theme.Apply(this);
+             Action<string> export = fmt =>
+             {
+--- 6차/src/UI/Pages/AutomationPage.cs
++++ 7차/src/UI/Pages/AutomationPage.cs
+@@ -25,7 +25,7 @@
+             lblState = Ui.Text("대기 중", 16f, true); lblState.Location = new Point(20, 18);
+             chipRun = new Chip { Text = "중지됨", Tone = null }; chipRun.Location = new Point(300, 22);
+             lblCurrent = Ui.Muted("현재 상품: -"); lblCurrent.Location = new Point(22, 58); lblCurrent.AutoSize = false; lblCurrent.Size = new Size(700, 22);
+-            bar = new FluentProgress { Location = new Point(22, 92), Height = 8, Width = 600 }; bar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
++            bar = new FluentProgress { Location = new Point(22, 92), Height = Ui.S(8), Width = Ui.S(600) }; bar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+             lblProgress = Ui.Muted("0 / 0"); lblProgress.Location = new Point(22, 106);
+             lblNext = Ui.Text("", 9.5f, false, "a"); lblNext.Location = new Point(22, 132);
+             lblMode = Ui.Muted(""); lblMode.Location = new Point(22, 158); lblMode.AutoSize = false; lblMode.Size = new Size(700, 22);
+@@ -40,7 +40,7 @@
+             lblFail = NumBlock(cardNums, "이번 실행 실패", 220, "d");
+             lblLeft = NumBlock(cardNums, "남은 상품", 420, "t");
+             Controls.AddRange(new Control[] { title, sub, cardMain, cardNums });
+-            Resize += delegate { cardMain.Width = Math.Max(400, ClientSize.Width - Padding.Horizontal); cardNums.Width = cardMain.Width; bar.Width = cardMain.Width - 44; };
++            Resize += delegate { cardMain.Width = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); cardNums.Width = cardMain.Width; bar.Width = cardMain.Width - Ui.S(44); };
+ 
+             btnStart.Click += delegate { Host.Auto.Start(); };
+             btnStop.Click += delegate { Host.Auto.Stop(); };
+--- 6차/src/UI/Pages/DashboardPage.cs
++++ 7차/src/UI/Pages/DashboardPage.cs
+@@ -14,6 +14,7 @@
+         private readonly FlatList lstActivity, lstLogs;
+         private readonly Timer _t = new Timer { Interval = 2000 };
+         private readonly TableLayoutPanel grid;
++        private readonly FluentButton more;
+ 
+         public DashboardPage(AppHost host) : base(host)
+         {
+@@ -35,7 +36,7 @@
+ 
+             recentLogs = new CardPanel { Location = new Point(0, 300), Height = 300, Anchor = AnchorStyles.Top | AnchorStyles.Left };
+             recentLogs.Controls.Add(Ui.Heading("최근 로그")); recentLogs.Controls[0].Location = new Point(16, 14);
+-            var more = Ui.Button("전체 보기", "", BtnStyle.Subtle); more.Location = new Point(300, 8); more.Anchor = AnchorStyles.Top | AnchorStyles.Right;
++            more = Ui.Button("전체 보기", "", BtnStyle.Subtle); more.Location = new Point(300, 8);
+             more.Click += delegate { Host.Navigate("logs"); };
+             recentLogs.Controls.Add(more);
+             lstLogs = MakeList(); lstLogs.SetBounds(12, 48, 300, 236); recentLogs.Controls.Add(lstLogs);
+@@ -51,7 +52,7 @@
+ 
+         private FlatList MakeList()
+         {
+-            var l = new FlatList { DrawMode = DrawMode.OwnerDrawFixed, ItemHeight = 30, Font = Theme.FontBase() };
++            var l = new FlatList { DrawMode = DrawMode.OwnerDrawFixed, ItemHeight = Ui.S(30), Font = Theme.FontBase() };
+             l.DrawItem += DrawRow;
+             return l;
+         }
+@@ -64,21 +65,22 @@
+             using (var b = new SolidBrush(p.Card)) e.Graphics.FillRectangle(b, e.Bounds);
+             if (e.Index < 0) return;
+             var r = (Row)l.Items[e.Index];
+-            TextRenderer.DrawText(e.Graphics, r.Time, Theme.Font(8.5f, FontStyle.Regular), new Rectangle(e.Bounds.X + 6, e.Bounds.Y, 78, e.Bounds.Height), p.TextMuted, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+-            TextRenderer.DrawText(e.Graphics, r.Text, Theme.FontBase(), new Rectangle(e.Bounds.X + 88, e.Bounds.Y, e.Bounds.Width - 94, e.Bounds.Height), r.Tone ?? p.Text, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
+-            using (var pen = new Pen(p.Border)) e.Graphics.DrawLine(pen, e.Bounds.X + 6, e.Bounds.Bottom - 1, e.Bounds.Right - 6, e.Bounds.Bottom - 1);
++            TextRenderer.DrawText(e.Graphics, r.Time, Theme.Font(8.5f, FontStyle.Regular), new Rectangle(e.Bounds.X + Ui.S(6), e.Bounds.Y, Ui.S(78), e.Bounds.Height), p.TextMuted, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
++            TextRenderer.DrawText(e.Graphics, r.Text, Theme.FontBase(), new Rectangle(e.Bounds.X + Ui.S(88), e.Bounds.Y, e.Bounds.Width - Ui.S(94), e.Bounds.Height), r.Tone ?? p.Text, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
++            using (var pen = new Pen(p.Border)) e.Graphics.DrawLine(pen, e.Bounds.X + Ui.S(6), e.Bounds.Bottom - 1, e.Bounds.Right - Ui.S(6), e.Bounds.Bottom - 1);
+         }
+ 
+         private void Relayout()
+         {
+             int w = ClientSize.Width - Padding.Horizontal;
+-            if (w < 300) return;
+-            grid.Width = w + 12;
+-            int half = (w - 12) / 2; int x0 = Padding.Left, y0 = Padding.Top + 300;
+-            activity.SetBounds(x0, y0, half, 300);
+-            recentLogs.SetBounds(x0 + half + 12, y0, w - half - 12, 300);
+-            lstActivity.SetBounds(12, 48, half - 24, 240);
+-            lstLogs.SetBounds(12, 48, recentLogs.Width - 24, 240);
++            if (w < Ui.S(300)) return;
++            grid.Width = w + Ui.S(12);
++            int gap = Ui.S(12); int half = (w - gap) / 2; int x0 = Padding.Left, y0 = Padding.Top + Ui.S(300), ch = Ui.S(300);
++            activity.SetBounds(x0, y0, half, ch);
++            recentLogs.SetBounds(x0 + half + gap, y0, w - half - gap, ch);
++            more.Location = new Point(recentLogs.Width - more.Width - Ui.S(10), Ui.S(8));
++            lstActivity.SetBounds(Ui.S(12), Ui.S(48), half - Ui.S(24), ch - Ui.S(60));
++            lstLogs.SetBounds(Ui.S(12), Ui.S(48), recentLogs.Width - Ui.S(24), ch - Ui.S(60));
+         }
+ 
+         public override void OnActivated() { Refresh2(); _t.Start(); }
+@@ -94,7 +96,7 @@
+             cTotal.Value = Host.Products.Count.ToString(); cTotal.Hint = Host.Products.Count == 0 ? "상품 관리에서 추가하거나 CSV로 불러오세요" : "목록에 있는 모든 상품";
+ 
+             bool loggedIn = Host.Cfg.AssumeLoggedIn;
+-            cLogin.Value = loggedIn ? "확인됨" : "미확인"; cLogin.Hint = loggedIn ? "전용 크롬 프로필에 로그인되어 있습니다" : "로그인 메뉴에서 로그인 테스트를 해 보세요";
++            cLogin.Value = loggedIn ? "확인됨" : "미확인"; cLogin.Hint = loggedIn ? "전용 크롬에 로그인되어 있음" : "로그인 메뉴에서 테스트하세요";
+             cLogin.Tone = () => loggedIn ? Theme.Success : Theme.Warn;
+ 
+             var li = LicenseGate.LastInfo;
+--- 6차/src/UI/Pages/HelpPage.cs
++++ 7차/src/UI/Pages/HelpPage.cs
+@@ -10,7 +10,7 @@
+     {
+         private readonly TextBox txtSearch;
+         private readonly FlatList lstToc;
+-        private readonly RichTextBox rtb;
++        private readonly DocView doc;
+         private readonly Label lblHit;
+         private List<HelpTopic> _shown = new List<HelpTopic>();
+ 
+@@ -24,18 +24,21 @@
+             top.Controls.AddRange(new Control[] { title, sub });
+ 
+             var left = new CardPanel { Dock = DockStyle.Left, Width = 290, Padding = new Padding(10) };
+-            txtSearch = Ui.Input(260); txtSearch.Location = new Point(12, 12); txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
++            txtSearch = Ui.Input(260); txtSearch.Location = new Point(12, 12);
+             lblHit = Ui.Muted(""); lblHit.Location = new Point(14, 46);
+-            lstToc = new FlatList { Location = new Point(8, 70), Size = new Size(272, 400), DrawMode = DrawMode.OwnerDrawFixed, ItemHeight = 34, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right };
++            lstToc = new FlatList { Location = new Point(8, 70), Size = new Size(272, 400), DrawMode = DrawMode.OwnerDrawFixed, ItemHeight = Ui.S(34) };
+             lstToc.DrawItem += DrawToc;
+             left.Controls.AddRange(new Control[] { txtSearch, lblHit, lstToc });
+-            left.Resize += delegate { lstToc.Height = Math.Max(100, left.Height - 80); };
++            left.Resize += delegate
++            {
++                txtSearch.Width = left.Width - Ui.S(24); lblHit.Width = left.Width - Ui.S(28);
++                lstToc.Width = left.Width - Ui.S(16); lstToc.Height = Math.Max(Ui.S(100), left.Height - Ui.S(80));
++            };
+ 
+             var gap = new Panel { Dock = DockStyle.Left, Width = 12, BackColor = Theme.BgDark };
+             var right = new CardPanel { Dock = DockStyle.Fill, Padding = new Padding(8) };
+-            rtb = new RichTextBox { Dock = DockStyle.Fill, ReadOnly = true, BorderStyle = BorderStyle.None, DetectUrls = false, BackColor = Theme.Panel, Margin = new Padding(0) };
+-            rtb.Font = Theme.Font(10.5f, FontStyle.Regular);
+-            right.Controls.Add(rtb);
++            doc = new DocView { Dock = DockStyle.Fill };
++            right.Controls.Add(doc);
+ 
+             Controls.Add(right); Controls.Add(gap); Controls.Add(left); Controls.Add(top);
+             txtSearch.TextChanged += delegate { Filter(); };
+@@ -49,9 +52,9 @@
+             bool sel = (e.State & DrawItemState.Selected) != 0;
+             using (var b = new SolidBrush(p.Card)) e.Graphics.FillRectangle(b, e.Bounds);
+             if (e.Index < 0 || e.Index >= _shown.Count) return;
+-            var r = new Rectangle(e.Bounds.X + 4, e.Bounds.Y + 2, e.Bounds.Width - 8, e.Bounds.Height - 4);
+-            if (sel) { using (var path = Theme.RoundedRect(r, 5)) using (var b = new SolidBrush(p.Selected)) e.Graphics.FillPath(b, path); using (var b = new SolidBrush(p.Accent)) e.Graphics.FillRectangle(b, r.X, r.Y + 8, 3, r.Height - 16); }
+-            TextRenderer.DrawText(e.Graphics, _shown[e.Index].Title, sel ? Theme.Font(9.5f, FontStyle.Bold) : Theme.FontBase(), new Rectangle(r.X + 12, r.Y, r.Width - 14, r.Height), p.Text, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding);
++            var r = new Rectangle(e.Bounds.X + Ui.S(4), e.Bounds.Y + Ui.S(2), e.Bounds.Width - Ui.S(8), e.Bounds.Height - Ui.S(4));
++            if (sel) { using (var path = Theme.RoundedRect(r, Ui.S(5))) using (var b = new SolidBrush(p.Selected)) e.Graphics.FillPath(b, path); using (var b = new SolidBrush(p.Accent)) e.Graphics.FillRectangle(b, r.X, r.Y + Ui.S(8), Ui.S(3), r.Height - Ui.S(16)); }
++            TextRenderer.DrawText(e.Graphics, _shown[e.Index].Title, sel ? Theme.Font(9.5f, FontStyle.Bold) : Theme.FontBase(), new Rectangle(r.X + Ui.S(12), r.Y, r.Width - Ui.S(14), r.Height), p.Text, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding);
+         }
+ 
+         private void Filter()
+@@ -61,14 +64,17 @@
+             lstToc.BeginUpdate(); lstToc.Items.Clear(); foreach (var t in _shown) lstToc.Items.Add(t.Title); lstToc.EndUpdate();
+             lblHit.Text = q.Length == 0 ? _shown.Count + "개 문서" : "'" + q + "' 검색 결과 " + _shown.Count + "개";
+             if (_shown.Count > 0) lstToc.SelectedIndex = 0;
+-            else { rtb.Clear(); rtb.Text = "검색 결과가 없습니다."; }
++            else doc.SetContent(new List<DocBlock> { NoResult() }, "", "");
+         }
++
++        private static DocBlock NoResult() { var b = new DocBlock(); b.Runs.Add(new DocRun("검색 결과가 없습니다.", 10.5f, "m")); return b; }
+ 
+         private void ShowSelected()
+         {
+             int i = lstToc.SelectedIndex;
+             if (i < 0 || i >= _shown.Count) return;
+-            HelpService.Render(rtb, _shown[i], txtSearch.Text);
++            var t = _shown[i];
++            doc.SetContent(HelpService.Build(t), HelpService.PlainText(t), txtSearch.Text);
+         }
+ 
+         /// <summary>다른 화면(오류 안내 등)에서 특정 문서를 바로 열 때 사용</summary>
+--- 6차/src/UI/Pages/LicensePage.cs
++++ 7차/src/UI/Pages/LicensePage.cs
+@@ -41,7 +41,7 @@
+             c2.Controls.AddRange(new Control[] { h2, d2, txtKey, bOk, lblMsg });
+ 
+             Controls.AddRange(new Control[] { title, sub, c1, c2 });
+-            Resize += delegate { int w = Math.Max(400, ClientSize.Width - Padding.Horizontal); c1.Width = w; c2.Width = w; txtKey.Width = w - 44; };
++            Resize += delegate { int w = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); c1.Width = w; c2.Width = w; txtKey.Width = w - Ui.S(44); };
+ 
+             bCopy.Click += delegate { try { Clipboard.SetText(License.GetMachineId()); lblMsg.Text = "PC 고유번호를 복사했습니다."; lblMsg.Tag = "m"; lblMsg.ForeColor = Theme.TextMuted; } catch { } };
+             bOk.Click += delegate
+--- 6차/src/UI/Pages/LogPage.cs
++++ 7차/src/UI/Pages/LogPage.cs
+@@ -31,7 +31,7 @@
+             txtSearch = Ui.Input(260); txtSearch.Location = new Point(0, 72);
+             cmbLevel = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 110, Location = new Point(272, 71), Font = Theme.FontBase() };
+             cmbLevel.Items.AddRange(new object[] { "전체 Level", "INFO 이상", "WARN 이상", "ERROR만" }); cmbLevel.SelectedIndex = 0;
+-            swScroll = Ui.Toggle("자동 스크롤", true); swScroll.Location = new Point(400, 70); swScroll.Width = 150;
++            swScroll = Ui.Toggle("자동 스크롤", true); swScroll.Location = new Point(400, 70); swScroll.Width = Ui.S(150);
+             var bFolder = Ui.Button("로그 폴더 열기", "\uE838", BtnStyle.Standard, 160); bFolder.Location = new Point(560, 68);
+             var bClear = Ui.Button("화면 지우기", "\uE74D", BtnStyle.Standard, 130); bClear.Location = new Point(730, 68);
+             top.Controls.AddRange(new Control[] { title, lblCount, txtSearch, cmbLevel, swScroll, bFolder, bClear });
+--- 6차/src/UI/Pages/LoginPage.cs
++++ 7차/src/UI/Pages/LoginPage.cs
+@@ -28,7 +28,7 @@
+             info.Location = new Point(22, 124);
+             card.Controls.AddRange(new Control[] { h, chip, bLogin, bReset, info });
+             Controls.AddRange(new Control[] { title, sub, card });
+-            Resize += delegate { card.Width = Math.Max(400, ClientSize.Width - Padding.Horizontal); };
++            Resize += delegate { card.Width = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); };
+ 
+             bLogin.Click += delegate { Host.RunBackground("로그인 테스트", delegate (Bot b) { b.EnsureLogin(); }); };
+             bReset.Click += delegate
+--- 6차/src/UI/Pages/SchedulePage.cs
++++ 7차/src/UI/Pages/SchedulePage.cs
+@@ -55,9 +55,10 @@
+             lblRounds = Ui.Muted("총 횟수 (처음 1회 포함)"); lblRounds.Location = new Point(60, y + 4);
+             numRounds = Ui.Number(2, 999, 80); numRounds.Location = new Point(240, y);
+ 
++            card.Height = y + 62;     // 마지막 줄(반복 횟수)까지 들어가도록 카드 높이를 내용에 맞춘다
+             card.Controls.AddRange(new Control[] { h1, chkRegister, h2, chkOneByOne, lblGap, numGap, chkWindows, gridRules, bAdd, bDel, lblRulesHint, chkDup, h3, chkRepeat, lblRounds, numRounds });
+             Controls.AddRange(new Control[] { title, sub, card });
+-            Resize += delegate { card.Width = Math.Max(400, ClientSize.Width - Padding.Horizontal); };
++            Resize += delegate { card.Width = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); };
+ 
+             LoadFromSettings();
+             EventHandler save = delegate { if (_loading) return; ReadToSettings(); UpdateEnabled(); };
+--- 6차/src/UI/Pages/SettingsPage.cs
++++ 7차/src/UI/Pages/SettingsPage.cs
+@@ -25,7 +25,7 @@
+             var c1 = new CardPanel { Location = new Point(0, 74), Height = 120, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+             var h1 = Ui.Heading("화면 테마"); h1.Location = new Point(20, 16);
+             var d1 = Ui.Muted("시스템을 고르면 Windows 의 앱 모드 설정을 따라갑니다."); d1.Location = new Point(22, 46);
+-            seg = new Segmented { Width = 300, Location = new Point(20, 74) };
++            seg = new Segmented { Width = Ui.S(300), Location = new Point(20, 74) };
+             seg.Items.AddRange(new[] { "라이트", "다크", "시스템" });
+             c1.Controls.AddRange(new Control[] { h1, d1, seg });
+ 
+@@ -52,15 +52,15 @@
+             c3.Controls.AddRange(new Control[] { h3, lblTele, lblClient, d3 });
+ 
+             // ---- 도구
+-            var c4 = new CardPanel { Location = new Point(0, 610), Height = 150, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
++            var c4 = new CardPanel { Location = new Point(0, 610), Height = 170, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+             var h4 = Ui.Heading("도구"); h4.Location = new Point(20, 16);
+             var bSelf = Ui.Button("자가 진단 실행", "\uE9D9", BtnStyle.Standard, 180); bSelf.Location = new Point(20, 52);
+             var bAdmin = Ui.Button("관리자 로그인", "\uE716", BtnStyle.Standard, 170); bAdmin.Location = new Point(212, 52);
+-            var d4 = Ui.Muted("v" + ClientIdentityService.AppVersion + "  ·  Copyright © 음악천재. All rights reserved."); d4.Location = new Point(22, 106);
++            var d4 = Ui.Muted("Lumivolt v" + ClientIdentityService.AppVersion + "  ·  Copyright © 음악천재. All rights reserved.\r\n글꼴: 나눔고딕 Bold (NAVER, SIL OFL 1.1) — " + (AppFont.Active ? "적용됨" : "불러오지 못해 기본 글꼴 사용 (" + AppFont.Status + ")")); d4.Location = new Point(22, 106);
+             c4.Controls.AddRange(new Control[] { h4, bSelf, bAdmin, d4 });
+ 
+             Controls.AddRange(new Control[] { title, sub, c1, c2, c3, c4 });
+-            Resize += delegate { int w = Math.Max(400, ClientSize.Width - Padding.Horizontal); c1.Width = w; c2.Width = w; c3.Width = w; c4.Width = w; };
++            Resize += delegate { int w = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); c1.Width = w; c2.Width = w; c3.Width = w; c4.Width = w; };
+ 
+             seg.SelectedIndexChanged += delegate { if (!_loading) ThemeService.SetMode((ThemeMode)seg.SelectedIndex); };
+             txtChrome.Leave += delegate { SaveChrome(); };
+@@ -120,7 +120,7 @@
+             using (var f = new Form { Text = title, Width = 720, Height = 640, StartPosition = FormStartPosition.CenterParent })
+             {
+                 var box = new TextBox { Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Both, Dock = DockStyle.Fill, Font = Theme.FontMono(9.5f), WordWrap = false, Text = text.Replace("\r\n", "\n").Replace("\n", "\r\n") };
+-                f.Controls.Add(box); Theme.Apply(f); box.Select(0, 0);
++                f.Controls.Add(box); Ui.ScaleForm(f); Theme.Apply(f); box.Select(0, 0);
+                 f.ShowDialog(FindForm());
+             }
+         }
+@@ -168,7 +168,7 @@
+             var no = new Button { Text = "취소", Left = 310, Top = 244, Width = 90, Height = 34, DialogResult = DialogResult.Cancel };
+             Controls.AddRange(new Control[] { lu, tu, lp, tp, err, ok, no, h });
+             CancelButton = no; AcceptButton = ok;
+-            Theme.MarkPrimary(ok); Theme.Apply(this);
++            Theme.MarkPrimary(ok); Ui.ScaleForm(this); Theme.Apply(this);
+             ok.Click += delegate
+             {
+                 ok.Enabled = false; err.Text = "확인하는 중...";
+--- 6차/src/UI/UiKit.cs
++++ 7차/src/UI/UiKit.cs
+@@ -8,20 +8,69 @@
+     /// <summary>페이지가 공통으로 쓰는 작은 도우미들. Label 은 의미 태그(t/m/a/d/s)를 달아 테마가 바뀌면 색이 따라 바뀌게 한다.</summary>
+     public static class Ui
+     {
+-        private static double _scale;
+-        /// <summary>화면 배율(100%=1.0, 150%=1.5 ...). 시스템 DPI 기준으로 한 번만 계산한다. (Control.DeviceDpi 는 구형 .NET/Mono 에 없어서 쓰지 않는다)</summary>
+-        public static double Scale
++        public static double Scale { get { return Dpi.Scale; } }
++        public static double ForcedScale { get { return Dpi.ForcedScale; } set { Dpi.ForcedScale = value; } }
++        public static bool EmulateFontScale { get { return Dpi.EmulateFontScale; } set { Dpi.EmulateFontScale = value; } }
++        /// <summary>96dpi 기준 픽셀을 현재 배율로 환산</summary>
++        public static int S(int px) { return Dpi.S(px); }
++
++        /// <summary>
++        /// 화면을 96dpi 기준 숫자(위치·크기)로 설계해 두고, 만든 직후 한 번 현재 배율로 키운다.
++        /// WinForms 자동 배율(AutoScaleMode)은 "나중에 만든" 컨트롤에는 적용되지 않아서 직접 처리한다.
++        /// 스스로 실제 픽셀로 크기를 정하는 컨트롤(IPreScaled)은 위치만 키운다.
++        /// </summary>
++        public static void ScaleTree(Control root)
+         {
+-            get
++            double f = Scale;
++            if (f <= 1.001) return;
++            root.Padding = ScalePad(root.Padding, f);
++            root.MinimumSize = new Size((int)Math.Round(root.MinimumSize.Width * f), (int)Math.Round(root.MinimumSize.Height * f));
++            ScaleChildren(root, f);
++        }
++
++        private static Padding ScalePad(Padding p, double f) { return new Padding((int)Math.Round(p.Left * f), (int)Math.Round(p.Top * f), (int)Math.Round(p.Right * f), (int)Math.Round(p.Bottom * f)); }
++
++        private static void ScaleChildren(Control parent, double f)
++        {
++            foreach (Control k in parent.Controls)
+             {
+-                if (_scale > 0) return _scale;
+-                try { using (var g = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) _scale = g.DpiX / 96.0; } catch { _scale = 1.0; }
+-                if (_scale < 1.0) _scale = 1.0;
+-                return _scale;
++                bool pre = k is IPreScaled;
++                bool fill = k.Dock == DockStyle.Fill;
++                int x = k.Left, y = k.Top, w = k.Width, h = k.Height;
++                switch (k.Dock)
++                {
++                    case DockStyle.None: x = R(x, f); y = R(y, f); if (!pre) { w = R(w, f); h = R(h, f); } break;
++                    case DockStyle.Top: case DockStyle.Bottom: if (!pre) h = R(h, f); break;
++                    case DockStyle.Left: case DockStyle.Right: if (!pre) w = R(w, f); break;
++                }
++                bool autoSize = (k is Label && ((Label)k).AutoSize) || (k is FlowLayoutPanel && ((FlowLayoutPanel)k).AutoSize);
++                if (k.Dock == DockStyle.None) { if (autoSize) k.Location = new Point(x, y); else k.SetBounds(x, y, w, h); }
++                else if (!fill && !autoSize) k.Size = new Size(w, h);
++                k.Margin = ScalePad(k.Margin, f);
++                if (!(k is IPreScaled)) k.Padding = ScalePad(k.Padding, f);
++                if (k is DataGridView) ScaleGrid((DataGridView)k, f);
++                if (k.MinimumSize != Size.Empty) k.MinimumSize = new Size(R(k.MinimumSize.Width, f), R(k.MinimumSize.Height, f));
++                ScaleChildren(k, f);
+             }
+         }
+-        /// <summary>96dpi 기준 픽셀을 현재 배율로 환산</summary>
+-        public static int S(int px) { return (int)Math.Round(px * Scale); }
++
++        private static void ScaleGrid(DataGridView g, double f)
++        {
++            foreach (DataGridViewColumn c in g.Columns) { c.Width = R(c.Width, f); if (c.MinimumWidth > 5) c.MinimumWidth = R(c.MinimumWidth, f); }
++            g.RowHeadersWidth = Math.Max(4, R(g.RowHeadersWidth, f));
++        }
++
++        private static int R(int v, double f) { return (int)Math.Round(v * f); }
++
++        /// <summary>대화상자(Form)를 만든 뒤(컨트롤을 다 붙인 다음) 호출: 내용과 창 크기를 현재 배율로 키운다.</summary>
++        public static void ScaleForm(Form f)
++        {
++            f.AutoScaleMode = AutoScaleMode.None;
++            double s = Scale;
++            if (s <= 1.001) return;
++            ScaleChildren(f, s);
++            f.ClientSize = new Size(R(f.ClientSize.Width, s), R(f.ClientSize.Height, s));
++        }
+ 
+         public static Label Text(string text, float size = 9.5f, bool bold = false, string tone = "t")
+         {
+@@ -40,21 +89,22 @@
+         public static FluentButton Button(string text, string glyph = "", BtnStyle style = BtnStyle.Standard, int width = 0)
+         {
+             var b = new FluentButton { Text = text, Glyph = glyph, Style = style };
+-            if (width > 0) b.Width = width;
++            // FluentButton 은 실제 픽셀로 크기를 정한다(IPreScaled): 글자 폭(이미 화면 픽셀) + 여백만 배율 적용
++            if (width > 0) b.Width = S(width);
+             else
+             {
+-                int w = TextRenderer.MeasureText(text, Theme.FontBase()).Width + 34 + (glyph.Length > 0 && Theme.HasIconFont ? 26 : 0);
+-                b.Width = Math.Max(84, w);
++                int w = TextRenderer.MeasureText(text, Theme.FontBase()).Width + S(34) + (glyph.Length > 0 && Theme.HasIconFont ? S(26) : 0);
++                b.Width = Math.Max(S(84), w);
+             }
+             if (!Theme.HasIconFont) b.Glyph = "";
+-            b.Margin = new Padding(0, 0, 8, 0);
++            b.Margin = new Padding(S(0), 0, S(8), 0);
+             return b;
+         }
+ 
+         public static ToggleSwitch Toggle(string text, bool on = false)
+         {
+             var t = new ToggleSwitch { Text = text, Checked = on };
+-            t.Width = TextRenderer.MeasureText(text, Theme.FontBase()).Width + 80;
++            t.Width = TextRenderer.MeasureText(text, Theme.FontBase()).Width + S(80);
+             t.Margin = new Padding(0, 4, 0, 4);
+             return t;
+         }
+@@ -94,6 +144,9 @@
+         }
+     }
+ 
++    /// <summary>스스로 실제 화면 픽셀로 크기를 정하는 컨트롤 표시(Ui.ScaleTree 가 크기를 다시 키우지 않는다).</summary>
++    public interface IPreScaled { }
++
+     /// <summary>각 화면의 공통 틀: 제목 줄 + 스크롤 가능한 본문. OnActivated 는 화면이 보일 때마다 호출된다.</summary>
+     public abstract class PageBase : Panel
+     {
+--- 6차/src/UI/UiLayoutCheck.cs
++++ 7차/src/UI/UiLayoutCheck.cs
+@@ -0,0 +1,102 @@
++#if UIPREVIEW
++// 개발 전용: 화면 배율(125~200%)을 흉내 내서 모든 페이지를 띄우고, 컨트롤이 부모 밖으로 나가거나 서로 겹치거나 글자가 잘리는지 검사한다.
++using System;
++using System.Collections.Generic;
++using System.Diagnostics;
++using System.Drawing;
++using System.Linq;
++using System.Reflection;
++using System.Threading;
++using System.Windows.Forms;
++
++namespace BunjangAuto
++{
++    public static class UiLayoutCheck
++    {
++        private static void Pump(int ms) { var end = DateTime.Now.AddMilliseconds(ms); while (DateTime.Now < end) { Application.DoEvents(); Thread.Sleep(15); } }
++        private static T Field<T>(object o, string n) { return (T)o.GetType().GetField(n, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(o); }
++        private static IEnumerable<Control> All(Control c) { yield return c; foreach (Control k in c.Controls) foreach (var x in All(k)) yield return x; }
++        private static int TW(string t, Font f) { return TextRenderer.MeasureText(t ?? "", f, new Size(10000, 200), TextFormatFlags.NoPadding | TextFormatFlags.SingleLine).Width; }
++        private static Rectangle Abs(Control c) { return c.Parent == null ? c.Bounds : new Rectangle(c.Parent.PointToScreen(c.Location), c.Size); }
++
++        public static int Run(string[] args)
++        {
++            double scale = args.Length > 1 ? double.Parse(args[1], System.Globalization.CultureInfo.InvariantCulture) : 1.0;
++            string theme = args.Length > 2 ? args[2] : "light"; string shots = args.Length > 3 ? args[3] : null;
++            Dpi.ForcedScale = scale; Dpi.EmulateFontScale = scale > 1.001;
++            Application.EnableVisualStyles(); Paths.EnsureAll();
++            var cfg = Storage.LoadSettings(); cfg.ThemeMode = theme == "dark" ? "Dark" : "Light"; cfg.AssumeLoggedIn = true; Storage.SaveSettings(cfg);
++            var seed = new System.ComponentModel.BindingList<Product>();
++            for (int i = 0; i < 6; i++) seed.Add(new Product { Title = "아이폰 15 프로 256GB 풀박스 미개봉 새상품 " + i, Price = "1050000", Category = "디지털>휴대폰>애플", Condition = "사용감 적음", Quantity = "1", Status = i % 3 == 0 ? "등록됨" : i % 3 == 1 ? "실패: 이미지 업로드에 실패했습니다" : "", ProductId = i % 3 == 0 ? "12345" : "" });
++            Storage.SaveProducts(seed);
++            LicenseGate.LastInfo = new LicenseInfo { Valid = true, Name = "데모 사용자", Expires = DateTime.Now.AddDays(12), Message = "ok" };
++            UsageMetricsService.Load();
++            foreach (var m in new[] { "프로그램을 시작했습니다. 데이터 폴더: " + Paths.Root, "[등록] 아이폰 15 프로 256GB 풀박스 (1/3)", "  → 등록 완료", "  → 실패: 이미지 업로드에 실패했습니다", "[1개씩 등록] 다음 등록 예정: 14:20:05" }) Log.Write(m);
++
++            int W = (int)(1240 * scale), H = (int)(820 * scale);
++            var f = new MainForm { StartPosition = FormStartPosition.Manual, Left = 0, Top = 0, Width = W, Height = H };
++            f.Show(); Pump(700);
++            var pages = Field<Dictionary<string, PageBase>>(f, "pages");
++            var navs = Field<Dictionary<string, NavItem>>(f, "navs");
++            var issues = new List<string>();
++            Action<string> bad = s => issues.Add(s);
++
++            // ---- 사이드바 / 헤더
++            var sidebar = Field<Control>(f, "sidebar"); var header = Field<Control>(f, "header"); var lblFoot = Field<Label>(f, "lblFoot");
++            var vis = navs.Values.Where(n => n.Visible).OrderBy(n => n.Top).ToList();
++            for (int i = 0; i < vis.Count; i++)
++            {
++                var n = vis[i];
++                if (i > 0 && n.Top < vis[i - 1].Bottom) bad("사이드바 항목 겹침: " + vis[i - 1].Text + "/" + n.Text);
++                if (TW(n.Text, n.Font) > n.Width - Dpi.S(62)) bad("사이드바 글자 잘림: " + n.Text);
++                if (n.Bottom > lblFoot.Top) bad("사이드바 항목이 하단 문구와 겹침: " + n.Text);
++            }
++            var lblPage = Field<Label>(f, "lblPage"); var chipLic = Field<Chip>(f, "chipLic"); var chipUser = Field<Chip>(f, "chipUser"); var seg = Field<Segmented>(f, "segTheme");
++            if (lblPage.Right > chipLic.Left) bad("헤더: 페이지 제목과 라이선스 칩 겹침");
++            if (chipLic.Right > chipUser.Left || chipUser.Right > seg.Left) bad("헤더 칩/테마 선택 겹침");
++            if (seg.Right > header.Width) bad("헤더 오른쪽 밖으로 나감");
++            foreach (var it in seg.Items) if (TW(it, seg.Font) > seg.Width / seg.Items.Count - Dpi.S(10)) bad("테마 선택 글자 잘림: " + it);
++
++            foreach (var key in new[] { "dashboard", "products", "automation", "login", "schedule", "logs", "help", "settings", "license" })
++            {
++                f.Navigate(key); Pump(500);
++                var page = pages[key]; var list = new List<string>();
++                foreach (var c in All(page))
++                {
++                    if (!c.Visible || c == page || c.Parent == null) continue;
++                    var p = c.Parent;
++                    if (c.Dock == DockStyle.None)
++                    {
++                        // 부모 안에 들어 있는가 (가로는 항상, 세로는 스크롤 영역이 아닌 부모만)
++                        bool scroll = (p is ScrollableControl) && ((ScrollableControl)p).AutoScroll;
++                        if (c.Left < -1 || c.Right > p.ClientSize.Width + 2) list.Add(key + ": 가로로 부모 밖 → " + c.GetType().Name + (c is Label ? " '" + c.Text.Split('\n')[0] + "'" : "") + " [" + c.Left + ".." + c.Right + " / " + p.ClientSize.Width + "]");
++                        if (!scroll && (c.Top < -1 || c.Bottom > p.ClientSize.Height + 2)) list.Add(key + ": 세로로 부모 밖 → " + c.GetType().Name + (c is Label ? " '" + c.Text.Split('\n')[0] + "'" : "") + " [" + c.Top + ".." + c.Bottom + " / " + p.ClientSize.Height + "]");
++                    }
++                    // 글자 잘림
++                    if (c is FluentButton) { var b = (FluentButton)c; int need = TW(b.Text, b.Font) + (b.Glyph.Length > 0 && Theme.HasIconFont ? Dpi.S(26) : 0) + Dpi.S(16); if (need > b.Width) list.Add(key + ": 버튼 글자 잘림 '" + b.Text + "' 필요 " + need + " > " + b.Width); }
++                    if (c is ToggleSwitch) { var t = (ToggleSwitch)c; if (TW(t.Text, t.Font) + Dpi.S(60) > t.Width) list.Add(key + ": 토글 글자 잘림 '" + t.Text + "'"); }
++                    if (c is StatCard) { var s = (StatCard)c; if (TW(s.Value, Theme.Font(22f, FontStyle.Bold)) > s.Width - Dpi.S(32)) list.Add(key + ": 카드 숫자 잘림 " + s.Caption + "=" + s.Value); if (TW(s.Caption, Theme.Font(9f, FontStyle.Regular)) > s.Width - Dpi.S(32)) list.Add(key + ": 카드 제목 잘림 " + s.Caption); if (TW(s.Hint, Theme.Font(8.5f, FontStyle.Regular)) > s.Width - Dpi.S(32)) list.Add(key + ": 카드 설명 잘림(" + s.Caption + "): " + s.Hint); }
++                }
++                // 같은 부모 안의 상호작용 컨트롤끼리 겹침
++                foreach (var grp in All(page).Where(c => c.Visible && c.Dock == DockStyle.None && c.Parent != null && (c is FluentButton || c is ToggleSwitch || c is TextBox || c is ComboBox || c is NumericUpDown || c is Chip || c is Segmented || c is Label)).GroupBy(c => c.Parent))
++                {
++                    var arr = grp.ToArray();
++                    for (int i = 0; i < arr.Length; i++) for (int j = i + 1; j < arr.Length; j++)
++                    {
++                        var a = arr[i].Bounds; var b = arr[j].Bounds; var inter = Rectangle.Intersect(a, b);
++                        if (inter.Width > Dpi.S(3) && inter.Height > Dpi.S(3)) list.Add(key + ": 겹침 " + Desc(arr[i]) + " ↔ " + Desc(arr[j]));
++                    }
++                }
++                foreach (var l in list.Distinct()) bad(l);
++                if (shots != null) { try { System.IO.Directory.CreateDirectory(shots); var psi = new ProcessStartInfo("import", "-window root \"" + System.IO.Path.Combine(shots, theme + "-" + scale.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "-" + key + ".png") + "\"") { UseShellExecute = false }; Process.Start(psi).WaitForExit(15000); } catch { } }
++            }
++            f.Close();
++            Console.WriteLine("LAYOUT scale=" + scale + " theme=" + theme + ": " + (issues.Count == 0 ? "OK (문제 없음)" : issues.Count + "건"));
++            foreach (var s in issues.Distinct()) Console.WriteLine("   ! " + s);
++            return issues.Count == 0 ? 0 : 1;
++        }
++
++        private static string Desc(Control c) { return c.GetType().Name + (c is Label ? "'" + c.Text.Split('\n')[0] + "'" : c is FluentButton ? "'" + ((FluentButton)c).Text + "'" : c is ToggleSwitch ? "'" + ((ToggleSwitch)c).Text + "'" : "") + "@" + c.Left + "," + c.Top + " " + c.Width + "x" + c.Height; }
++    }
++}
++#endif
+--- 6차/src/UI/UiSelfTest.cs
++++ 7차/src/UI/UiSelfTest.cs
+@@ -0,0 +1,181 @@
++#if UIPREVIEW
++// 개발 전용(출시용 exe 에는 포함되지 않음): 가상 화면에서 MainForm 을 띄우고 실제로 컨트롤을 조작해 동작을 검사한다.
++using System;
++using System.Collections.Generic;
++using System.Drawing;
++using System.Linq;
++using System.Reflection;
++using System.Threading;
++using System.Windows.Forms;
++
++namespace BunjangAuto
++{
++    public static class UiSelfTest
++    {
++        private static int _fail, _pass;
++        private static void Check(string name, bool ok) { Console.WriteLine((ok ? "  PASS " : "  FAIL ") + name); if (ok) _pass++; else _fail++; }
++        private static void Pump(int ms) { var end = DateTime.Now.AddMilliseconds(ms); while (DateTime.Now < end) { Application.DoEvents(); Thread.Sleep(15); } }
++        private static T Field<T>(object o, string n) { return (T)o.GetType().GetField(n, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).GetValue(o); }
++        private static IEnumerable<Control> All(Control c) { yield return c; foreach (Control k in c.Controls) foreach (var x in All(k)) yield return x; }
++
++        public static int Run()
++        {
++            Application.EnableVisualStyles();
++            Paths.EnsureAll();
++            var cfg0 = Storage.LoadSettings(); cfg0.ThemeMode = "Light"; Storage.SaveSettings(cfg0);
++            var seed = new System.ComponentModel.BindingList<Product>();
++            string[][] rows = { new[] { "아이폰 15 프로", "1050000", "디지털>휴대폰>애플", "등록됨", "111" }, new[] { "무선 이어폰", "8000", "디지털>오디오>이어폰", "", "" },
++                                new[] { "나이키 에어포스", "89000", "패션잡화>신발>스니커즈", "실패: 이미지 업로드에 실패했습니다", "" }, new[] { "레고 테크닉", "310000", "키덜트>레고>테크닉", "", "" },
++                                new[] { "캐논 EOS R6", "1750000", "디지털>카메라>미러리스", "등록됨", "222" } };
++            foreach (var r in rows) seed.Add(new Product { Title = r[0], Price = r[1], Category = r[2], Condition = "사용감 적음", Quantity = "1", Status = r[3], ProductId = r[4] });
++            Storage.SaveProducts(seed);
++            LicenseGate.LastInfo = new LicenseInfo { Valid = true, Name = "테스터", Expires = DateTime.Now.AddDays(30), Message = "ok" };
++            UsageMetricsService.Load();
++
++            // ---- 라이선스: 실제 개인키로 이 PC 용 키를 발급 → 앱의 인증 경로(TryActivate)로 검증 → Guard 통과
++            string priv = Environment.GetEnvironmentVariable("BJA_TEST_PRIV");
++            if (priv != null && System.IO.File.Exists(priv))
++            {
++                string pxml = System.IO.File.ReadAllText(priv), mid = License.GetMachineId(), msg;
++                string good = License.Sign(pxml, License.Payload("테스터", mid, DateTime.Today.AddDays(30)));
++                Check("[License] 개인키로 발급한 이 PC 용 키가 공개키로 검증됨", License.Verify(good, mid).Valid);
++                Check("[License] 다른 PC 번호로는 거부", !License.Verify(good, "AAAA-BBBB-CCCC").Valid);
++                Check("[License] 만료된 키는 거부", !License.Verify(License.Sign(pxml, License.Payload("t", mid, DateTime.Today.AddDays(-2))), mid).Valid);
++                Check("[License] 한 글자만 바뀌어도 거부(변조 방지)", !License.Verify(good.Substring(0, 60) + (good[60] == 'A' ? "B" : "A") + good.Substring(61), mid).Valid);
++                Check("[License] 무기한 키 허용", License.Verify(License.Sign(pxml, License.Payload("t", mid, null)), mid).Valid);
++                Check("[License] 앱의 인증 경로(TryActivate)로 저장 + 정보 반영", LicenseGate.TryActivate(good, out msg) && LicenseGate.LastInfo != null && LicenseGate.LastInfo.Valid && LicenseGate.Recheck());
++            }
++            else Console.WriteLine("  (건너뜀) 라이선스 발급 검사: BJA_TEST_PRIV 에 license_private.xml 경로를 지정하세요");
++
++            var f = new MainForm { StartPosition = FormStartPosition.Manual, Left = 0, Top = 0, Width = 1240, Height = 820 };
++            f.Show(); Pump(500);
++            var host = Field<AppHost>(f, "host");
++            var pages = Field<Dictionary<string, PageBase>>(f, "pages");
++            var seg = Field<Segmented>(f, "segTheme");
++
++            // ---- 모든 페이지 이동
++            bool nav = true; string[] keys = { "dashboard", "products", "automation", "login", "schedule", "logs", "help", "settings", "license" };
++            foreach (var k in keys) { try { f.Navigate(k); Pump(250); if (!pages.ContainsKey(k) || !pages[k].Visible) nav = false; } catch (Exception ex) { Console.WriteLine("    " + k + ": " + ex.Message); nav = false; } }
++            Check("[UI] 9개 페이지 모두 이동/표시", nav);
++            f.Navigate("admin"); Pump(100);
++            Check("[UI] 관리자 로그인 전에는 관리자 센터로 못 들어감(설정으로 돌려보냄)", pages.ContainsKey("settings") && pages["settings"].Visible && !pages.ContainsKey("admin"));
++
++            // ---- 글꼴
++            Check("[Font] 나눔고딕 Bold 가 실제 적용됨", AppFont.Active && Theme.Family == "NanumGothic" && Theme.FontBase().Bold && Theme.FontBase().Name == "NanumGothic");
++            Check("[Font] 폼/버튼/그리드에도 같은 글꼴", f.Font.Name == "NanumGothic" && All(f).OfType<FluentButton>().All(b => b.Font.Name == "NanumGothic"));
++
++            // ---- 테마 전환 (헤더의 Segmented 를 누른 것과 같은 경로)
++            Func<bool> consistent = () =>
++            {
++                var p = Theme.Current;
++                bool ok = f.BackColor == p.Bg;
++                foreach (var c in All(f))
++                {
++                    if (c is CardPanel && c.BackColor != p.Card) { Console.WriteLine("    카드 색 불일치: " + c.GetType().Name); ok = false; }
++                    if (c is Label && (c.Tag as string) == "t" && ((Label)c).ForeColor != p.Text) ok = false;
++                    if (c is DataGridView && ((DataGridView)c).BackgroundColor != p.Card) ok = false;
++                    if (c is SidebarPanel && c.BackColor != p.Sidebar) ok = false;
++                }
++                return ok;
++            };
++            seg.SelectedIndex = 1; Pump(400);
++            Check("[Theme] 다크 선택 → 팔레트 적용 + settings.json 저장", Theme.Current.Dark && Storage.LoadSettings().ThemeMode == "Dark" && consistent());
++            seg.SelectedIndex = 0; Pump(400);
++            Check("[Theme] 라이트 선택 → 모든 화면 색 일치", !Theme.Current.Dark && Storage.LoadSettings().ThemeMode == "Light" && consistent());
++            seg.SelectedIndex = 2; Pump(400);
++            Check("[Theme] 시스템 선택 → 저장 및 시스템 모드 추적", Storage.LoadSettings().ThemeMode == "System" && ThemeService.Mode == ThemeMode.System && Theme.Current.Dark == ThemeService.SystemIsDark());
++            // 설정 화면의 Segmented 도 같은 경로
++            f.Navigate("settings"); Pump(200);
++            var segSet = All(pages["settings"]).OfType<Segmented>().First(); segSet.SelectedIndex = 1; Pump(300);
++            Check("[Theme] 설정 화면에서도 변경 가능, 헤더 표시도 동기화", ThemeService.Mode == ThemeMode.Dark && seg.SelectedIndex == 1 && consistent());
++            // 재실행 후 유지: 새 설정 읽기
++            Check("[Theme] 재실행 시 저장된 선택을 복원", ThemeService.Parse(Storage.LoadSettings().ThemeMode) == ThemeMode.Dark);
++            seg.SelectedIndex = 0; Pump(300);
++
++            // ---- 상품 관리: 검색 / 필터 / 정렬
++            f.Navigate("products"); Pump(300);
++            var pp = pages["products"]; var grid = All(pp).OfType<DataGridView>().First();
++            var search = All(pp).OfType<TextBox>().First(); var combo = All(pp).OfType<ComboBox>().First();
++            Check("[Products] 처음엔 전체 5개 표시", grid.RowCount == 5);
++            search.Text = "아이폰"; Pump(150);
++            Check("[Products] 검색 '아이폰' → 1건", grid.RowCount == 1);
++            search.Text = "";
++            combo.SelectedIndex = 3; Pump(150);   // 등록 실패
++            Check("[Products] 필터 '등록 실패' → 1건(나이키)", grid.RowCount == 1 && ((Product)grid.Rows[0].DataBoundItem).Title.StartsWith("나이키"));
++            combo.SelectedIndex = 2; Pump(150);   // 등록 성공
++            Check("[Products] 필터 '등록 성공' → 2건", grid.RowCount == 2);
++            combo.SelectedIndex = 1; Pump(150);   // 등록 대기
++            Check("[Products] 필터 '등록 대기' → 2건", grid.RowCount == 2);
++            combo.SelectedIndex = 0; Pump(150);
++            var t = pp.GetType();
++            t.GetField("_sortProp", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(pp, "Price"); t.GetField("_sortAsc", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(pp, false);
++            t.GetMethod("Rebuild", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(pp, null); Pump(150);
++            var first = (Product)grid.Rows[0].DataBoundItem;
++            Check("[Products] 가격 내림차순 정렬(화면만) → 첫 행 캐논, 실제 목록 순서는 그대로", first.Title.StartsWith("캐논") && host.Products[0].Title.StartsWith("아이폰"));
++            t.GetField("_sortProp", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(pp, ""); t.GetMethod("Rebuild", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(pp, null);
++
++            // ---- 로그 화면
++            Log.Write("[등록] 로그 화면 테스트 상품"); Log.Write("  → 실패: 테스트 실패 문구"); Pump(700);
++            f.Navigate("logs"); Pump(500);
++            var lg = pages["logs"]; var lgrid = All(lg).OfType<DataGridView>().First(); var lsearch = All(lg).OfType<TextBox>().First();
++            int before = lgrid.RowCount; lsearch.Text = "테스트 실패 문구"; Pump(300);
++            Check("[Logs] 실시간 로그가 화면에 쌓이고 검색됨", before >= 2 && lgrid.RowCount == 1);
++            var lcombo = All(lg).OfType<ComboBox>().First(); lsearch.Text = ""; lcombo.SelectedIndex = 3; Pump(300);   // ERROR만
++            Check("[Logs] Level 필터(ERROR만)", lgrid.RowCount >= 1 && lgrid.RowCount < before + 5);
++            lcombo.SelectedIndex = 0;
++
++            // ---- 도움말
++            f.Navigate("help"); Pump(400);
++            var hp = pages["help"]; var hsearch = All(hp).OfType<TextBox>().First(); var toc = All(hp).OfType<FlatList>().First(); var doc = All(hp).OfType<DocView>().First();
++            int total = toc.Items.Count; int h0 = doc.ContentHeight;
++            hsearch.Text = "CSV"; Pump(300);
++            Check("[Help] 20개 문서, 검색 'CSV' → 일부만 남고 본문 표시", total == 20 && toc.Items.Count > 0 && toc.Items.Count < 20 && doc.ContentHeight > 100);
++            hsearch.Text = "zzzz없는검색어"; Pump(300);
++            Check("[Help] 검색 결과 없음 처리", toc.Items.Count == 0);
++            hsearch.Text = "";
++            toc.SelectedIndex = 4; Pump(300);
++            Check("[Help] 목차 선택 시 본문 교체(스크롤 맨 위)", doc.ContentHeight > 100 && doc.ScrollPos == 0);
++
++            // ---- 자동 등록 흐름 (Chrome 이 없는 환경 → 실패 경로 확인)
++            f.Navigate("automation"); Pump(300);
++            var ap = pages["automation"]; var btns = All(ap).OfType<FluentButton>().ToList();
++            var bStart = btns.First(b => b.Text == "시작"); var bStop = btns.First(b => b.Text == "중지"); var bPause = btns.First(b => b.Text == "일시정지" || b.Text == "계속");
++            Check("[Auto] 시작 전: 시작만 활성, 일시정지·중지 비활성", bStart.Enabled && !bStop.Enabled && !bPause.Enabled);
++            host.Cfg.OneByOne = true; host.Cfg.UseTimeRules = false; host.Cfg.OneByOneMinutes = 20; host.Cfg.RepeatAll = false; host.Cfg.DoRegister = true;
++            bStart.PerformClick(); Pump(300);
++            Check("[Auto] 시작 직후 컨트롤러가 활성화되고 시작 버튼 비활성", host.Auto.Active && !bStart.Enabled && bStop.Enabled);
++            // Runner 가 (Chrome 없음으로) 끝날 때까지 기다린다
++            int wait = 0; while (host.Runner.Running && wait++ < 400) Pump(50);
++            Pump(500);
++            Check("[Auto] 실행이 끝나면 '다음 실행 대기'로 넘어가고 다음 시각이 정해짐(1개씩 모드)", host.Auto.Active && host.Auto.NextRun > DateTime.Now.AddMinutes(5) && host.Auto.StateText.Contains("다음 실행 대기"));
++            host.Auto.Tick();
++            Check("[Auto] 다음 실행까지 남은 시간이 화면 문구로 표시됨", host.Auto.NextText.Contains("다음 실행까지"));
++            bStop.PerformClick(); Pump(400);
++            Check("[Auto] 중지 → 예약 해제, 대기 중으로 복귀", !host.Auto.Active && host.Auto.NextRun == DateTime.MinValue && bStart.Enabled && !bStop.Enabled);
++            // 일시정지 버튼은 실행 중일 때만 의미가 있으므로 상태 문구/버튼 토글만 검사
++            Check("[Auto] 일시정지 버튼 상태 전환 로직(실행 중 아님 → 비활성)", !bPause.Enabled);
++
++            // ---- 예약 화면: 설정 변경이 즉시 저장됨
++            f.Navigate("schedule"); Pump(300);
++            var sp = pages["schedule"]; var toggles = All(sp).OfType<ToggleSwitch>().ToList(); var nums = All(sp).OfType<NumericUpDown>().ToList();
++            nums[0].Value = 33; Pump(100);
++            Check("[Schedule] 기본 간격 변경이 즉시 settings.json 에 저장", Storage.LoadSettings().OneByOneMinutes == 33);
++            var dup = toggles.First(x => x.Text.StartsWith("중복")); dup.Checked = true; Pump(100);
++            Check("[Schedule] 중복 허용 토글 저장", Storage.LoadSettings().AllowDuplicate);
++            var rep = toggles.First(x => x.Text.Contains("처음 상품부터")); rep.Checked = true; Pump(100); nums[1].Value = 3; Pump(100);
++            var sv = Storage.LoadSettings();
++            Check("[Schedule] 반복 켬/횟수 저장", sv.RepeatAll && sv.RepeatCount == 3);
++            var win = toggles.First(x => x.Text.StartsWith("시간대별")); win.Checked = true; Pump(100);
++            Check("[Schedule] 시간대별 켜면 기본 간격 입력은 비활성(예전 규칙)", !nums[0].Enabled && Storage.LoadSettings().UseTimeRules);
++            toggles.First(x => x.Text.StartsWith("1개씩")).Checked = false; Pump(100);
++            Check("[Schedule] 1개씩 끄면 시간대·반복 비활성(예전 규칙)", !win.Enabled && !rep.Enabled);
++
++            // ---- 종료 처리
++            f.Close(); Pump(200);
++            Check("[UI] 종료 시 설정/상품 저장 후 닫힘", f.IsDisposed || !f.Visible);
++            Console.WriteLine("UI-SELFTEST: PASS " + _pass + " / FAIL " + _fail);
++            return _fail == 0 ? 0 : 1;
++        }
++    }
++}
++#endif
+--- 6차/tests/WINDOWS_CHECKLIST.md
++++ 7차/tests/WINDOWS_CHECKLIST.md
+@@ -1,6 +1,6 @@
+ # Windows 에서 직접 확인해야 하는 항목 (제작 환경이 Linux 라서 자동 검증하지 못한 부분)
+ 
+-`tests/regression.sh` 로 자동 확인된 것: 빌드, SelfTest 98항목, 서버·종단 전송, 비밀정보 제거, 구버전 데이터 마이그레이션, 관리자 대시보드(jsdom) 렌더링.
++`tests/regression.sh` 로 자동 확인된 것: 빌드, SelfTest 110항목, UI 상호작용 38항목, 배율 100~200% 레이아웃 검사, 서버 보강 점검, 종단 전송, 비밀정보 제거, 구버전 데이터 마이그레이션, 관리자 대시보드(jsdom) 렌더링.
+ 아래는 **Windows 10/11 PC 에서 한 번씩** 확인해 주세요. 이상이 있으면 `%AppData%\BunjangAuto\logs` 의 로그와 화면 캡처를 보내 주시면 됩니다.
+ 
+ | # | 확인 항목 | 방법 | 결과 |
+@@ -17,8 +17,9 @@
+ | 10 | **일시정지 / 계속 / 중지** (신규 기능) | 등록 도중 일시정지 → 계속, 일시정지 중 중지 | ☐ |
+ | 11 | 테마 Light / Dark / System | 헤더 버튼, 설정 화면, 재실행 후 유지, Windows 앱 모드 변경에 System 이 따라가는지 | ☐ |
+ | 12 | 제목 표시줄 색(Windows 11) | 다크에서 제목 표시줄이 어둡게 / 둥근 모서리 | ☐ |
+-| 13 | DPI 100/125/150/175/200% | 사이드바·Dashboard 카드·표·대화상자·도움말이 잘리지 않는지 | ☐ |
+-| 14 | 사이드바 아이콘 | Segoe Fluent Icons(Win11) / Segoe MDL2 Assets(Win10) 로 표시 | ☐ |
++| 13 | DPI 100/125/150/175/200% (Windows 설정 > 디스플레이 > 배율) | 사이드바·Dashboard 카드·표·**모든 대화상자(약관·라이선스·상품 편집)**·도움말이 잘리거나 겹치지 않는지 | ☐ |
++| 14 | **글꼴이 나눔고딕 Bold 로 보이는지**(설정 화면 맨 아래/자가 진단의 [Font] 항목이 "적용") | ☐ |
++| 14b | 사이드바 아이콘 | Segoe Fluent Icons(Win11) / Segoe MDL2 Assets(Win10) 로 표시 | ☐ |
+ | 15 | 도움말 검색 | 사용 설명서에서 "CSV" 검색 → 목록 필터와 본문 강조 | ☐ |
+ | 16 | 중앙 로그 | 서버 주소를 넣고 실행 → 관리자 웹 대시보드의 Users/Live Logs 에 나타남 | ☐ |
+ | 17 | 관리자 센터(EXE 내부) | 설정 → 관리자 로그인 → 사이드바에 관리자 센터 | ☐ |
+--- 6차/tests/build_preview.sh
++++ 7차/tests/build_preview.sh
+@@ -0,0 +1,15 @@
++#!/bin/bash
++# 개발 전용 빌드: UIPREVIEW 기호를 켜서 화면 점검 도구(--ui-preview / --ui-selftest / --ui-layout)가 들어간 exe 를 만든다. 배포하지 않는다.
++set -e
++cd "$(dirname "$0")/.."
++OUTDIR=${1:-/tmp/lumivolt-preview}
++REFS=""; RES=""
++for f in lib/*.dll; do n=$(basename $f .dll); REFS="$REFS -r:$f"; RES="$RES -resource:$f,lib.$n.dll"; done
++RES="$RES -resource:resources/fonts/NanumGothicBold.ttf,font.NanumGothicBold.ttf"
++for f in resources/help/*.md; do RES="$RES -resource:$f,help.$(basename $f)"; done
++mkdir -p "$OUTDIR"
++mcs -target:winexe -sdk:4.7.2 -define:UIPREVIEW -langversion:latest -nowarn:1701,1702,0618,0168,0219,0414,0649,0169,0108 -out:"$OUTDIR/Preview.exe" $REFS $RES \
++  -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Security.dll -r:System.IO.Compression.dll -r:System.IO.Compression.FileSystem.dll -r:System.Core.dll -r:Microsoft.CSharp.dll -r:System.Management.dll \
++  $(find src -name '*.cs' | sort)
++cp lib/*.dll "$OUTDIR"/ 2>/dev/null || true
++echo "$OUTDIR/Preview.exe"
+--- 6차/tests/regression.sh
++++ 7차/tests/regression.sh
+@@ -11,15 +11,32 @@
+ bad()  { echo "  [FAIL] $1"; FAIL=$((FAIL+1)); }
+ 
+ step "1. 빌드 (mcs, .NET Framework 4.7.2)"
+-if bash build.sh >/tmp/bja_build.log 2>&1 && [ -f dist/BunjangAuto.exe ]; then ok "BunjangAuto.exe 빌드"; else bad "빌드 실패 (/tmp/bja_build.log)"; fi
++if bash build.sh >/tmp/bja_build.log 2>&1 && [ -f dist/Lumivolt.exe ]; then ok "Lumivolt.exe 빌드"; else bad "빌드 실패 (/tmp/bja_build.log)"; fi
+ if bash build_admin.sh >/tmp/bja_build_admin.log 2>&1 && [ -f dist/LicenseAdmin.exe ]; then ok "LicenseAdmin.exe 빌드"; else bad "관리자 발급툴 빌드 실패"; fi
+ 
+ step "2. SelfTest (기존 1~6 + v2 추가 검사)"
+-H=$(mktemp -d); OUT=$(cd dist && HOME=$H XDG_CONFIG_HOME=$H/.config timeout 300 mono BunjangAuto.exe --selftest 2>&1)
++H=$(mktemp -d); OUT=$(cd dist && HOME=$H XDG_CONFIG_HOME=$H/.config timeout 300 xvfb-run -a mono Lumivolt.exe --selftest 2>&1)
+ echo "$OUT" | grep -E "^\s*\[?(PASS|FAIL)" | sed 's/^/  /' | grep -c PASS | xargs -I{} echo "  통과 항목: {}"
+ if echo "$OUT" | grep -q "ALL PASSED"; then ok "SelfTest ALL PASSED"; else bad "SelfTest 실패"; echo "$OUT" | grep FAIL; fi
+ 
+-step "3. 중앙 로그 서버 단위/통합 테스트 (8개)"
++step "2b. C# 5 문법 호환(Windows 기본 csc 로도 빌드되는지)"
++REFS5=""; for f in lib/*.dll; do REFS5="$REFS5 -r:$f"; done
++if mcs -target:winexe -sdk:4.7.2 -langversion:5 -nowarn:1701,1702,0618,0168,0219,0414,0649,0169,0108 -out:/tmp/bja_c5.exe $REFS5 -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Security.dll -r:System.IO.Compression.dll -r:System.IO.Compression.FileSystem.dll -r:System.Core.dll -r:Microsoft.CSharp.dll -r:System.Management.dll $(find src -name '*.cs' | sort) >/tmp/bja_c5.log 2>&1; then ok "-langversion:5 컴파일"; else bad "C# 5 호환 실패 (/tmp/bja_c5.log)"; fi
++
++step "2c. 화면 상호작용 테스트 + 배율(100~200%) 레이아웃 검사 (가상 화면, 개발용 빌드)"
++if bash tests/build_preview.sh /tmp/bja_preview >/tmp/bja_prev_build.log 2>&1; then
++  U=$(mktemp -d); PRIV="$ROOT/license_private.xml"
++  UIOUT=$(cd /tmp/bja_preview && BJA_TEST_PRIV="$PRIV" HOME=$U timeout 300 xvfb-run -a -s "-screen 0 1700x1000x24" mono Preview.exe --ui-selftest 2>&1 | grep -E "PASS|FAIL|UI-SELFTEST")
++  echo "$UIOUT" | grep -E "FAIL|UI-SELFTEST" | sed 's/^/  /'
++  echo "$UIOUT" | grep -q "UI-SELFTEST: PASS [0-9]* / FAIL 0" && ok "UI 상호작용 테스트 (테마·검색·필터·정렬·로그·도움말·자동등록 흐름·예약 저장·라이선스 발급/검증)" || bad "UI 상호작용 테스트"
++  for sc in 1.0 1.25 1.5 1.75 2.0; do for th in light dark; do
++    L=$(cd /tmp/bja_preview && HOME=$(mktemp -d) timeout 200 xvfb-run -a -s "-screen 0 3000x2000x24" mono Preview.exe --ui-layout $sc $th 2>&1 | grep -E "^LAYOUT|^   !")
++    echo "$L" | grep -q "OK" && ok "레이아웃 ${sc}x $th: 잘림/겹침 없음" || { bad "레이아웃 ${sc}x $th"; echo "$L"; }
++  done; done
++else bad "개발용 빌드 실패 (/tmp/bja_prev_build.log)"; fi
++
++step "3. 중앙 로그 서버 단위/통합 테스트 (8개) + 보강 점검(SQL 주입·경로·크기·동시 60접속·TLS)"
++if (cd "$SRV" && python3 tests/hardening_checks.py >/tmp/bja_hard.log 2>&1); then ok "서버 보강 점검 $(grep RESULT /tmp/bja_hard.log)"; else bad "서버 보강 점검 (/tmp/bja_hard.log)"; fi
+ if (cd "$SRV" && python3 tests/test_server.py >/tmp/bja_srv_test.log 2>&1); then ok "서버 테스트 OK"; else bad "서버 테스트 실패 (/tmp/bja_srv_test.log)"; fi
+ 
+ step "4. 종단 테스트: EXE 의 전송 계층 → 실제 서버 → 관리자 API"
+@@ -27,7 +44,7 @@
+ (cd "$SRV" && BJA_ADMIN_PASSWORD='regression-pass-123' python3 server.py init-admin --username admin >/dev/null)
+ (cd "$SRV" && python3 server.py serve --host 127.0.0.1 --port 18555 >/tmp/bja_srv.log 2>&1) & SP=$!
+ sleep 1.5
+-R=$(cd dist && HOME=$H mono BunjangAuto.exe --selftest-central http://127.0.0.1:18555 reg-key 2>&1 | grep -E "SENT|FAILED")
++R=$(cd dist && HOME=$H mono Lumivolt.exe --selftest-central http://127.0.0.1:18555 reg-key 2>&1 | grep -E "SENT|FAILED")
+ echo "  $R"
+ TOK=$(curl -s -X POST localhost:18555/api/v1/admin/login -d '{"username":"admin","password":"regression-pass-123"}' | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
+ LOGS=$(curl -s -H "Authorization: Bearer $TOK" "localhost:18555/api/v1/admin/logs?limit=20")
+@@ -45,10 +62,10 @@
+   step "5. 마이그레이션: 구버전(v1)이 만든 암호화 settings/products → 신버전(v2)"
+   W=$(mktemp -d); mkdir -p $W/old $W/new $W/o; (cd $W/o && unzip -q "$1")
+   (cd $W/o/3_소스코드 && bash build.sh >/dev/null 2>&1)
+-  cp $W/o/3_소스코드/dist/BunjangAuto.exe $W/old/; cp "$ROOT/dist/BunjangAuto.exe" $W/new/; cp lib/*.dll $W/old/; cp lib/*.dll $W/new/
++  cp $W/o/3_소스코드/dist/BunjangAuto.exe $W/old/; cp "$ROOT/dist/Lumivolt.exe" $W/new/Lumivolt.exe; cp lib/*.dll $W/old/; cp lib/*.dll $W/new/
+   REFS="-r:Newtonsoft.Json.dll -r:System.Windows.Forms.dll -r:System.Drawing.dll"
+   mcs -out:$W/old/w.exe tests/migration/write_with_old.cs -lib:$W/old -r:$W/old/BunjangAuto.exe $REFS 2>/dev/null
+-  mcs -out:$W/new/r.exe tests/migration/read_with_new.cs -lib:$W/new -r:$W/new/BunjangAuto.exe $REFS 2>/dev/null
++  mcs -out:$W/new/r.exe tests/migration/read_with_new.cs -lib:$W/new -r:$W/new/Lumivolt.exe $REFS 2>/dev/null
+   M=$(mktemp -d); (cd $W/old && HOME=$M mono w.exe >/dev/null 2>&1); RES=$(cd $W/new && HOME=$M mono r.exe 2>&1 | grep -E "migrated|persisted")
+   echo "$RES" | sed 's/^/  /'
+   echo "$RES" | grep -q "settings migrated: True  products migrated: True" && ok "구버전 데이터 모든 필드 보존" || bad "마이그레이션"

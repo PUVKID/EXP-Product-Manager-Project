@@ -1,0 +1,23 @@
+{
+  "new_observation": "직전inventory에서resources/help와12개md실재확인",
+  "model": "gpt-6-astra",
+  "effort": "medium",
+  "cause": "PowerShell이rg의경로glob을확장하지않음",
+  "method": "rg 디렉터리와 -g 패턴 인자로 분리",
+  "selection_reason": "확정 파일검색 구문만 보정",
+  "before_argv": [
+    "rg",
+    "-n",
+    "예약|반복|1개씩",
+    "소스코드/resources/help/*.md"
+  ],
+  "after_argv": [
+    "rg",
+    "-n",
+    "예약|반복|1개씩",
+    "소스코드/resources/help",
+    "-g",
+    "*.md"
+  ],
+  "role": "escalate"
+}

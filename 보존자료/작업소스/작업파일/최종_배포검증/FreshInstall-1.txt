@@ -1,0 +1,16 @@
+PASS fresh product profile
+PASS fresh usage registry
+PASS activate PUVKID Classic
+PASS recheck Classic
+PASS usage after activation Classic
+PASS activate PUVKID Studio
+PASS recheck Studio
+PASS usage after activation Studio
+PASS activate PUVKID Pro
+PASS recheck Pro
+PASS usage after activation Pro
+PASS actual setup gate 0
+PASS actual setup gate 1
+PASS renew same name
+PASS renewal does not change usage
+FRESH: 15 passed, 0 failed

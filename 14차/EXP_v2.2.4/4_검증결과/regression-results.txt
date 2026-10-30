@@ -1,0 +1,92 @@
+PASS  Selenium 내장 로딩 (ChromeOptions 생성)
+PASS  XPath 리터럴 생성
+PASS  Newtonsoft.Json 내장 로딩
+PASS  CSV 1건 읽힘
+PASS  CSV 제목(쉼표/따옴표)
+PASS  CSV 설명(줄바꿈)
+PASS  CSV 배송비포함
+PASS  CSV 이미지 2장·상대경로 해석
+PASS  CSV 가격/수량
+PASS  CP949 CSV 자동 판별
+PASS  CSV 인코딩: UTF-8 BOM
+PASS  CSV 인코딩: UTF-8 BOM 없음
+PASS  CSV 인코딩: UTF-16 LE BOM
+PASS  CSV 인코딩: UTF-16 LE BOM 없음
+PASS  CSV 인코딩: UTF-16 BE BOM
+PASS  CSV 인코딩: UTF-16 BE BOM 없음
+PASS  CSV 인코딩: UTF-32 BOM
+PASS  CSV 인코딩: CP949(엑셀 기본 CSV)
+PASS  CSV 인코딩: 탭 구분 UTF-16(엑셀 유니코드 텍스트)
+PASS  CSV 인코딩: 세미콜론 구분 CP949
+PASS  CSV 다른 프로그램이 열어 둔 파일 읽기
+PASS  CSV 머리글 없으면 안내 오류
+PASS  CSV 영문·순서 다른 머리글
+PASS  XPath 값 채우기(일반)
+PASS  XPath 값 채우기(작은따옴표)
+PASS  XPath 값 채우기(두 종류 따옴표)
+PASS  selectors JSON 왕복
+PASS  Vault: 같은 내용도 암호문은 매번 다름(IV)
+PASS  Vault: 암·복호화 왕복
+PASS  Vault: 평문은 보호된 형식이 아님
+PASS  Vault: 용도(label)가 다르면 못 품
+PASS  Vault: 변조된 데이터는 거부
+PASS  Vault: 형식이 아닌 문자열은 거부
+PASS  라이선스: PC 고유번호 형식(XXXX-XXXX-XXXX)
+PASS  라이선스: 구형 RSA 라이선스 거부
+PASS  라이선스: 형식이 아예 틀린 키는 형식 오류로 구분
+PASS  시간 해석 09:30 / 24:00 / 잘못된 값
+PASS  시간대 검사(정상)
+PASS  시간대 검사(빈 목록/잘못된 값 거부)
+PASS  00~09시는 40분 간격
+PASS  09~18시는 60분 간격
+PASS  새 시간대 시작 시 이전 간격 대기 취소
+PASS  마지막 시간대 이후엔 다음날 첫 시간대 시작까지 대기
+PASS  작업이 오래 걸려 늦으면 즉시
+PASS  시간대 밖에서 시작하면 다음 시작 시각까지 대기(다음날)
+PASS  시간대 밖(새벽 전)에서 시작하면 당일 시작 시각
+PASS  자정을 넘는 시간대(22~06)
+PASS  시작=종료는 24시간
+PASS  설정 왕복(시간대 2개 유지)
+PASS  예전 설정 파일 읽기(끌올/재등록 항목 무시)
+PASS  [Theme] Light/Dark/System 문자열 변환
+PASS  [Theme] 두 팔레트의 밝기가 확실히 다름
+PASS  [Theme] 본문 글자 대비 4.5:1 이상(라이트/다크)
+PASS  [Theme] 보조 글자·강조색 대비 4.5:1 이상
+PASS  [Theme] 다크 모드가 검정 한 색이 아닌 계층(사이드바<바탕<카드<카드Alt)
+PASS  [Theme] 라이트 모드 계층(바탕<카드)
+PASS  [Theme] 예전 이름(BgDark/Panel/Gold…)이 현재 팔레트를 가리킴
+PASS  [Theme] 선택값 저장/복원 + 예전 settings.json 은 System 으로 시작
+PASS  [Font] 나눔고딕 Bold TTF 가 exe 안에 내장됨(TrueType 시그니처, 1MB 이상)
+PASS  [Font] 나눔고딕 Bold 를 실제로 쓸 수 있음(적용)
+PASS  [Font] 모든 글꼴 요청이 나눔고딕 Bold 로 만들어짐
+PASS  [Help] 현재 화면의 12개 목차가 모두 내장되어 있음
+PASS  [Help] 모든 문서가 비어 있지 않고 블록으로 변환됨
+PASS  [Help] 검색(제목/본문, 대소문자 무시)
+PASS  [Help] 본문 뷰어: 폭이 좁아지면 줄바꿈으로 높이가 늘어남
+PASS  [Help] 본문 뷰어: 평문 복사 텍스트 생성
+PASS  [Pause] 일시정지가 아니면 단계 점검이 바로 통과
+PASS  [Pause] 일시정지 중에는 멈춰 있다가, 해제하면 이어서 진행
+PASS  [Pause] 일시정지 중에 중지하면 바로 중지 처리됨
+PASS  [Migration] 평문 settings.json 은 암호화 대상으로 인식
+PASS  [Migration] 예전 설정의 모든 값 보존(반복/간격/시간대/중복/크롬경로/로그인)
+PASS  [Migration] 설정 암호화 왕복
+PASS  [Migration] 상품 12개 필드 전부 보존(암호화 왕복)
+PASS  [Migration] 다른 용도(label) 키로는 열리지 않음
+PASS  [Redaction] password=값
+PASS  [Redaction] 비밀번호: 값(한글 키)
+PASS  [Redaction] Authorization/Bearer
+PASS  [Redaction] Cookie/Set-Cookie 헤더
+PASS  [Redaction] 세션/토큰 key=value
+PASS  [Redaction] JWT
+PASS  [Redaction] 개인키 블록
+PASS  [Redaction] 카드번호(Luhn 통과)만 가림
+PASS  [Redaction] 계좌번호 형태(110-123-456789)
+PASS  [Redaction] Windows 사용자 폴더명
+PASS  [Redaction] 이메일
+PASS  [Redaction] 일반 운영 로그는 그대로 보존
+PASS  [Redaction] 실제 로그 형태(URL·경로·상품번호·드라이버 주소)는 과하게 지워지지 않음
+PASS  [Redaction] LogEntry 단위 처리
+PASS  [CSV] 쓰기→읽기 왕복(쉼표·따옴표·줄바꿈·이모지·특수기호)
+PASS  [CSV] 예전 형식 파일(9열 중 일부, 가격 '15,000원', 배송비 Y)도 그대로 열림
+PASS  [CSV] 양식 파일을 다시 읽을 수 있음
+ALL PASSED

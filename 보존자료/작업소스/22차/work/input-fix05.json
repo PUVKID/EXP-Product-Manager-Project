@@ -1,0 +1,19 @@
+{
+  "before_argv": [
+    "Get-ChildItem",
+    "고객배포",
+    "관리자전용"
+  ],
+  "new_observation": "evidence/verifier-path-input-failure.json과SHA256SUMS,rg파일목록이실제고객 배포/관리자 전용을확인",
+  "after_argv": [
+    "Get-ChildItem",
+    "고객 배포",
+    "관리자 전용"
+  ],
+  "model": "gpt-6.1-sol",
+  "cause": "verifier의배포폴더명조회에서고객배포/관리자전용공백누락",
+  "role": "verifier",
+  "selection_reason": "명령입력경로정정만이며소스/검사기준/배포내용불변",
+  "method": "확인된공백포함폴더명으로조회인자정정",
+  "effort": "high"
+}

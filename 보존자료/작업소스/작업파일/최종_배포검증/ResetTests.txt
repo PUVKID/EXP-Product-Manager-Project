@@ -1,0 +1,18 @@
+PASS missing issuer refuses reset
+PASS unauthorized reset preserves client state
+PASS untrusted issuer refuses reset
+PASS path escape rejected
+PASS locked files fail before deletion
+PASS failed preflight preserves license
+PASS authorized reset succeeds
+PASS products preserved
+PASS photos preserved
+PASS license removed
+PASS registry removed
+PASS device key removed
+PASS device key removed
+PASS issuer key preserved
+PASS master history default preserved
+PASS optional master history removed
+PASS repeat reset safe
+RESET: 17 passed, 0 failed

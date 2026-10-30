@@ -1,0 +1,2 @@
+PASS: native registry stale enrollment copy replaced with verified current file.
+PASS: license, TPM enrollment, usage file, counts, credits and trial state preserved.

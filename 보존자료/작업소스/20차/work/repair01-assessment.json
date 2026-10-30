@@ -1,0 +1,10 @@
+{
+  "cause": "새격리테스트의느린회차가짜시각18:12후다음fixture15:02가같은임시usageledger를재사용하여정상역행차단발생",
+  "new_observation": "실제UsageQuota.Read가PC시간이이전으로변경되었습니다예외를반환. 실제제품변경전TDD RED 32건과구분되는fixture설계결함",
+  "failure_evidence": "work/logic/red-corrected-tests-result.json",
+  "effort": "xhigh",
+  "model": "gpt-6.1-sol",
+  "selection_reason": "시각회귀와보안원장상태의상호작용을검증하는테스트수리이므로기존deep xhigh유지",
+  "role": "deep",
+  "method": "각fixture의TESTBUILD프로세스전용ledger/registry상태를분리하여독립화. 실제경로검증및운영키접근금지. 필요할때만프로세스전용CNG정리. 정책판정과기대동작은유지"
+}

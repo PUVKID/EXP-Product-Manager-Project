@@ -1,0 +1,557 @@
+--- 4차/kg.cs
++++ 5차/kg.cs
+@@ -1,2 +1,2 @@
+ using System; using System.IO; using System.Security.Cryptography;
+-class K { static void Main(){ var r=new RSACryptoServiceProvider(3072); File.WriteAllText("private.xml", r.ToXmlString(true)); File.WriteAllText("public.xml", r.ToXmlString(false)); } }
++class K { static void Main(){ var r=new RSACryptoServiceProvider(4096); File.WriteAllText("private.xml", r.ToXmlString(true)); File.WriteAllText("public.xml", r.ToXmlString(false)); } }
+--- 4차/license_public.xml
++++ 5차/license_public.xml
+@@ -1 +1 @@
+-<RSAKeyValue><Modulus>iZrQvuW+0YJ7I/u7isLIszYULRzF/sp2/EiMwNs6Rqn6cpZs+O0TYHmw3V/2dCH/wuynfU2wfiZKGzg5THaOguc2jcSbYaavnd1w2H1bDGB0or9VeJHxizjJl/D9hu5T7KiPJeNjqMt0vacoRjiMh3KYv+1wxyibmP3gRHuTANmJB6S6dvyX4enPudWx/EdDxU01xD/vW2gwHe08PZ8g0AjrfyayDfWTB1GUlwlrmDCWjZoLupU0rOsWHMdWYDuSehJL9f2OT8bXCs+uFizOVdfvyxP08A7Mc9LTEC506/nEqgMsfCvIsXc7AsmrNKkwv88BJx/rp/yrpxjWckV6ZkWFhd94EFNfyc7UjF1SlO0/2Iyh1JnI0I+TOXrllVDRN34XNo3oBw5BKqWo3UkFkNps43V6URs1TPwPCHR37Z4U6uZS4WiWb07EaD2+501d1Qxe/geAfjkbzN3kCqKAJELB8rcGbAylcJYAOXreju2S2friSAvk547eU//AxqCJ</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>+<RSAKeyValue><Modulus>nmPLS5WQloX9/BI0ZXXGMsaKyvzuFaaKLU6jHCyKBUEzvnKw9RTH7E4vVQjQqEsErwzLgD81y1wvjxQsIiX0Un9q1nvtyPO17Isqjcjp+EnM/uCm4eBQyGOqE6SYZbwXod5e9R9K6AiLSozE1JWFwZrR9TtrBFcqx/U3e18pKw2jwNdhyz9GIl4laTa+4YrFwZD3EJ/XTKZU82S9cIZGQV5+89Vf5D8PeQvBGKkHWqXXZjB9UBpY9MqrIoIrksEt2Xxv6IqjiNmj3ZF5nb8lifz1MtDAskAdR7mtQtiep+DnhkKIwCOF3v8Ys48bGT5wWRLJHhuzlpumV7PNQmhiljRX8OiN6/x/AnlBaHWXINPQYAdKIYgyoVRneeim4UZ7w1ygI6bsqiq7NuAUuC3xFAsPmTMQeMp0tqwxlSw9oE55i6TWKBAiVlwvAtmu07Mvf6xk6mnu4jnEPsgKI6f/Lg1h/HCCY+l6T0oUI2hAb7m84o9kxq67KToJ5dciqCqASleg5A/SKSMcryXBS4XJ4o3hGDpKt7srjy9vb4UN0nW5a9AdrAYHn3FF49/LWpm5CLzjeezNgOOFnWBePOqNj59YTe/vP8oUhxEjJjE4AJC5eHHjqw4qwRuCyz+QXcn6aaiyondD9msZYcucYk1FPNd/lVBUbR+KyBRS82MdDpM=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>--- 4차/src/License.cs
++++ 5차/src/License.cs
+@@ -18,30 +18,54 @@
+ 
+     public static class License
+     {
+-        // 공개키(XML)는 평문으로 두지 않고 변형해 둔다.
++        // 공개키(XML)는 평문으로 두지 않고 AES-256(CBC)으로 암호화해 둔다(여러 조각 상수를 조합해 키/IV를 만든다).
++        private static readonly byte[] _k1 = { 0x4E,0x91,0xD2,0x3F,0x7A,0x0C,0x88,0x5B,0x1E,0x6D,0xA3,0x29,0xF4,0x57,0x9B,0xC0 };
++        private static readonly byte[] _k2 = { 0x12,0xE8,0x6A,0xB5,0x3D,0xF0,0x74,0x9C,0x28,0x61,0xDA,0x4F,0x87,0x15,0xC9,0x3B };
++        private static readonly byte[] _k3 = { 0xA7,0x5C,0x1F,0x92,0xE3,0x68,0xB0,0x4D,0x97,0x2A,0x6E,0xD1,0x53,0xF8,0x0A,0xC4 };
++        private static readonly byte[] _iv1 = { 0x8B,0x3E,0xC7,0x14,0x5A,0x92,0xF6,0x2D,0x71,0xB8,0x4C,0xE0,0x39,0xA6,0x1D,0x85 };
++        private static readonly byte[] _iv2 = { 0x27,0xD4,0x6F,0xB1,0x9A,0x3C,0x58,0xE2,0x0D,0x74,0xC1,0x4B,0x96,0x2E,0xF7,0x80 };
++
++        // AES-256-CBC 로 암호화된 공개키 XML (Base64, RSA-4096)
+         private static readonly string _b =
+-            "ZpFEz2aUHc1iuzvHZP9a4UmECO5w6Sf4KJJh+3raVMJJ4AeNL/R+/WG4F+Fa" +
+-            "ggLwIIU4/V3DS95qmjnsKfVF/0PHB+tZpGXtapdOxkCGV80s5SrhEuxg+1Sf" +
+-            "As4xoCjLAIhQ9ErEMNNimCnXOfF97X6TPfpioSDGa7QlxhyTINxB5yHQY5Vy" +
+-            "xGWJDeFpnSKNHvp/+xilU9BqhwTHFKlmw1nBEvpguBzIM45/vWaoErAyoDbb" +
+-            "M6F63h6WNtN2gw/sN4lVuH7HAO16j3rHNJNi6nqJS95nkzb3avJvygKHM6lk" +
+-            "oAbHavtH1BWWVNpppSjbO7pT6HqlJqpEgiLVNrF6ym6mDsFsmzvSD/NlwV6m" +
+-            "LNZngBfmL5By5me9Xf0xmBqaOJtU/QaEIvJ5mBjGPLVu9n3BXNo0mi2bFpdS" +
+-            "zRjBUrRtkj/FF7BxzVu4F8Ng4A/RN7FZxUaGEqM7lQTadbFnoVSDFONpgC3J" +
+-            "DPVN5Xq3DP864wvkFKVu7RqkDt0yhCLtauwlx1SZVdFtnn7rcZdY1l+dCM1H" +
+-            "hQCRbptZ4R6eJuw2lQXTDawk20a3D9VzpHqRDPVC3F7AMMt0hw3qCPAg1Bmk" +
+-            "Uu5ZhHr1M5R1vhq0Bd8x/HuSa6cm31WUS/xmlijIMaFtwB6aJ+pIlgTnFoEv" +
+-            "/E62Btp6uy3oA4JY1l+UDu4xhHzEKKpEz1uaUa80shuNdYJv/267WLROuCrX" +
+-            "NrZksBG0HOtsuSvMLv1W32yzWLRGrz7NNKZ5+hPNS8lQlgXHI5V24liUWg==";
++            "WWY21hNpelVvr2DRvp80OksHjFkWxTUk2vdxGdMV2jXdEs3+l1ZBLCwYUBMqRagW" +
++            "L7tlScrbNkjId6D4uR4rjSunqtO3IuuC1Rtyt7QqktlMNvb8EUnNJ+oJRQaOilAV" +
++            "e3JBGoem/qlO40pwprxR6dQfvP37eQJeSqM5+UebBvGENgVylhOWeRAek/vSVkj0" +
++            "rSByZ1etai4cjdyqblUdtpw/HcQ7tmlX8W9rcHPqjtnuIXGNXjjM2GC0zp+iaLDQ" +
++            "oJRKk/jl+mubnQ7MRycedNnCN2+C2+B0a2HsRoXia5rhDW9JrGxojowXQS083Eye" +
++            "fJvBWU1a/1ombVeZYNKsLN04GsvNvsT3qbVXTC7+zgKq3azWQCXPCyuhtYW7fSfD" +
++            "2Q7bmYHkPaWsvFn6kXq9t5U0rfjY/1rcQbaFBFjbXC68J/IWaJNagwGbt04wtzB7" +
++            "BHY619eaCAKW5imRdFWfuy2tkBwYKzO89cheyHbmzQEPyxlQj3AJEAOA8p5oKoyB" +
++            "0IPTHMcZH/NL+K7wGR9pd6iGjht7SXNDtIQIyjLg3P/MjtMBzgU0tP0cZi05IyqQ" +
++            "6bxzF9EOgmwolGslsIYNM+d67IKk4ULD+3X3u4m+iFSm9p5vuCBZkUPj+o2qVu70" +
++            "IRvDAI7+KmVOzAnY8h1CREjP8ZxfyAj+0tIj5TT4HOFrDx5aqT5whKsg9Tr1taB2" +
++            "StfJT8tXFD4YM0Uf1tFKANSE/cfw0NfZfd+uYQ3CahjCHwtWOWrfRpzQXAE4Q66e" +
++            "t1vu+yHcl3/bbY37314H77PhU4Dr+gwZlkLqsNC71zw684IVCTnINKVSO7Fd65+L" +
++            "mIFkV7s5d0CNAdzx3xzmodxONbGO5sA3/1QqA4pHPnFSj7HD82nEp9IcxfhwCYyN" +
++            "Rb6nFg00FbNNs7ybypHYD11GRIGmd4NwFgzGrEujaWkW+MWJIIArGAILFfumUq3p" +
++            "eXCm5FGxrPBMNPiH16X/p/bGimrsEYdQZamVSM1cICaTX3ncTdlS2DuWpURDWmGA";
++
++        private static byte[] Xor3(byte[] x, byte[] y, byte[] z)
++        {
++            var r = new byte[x.Length];
++            for (int i = 0; i < x.Length; i++) r[i] = (byte)(x[i] ^ y[i] ^ z[i]);
++            return r;
++        }
+ 
+         private static string PublicKeyXml
+         {
+             get
+             {
+-                byte[] k = new byte[] { 0x5A, 0xC3, 0x17, 0x8E, 0x2D, 0xF1, 0x64, 0x9B, 0x03, 0xD7, 0x4E, 0xA2 };
+-                byte[] d = Convert.FromBase64String(_b);
+-                for (int i = 0; i < d.Length; i++) d[i] = (byte)(d[i] ^ k[i % k.Length]);
+-                return Encoding.UTF8.GetString(d);
++                byte[] key = SHA256.Create().ComputeHash(Xor3(_k1, _k2, _k3));
++                byte[] iv = Xor3(_iv1, _iv2, _iv1);
++                Array.Resize(ref iv, 16);
++                byte[] ct = Convert.FromBase64String(_b);
++                using (var aes = Aes.Create())
++                {
++                    aes.KeySize = 256; aes.Mode = CipherMode.CBC; aes.Padding = PaddingMode.PKCS7;
++                    aes.Key = key; aes.IV = iv;
++                    using (var dec = aes.CreateDecryptor())
++                        return Encoding.UTF8.GetString(dec.TransformFinalBlock(ct, 0, ct.Length));
++                }
+             }
+         }
+ 
+--- 4차/src/SelfTest.cs
++++ 5차/src/SelfTest.cs
+@@ -12,6 +12,12 @@
+     public static class SelfTest
+     {
+         private static int _fail;
++        private static bool Throws(Action a)
++        {
++            try { a(); return false; }
++            catch { return true; }
++        }
++
+         private static void Check(string name, bool ok)
+         {
+             Console.WriteLine((ok ? "PASS  " : "FAIL  ") + name);
+@@ -158,6 +164,44 @@
+             }
+             catch (Exception ex) { Check("selectors JSON: " + ex.Message, false); }
+ 
++            // 4b) 로컬 데이터 금고(Vault): AES-256 암호화 + 위변조 확인, 이 PC에서만 풀리는지
++            try
++            {
++                string plain = "{\"Id\":\"테스트\",\"Num\":123}";
++                string enc1 = Vault.Protect(plain, "selftest");
++                string enc2 = Vault.Protect(plain, "selftest");
++                Check("Vault: 같은 내용도 암호문은 매번 다름(IV)", enc1 != enc2);
++                Check("Vault: 암·복호화 왕복", Vault.Unprotect(enc1, "selftest") == plain);
++                Check("Vault: 평문은 보호된 형식이 아님", !Vault.IsProtected(plain) && Vault.IsProtected(enc1));
++                Check("Vault: 용도(label)가 다르면 못 품", Throws(() => Vault.Unprotect(enc1, "other-label")));
++
++                var tampered = Convert.FromBase64String(enc1.Substring(enc1.IndexOf(':') + 1));
++                tampered[tampered.Length - 1] ^= 0xFF;   // 끝부분(HMAC) 한 바이트 변조
++                string tamperedStr = enc1.Substring(0, enc1.IndexOf(':') + 1) + Convert.ToBase64String(tampered);
++                Check("Vault: 변조된 데이터는 거부", Throws(() => Vault.Unprotect(tamperedStr, "selftest")));
++                Check("Vault: 형식이 아닌 문자열은 거부", Throws(() => Vault.Unprotect("그냥 평문", "selftest")));
++            }
++            catch (Exception ex) { Check("Vault: " + ex.Message, false); }
++
++            // 4c) 라이선스: 공개키 임베딩(AES) 복호화, 서명 형식, PC 고유번호 형식
++            try
++            {
++                Check("라이선스: PC 고유번호 형식(XXXX-XXXX-XXXX)",
++                    System.Text.RegularExpressions.Regex.IsMatch(License.GetMachineId(), @"^[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}$"));
++
++                // 서명이 올바르지 않은 키를 넣어, 내장된(AES로 보호된) 공개키가 정상적으로 풀려
++                // RSA 검증 단계까지 도달하는지 확인한다(= "형식 오류"가 아니라 "키가 올바르지 않음"이어야 함).
++                byte[] payload = Encoding.UTF8.GetBytes("BJA2|테스트|AAAA-BBBB-CCCC|0|20260101|aaaaaaaa");
++                byte[] fakeSig = new byte[512];
++                new Random(1).NextBytes(fakeSig);
++                string fakeKey = Convert.ToBase64String(payload) + "." + Convert.ToBase64String(fakeSig);
++                var info = License.Verify(fakeKey, "AAAA-BBBB-CCCC");
++                Check("라이선스: 내장 공개키 복호화 후 서명 검증까지 도달", !info.Valid && info.Message == "라이선스 키가 올바르지 않습니다.");
++
++                Check("라이선스: 형식이 아예 틀린 키는 형식 오류로 구분", !License.Verify("asdf", "AAAA-BBBB-CCCC").Valid);
++            }
++            catch (Exception ex) { Check("라이선스 점검: " + ex.Message, false); }
++
+             // 5) 시간대별 등록 간격 계산
+             try
+             {
+--- 4차/src/Storage.cs
++++ 5차/src/Storage.cs
+@@ -11,40 +11,59 @@
+ {
+     public static class Storage
+     {
+-        // ---------- 설정 ----------
++        // ---------- 설정 (이 PC에서만 열리도록 암호화해 저장) ----------
+         public static AppSettings LoadSettings()
+         {
+             try
+             {
+-                if (File.Exists(Paths.Settings))
+-                {
+-                    var s = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(Paths.Settings, Encoding.UTF8));
+-                    if (s != null) return s;
+-                }
+-            }
+-            catch { }
+-            return new AppSettings();
++                if (!File.Exists(Paths.Settings)) return new AppSettings();
++                string raw = File.ReadAllText(Paths.Settings, Encoding.UTF8);
++                string json;
++                bool legacy = !Vault.IsProtected(raw);
++                try { json = legacy ? raw : Vault.Unprotect(raw, "settings"); }
++                catch (CryptographicException)
++                {
++                    Log.Write("[주의] 설정 파일을 열 수 없어(다른 PC에서 옮겨왔거나 손상됨) 기본값으로 시작합니다.");
++                    return new AppSettings();
++                }
++                var s = JsonConvert.DeserializeObject<AppSettings>(json);
++                if (s == null) return new AppSettings();
++                if (legacy) { try { SaveSettings(s); } catch { } }   // 예전 평문 설정을 암호화 형식으로 올려 쓴다
++                return s;
++            }
++            catch { return new AppSettings(); }
+         }
+ 
+         public static void SaveSettings(AppSettings s)
+         {
+             Directory.CreateDirectory(Paths.Root);
+-            File.WriteAllText(Paths.Settings, JsonConvert.SerializeObject(s, Formatting.Indented), Encoding.UTF8);
+-        }
+-
+-        // ---------- 상품 목록 자동 저장/복원 ----------
++            string json = JsonConvert.SerializeObject(s, Formatting.Indented);
++            File.WriteAllText(Paths.Settings, Vault.Protect(json, "settings"), Encoding.UTF8);
++        }
++
++        // ---------- 상품 목록 자동 저장/복원 (이 PC에서만 열리도록 암호화해 저장) ----------
+         public static BindingList<Product> LoadProducts()
+         {
+             try
+             {
+-                if (File.Exists(Paths.Products))
+-                {
+-                    var list = JsonConvert.DeserializeObject<List<Product>>(File.ReadAllText(Paths.Products, Encoding.UTF8));
+-                    if (list != null) return new BindingList<Product>(list);
+-                }
+-            }
+-            catch { }
+-            return new BindingList<Product>();
++                if (!File.Exists(Paths.Products)) return new BindingList<Product>();
++                string raw = File.ReadAllText(Paths.Products, Encoding.UTF8);
++                string json;
++                bool legacy = !Vault.IsProtected(raw);
++                try { json = legacy ? raw : Vault.Unprotect(raw, "products"); }
++                catch (CryptographicException)
++                {
++                    Log.Write("[주의] 상품 목록 파일을 열 수 없습니다(다른 PC에서 옮겨왔거나 손상됨). " +
++                              "CSV 백업이 있다면 'CSV 불러오기'로 다시 불러와 주세요.");
++                    return new BindingList<Product>();
++                }
++                var list = JsonConvert.DeserializeObject<List<Product>>(json);
++                if (list == null) return new BindingList<Product>();
++                var bl = new BindingList<Product>(list);
++                if (legacy) { try { SaveProducts(bl); } catch { } }   // 예전 평문 목록을 암호화 형식으로 올려 쓴다
++                return bl;
++            }
++            catch { return new BindingList<Product>(); }
+         }
+ 
+         public static void SaveProducts(IList<Product> items)
+@@ -53,7 +72,8 @@
+             {
+                 Directory.CreateDirectory(Paths.Root);
+                 var tmp = Paths.Products + ".tmp";
+-                File.WriteAllText(tmp, JsonConvert.SerializeObject(new List<Product>(items), Formatting.Indented), Encoding.UTF8);
++                string json = JsonConvert.SerializeObject(new List<Product>(items), Formatting.Indented);
++                File.WriteAllText(tmp, Vault.Protect(json, "products"), Encoding.UTF8);
+                 if (File.Exists(Paths.Products)) File.Delete(Paths.Products);
+                 File.Move(tmp, Paths.Products);
+             }
+--- 4차/src/Theme.cs
++++ 5차/src/Theme.cs
+@@ -6,32 +6,33 @@
+ namespace BunjangAuto
+ {
+     /// <summary>
+-    /// 앱 전체에서 쓰는 다크 + 골드 "프리미엄" 테마.
++    /// 앱 전체에서 쓰는 밝은 아이보리 + 골드 "프리미엄" 테마.
+     /// 주의: WinForms 에서 BackColor=Transparent 를 UserPaint 컨트롤에 쓰면 실제 Windows 에서
+     /// 해당 영역이 완전히 검게 칠해지는 고질적인 버그가 있다. 그래서 이 파일에서는
+     /// Color.Transparent 를 절대 쓰지 않고, 모든 컨트롤의 배경색을 항상 "실제 색"으로 명시한다.
+     /// </summary>
+     public static class Theme
+     {
+-        public static readonly Color BgDark = Color.FromArgb(24, 25, 29);
+-        public static readonly Color Panel = Color.FromArgb(32, 34, 40);
+-        public static readonly Color PanelAlt = Color.FromArgb(38, 41, 48);
+-        public static readonly Color Field = Color.FromArgb(44, 47, 55);
+-        public static readonly Color FieldBorder = Color.FromArgb(70, 74, 86);
+-        public static readonly Color Border = Color.FromArgb(58, 61, 71);
+-        public static readonly Color Gold = Color.FromArgb(197, 160, 71);
+-        public static readonly Color GoldBright = Color.FromArgb(226, 193, 115);
+-        public static readonly Color GoldDim = Color.FromArgb(132, 108, 56);
+-        public static readonly Color TextPrimary = Color.FromArgb(236, 237, 240);
+-        public static readonly Color TextMuted = Color.FromArgb(168, 173, 184);
+-        public static readonly Color Danger = Color.FromArgb(224, 110, 110);
+-        public static readonly Color OnGold = Color.FromArgb(28, 23, 14);
++        public static readonly Color BgDark = Color.FromArgb(237, 232, 222);     // 바탕(은은한 아이보리)
++        public static readonly Color Panel = Color.FromArgb(255, 254, 251);      // 카드/선택된 탭(거의 흰색)
++        public static readonly Color PanelAlt = Color.FromArgb(247, 242, 232);   // 교대 행 / 은은한 강조
++        public static readonly Color Field = Color.FromArgb(255, 255, 255);      // 입력창
++        public static readonly Color FieldBorder = Color.FromArgb(213, 203, 182);
++        public static readonly Color Border = Color.FromArgb(222, 214, 196);
++        public static readonly Color Gold = Color.FromArgb(160, 120, 44);        // 진한 브라스 골드(밝은 바탕에서도 또렷함)
++        public static readonly Color GoldBright = Color.FromArgb(193, 151, 66);
++        public static readonly Color GoldDim = Color.FromArgb(118, 87, 28);
++        public static readonly Color TextPrimary = Color.FromArgb(46, 39, 31);   // 진한 에스프레소 브라운
++        public static readonly Color TextMuted = Color.FromArgb(128, 117, 101);
++        public static readonly Color Danger = Color.FromArgb(173, 56, 56);
++        public static readonly Color OnGold = Color.FromArgb(255, 252, 244);     // 골드 버튼 위 글자(크림 화이트)
+ 
+         private const string TagPrimary = "lux-primary";
++        private const int ButtonRadius = 7;
+ 
+         public static Font FontBase() { return new Font("맑은 고딕", 9.3f, FontStyle.Regular); }
+         public static Font FontBold() { return new Font("맑은 고딕", 9.3f, FontStyle.Bold); }
+-        public static Font FontTitle() { return new Font("맑은 고딕", 13.5f, FontStyle.Bold); }
++        public static Font FontTitle() { return new Font("맑은 고딕", 14f, FontStyle.Bold); }
+         public static Font FontSub() { return new Font("맑은 고딕", 9f, FontStyle.Regular); }
+         public static Font FontMono(float size) { return new Font("Consolas", size); }
+ 
+@@ -39,7 +40,7 @@
+         public static void MarkPrimary(Button b) { b.Tag = TagPrimary; }
+         private static bool IsPrimary(Button b) { return (b.Tag as string) == TagPrimary; }
+ 
+-        /// <summary>폼과 그 하위 컨트롤 전체에 다크/골드 테마를 재귀적으로 입힌다. 항상 불투명한 색만 사용한다.</summary>
++        /// <summary>폼과 그 하위 컨트롤 전체에 밝은 아이보리/골드 테마를 재귀적으로 입힌다. 항상 불투명한 색만 사용한다.</summary>
+         public static void Apply(Control root)
+         {
+             if (root is Form)
+@@ -71,12 +72,12 @@
+                 b.UseVisualStyleBackColor = false;
+                 b.Cursor = Cursors.Hand;
+                 b.Font = FontBold();
+-                if (b.Height < 28) b.Height = 28;
++                if (b.Height < 30) b.Height = 30;
+                 if (primary)
+                 {
+                     b.BackColor = Gold;
+                     b.ForeColor = OnGold;
+-                    b.FlatAppearance.BorderColor = GoldBright;
++                    b.FlatAppearance.BorderColor = GoldDim;
+                     b.FlatAppearance.MouseOverBackColor = GoldBright;
+                     b.FlatAppearance.MouseDownBackColor = GoldDim;
+                 }
+@@ -86,9 +87,10 @@
+                     b.ForeColor = TextPrimary;
+                     b.FlatAppearance.BorderColor = FieldBorder;
+                     b.FlatAppearance.MouseOverBackColor = PanelAlt;
+-                    b.FlatAppearance.MouseDownBackColor = Panel;
++                    b.FlatAppearance.MouseDownBackColor = Border;
+                 }
+-                return b.BackColor;
++                RoundButton(b);
++                return parentBg;   // 버튼 모서리 바깥은 부모 배경이 비치므로, 자식 기준색은 부모색 그대로
+             }
+             if (c is TextBoxBase)
+             {
+@@ -167,6 +169,41 @@
+             c.BackColor = parentBg;
+             if (c.ForeColor.ToArgb() == SystemColors.ControlText.ToArgb()) c.ForeColor = TextPrimary;
+             return parentBg;
++        }
++
++        /// <summary>버튼 모서리를 살짝 둥글게 깎는다(바깥쪽은 부모 배경이 비친다). 크기가 바뀌어도 다시 적용한다.</summary>
++        private static void RoundButton(Button b)
++        {
++            ApplyRoundRegion(b);
++            b.SizeChanged -= OnButtonSizeChanged;
++            b.SizeChanged += OnButtonSizeChanged;
++        }
++
++        private static void OnButtonSizeChanged(object sender, EventArgs e) { ApplyRoundRegion((Button)sender); }
++
++        private static void ApplyRoundRegion(Button b)
++        {
++            if (b.Width <= 0 || b.Height <= 0) return;
++            var old = b.Region;
++            b.Region = new Region(RoundedRect(new Rectangle(0, 0, b.Width, b.Height), ButtonRadius));
++            if (old != null) old.Dispose();
++        }
++
++        private static GraphicsPath RoundedRect(Rectangle r, int radius)
++        {
++            int d = radius * 2;
++            var p = new GraphicsPath();
++            if (d >= r.Width || d >= r.Height)
++            {
++                p.AddRectangle(r);
++                return p;
++            }
++            p.AddArc(r.X, r.Y, d, d, 180, 90);
++            p.AddArc(r.Right - d, r.Y, d, d, 270, 90);
++            p.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
++            p.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
++            p.CloseFigure();
++            return p;
+         }
+ 
+         public static void StyleGrid(DataGridView g)
+@@ -182,7 +219,7 @@
+             g.ColumnHeadersDefaultCellStyle.ForeColor = Gold;
+             g.ColumnHeadersDefaultCellStyle.Font = FontBold();
+             g.ColumnHeadersDefaultCellStyle.SelectionBackColor = PanelAlt;
+-            g.ColumnHeadersHeight = 30;
++            g.ColumnHeadersHeight = 32;
+             g.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+             g.DefaultCellStyle.BackColor = Field;
+             g.DefaultCellStyle.ForeColor = TextPrimary;
+@@ -192,7 +229,7 @@
+             g.AlternatingRowsDefaultCellStyle.ForeColor = TextPrimary;
+             g.AlternatingRowsDefaultCellStyle.SelectionBackColor = Gold;
+             g.AlternatingRowsDefaultCellStyle.SelectionForeColor = OnGold;
+-            g.RowTemplate.Height = 26;
++            g.RowTemplate.Height = 27;
+             g.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+         }
+ 
+@@ -200,8 +237,8 @@
+         {
+             tc.DrawMode = TabDrawMode.OwnerDrawFixed;
+             tc.SizeMode = TabSizeMode.Fixed;
+-            tc.ItemSize = new Size(140, 32);
+-            tc.Padding = new Point(14, 6);
++            tc.ItemSize = new Size(140, 34);
++            tc.Padding = new Point(14, 7);
+             tc.DrawItem -= TabDrawItem;
+             tc.DrawItem += TabDrawItem;
+         }
+@@ -218,13 +255,13 @@
+                 using (var gold = new SolidBrush(Gold))
+                     e.Graphics.FillRectangle(gold, rect.Left, rect.Bottom - 3, rect.Width, 3);
+             TextRenderer.DrawText(e.Graphics, page.Text, selected ? FontBold() : FontBase(), rect,
+-                selected ? GoldBright : TextMuted, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
++                selected ? Gold : TextMuted, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+         }
+ 
+         /// <summary>상단에 타이틀/부제를 담은 헤더 바를 만든다. 완전히 불투명한 색만 사용한다.</summary>
+         public static Panel BuildHeader(string title, string subtitle)
+         {
+-            var header = new Panel { Dock = DockStyle.Top, Height = 58, BackColor = Panel };
++            var header = new Panel { Dock = DockStyle.Top, Height = 60, BackColor = Panel };
+ 
+             var accent = new Panel { Dock = DockStyle.Bottom, Height = 2, BackColor = Gold };
+             header.Controls.Add(accent);
+@@ -233,7 +270,7 @@
+             {
+                 Text = title,
+                 Left = 18,
+-                Top = 8,
++                Top = 9,
+                 AutoSize = true,
+                 Font = FontTitle(),
+                 ForeColor = TextPrimary,
+@@ -243,7 +280,7 @@
+             {
+                 Text = subtitle,
+                 Left = 20,
+-                Top = 34,
++                Top = 36,
+                 AutoSize = true,
+                 Font = FontSub(),
+                 ForeColor = Gold,
+--- 4차/src/Vault.cs
++++ 5차/src/Vault.cs
+@@ -0,0 +1,124 @@
++using System;
++using System.Collections.Generic;
++using System.Security.Cryptography;
++using System.Text;
++
++namespace BunjangAuto
++{
++    /// <summary>
++    /// 로컬에 저장하는 설정·상품 데이터를 이 PC에서만 열어 볼 수 있게 보호한다.
++    /// AES-256(CBC) 으로 암호화하고 HMAC-SHA256 으로 위변조 여부를 함께 확인한다(Encrypt-then-MAC).
++    /// 키는 비밀번호 없이, 이 PC 고유번호(License.GetMachineId)에서 PBKDF2(SHA-256)로 만들어 내므로
++    /// 파일만 복사해 다른 PC로 가져가거나 손으로 편집하면 열리지 않는다.
++    /// </summary>
++    public static class Vault
++    {
++        private const string Magic = "BJAV1";
++        private const int Iterations = 50000;     // 처음 한 번만 치르는 비용(이후 같은 라벨은 메모리에 캐시)
++        private const int KeyBytes = 32;          // AES-256
++        private const int MacBytes = 32;          // HMAC-SHA256
++        private const int IvBytes = 16;
++
++        private static readonly Dictionary<string, byte[][]> _cache = new Dictionary<string, byte[][]>();
++        private static readonly object _gate = new object();
++
++        /// <summary>용도(label)별로 서로 다른 암호키/서명키를 한 번만 유도하고 캐시해 둔다.</summary>
++        private static byte[][] Keys(string label)
++        {
++            lock (_gate)
++            {
++                byte[][] k;
++                if (_cache.TryGetValue(label, out k)) return k;
++
++                string material = "BJA-VAULT-v1|" + label + "|" + License.GetMachineId();
++                byte[] salt = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes("BunjangAuto-Vault-Salt|" + label));
++                byte[] both;
++                using (var kdf = new Rfc2898DeriveBytes(material, salt, Iterations, HashAlgorithmName.SHA256))
++                    both = kdf.GetBytes(KeyBytes * 2);
++
++                var encKey = new byte[KeyBytes];
++                var macKey = new byte[KeyBytes];
++                Buffer.BlockCopy(both, 0, encKey, 0, KeyBytes);
++                Buffer.BlockCopy(both, KeyBytes, macKey, 0, KeyBytes);
++                k = new byte[][] { encKey, macKey };
++                _cache[label] = k;
++                return k;
++            }
++        }
++
++        /// <summary>평문 문자열을 이 PC에서만 풀 수 있는 암호문(한 줄 텍스트)으로 바꾼다.</summary>
++        public static string Protect(string plainText, string label)
++        {
++            var keys = Keys(label);
++            using (var aes = Aes.Create())
++            {
++                aes.KeySize = 256; aes.Mode = CipherMode.CBC; aes.Padding = PaddingMode.PKCS7;
++                aes.Key = keys[0];
++                aes.GenerateIV();
++                byte[] pt = Encoding.UTF8.GetBytes(plainText ?? "");
++                byte[] ct;
++                using (var enc = aes.CreateEncryptor()) ct = enc.TransformFinalBlock(pt, 0, pt.Length);
++
++                byte[] payload = new byte[IvBytes + ct.Length];
++                Buffer.BlockCopy(aes.IV, 0, payload, 0, IvBytes);
++                Buffer.BlockCopy(ct, 0, payload, IvBytes, ct.Length);
++
++                byte[] mac;
++                using (var h = new HMACSHA256(keys[1])) mac = h.ComputeHash(payload);
++
++                byte[] all = new byte[payload.Length + MacBytes];
++                Buffer.BlockCopy(payload, 0, all, 0, payload.Length);
++                Buffer.BlockCopy(mac, 0, all, payload.Length, MacBytes);
++                return Magic + ":" + Convert.ToBase64String(all);
++            }
++        }
++
++        /// <summary>Protect() 로 만든 값을 되돌린다. 형식이 다르거나, 위조되었거나, 다른 PC 것이면 예외를 던진다.</summary>
++        public static string Unprotect(string stored, string label)
++        {
++            if (string.IsNullOrEmpty(stored) || !stored.StartsWith(Magic + ":"))
++                throw new CryptographicException("암호화된 형식이 아닙니다.");
++            byte[] all = Convert.FromBase64String(stored.Substring(Magic.Length + 1));
++            if (all.Length < IvBytes + MacBytes + 1)
++                throw new CryptographicException("손상된 데이터입니다.");
++
++            var keys = Keys(label);
++            int payloadLen = all.Length - MacBytes;
++            byte[] payload = new byte[payloadLen];
++            byte[] mac = new byte[MacBytes];
++            Buffer.BlockCopy(all, 0, payload, 0, payloadLen);
++            Buffer.BlockCopy(all, payloadLen, mac, 0, MacBytes);
++
++            byte[] expect;
++            using (var h = new HMACSHA256(keys[1])) expect = h.ComputeHash(payload);
++            if (!FixedTimeEquals(mac, expect))
++                throw new CryptographicException("데이터가 손상되었거나 다른 PC에서 만든 파일입니다.");
++
++            byte[] iv = new byte[IvBytes];
++            byte[] ct = new byte[payloadLen - IvBytes];
++            Buffer.BlockCopy(payload, 0, iv, 0, IvBytes);
++            Buffer.BlockCopy(payload, IvBytes, ct, 0, ct.Length);
++
++            using (var aes = Aes.Create())
++            {
++                aes.KeySize = 256; aes.Mode = CipherMode.CBC; aes.Padding = PaddingMode.PKCS7;
++                aes.Key = keys[0]; aes.IV = iv;
++                using (var dec = aes.CreateDecryptor())
++                    return Encoding.UTF8.GetString(dec.TransformFinalBlock(ct, 0, ct.Length));
++            }
++        }
++
++        public static bool IsProtected(string stored)
++        {
++            return !string.IsNullOrEmpty(stored) && stored.StartsWith(Magic + ":");
++        }
++
++        private static bool FixedTimeEquals(byte[] a, byte[] b)
++        {
++            if (a.Length != b.Length) return false;
++            int diff = 0;
++            for (int i = 0; i < a.Length; i++) diff |= a[i] ^ b[i];
++            return diff == 0;
++        }
++    }
++}

@@ -1,0 +1,17 @@
+{
+  "selection_reason": "명령 경로만 보정하며 구현 및 모델 판단은 그대로",
+  "after_argv": [
+    "C:\\Users\\PUVKID\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-"
+  ],
+  "role": "build",
+  "effort": "medium",
+  "cause": "python 명령이 WindowsApps 설치 별칭을 가리켜 실행 실패",
+  "before_argv": [
+    "python",
+    "-"
+  ],
+  "method": "동일 stdin 편집 스크립트를 번들 Python으로 실행",
+  "model": "gpt-6.1-sol",
+  "new_observation": "load_workspace_dependencies가 번들 Python 절대 경로를 반환했고 파일 존재 확인"
+}

@@ -1,0 +1,23 @@
+{
+  "new_observation": "실제 파일 검색 및 중앙 도구 오류로 정확한 경로와 필수 배열 확인",
+  "method": "읽기 경로와 기록 JSON 인자만 보정",
+  "role": "main",
+  "selection_reason": "제품 코드 변경 없이 확정된 입력 오류이므로 같은 main 유지",
+  "model": "gpt-6.1-sol",
+  "before_argv": [
+    "rg",
+    "-n",
+    "src/AutomationController.cs",
+    "src/BotRunner.cs",
+    "src/UsageQuota.cs"
+  ],
+  "cause": "소스 파일 위치를 확인하기 전에 src 직하위 경로를 지정함",
+  "effort": "medium",
+  "after_argv": [
+    "rg",
+    "-n",
+    "src/UI/AutomationController.cs",
+    "src/Runner.cs",
+    "src/Security/UsageQuota.cs"
+  ]
+}

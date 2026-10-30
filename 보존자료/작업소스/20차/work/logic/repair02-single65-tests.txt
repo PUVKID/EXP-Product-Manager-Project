@@ -1,0 +1,5 @@
+PASS 회차 종료 응답
+목록 진단 {"count":65,"attempts":65,"running":false,"active":true,"notice":"","blockedReason":"","nextRun":"2026-10-26T16:02:00.0000000","lastRegistered":65,"success":65,"failure":0,"edition":"Pro","quota":"오늘 65 / 100개  ·  추가 등록권 0개","fixtureRoot":"C:\\Users\\PUVKID\\AppData\\Local\\Temp\\Lumivolt-tests-85364","ledgerFile":true,"registry":"Software\\EXP\\Tests\\85364"}
+PASS 65개 전체 목록 첫 회차 기존 상품 포함
+PASS 65개 회차 상태
+BATCH: 3 passed, 0 failed

@@ -1,0 +1,17 @@
+PASS dialog keyboard actions Light
+PASS dialog confirmation Light
+PASS input forwards edits Light
+PASS readonly preserved Light
+PASS typed numeric value Light
+PASS plus button value Light
+PASS maximum respected Light
+PASS minimum respected Light
+PASS dialog keyboard actions Dark
+PASS dialog confirmation Dark
+PASS input forwards edits Dark
+PASS readonly preserved Dark
+PASS typed numeric value Dark
+PASS plus button value Dark
+PASS maximum respected Dark
+PASS minimum respected Dark
+SURFACES: 16 passed

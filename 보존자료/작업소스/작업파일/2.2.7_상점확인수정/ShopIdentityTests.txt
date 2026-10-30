@@ -1,0 +1,24 @@
+PASS authenticated account A
+PASS account switch uses fresh account B
+PASS string preserves 20 digit id
+PASS logged out
+PASS boolean must not be string
+PASS expired session
+PASS server failure
+PASS timeout
+PASS missing data
+PASS bad json
+PASS empty response
+PASS invalid id
+PASS zero id
+PASS negative id
+PASS non canonical id
+PASS too long id
+PASS missing id
+PASS numeric boundary not normalized
+PASS real marketplace
+PASS lookalike domain rejected
+PASS http rejected
+PASS wrong port rejected
+PASS untrusted page rejected
+SHOP IDENTITY: 23 passed, 0 failed

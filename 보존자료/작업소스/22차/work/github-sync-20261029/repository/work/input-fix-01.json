@@ -1,0 +1,21 @@
+{
+  "effort": "medium",
+  "cause": "등록 검사 argv의 일반 설치 Git 경로가 현재 PC에 없음",
+  "selection_reason": "부모가 확인한 설치 경로의 명령 입력 보정이며 제품 코드와 수락 기준 변경이 없어 main에서 수행",
+  "method": "검사 argv 첫 실행 파일 경로만 실제 번들 Git으로 변경하며 diff --cached --check와 cwd/시간 상한은 동일 유지",
+  "model": "gpt-6.1-sol",
+  "new_observation": "git-spec-path-failure.json에 실패 원문 보존. 번들 Git 2.53.0 실행과 정상 저장소 명령 성공으로 실제 경로 확인",
+  "before_argv": [
+    "C:\\Program Files\\Git\\cmd\\git.exe",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "role": "main",
+  "after_argv": [
+    "C:\\Users\\PUVKID\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd\\git.exe",
+    "diff",
+    "--cached",
+    "--check"
+  ]
+}

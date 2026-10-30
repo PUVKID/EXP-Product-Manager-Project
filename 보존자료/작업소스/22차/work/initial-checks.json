@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "total_timeout_seconds": 125,
+  "checks": [
+    {
+      "cwd": ".",
+      "id": "보안-UTF8",
+      "timeout_seconds": 15,
+      "argv": [
+        "C:\\Users\\PUVKID\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "tools/verify_scope.py"
+      ]
+    },
+    {
+      "cwd": ".",
+      "id": "전체목록반복",
+      "timeout_seconds": 25,
+      "argv": [
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\소스코드\\dist\\BatchRepeatTests.exe"
+      ]
+    },
+    {
+      "cwd": ".",
+      "id": "DPI200",
+      "timeout_seconds": 30,
+      "argv": [
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\소스코드\\dist\\DpiLayoutTests.exe",
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\work\\independent-dpi2",
+        "2"
+      ]
+    },
+    {
+      "cwd": ".",
+      "id": "화면-모션",
+      "timeout_seconds": 30,
+      "argv": [
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\소스코드\\dist\\RedesignUiTests.exe",
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\work\\independent-ui"
+      ]
+    },
+    {
+      "argv": [
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\소스코드\\dist\\RepeatDesignUiTests.exe",
+        "D:\\2026\\EXP 프로젝트(번장 상품 등록 매크로)\\22차\\work\\independent-repeat-ui"
+      ],
+      "timeout_seconds": 25,
+      "id": "선택-입체모션",
+      "cwd": "."
+    }
+  ]
+}

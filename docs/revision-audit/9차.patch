@@ -1,0 +1,2347 @@
+--- 8차/EXP.csproj
++++ 9차/EXP.csproj
+@@ -0,0 +1,35 @@
++<Project Sdk="Microsoft.NET.Sdk">
++  <!-- Windows SDK project. Verified build path: build/Build.ps1 using the Windows .NET Framework compiler. -->
++  <PropertyGroup>
++    <OutputType>WinExe</OutputType>
++    <TargetFramework>net472</TargetFramework>
++    <UseWindowsForms>true</UseWindowsForms>
++    <AssemblyName>EXP</AssemblyName>
++    <RootNamespace>BunjangAuto</RootNamespace>
++    <LangVersion>7.3</LangVersion>
++    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
++    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
++    <ApplicationIcon>resources\app.ico</ApplicationIcon>
++    <ApplicationManifest>resources\app.manifest</ApplicationManifest>
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <Prefer32Bit>false</Prefer32Bit>
++    <Nullable>disable</Nullable>
++    <NoWarn>1701;1702;0618;0168;0219;0414;0649;0169;0108</NoWarn>
++  </PropertyGroup>
++  <ItemGroup>
++    <Compile Include="src\**\*.cs" />
++    <Compile Include="shared\*.cs" />
++    <Reference Include="System.Management" />
++    <Reference Include="System.Security" />
++    <Reference Include="System.IO.Compression" />
++    <Reference Include="System.IO.Compression.FileSystem" />
++  </ItemGroup>
++  <!-- lib\*.dll: 컴파일 참조 + exe 안에 'lib.<이름>.dll' 로 내장 (Program.cs 의 AssemblyResolve 가 꺼내 쓴다. 단일 exe 유지) -->
++  <ItemGroup>
++    <LibDll Include="lib\*.dll" />
++    <Reference Include="%(LibDll.Filename)"><HintPath>%(LibDll.Identity)</HintPath><Private>false</Private></Reference>
++    <EmbeddedResource Include="@(LibDll)" LogicalName="lib.%(Filename)%(Extension)" />
++    <EmbeddedResource Include="resources\fonts\NanumGothicBold.ttf" LogicalName="font.NanumGothicBold.ttf" />
++    <EmbeddedResource Include="resources\help\*.md" LogicalName="help.%(Filename)%(Extension)" />
++  </ItemGroup>
++</Project>
+--- 8차/Lumivolt.csproj
++++ 9차/Lumivolt.csproj
+@@ -1,35 +0,0 @@
+-<Project Sdk="Microsoft.NET.Sdk">
+-  <!-- Windows SDK project. Verified build path: build/Build.ps1 using the Windows .NET Framework compiler. -->
+-  <PropertyGroup>
+-    <OutputType>WinExe</OutputType>
+-    <TargetFramework>net472</TargetFramework>
+-    <UseWindowsForms>true</UseWindowsForms>
+-    <AssemblyName>Lumivolt</AssemblyName>
+-    <RootNamespace>BunjangAuto</RootNamespace>
+-    <LangVersion>7.3</LangVersion>
+-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+-    <ApplicationIcon>resources\app.ico</ApplicationIcon>
+-    <ApplicationManifest>resources\app.manifest</ApplicationManifest>
+-    <PlatformTarget>AnyCPU</PlatformTarget>
+-    <Prefer32Bit>false</Prefer32Bit>
+-    <Nullable>disable</Nullable>
+-    <NoWarn>1701;1702;0618;0168;0219;0414;0649;0169;0108</NoWarn>
+-  </PropertyGroup>
+-  <ItemGroup>
+-    <Compile Include="src\**\*.cs" />
+-    <Compile Include="shared\*.cs" />
+-    <Reference Include="System.Management" />
+-    <Reference Include="System.Security" />
+-    <Reference Include="System.IO.Compression" />
+-    <Reference Include="System.IO.Compression.FileSystem" />
+-  </ItemGroup>
+-  <!-- lib\*.dll: 컴파일 참조 + exe 안에 'lib.<이름>.dll' 로 내장 (Program.cs 의 AssemblyResolve 가 꺼내 쓴다. 단일 exe 유지) -->
+-  <ItemGroup>
+-    <LibDll Include="lib\*.dll" />
+-    <Reference Include="%(LibDll.Filename)"><HintPath>%(LibDll.Identity)</HintPath><Private>false</Private></Reference>
+-    <EmbeddedResource Include="@(LibDll)" LogicalName="lib.%(Filename)%(Extension)" />
+-    <EmbeddedResource Include="resources\fonts\NanumGothicBold.ttf" LogicalName="font.NanumGothicBold.ttf" />
+-    <EmbeddedResource Include="resources\help\*.md" LogicalName="help.%(Filename)%(Extension)" />
+-  </ItemGroup>
+-</Project>
+--- 8차/admin/AdminWorkflow.cs
++++ 9차/admin/AdminWorkflow.cs
+@@ -0,0 +1,42 @@
++using System;
++using System.IO;
++using System.Collections.Generic;
++using BunjangAuto;
++using Lumivolt.Security;
++namespace Lumivolt.Admin
++{
++    public static class AdminWorkflow
++    {
++        public static bool IsMatchingVault(string folder)
++        {
++            try
++            {
++                var pub = IssuerService.Public(folder); byte[] expected;
++                return TrustedKeys.All.TryGetValue((string)pub["keyId"], out expected) && Convert.ToBase64String(expected) == (string)pub["publicKey"];
++            }
++            catch { return false; }
++        }
++        public static string FindVault()
++        {
++            var folders = new List<string>();
++            try { folders.Add(IssuerService.LastVault); } catch { }
++            folders.Add(AppDomain.CurrentDomain.BaseDirectory);
++            var parent = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar));
++            if (parent != null) folders.Add(parent.FullName);
++            // Existing administrator vaults only. Never generate or switch to a new signing identity silently.
++            try { folders.AddRange(Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Lumivolt_AdminVault_*", SearchOption.TopDirectoryOnly)); } catch { }
++            foreach (var folder in folders) if (!String.IsNullOrWhiteSpace(folder) && IsMatchingVault(folder)) return folder;
++            return "";
++        }
++        public static string Issue(string folder, string request, string name, DateTime? expires, string edition)
++        {
++            if (!IsMatchingVault(folder)) throw new InvalidOperationException("이 앱에 맞는 발급키를 찾지 못했습니다. 관리 메뉴에서 기존 키를 연결해 주세요.");
++            request = LicenseText.Normalize(request, "LVR3");
++            var req = LicenseProtocol.VerifyRequest(request, DateTime.UtcNow);
++            if (String.IsNullOrWhiteSpace(name)) name = "고객-" + LicenseProtocol.Fingerprint(Convert.FromBase64String((string)req["devicePublicKey"])).Substring(0, 8);
++            var token = IssuerService.Issue(folder, request, name, expires, edition);
++            LicenseProtocol.VerifyLicense(token, TrustedKeys.All, DateTime.UtcNow, "automation");
++            return token;
++        }
++    }
++}
+--- 8차/admin/AssemblyInfo.cs
++++ 9차/admin/AssemblyInfo.cs
+@@ -0,0 +1,6 @@
++using System.Reflection;
++[assembly: AssemblyTitle("EXP Master")]
++[assembly: AssemblyProduct("EXP Master")]
++[assembly: AssemblyDescription("EXP 오프라인 라이선스 및 추가 등록권 발급")]
++[assembly: AssemblyVersion("2.2.0.0")]
++[assembly: AssemblyFileVersion("2.2.0.0")]
+--- 8차/admin/CreditIssuer.cs
++++ 9차/admin/CreditIssuer.cs
+@@ -0,0 +1,22 @@
++using System;
++using System.IO;
++using System.Collections.Generic;
++using Newtonsoft.Json.Linq;
++using Org.BouncyCastle.Crypto.Signers;
++using Lumivolt.Security;
++namespace Lumivolt.Admin {
++    public static class CreditIssuer {
++        public static string Issue(string folder,string request,int quantity) {
++            if (!AdminWorkflow.IsMatchingVault(folder)) throw new InvalidOperationException("이 앱과 일치하는 발급키가 필요합니다.");
++            if (quantity < 1 || quantity > 100000) throw new FormatException("수량은 1~100000 사이여야 합니다.");
++            var req=LicenseProtocol.VerifyRequest(LicenseText.Normalize(request,"LVR3"),DateTime.UtcNow);
++            var key=IssuerService.Load(folder); var pub=key.GeneratePublicKey().GetEncoded();
++            var o=new JObject { {"version",1},{"product","EXP"},{"creditId",Guid.NewGuid().ToString("D")},{"devicePublicKey",req["devicePublicKey"].DeepClone()},{"keyId",LicenseProtocol.KeyId(pub)},{"issuedUtc",LicenseProtocol.Utc(DateTime.UtcNow)},{"quantity",quantity} };
++            var data=LicenseProtocol.Bytes(o); var s=new Ed25519Signer(); s.Init(true,key); s.BlockUpdate(data,0,data.Length);
++            var token=LicenseProtocol.Wrap("EXPC1",data,s.GenerateSignature());
++            CreditProtocol.Verify(token,new Dictionary<string,byte[]> {{LicenseProtocol.KeyId(pub),pub}},DateTime.UtcNow);
++            string dir=Path.Combine(folder,"credits"); Directory.CreateDirectory(dir);
++            File.WriteAllText(Path.Combine(dir,(string)o["creditId"]+".expcredit"),token,LicenseProtocol.Utf8); return token;
++        }
++    }
++}
+--- 8차/admin/IssuerService.cs
++++ 9차/admin/IssuerService.cs
+@@ -59,16 +59,21 @@
+             return new JObject { { "keyId", LicenseProtocol.KeyId(pub) }, { "publicKey", Convert.ToBase64String(pub) } };
+         }
+         public static void ExportPublic(string directory, string file) { File.WriteAllText(file, Public(directory).ToString(), LicenseProtocol.Utf8); }
+-        public static string Issue(string directory, string request, string name, DateTime? expires)
++        public static string Issue(string directory, string request, string name, DateTime? expires) { return Issue(directory, request, name, expires, "Pro"); }
++        public static string Issue(string directory, string request, string name, DateTime? expires, string edition)
++        { return Issue(directory,request,name,expires,edition,false); }
++        internal static string Issue(string directory, string request, string name, DateTime? expires, string edition, bool trial)
+         {
+             if (String.IsNullOrWhiteSpace(name) || name.Trim().Length > 120) throw new FormatException("이름/메모를 1~120자로 입력해 주세요.");
+             if (expires.HasValue && expires.Value.ToUniversalTime() <= DateTime.UtcNow) throw new FormatException("미래의 만료일을 선택해 주세요.");
++            EditionPolicy.DailyLimit(edition);
+             var req = LicenseProtocol.VerifyRequest(request, DateTime.UtcNow);
+             var key = Load(directory); var pub = key.GeneratePublicKey().GetEncoded();
+-            var o = new JObject { { "version", 3 }, { "licenseId", Guid.NewGuid().ToString("D") }, { "product", LicenseProtocol.Product }, { "name", name.Trim() }, { "issuedUtc", LicenseProtocol.Utc(DateTime.UtcNow) }, { "expiresUtc", expires.HasValue ? (JToken)LicenseProtocol.Utc(expires.Value) : JValue.CreateNull() }, { "perpetual", !expires.HasValue }, { "features", new JArray("automation") }, { "devicePublicKey", req["devicePublicKey"].DeepClone() }, { "keyId", LicenseProtocol.KeyId(pub) }, { "status", "active" } };
++            var o = new JObject { { "version", 4 }, { "edition", edition }, { "licenseId", Guid.NewGuid().ToString("D") }, { "product", "EXP" }, { "name", name.Trim() }, { "issuedUtc", LicenseProtocol.Utc(DateTime.UtcNow) }, { "expiresUtc", expires.HasValue ? (JToken)LicenseProtocol.Utc(expires.Value) : JValue.CreateNull() }, { "perpetual", !expires.HasValue }, { "features", new JArray("automation") }, { "devicePublicKey", req["devicePublicKey"].DeepClone() }, { "keyId", LicenseProtocol.KeyId(pub) }, { "status", "active" } };
++            o["trial"] = trial;
+             byte[] data = LicenseProtocol.Bytes(o);
+             var signer = new Ed25519Signer(); signer.Init(true, key); signer.BlockUpdate(data, 0, data.Length);
+-            string token = LicenseProtocol.Wrap("LV3", data, signer.GenerateSignature());
++            string token = LicenseProtocol.Wrap("LV4", data, signer.GenerateSignature());
+             // Verify before storing. Issuance records contain public license data only.
+             LicenseProtocol.VerifyLicense(token, new Dictionary<string, byte[]> { { LicenseProtocol.KeyId(pub), pub } }, DateTime.UtcNow, "automation");
+             string records = Path.Combine(directory, "records"); Directory.CreateDirectory(records);
+@@ -79,7 +84,7 @@
+         {
+             var pub = Load(directory).GeneratePublicKey().GetEncoded();
+             // Inspect historical expired records at their issuance time, preserving signature verification.
+-            byte[] data, sig; LicenseProtocol.Decode(token, "LV3", out data, out sig);
++            byte[] data, sig; LicenseProtocol.Decode(token, token.StartsWith("LV4.") ? "LV4" : "LV3", out data, out sig);
+             var o = LicenseProtocol.Parse(data);
+             return LicenseProtocol.VerifyLicense(token, new Dictionary<string, byte[]> { { LicenseProtocol.KeyId(pub), pub } }, LicenseProtocol.Time(LicenseProtocol.Text(o, "issuedUtc", 32)), "automation");
+         }
+--- 8차/admin/LicenseAdmin.cs
++++ 9차/admin/LicenseAdmin.cs
+@@ -27,7 +27,10 @@
+             if (args.Length == 2 && args[0] == "--create-vault") IssuerService.Create(args[1]);
+             else if (args.Length == 3 && args[0] == "--export-public") IssuerService.ExportPublic(args[1], args[2]);
+             else if (args.Length == 3 && args[0] == "--export-records") IssuerService.ExportRecords(args[1], args[2]);
+-            else if (args.Length == 6 && args[0] == "--issue") File.WriteAllText(args[5], IssuerService.Issue(args[1], LicenseProtocol.ReadFile(args[2]), args[3], args[4] == "forever" ? (DateTime?)null : LicenseProtocol.Time(args[4])), LicenseProtocol.Utf8);
++            else if (args.Length == 6 && args[0] == "--issue") File.WriteAllText(args[5], AdminWorkflow.Issue(args[1], LicenseProtocol.ReadFile(args[2]), args[3], args[4] == "forever" ? (DateTime?)null : LicenseProtocol.Time(args[4]), "Pro"), LicenseProtocol.Utf8);
++            else if (args.Length == 7 && args[0] == "--issue-edition") File.WriteAllText(args[6], AdminWorkflow.Issue(args[1],LicenseProtocol.ReadFile(args[2]),args[3],args[4] == "forever" ? (DateTime?)null : LicenseProtocol.Time(args[4]),args[5]),LicenseProtocol.Utf8);
++            else if (args.Length == 5 && args[0] == "--trial") File.WriteAllText(args[4], TrialIssuer.Issue(args[1],LicenseProtocol.ReadFile(args[2]),args[3]),LicenseProtocol.Utf8);
++            else if (args.Length == 5 && args[0] == "--credits") File.WriteAllText(args[4],CreditIssuer.Issue(args[1],LicenseProtocol.ReadFile(args[2]),int.Parse(args[3])),LicenseProtocol.Utf8);
+             else return 2;
+             return 0;
+         }
+@@ -38,88 +41,88 @@
+ 
+ class AdminForm : Form
+ {
+-    string vault = "";
+-    Label lblKey;
+-    TextBox txtName, txtMid, txtOut;
+-    DateTimePicker dtp;
+-    NumericUpDown numDays;
+-    bool _sync;
+-    CheckBox chkForever;
+-
+-
++    string vault = ""; Label lblKey, status, summary;
++    TextBox txtName, txtMid, txtOut; DateTimePicker dtp; NumericUpDown numDays, numCredits;
++    CheckBox chkForever; ComboBox edition, mode; bool syncing;
+     public AdminForm()
+     {
+-        Text = "Lumivolt - 라이선스 발급 (관리자 전용)";
+-        Width = 600; Height = 600;
+-        StartPosition = FormStartPosition.CenterScreen;
+-        Font = Theme.FontBase();
+-
+-        var header = Theme.BuildHeader("라이선스 발급", "관리자 전용   ·   절대 배포 금지");
+-        lblKey = new Label { Left = 16, Top = 76, Width = 560, Height = 34 };
+-        var l1 = new Label { Left = 16, Top = 118, AutoSize = true, Text = "사용자 이름 / 메모" };
+-        txtName = new TextBox { Left = 16, Top = 140, Width = 550 };
+-        var l2 = new Label { Left = 16, Top = 174, AutoSize = true, Text = "기기 등록 요청 (Lumivolt / automation 권한)" };
+-        txtMid = new TextBox { Left = 16, Top = 196, Width = 418, Font = Theme.FontMono(11f) };
+-        var l3 = new Label { Left = 16, Top = 234, AutoSize = true, Text = "사용 기간 (만료일 또는 일수 입력, 만료일 당일 23:59까지 사용)" };
+-        dtp = new DateTimePicker { Left = 16, Top = 256, Width = 160, Format = DateTimePickerFormat.Short, Value = DateTime.Today.AddDays(30) };
+-        chkForever = new CheckBox { Left = 190, Top = 258, AutoSize = true, Text = "무기한" };
+-        numDays = new NumericUpDown { Left = 300, Top = 254, Width = 70, Minimum = 1, Maximum = 3650, Value = 30 };
+-        var lblDays = new Label { Left = 374, Top = 258, AutoSize = true, Text = "일 (오늘부터)" };
+-        var b7 = new Button { Left = 16, Top = 284, Width = 60, Height = 28, Text = "7일" };
+-        var b30 = new Button { Left = 80, Top = 284, Width = 60, Height = 28, Text = "30일" };
+-        var b90 = new Button { Left = 144, Top = 284, Width = 60, Height = 28, Text = "90일" };
+-        var b365 = new Button { Left = 208, Top = 284, Width = 60, Height = 28, Text = "1년" };
+-        var bGen = new Button { Left = 16, Top = 320, Width = 550, Height = 36, Text = "라이선스 키 발급" };
+-        var l4 = new Label { Left = 16, Top = 366, AutoSize = true, Text = "발급된 키 (사용자에게 그대로 전달)" };
+-        txtOut = new TextBox { Left = 16, Top = 388, Width = 550, Height = 120, Multiline = true, ScrollBars = ScrollBars.Vertical, ReadOnly = true, Font = Theme.FontMono(9.5f) };
+-        var bCopy = new Button { Left = 16, Top = 518, Width = 130, Height = 30, Text = "키 복사" };
+-        var bRequest = new Button { Left = 442, Top = 194, Width = 124, Height = 28, Text = "요청 열기" };
+-        var bSave = new Button { Left = 154, Top = 518, Width = 120, Height = 30, Text = "파일 저장" };
+-        var bHistory = new Button { Left = 282, Top = 518, Width = 120, Height = 30, Text = "발급 기록" };
+-        var bKeys = new Button { Left = 410, Top = 518, Width = 156, Height = 30, Text = "발급키 관리" };
+-        Controls.AddRange(new Control[] { bRequest, bSave, bHistory, bKeys, lblKey, l1, txtName, l2, txtMid, l3, dtp, chkForever, numDays, lblDays, b7, b30, b90, b365, bGen, l4, txtOut, bCopy, header });
+-
+-        Safe(delegate { if (Directory.Exists(IssuerService.LastVault)) LoadVault(IssuerService.LastVault); else lblKey.Text = "발급키 관리에서 관리자 보관 폴더를 선택해 주세요."; });
+-
+-        bRequest.Click += delegate { Safe(delegate { using (var d = new OpenFileDialog { Filter = "등록 요청|*.lvrequest" }) if (d.ShowDialog(this) == DialogResult.OK) { string t = LicenseProtocol.ReadFile(d.FileName); LicenseProtocol.VerifyRequest(t, DateTime.UtcNow); txtMid.Text = t; } }); };
+-        bSave.Click += delegate { Safe(delegate { if (!txtOut.Text.StartsWith("LV3.")) throw new InvalidOperationException("먼저 발급해 주세요."); using (var d = new SaveFileDialog { Filter = "라이선스|*.lvlicense", FileName = "Lumivolt.lvlicense" }) if (d.ShowDialog(this) == DialogResult.OK) File.WriteAllText(d.FileName, txtOut.Text, LicenseProtocol.Utf8); }); };
+-        var history = new ContextMenuStrip();
+-        history.Items.Add("기존 라이선스 조회", null, delegate { Safe(delegate { RequireVault(); using (var d = new OpenFileDialog { Filter = "라이선스|*.lvlicense", InitialDirectory = Path.Combine(vault, "records") }) if (d.ShowDialog(this) == DialogResult.OK) txtOut.Text = IssuerService.Inspect(vault, LicenseProtocol.ReadFile(d.FileName)).ToString(); }); });
+-        history.Items.Add("발급 기록 JSON 내보내기", null, delegate { Safe(delegate { RequireVault(); using (var d = new SaveFileDialog { Filter = "JSON|*.json", FileName = "issued-licenses.json" }) if (d.ShowDialog(this) == DialogResult.OK) IssuerService.ExportRecords(vault, d.FileName); }); });
+-        bHistory.Click += delegate { history.Show(bHistory, new Point(0, bHistory.Height)); };
+-        var keys = new ContextMenuStrip();
+-        keys.Items.Add("기존 발급키 보관 폴더 열기", null, delegate { ChooseVault(false); });
+-        keys.Items.Add("새 발급키 생성 (고객 앱 재빌드 필요)", null, delegate { ChooseVault(true); });
+-        keys.Items.Add("공개키 내보내기", null, delegate { Safe(delegate { RequireVault(); using (var d = new SaveFileDialog { Filter = "공개키 JSON|*.json", FileName = "issuer-public.json" }) if (d.ShowDialog(this) == DialogResult.OK) IssuerService.ExportPublic(vault, d.FileName); }); });
+-        keys.Items.Add("암호화 백업 만들기", null, delegate { Safe(delegate { RequireVault(); using (var d = new SaveFileDialog { Filter = "암호화 키 백업|*.lvbackup", FileName = "Lumivolt-issuer.lvbackup" }) if (d.ShowDialog(this) == DialogResult.OK) { string password = Password(true); if (password != null) { IssuerService.Backup(vault, d.FileName, password); MessageBox.Show(this, "백업을 만들었습니다. 백업과 암호는 별도로 보관하세요."); } } }); });
+-        keys.Items.Add("암호화 백업에서 복원", null, delegate { Safe(delegate { using (var d = new OpenFileDialog { Filter = "암호화 키 백업|*.lvbackup" }) if (d.ShowDialog(this) == DialogResult.OK) { using (var folder = new FolderBrowserDialog { Description = "복원할 비어 있는 새 관리자 폴더" }) if (folder.ShowDialog(this) == DialogResult.OK) { string password = Password(false); if (password != null) { IssuerService.Restore(d.FileName, folder.SelectedPath, password); LoadVault(folder.SelectedPath); } } } }); });
+-        bKeys.Click += delegate { keys.Show(bKeys, new Point(0, bKeys.Height)); };
+-        Theme.MarkPrimary(bGen);
+-        Theme.Apply(this);
+-        chkForever.CheckedChanged += delegate { dtp.Enabled = !chkForever.Checked; numDays.Enabled = !chkForever.Checked; };
+-        numDays.ValueChanged += delegate { if (_sync) return; _sync = true; dtp.Value = DateTime.Today.AddDays((double)numDays.Value); _sync = false; };
+-        dtp.ValueChanged += delegate
+-        {
+-            if (_sync) return; _sync = true;
+-            int d = (int)(dtp.Value.Date - DateTime.Today).TotalDays;
+-            numDays.Value = Math.Max(numDays.Minimum, Math.Min(numDays.Maximum, d));
+-            _sync = false;
++        Theme.Set(Design.AdminDark ? ThemePalette.DarkPal : ThemePalette.Light);
++        Text = Brand.Master; ClientSize = new Size(980,760); Font = Theme.FontBase(); StartPosition = FormStartPosition.CenterScreen;
++        FormBorderStyle = FormBorderStyle.FixedSingle; MaximizeBox = false;
++        Controls.Add(new BrandMark { Left=32,Top=30,Width=46,Height=46 });
++        Controls.Add(Design.Label(Brand.Master,94,28,430,38,24,"t"));
++        Controls.Add(Design.Label("윤석님의 라이선스 워크스페이스",96,71,420,24,10,"m"));
++        var light=Design.Button("라이트",754,36,90,false); var dark=Design.Button("다크",852,36,90,false);
++        light.Click+=delegate { SetTheme(false); }; dark.Click+=delegate { SetTheme(true); };
++        Controls.AddRange(new Control[] { light,dark });
++        lblKey=Design.Label("기존 발급키를 찾는 중…",34,116,840,25,10,"m"); Controls.Add(lblKey);
++        var input=new SoftCard { Left=32,Top=160,Width=458,Height=516 };
++        input.Controls.Add(Design.Label("발급 설정",24,20,400,28,16,"t"));
++        input.Controls.Add(Design.Label("발급 종류",24,64,400,22,10,"m"));
++        mode=Combo(24,92,410,new[]{"정식 라이선스","Pro 체험판 · 발급 후 3시간","Pro 추가 등록권"});
++        input.Controls.Add(mode);
++        input.Controls.Add(Design.Label("고객 메모 · 체험판은 신청 이메일 필수",24,132,410,23,10,"m"));
++        txtName=Design.Input("customer",24,162,410,34,false); input.Controls.Add(txtName);
++        input.Controls.Add(Design.Label("고객 등록코드",24,210,250,23,10,"m"));
++        var paste=Design.Button("붙여넣기",310,202,124,false);
++        txtMid=Design.Input("request",24,246,410,70,false); input.Controls.AddRange(new Control[]{paste,txtMid});
++        paste.Click+=delegate { Safe(delegate { txtMid.Text=LicenseText.Normalize(Clipboard.GetText(),"LVR3"); status.Text="등록코드를 확인했습니다."; }); };
++        input.Controls.Add(Design.Label("제품 등급",24,330,180,22,10,"m"));
++        edition=Combo(24,360,192,new[]{"Classic · 하루 25개","Studio · 50개 + 반복","Pro · 100개 + 반복"});
++        input.Controls.Add(edition);
++        numDays=new NumericUpDown { Left=236,Top=360,Width=80,Minimum=1,Maximum=3650,Value=30 };
++        chkForever=new CheckBox { Left=328,Top=359,Width=104,Text="무기한" };
++        input.Controls.Add(Design.Label("사용 기간 (일)",236,330,198,22,10,"m"));
++        input.Controls.AddRange(new Control[]{numDays,chkForever});
++        dtp=new DateTimePicker { Left=24,Top=410,Width=192,Format=DateTimePickerFormat.Short,Value=DateTime.Today.AddDays(29) };
++        var dateHint=Design.Label("선택한 만료일 23:59까지",236,414,200,24,9,"m");
++        numCredits=new NumericUpDown { Left=24,Top=410,Width=192,Minimum=1,Maximum=100000,Value=100,Visible=false };
++        input.Controls.AddRange(new Control[]{dtp,dateHint,numCredits});
++        summary=Design.Label("",24,462,410,40,10,"m"); input.Controls.Add(summary);
++        var output=new SoftCard { Left=506,Top=160,Width=442,Height=516 };
++        output.Controls.Add(Design.Label("고객에게 보낼 키",24,20,394,30,16,"t"));
++        output.Controls.Add(Design.Label("발급하면 복사되고, 이력도 자동으로 저장됩니다.",24,62,394,46,10,"m"));
++        txtOut=Design.Input("issuedKey",24,122,394,194,true); output.Controls.Add(txtOut);
++        var issue=Design.Button("발급하고 복사",24,338,394,true); issue.Height=48; output.Controls.Add(issue);
++        var copy=Design.Button("다시 복사",24,402,190,false); var save=Design.Button("파일로 저장",224,402,194,false); output.Controls.AddRange(new Control[]{copy,save});
++        output.Controls.Add(Design.Label("고객은 받은 키를 붙여 넣기만 하면 됩니다.",24,466,394,30,10,"m"));
++        status=Design.Label("등록코드 → 제품·기간 선택 → 발급하고 복사",34,694,800,44,10,"m");
++        var manage=Design.Button("관리",850,696,98,false);
++        Controls.AddRange(new Control[]{input,output,status,manage});
++        Action sync=delegate {
++            bool normal=mode.SelectedIndex==0, credits=mode.SelectedIndex==2;
++            edition.Enabled=normal; if(!normal) edition.SelectedIndex=2;
++            dtp.Visible=normal; numCredits.Visible=credits; dtp.Enabled=normal&&!chkForever.Checked;
++            numDays.Enabled=normal&&!chkForever.Checked; chkForever.Enabled=normal;
++            dateHint.Text=credits?"추가 등록 가능 횟수":mode.SelectedIndex==1?"발급 시점부터 정확히 3시간":"선택한 만료일 23:59까지";
++            summary.Text=credits?"미사용 잔액 유지 · 같은 키 중복 충전 불가":mode.SelectedIndex==1?"Pro 기능 체험 · 이메일 / PC 중복 발급 차단":"일일 한도는 자정 초기화 · 기본 잔여량 이월 없음";
+         };
+-        b7.Click += delegate { numDays.Value = 7; chkForever.Checked = false; };
+-        b30.Click += delegate { numDays.Value = 30; chkForever.Checked = false; };
+-        b90.Click += delegate { numDays.Value = 90; chkForever.Checked = false; };
+-        b365.Click += delegate { numDays.Value = 365; chkForever.Checked = false; };
+-        bCopy.Click += delegate { if (txtOut.Text.Length > 0) Clipboard.SetText(txtOut.Text); };
+-        bGen.Click += delegate
+-        {
+-            Safe(delegate {
+-                RequireVault();
+-                txtOut.Text = IssuerService.Issue(vault, txtMid.Text, txtName.Text, chkForever.Checked ? (DateTime?)null : dtp.Value.Date.AddDays(1));
+-            });
+-        };
++        mode.SelectedIndexChanged+=delegate { sync(); }; chkForever.CheckedChanged+=delegate { sync(); };
++        numDays.ValueChanged+=delegate { if(syncing)return; syncing=true; dtp.Value=DateTime.Today.AddDays((double)numDays.Value-1); syncing=false; };
++        dtp.ValueChanged+=delegate { if(syncing)return; syncing=true; numDays.Value=Math.Max(1,Math.Min(3650,(int)(dtp.Value.Date-DateTime.Today).TotalDays+1)); syncing=false; };
++        issue.Click+=delegate { Safe(delegate {
++            RequireVault();
++            if(mode.SelectedIndex==1) txtOut.Text=TrialIssuer.Issue(vault,txtMid.Text,txtName.Text);
++            else if(mode.SelectedIndex==2) txtOut.Text=CreditIssuer.Issue(vault,txtMid.Text,(int)numCredits.Value);
++            else txtOut.Text=AdminWorkflow.Issue(vault,txtMid.Text,txtName.Text,chkForever.Checked?(DateTime?)null:dtp.Value.Date.AddDays(1),new[]{"Classic","Studio","Pro"}[edition.SelectedIndex]);
++            try { Clipboard.SetText(txtOut.Text); status.Text="발급 완료 · 복사한 키를 고객에게 보내 주세요."; } catch { status.Text="발급 완료 · 키를 선택해 직접 복사해 주세요."; }
++        }); };
++        copy.Click+=delegate { Safe(delegate { if(txtOut.Text.Length>0)Clipboard.SetText(txtOut.Text); }); };
++        save.Click+=delegate { Safe(delegate { if(txtOut.Text.Length==0)throw new InvalidOperationException("먼저 키를 발급해 주세요."); using(var d=new SaveFileDialog { Filter="EXP 키|*.expkey",FileName="EXP.expkey" }) if(d.ShowDialog(this)==DialogResult.OK)File.WriteAllText(d.FileName,txtOut.Text,LicenseProtocol.Utf8); }); };
++        var menu=new ContextMenuStrip();
++        menu.Items.Add("기존 보안키 연결",null,delegate { ChooseVault(false); });
++        menu.Items.Add("등록코드 파일 열기",null,delegate { Safe(delegate { using(var d=new OpenFileDialog { Filter="등록코드|*.lvrequest" })if(d.ShowDialog(this)==DialogResult.OK)txtMid.Text=LicenseText.Normalize(LicenseProtocol.ReadFile(d.FileName),"LVR3"); }); });
++        menu.Items.Add("발급 이력 폴더",null,delegate { Safe(delegate { RequireVault(); var dir=Path.Combine(vault,"records"); Directory.CreateDirectory(dir); System.Diagnostics.Process.Start("explorer.exe",dir); }); });
++        menu.Items.Add("발급 이력 내보내기",null,delegate { Safe(delegate { RequireVault(); using(var d=new SaveFileDialog { Filter="JSON|*.json",FileName="EXP-records.json" })if(d.ShowDialog(this)==DialogResult.OK)IssuerService.ExportRecords(vault,d.FileName); }); });
++        menu.Items.Add("보안키 암호화 백업",null,delegate { Safe(delegate { RequireVault(); using(var d=new SaveFileDialog { Filter="암호화 백업|*.lvbackup",FileName="EXP-Master.lvbackup" })if(d.ShowDialog(this)==DialogResult.OK){string password=Password(true);if(password!=null)IssuerService.Backup(vault,d.FileName,password);} }); });
++        menu.Items.Add("보안키 백업 복원",null,delegate { Safe(delegate { using(var d=new OpenFileDialog {Filter="암호화 백업|*.lvbackup"})if(d.ShowDialog(this)==DialogResult.OK)using(var dir=new FolderBrowserDialog {Description="비어 있는 새 관리자 폴더"})if(dir.ShowDialog(this)==DialogResult.OK){string password=Password(false);if(password!=null){IssuerService.Restore(d.FileName,dir.SelectedPath,password);LoadVault(dir.SelectedPath);}} }); });
++        manage.Click+=delegate { menu.Show(manage,new Point(0,manage.Height)); };
++        string found=AdminWorkflow.FindVault(); if(found.Length>0)LoadVault(found); else lblKey.Text="기존 보안키를 연결해 주세요. 관리 → 기존 보안키 연결";
++        sync(); Design.Scale(this); Theme.Apply(this);
+     }
+-
+-    void RequireVault() { if (vault.Length == 0) throw new InvalidOperationException("먼저 발급키 보관 폴더를 선택해 주세요."); }
++    ComboBox Combo(int x,int y,int width,string[] values) {var c=new SoftCombo{Left=x,Top=y,Width=width};c.Items.AddRange(values);c.SelectedIndex=0;return c;}
++    void SetTheme(bool dark) { Design.AdminDark=dark;Theme.Set(dark?ThemePalette.DarkPal:ThemePalette.Light);Theme.Apply(this);Dwm.Apply(this,Theme.Current);Invalidate(true); }
++    void RequireVault() { if(!AdminWorkflow.IsMatchingVault(vault))throw new InvalidOperationException("관리 메뉴에서 기존 보안키를 연결해 주세요."); }
+     string Password(bool confirm)
+     {
+         using (var f = new Form { Text = "발급키 백업 암호", Width = 420, Height = confirm ? 220 : 160, StartPosition = FormStartPosition.CenterParent, FormBorderStyle = FormBorderStyle.FixedDialog, MaximizeBox = false, MinimizeBox = false, Font = Theme.FontBase() })
+@@ -134,6 +137,7 @@
+         }
+     }
+     void Safe(Action action) { try { action(); } catch (Exception ex) { MessageBox.Show(this, "작업 실패: " + ex.Message); } }
+-    void LoadVault(string folder) { var pub = IssuerService.Public(folder); vault = folder; IssuerService.LastVault = folder; lblKey.Text = "Ed25519: " + (string)pub["keyId"] + "\r\n관리자 개인키: DPAPI + 계정 접근 권한 보호 · 고객 배포 제외"; }
++    void LoadVault(string folder) { if (!AdminWorkflow.IsMatchingVault(folder)) throw new InvalidOperationException("이 EXP 버전과 맞지 않는 발급키입니다. 기존 키를 선택해 주세요."); vault = folder; IssuerService.LastVault = folder; lblKey.Text = "발급 준비 완료  ·  기존 보안키 연결됨"; }
+     void ChooseVault(bool create) { Safe(delegate { using (var d = new FolderBrowserDialog { Description = "관리자 전용 보관 폴더 (새 키 생성 시 비어 있는 새 폴더)" }) if (d.ShowDialog(this) == DialogResult.OK) { if (create) IssuerService.Create(d.SelectedPath); LoadVault(d.SelectedPath); if (create) MessageBox.Show(this, "새 공개키를 내보내고 Build.ps1 -PublicKeyFile로 고객 앱을 다시 빌드해야 합니다."); } }); }
+ }
++
+--- 8차/admin/TrialIssuer.cs
++++ 9차/admin/TrialIssuer.cs
+@@ -0,0 +1,28 @@
++using System;
++using System.IO;
++using System.Net.Mail;
++using System.Threading;
++using Lumivolt.Security;
++namespace Lumivolt.Admin {
++    public static class TrialIssuer {
++        public static string Issue(string folder,string request,string email) {
++            if(!AdminWorkflow.IsMatchingVault(folder))throw new InvalidOperationException("기존 발급키를 연결해 주세요.");
++            email=(email??"").Trim().ToLowerInvariant();
++            try { if(new MailAddress(email).Address!=email || email.Length>120)throw new FormatException(); } catch { throw new FormatException("체험판은 신청한 고객의 이메일을 입력해 주세요."); }
++            request=LicenseText.Normalize(request,"LVR3"); var req=LicenseProtocol.VerifyRequest(request,DateTime.UtcNow);
++            using(var mutex=new Mutex(false,"Local\\EXP_Trial_Issuer")) {
++                bool entered=false;
++                try {
++                    try { entered=mutex.WaitOne(15000); }catch(AbandonedMutexException){entered=true;}
++                    if(!entered)throw new IOException("다른 발급 작업이 진행 중입니다.");
++                    string dir=Path.Combine(folder,"records");
++                    if(Directory.Exists(dir))foreach(var file in Directory.GetFiles(dir,"*.lvlicense")) {
++                        var old=IssuerService.Inspect(folder,LicenseProtocol.ReadFile(file));
++                        if(old["trial"]!=null && (bool)old["trial"] && ((string)old["devicePublicKey"]==(string)req["devicePublicKey"] || String.Equals((string)old["name"],email,StringComparison.OrdinalIgnoreCase))) throw new InvalidOperationException("이미 체험판을 발급한 이메일 또는 PC입니다. 기존 발급 이력을 확인해 주세요.");
++                    }
++                    return IssuerService.Issue(folder,request,email,DateTime.UtcNow.AddHours(3),"Pro",true);
++                } finally { if(entered)mutex.ReleaseMutex(); }
++            }
++        }
++    }
++}
+--- 8차/build/Build-Installer.ps1
++++ 9차/build/Build-Installer.ps1
+@@ -1,6 +1,10 @@
+-param([Parameter(Mandatory=$true)][string]$IsccPath)
+-$ErrorActionPreference = 'Stop'
+-$project = Split-Path $PSScriptRoot -Parent
+-if (!(Test-Path -LiteralPath (Join-Path $project 'dist\Lumivolt.exe'))) { throw 'Build the application first using Build.ps1.' }
+-& $IsccPath (Join-Path $project 'installer\Lumivolt.iss')
+-if ($LASTEXITCODE -ne 0) { throw 'Inno Setup build failed.' }
++param([string]$ISCC)
++$ErrorActionPreference='Stop'
++if (!$ISCC) {
++    $candidates=@((Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6/ISCC.exe'),(Join-Path $env:LOCALAPPDATA 'Programs/Inno Setup 6/ISCC.exe'),(Join-Path $env:ProgramFiles 'Inno Setup 7/ISCC.exe'))
++    $ISCC=$candidates | Where-Object {Test-Path -LiteralPath $_} | Select-Object -First 1
++}
++if (!$ISCC -or !(Test-Path -LiteralPath $ISCC)) { throw 'Install Inno Setup, or supply -ISCC with the full path to ISCC.exe.' }
++& (Join-Path $PSScriptRoot 'Build.ps1') -Target All
++& $ISCC (Join-Path (Split-Path $PSScriptRoot -Parent) 'installer/EXP.iss')
++if($LASTEXITCODE -ne 0){throw 'Installer build failed.'}
+--- 8차/build/Build.ps1
++++ 9차/build/Build.ps1
+@@ -32,16 +32,17 @@
+     & $csc @compilerArgs @Sources
+     if ($LASTEXITCODE -ne 0 -or !(Test-Path -LiteralPath $output)) { throw "Build failed: $Name" }
+ }
+-if ($Target -in @('All','Admin')) { Compile 'LicenseAdmin' ($shared + @('admin\LicenseAdmin.cs','admin\IssuerService.cs','src\Theme.cs')) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $false }
++if ($Target -in @('All','Admin')) { Compile 'EXP-Master' ($shared + @('admin\LicenseAdmin.cs','admin\AssemblyInfo.cs','admin\IssuerService.cs','admin\CreditIssuer.cs','admin\TrialIssuer.cs','src\Theme.cs','src\Brand.cs','src\Design.cs','src\Security\TrustedKeys.cs','admin\AdminWorkflow.cs')) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $false }
+ if ($Target -in @('All','App')) {
+     if (!(Test-Path src\Security\TrustedKeys.cs)) { throw 'Provide -PublicKeyFile exported by LicenseAdmin. No default or test signing key is accepted.' }
+-    Compile 'Lumivolt' ($app + $shared) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $true
++    Compile 'EXP' ($app + $shared) @('/target:winexe','/win32icon:resources\app.ico','/win32manifest:resources\app.manifest') $true
+ }
+ if ($Target -eq 'Tests') {
++    Compile 'ReleaseTests' ($app + $shared + @('admin\IssuerService.cs','admin\AdminWorkflow.cs','admin\CreditIssuer.cs','admin\TrialIssuer.cs','tests\ReleaseTests.cs')) @('/target:exe','/define:TESTBUILD','/main:ReleaseTests') $true
+     Compile 'SecurityTests' ($shared + @('tests\SecurityTests.cs','src\Security\TpmDevice.cs','admin\IssuerService.cs')) @('/target:exe') $false
+     Compile 'RegressionTests' ($app + $shared) @('/target:exe','/define:TESTBUILD') $true
+     Compile 'UiSmoke' ($app + $shared + @('tests\UiSmoke.cs')) @('/target:exe','/define:TESTBUILD','/main:UiSmoke') $true
+     Compile 'GateIntegration' ($app + $shared + @('tests\GateIntegration.cs')) @('/target:exe','/define:TESTBUILD','/main:GateIntegration') $true
+-    Compile 'AdminUiSmoke' ($shared + @('admin\LicenseAdmin.cs','admin\IssuerService.cs','src\Theme.cs','tests\AdminUiSmoke.cs')) @('/target:exe','/main:AdminUiSmoke') $false
++    Compile 'AdminUiSmoke' ($shared + @('admin\LicenseAdmin.cs','admin\AssemblyInfo.cs','admin\IssuerService.cs','src\Theme.cs','src\Brand.cs','src\Design.cs','src\Security\TrustedKeys.cs','admin\AdminWorkflow.cs','admin\CreditIssuer.cs','admin\TrialIssuer.cs','tests\AdminUiSmoke.cs')) @('/target:exe','/main:AdminUiSmoke') $false
+ }
+ Write-Host "Build completed: $Target -> $dist"
+--- 8차/installer/EXP.iss
++++ 9차/installer/EXP.iss
+@@ -0,0 +1,111 @@
++#define AppVersion "2.2.0"
++[Setup]
++AppId={{BBD63563-5422-4DA7-93C6-2F0D98E87E3F}
++AppName={code:ProductName}
++AppVersion={#AppVersion}
++AppPublisher=EXP
++AppSupportURL=mailto:contact@example.invalid
++DefaultDirName={localappdata}\Programs\EXP
++DefaultGroupName=EXP
++DisableProgramGroupPage=yes
++PrivilegesRequired=lowest
++MinVersion=10.0
++OutputDir=..\dist\installer
++OutputBaseFilename=EXP_Setup_{#AppVersion}
++SetupIconFile=..\resources\app.ico
++UninstallDisplayIcon={app}\{code:ExecutableName}
++Compression=lzma2
++SolidCompression=yes
++WizardStyle=modern
++SetupLogging=yes
++CloseApplications=no
++RestartApplications=no
++AppMutex=BunjangAuto_SingleInstance
++VersionInfoVersion=2.2.0.0
++VersionInfoCompany=EXP
++VersionInfoDescription=EXP 통합 설치 프로그램
++VersionInfoProductName=EXP
++UninstallDisplayName={code:ProductName}
++
++[Languages]
++Name: "korean"; MessagesFile: "compiler:Languages\Korean.isl"
++
++[Tasks]
++Name: "desktopicon"; Description: "바탕 화면 바로 가기 만들기"; GroupDescription: "바로 가기"
++
++[Files]
++Source: "..\resources\fonts\NanumGothicBold.ttf"; Flags: dontcopy
++Source: "..\dist\EXP.exe"; Flags: dontcopy
++Source: "..\dist\EXP.exe"; DestDir: "{app}"; DestName: "{code:ExecutableName}"; Flags: ignoreversion
++Source: "..\resources\fonts\NanumGothic-OFL.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
++Source: "..\licenses\BouncyCastle-LICENSE.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
++Source: "..\licenses\Inno-Setup-LICENSE.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
++
++[InstallDelete]
++Type: files; Name: "{app}\EXP Classic.exe"
++Type: files; Name: "{app}\EXP Studio.exe"
++Type: files; Name: "{app}\EXP Pro.exe"
++Type: files; Name: "{group}\EXP Classic.lnk"
++Type: files; Name: "{group}\EXP Studio.lnk"
++Type: files; Name: "{group}\EXP Pro.lnk"
++Type: files; Name: "{autodesktop}\EXP Classic.lnk"
++Type: files; Name: "{autodesktop}\EXP Studio.lnk"
++Type: files; Name: "{autodesktop}\EXP Pro.lnk"
++
++[Icons]
++Name: "{group}\{code:ProductName}"; Filename: "{app}\{code:ExecutableName}"; WorkingDir: "{app}"
++Name: "{autodesktop}\{code:ProductName}"; Filename: "{app}\{code:ExecutableName}"; Tasks: desktopicon
++
++[Run]
++Filename: "{app}\{code:ExecutableName}"; Description: "EXP 실행"; Flags: nowait postinstall skipifsilent
++
++[Code]
++var Edition: String; AuthPage: TWizardPage; Intro: TNewStaticText;
++function AddFontResourceEx(FileName: String; Flags: DWORD; Reserved: Integer): Integer;
++  external 'AddFontResourceExW@gdi32.dll stdcall';
++function ProductName(Param: String): String;
++begin Result := 'EXP'; if Edition <> '' then Result := Result + ' ' + Edition; end;
++function ExecutableName(Param: String): String;
++begin Result := ProductName('') + '.exe'; end;
++function Authenticate(Silent: Boolean): Boolean;
++var Code: Integer; Args: String;
++begin
++  Result := False;
++  ExtractTemporaryFile('EXP.exe');
++  Args := '--activate-for-setup'; if Silent then Args := '--check-for-setup';
++  if not Exec(ExpandConstant('{tmp}\EXP.exe'), Args, ExpandConstant('{tmp}'), SW_SHOWNORMAL, ewWaitUntilTerminated, Code) then Exit;
++  case Code of 10: Edition := 'Classic'; 20: Edition := 'Studio'; 30: Edition := 'Pro'; else Exit; end;
++  Result := True;
++end;
++function InitializeSetup(): Boolean;
++var Release: Cardinal;
++begin
++  Result := RegQueryDWordValue(HKLM, 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', Release) and (Release >= 461808);
++  if not Result then MsgBox('.NET Framework 4.7.2 이상이 필요합니다.', mbError, MB_OK);
++end;
++procedure InitializeWizard();
++begin
++  ExtractTemporaryFile('NanumGothicBold.ttf'); AddFontResourceEx(ExpandConstant('{tmp}\NanumGothicBold.ttf'),16,0);
++  WizardForm.Font.Name := 'NanumGothic'; WizardForm.Font.Style := [fsBold];
++  AuthPage := CreateCustomPage(wpWelcome,'EXP 시작하기','받은 인증키에 맞는 제품이 자동으로 설치됩니다.');
++  Intro := TNewStaticText.Create(AuthPage); Intro.Parent := AuthPage.Surface;
++  Intro.Left := 0; Intro.Top := ScaleY(16); Intro.Width := AuthPage.SurfaceWidth; Intro.Height := ScaleY(220); Intro.AutoSize := False; Intro.WordWrap := True;
++  Intro.Caption := 'Classic · 하루 25개' + #13#10 + 'Studio · 하루 50개 + 반복·예약' + #13#10 + 'Pro · 하루 100개 + 반복·예약 + 추가 등록권' + #13#10#13#10 + '다음을 누르면 인증 화면이 열립니다.' + #13#10 + 'Pro 3시간 체험판도 같은 설치 파일을 사용합니다.' + #13#10#13#10 + '체험판 신청 및 추가 등록권 문의' + #13#10 + 'contact@example.invalid';
++end;
++function NextButtonClick(CurPageID: Integer): Boolean;
++begin
++  Result := True;
++  if CurPageID = AuthPage.ID then begin
++    Result := Authenticate(WizardSilent);
++    if not Result and not WizardSilent then MsgBox('인증을 완료해야 설치할 수 있습니다.',mbInformation,MB_OK);
++    if Result then WizardForm.Caption := ProductName('') + ' 설치';
++  end;
++end;
++function PrepareToInstall(var NeedsRestart: Boolean): String;
++var OriginalEdition: String;
++begin
++  OriginalEdition := Edition; Result := '';
++  if not Authenticate(True) then Result := '인증이 만료되었거나 변경되었습니다. 설치 파일을 다시 실행해 주세요.'
++  else if Edition <> OriginalEdition then Result := '인증 등급이 변경되었습니다. 설치 파일을 다시 실행해 주세요.';
++end;
++// Customer data, TPM enrollment and usage records deliberately survive uninstall.
+--- 8차/installer/Lumivolt.iss
++++ 9차/installer/Lumivolt.iss
+@@ -1,50 +1,2 @@
+-; Deferred installer configuration. This delivery is the portable EXE ZIP.
+-#define AppVersion "2.1.0"
+-[Setup]
+-AppId={{BBD63563-5422-4DA7-93C6-2F0D98E87E3F}
+-AppName=Lumivolt
+-AppVersion={#AppVersion}
+-AppPublisher=음악천재
+-DefaultDirName={localappdata}\Programs\Lumivolt
+-DefaultGroupName=Lumivolt
+-DisableDirPage=no
+-PrivilegesRequired=lowest
+-MinVersion=10.0
+-OutputDir=..\dist\installer
+-OutputBaseFilename=Lumivolt_Setup_{#AppVersion}
+-SetupIconFile=..\resources\app.ico
+-UninstallDisplayIcon={app}\Lumivolt.exe
+-Compression=lzma2
+-SolidCompression=yes
+-WizardStyle=modern
+-SetupLogging=yes
+-CloseApplications=yes
+-RestartApplications=no
+-AppMutex=BunjangAuto_SingleInstance
+-VersionInfoVersion=2.1.0.0
+-VersionInfoCompany=음악천재
+-
+-[Tasks]
+-Name: "desktopicon"; Description: "바탕 화면 바로 가기 만들기"; GroupDescription: "바로 가기"; Flags: unchecked
+-
+-[Files]
+-Source: "..\dist\Lumivolt.exe"; DestDir: "{app}"; Flags: ignoreversion
+-Source: "..\resources\fonts\NanumGothic-OFL.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
+-Source: "..\licenses\BouncyCastle-LICENSE.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
+-Source: "..\..\1_배포용_앱\상품양식.csv"; DestDir: "{app}"; Flags: onlyifdoesntexist uninsneveruninstall
+-
+-[Icons]
+-Name: "{group}\Lumivolt"; Filename: "{app}\Lumivolt.exe"; WorkingDir: "{app}"
+-Name: "{autodesktop}\Lumivolt"; Filename: "{app}\Lumivolt.exe"; Tasks: desktopicon
+-
+-[Run]
+-Filename: "{app}\Lumivolt.exe"; Description: "Lumivolt 실행"; Flags: nowait postinstall skipifsilent
+-
+-[Code]
+-function InitializeSetup(): Boolean;
+-var Release: Cardinal;
+-begin
+-  Result := RegQueryDWordValue(HKLM, 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', Release) and (Release >= 461808);
+-  if not Result then MsgBox('.NET Framework 4.7.2 이상을 먼저 설치해 주세요.', mbError, MB_OK);
+-end;
+-; No AppData deletion, TPM-key removal, registry-key removal, or wildcard payload copy.
++; Compatibility entry point for older build instructions.
++#include "EXP.iss"
+--- 8차/licenses/Inno-Setup-LICENSE.txt
++++ 9차/licenses/Inno-Setup-LICENSE.txt
+@@ -0,0 +1,32 @@
++Inno Setup License
++==================
++
++Except where otherwise noted, all of the documentation and software included in the Inno
++Setup package is copyrighted by Jordan Russell.
++
++Copyright (C) 1997-2026 Jordan Russell. All rights reserved.
++Portions Copyright (C) 2000-2026 Martijn Laan. All rights reserved.
++
++This software is provided "as-is," without any express or implied warranty. In no event shall
++the author be held liable for any damages arising from the use of this software.
++
++Permission is granted to anyone to use this software for any purpose, including commercial
++applications, and to alter and redistribute it, provided that the following conditions are met:
++
++1. All redistributions of source code files must retain all copyright notices that are currently
++   in place, and this list of conditions without modification.
++
++2. All redistributions in binary form must retain all occurrences of the above copyright notice
++   and web site addresses that are currently in place (for example, in the About boxes).
++
++3. The origin of this software must not be misrepresented; you must not claim that you wrote
++   the original software. If you use this software to distribute a product, an acknowledgment
++   in the product documentation would be appreciated but is not required.
++
++4. Modified versions in source or binary form must be plainly marked as such, and must not
++   be misrepresented as being the original software.
++
++
++Jordan Russell
++jr-2020 AT jrsoftware.org
++https://jrsoftware.org/--- 8차/resources/help/01-start.md
++++ 9차/resources/help/01-start.md
+@@ -1,6 +1,6 @@
+ # 프로그램 시작하기
+ 
+-Lumivolt(루미볼트)는 번개장터에 올릴 상품 목록을 만들어 두면, 크롬 창을 자동으로 조작해 한 개씩 등록해 주는 프로그램입니다.
++EXP는 번개장터에 올릴 상품 목록을 만들어 두면, 크롬 창을 자동으로 조작해 한 개씩 등록해 주는 프로그램입니다.
+ 
+ ## 처음 실행하면
+ 1. **이용약관**이 나타납니다. 내용을 읽고 동의해야 다음 단계로 넘어갑니다.
+@@ -9,7 +9,6 @@
+ 
+ ## 왼쪽 메뉴
+ - **Dashboard** — 등록 대기·성공·실패 개수, 로그인·라이선스 상태, 최근 활동
+-- **상품 관리** — 상품 추가·편집·삭제, CSV 불러오기/저장
+ - **자동 등록** — 시작 / 일시정지 / 중지, 진행률
+ - **로그인** — 번개장터 로그인 확인
+ - **예약** — 1개씩 등록 간격, 시간대별 등록, 반복
+--- 8차/resources/help/02-license.md
++++ 9차/resources/help/02-license.md
+@@ -1,12 +1,17 @@
+ # 라이선스 등록
+ 
+-1. 인증 창에서 **등록 요청 저장**을 누릅니다. Windows TPM에 비이동형 P-256 키를 만들고 공개키 등록 요청(.lvrequest)을 저장합니다.
+-2. 등록 요청 파일을 관리자에게 전달하세요. PC 번호만으로는 발급되지 않습니다.
+-3. 관리자가 발급한 .lvlicense 파일을 **라이선스 파일 열기**로 선택하고 **인증**을 누릅니다. 키 문자열을 붙여 넣어도 됩니다.
+-4. 라이선스는 이 기기의 TPM 키와 등록한 Windows 계정에 연결됩니다.
++1. 설치 파일을 실행하고 인증 화면에서 **등록코드 복사**를 누르세요.
++2. 복사한 내용을 판매자에게 보내 주세요.
++3. 받은 인증키를 붙여 넣고 **인증하고 시작**을 누르세요. 키에 맞는 Classic / Studio / Pro가 설치됩니다.
+ 
+-## 연장
+-라이선스 화면에서 새 파일을 열거나 붙여 넣고 인증하세요. 기존 상품과 설정은 유지됩니다.
++## Pro 3시간 체험
++첫 인증 화면에서 **체험판 요청 복사**를 누르면 요청 문구와 등록코드가 함께 복사됩니다.
++contact@example.invalid로 보내면 관리자가 발급 이력을 확인합니다. 받은 체험 키를 같은 화면에 붙여 넣으세요.
++발급 시점부터 3시간이며, 같은 PC나 신청 이메일로 체험판을 다시 받을 수 없습니다. 재설치해도 시간이 다시 시작되지 않습니다.
+ 
+-## 기존 버전
+-v2.0 RSA 라이선스는 새 방식으로 재발급해야 합니다. 구형 라이선스로 인증을 우회하지 않습니다.
++## 연장 및 변경
++앱의 라이선스 화면에서 새 인증키를 붙여 넣고 **인증**을 누르세요. 기존 상품과 설정은 유지됩니다.
++기간제와 무기한 모두 지원합니다. 라이선스는 등록한 PC와 Windows 계정에 귀속됩니다.
++
++## 추가 등록권
++Pro의 라이선스 화면에서 받은 추가 등록권 키를 입력하고 **충전**을 누르세요. 기본 일일 한도를 모두 쓴 뒤에 추가 등록권을 사용합니다. 남은 추가 등록권은 다음 날에도 유지됩니다.
+--- 8차/resources/help/05-csv.md
++++ 9차/resources/help/05-csv.md
+@@ -1,18 +1,15 @@
+-# CSV 사용법
++# 상품을 앱에서 관리하기
+ 
+-상품이 많으면 엑셀에서 표로 만들어 한 번에 불러오는 것이 편합니다.
++상품 관리에서 **상품 추가**를 누르고 제목·가격·설명·카테고리·사진을 작성하세요.
++입력한 상품과 사진은 이 PC에 자동 저장됩니다. 목록의 상품을 선택하고 **편집**을 누르면 다시 수정할 수 있습니다.
+ 
+-## 순서
+-1. **CSV 양식 만들기**로 예시가 들어 있는 양식 파일을 저장합니다.
+-2. 엑셀에서 열어 상품을 한 줄에 하나씩 채웁니다.
+-3. 저장할 때는 **CSV UTF-8(쉼표로 분리)** 을 권장합니다.
+-4. **CSV 불러오기**로 파일을 고릅니다. 이미 목록이 있으면 "지우고 새로 불러올지, 아래에 이어 붙일지" 물어봅니다.
+-5. **CSV 저장**으로 현재 목록을 파일로 내보낼 수 있습니다. 백업용으로 자주 저장해 두세요.
++## 이용 등급
++- Classic: 하루 25개, 기본 상품 등록.
++- Studio: 하루 50개, 반복 등록·시간대 예약.
++- Pro: 하루 100개, 반복 등록·시간대 예약·추가 등록권.
++- Pro 체험판: 발급 시점부터 3시간, PC와 신청 이메일당 1회.
+ 
+-## 읽을 수 있는 파일
+-- 글자 모양: UTF-8(BOM 있음/없음), UTF-16, UTF-32, 한국어 윈도우 엑셀 기본 CSV(CP949)
+-- 구분 글자: 쉼표, 탭, 세미콜론
+-- 큰따옴표로 감싼 칸 안의 쉼표와 줄바꿈
+-- 머리글 이름이 조금 달라도 같은 열로 인식합니다. 예) 상품명 → 제목, 판매가 → 가격
++기본 일일 잔여량은 이월되지 않으며 한국시간 자정에 초기화됩니다. 계정을 바꿔도 이 PC의 사용량은 합산됩니다. 계정별로는 하루 50개를 넘길 수 없습니다.
++추가 등록권은 Pro에서 기본 한도를 사용한 뒤 차감하며 미사용 잔액은 유지됩니다. 구입 문의: contact@example.invalid
+ 
+-> 엑셀에서 'CSV(쉼표로 분리)'로 저장하면 이모지가 `?`로 바뀌어 복구되지 않습니다. 불러올 때 제목·설명에 `??`가 보이면 원본에서 'CSV UTF-8'로 다시 저장하세요.
++등록 버튼을 제출하기 직전에 1회 기록합니다. 제출 전에 준비가 실패하면 차감하지 않습니다. 제출 뒤 결과를 확인하지 못한 경우에도 차감은 유지됩니다.
+--- 8차/resources/help/07-images.md
++++ 9차/resources/help/07-images.md
+@@ -4,6 +4,5 @@
+ - 형식은 jpg, jpeg, png, webp, gif 를 선택할 수 있습니다.
+ - **사진 지정**으로 고르거나, 상품 입력 창의 **사진 추가**를 사용합니다. 선택한 사진은 프로그램 데이터 폴더로 복사되므로 원본을 지워도 등록됩니다.
+ - 입력 창에서 **위로 / 아래로**로 순서를 바꿉니다. 맨 위 사진이 대표 사진입니다.
+-- CSV에서는 사진 경로를 세미콜론(;)으로 이어 적습니다. **상대 경로**를 쓰면 CSV 파일이 있는 폴더를 기준으로 찾습니다.
+ 
+ > 사진 파일이 없거나 경로가 틀리면 그 상품의 등록이 실패하고 로그에 이미지 업로드 실패가 남습니다.
+--- 8차/resources/help/14-errors.md
++++ 9차/resources/help/14-errors.md
+@@ -6,7 +6,5 @@
+ | 입력칸에 값이 정확히 안 들어갔다는 경고 | 크롬 창을 건드리지 말고 다시 시도 |
+ | 번개장터 화면이 바뀐 것 같음 | `selectors.json` 이 새 화면을 못 찾는 경우입니다. 관리자에게 로그와 캡처를 보내세요 |
+ | 작업 중 갑자기 멈춤 | 로그 마지막 줄 확인, 크롬 창이 닫혔는지 확인 |
+-| 상품 목록이 비어 있음 | 로그에 "상품 목록 파일을 열 수 없습니다"가 있는지 확인. 다른 PC에서 옮긴 파일은 열리지 않으므로 CSV 백업을 불러오세요 |
+ 
+ ## 상품 목록 백업
+-상품 목록은 PC에 암호화되어 저장되어서, PC를 바꾸거나 윈도우를 새로 설치하면 복구할 수 없습니다. 평소에 **CSV 저장**으로 백업해 두세요.
+--- 8차/resources/help/20-faq.md
++++ 9차/resources/help/20-faq.md
+@@ -16,7 +16,6 @@
+ A. 상태메시지와 로그의 실패 이유를 확인해 고친 뒤 **상태 초기화**를 하고 다시 시작하세요.
+ 
+ **Q. 다른 PC로 옮기고 싶어요.**
+-A. 상품 목록은 CSV로 저장해 옮기세요. 라이선스는 PC마다 새로 발급받아야 합니다.
+ 
+ **Q. 번개장터 화면이 바뀌어 등록이 안 돼요.**
+ A. 관리자에게 로그와 `screenshots` 폴더의 캡처를 보내 주세요. 화면 요소 주소(`selectors.json`)를 바꾸면 해결되는 경우가 많습니다.
+@@ -26,3 +25,8 @@
+ 
+ **Q. 자동화 도구를 쓰면 계정에 문제가 생기나요?**
+ A. 번개장터의 운영정책 준수 책임은 이용자에게 있습니다. 이용약관 제5조를 확인하세요.
++
++## 예약 시각과 체험판
++번개장터 HTTPS 응답의 시각을 동기화해 한국시간으로 예약합니다. 시각을 확인할 수 없으면 등록을 대기합니다. 내부 등록 한도 서버와의 시각 일치를 보증하는 기능은 아닙니다.
++08:50에 등록하고 45분 간격이더라도 다음 예약 시작이 09:00이면 이전 대기를 끝내고 09:00부터 다음 상품을 준비합니다. 브라우저 처리 시간 때문에 실제 게시 시각에는 차이가 있습니다.
++체험판은 첫 인증 화면의 요청 복사로 신청하세요. 발급 시각부터 3시간이며, 동일 PC/신청 이메일에는 재발급할 수 없습니다.
+--- 8차/shared/CreditProtocol.cs
++++ 9차/shared/CreditProtocol.cs
+@@ -0,0 +1,25 @@
++using System;
++using System.Collections.Generic;
++using System.Security.Cryptography;
++using Newtonsoft.Json.Linq;
++using Org.BouncyCastle.Crypto.Parameters;
++using Org.BouncyCastle.Crypto.Signers;
++namespace Lumivolt.Security {
++    public static class CreditProtocol {
++        public static JObject Verify(string text, IDictionary<string,byte[]> trusted, DateTime now) {
++            byte[] data, sig; LicenseProtocol.Decode(LicenseText.Normalize(text,"EXPC1"),"EXPC1",out data,out sig);
++            var o = LicenseProtocol.Parse(data); byte[] pub;
++            if (!trusted.TryGetValue(LicenseProtocol.Text(o,"keyId",32),out pub)) throw new CryptographicException("등록되지 않은 발급키입니다.");
++            var v = new Ed25519Signer(); v.Init(false,new Ed25519PublicKeyParameters(pub,0)); v.BlockUpdate(data,0,data.Length);
++            if (!v.VerifySignature(sig)) throw new CryptographicException("추가 등록권 서명이 올바르지 않습니다.");
++            var fields = "version,product,creditId,devicePublicKey,keyId,issuedUtc,quantity".Split(',');
++            if (o.Count != fields.Length) throw new FormatException("추가 등록권 형식 오류");
++            foreach (var f in fields) if (o[f] == null) throw new FormatException("추가 등록권 필드 오류");
++            if (o["version"].Type != JTokenType.Integer || (int)o["version"] != 1 || LicenseProtocol.Text(o,"product",16) != "EXP") throw new FormatException("추가 등록권 제품 오류");
++            Guid.ParseExact(LicenseProtocol.Text(o,"creditId",36),"D"); LicenseProtocol.PublicBlob(LicenseProtocol.Text(o,"devicePublicKey",128));
++            if (LicenseProtocol.Time(LicenseProtocol.Text(o,"issuedUtc",32)) > now.AddMinutes(5)) throw new FormatException("발급 시각 이전입니다.");
++            if (o["quantity"].Type != JTokenType.Integer || (long)o["quantity"] < 1 || (long)o["quantity"] > 100000) throw new FormatException("추가 등록권 수량 오류");
++            return o;
++        }
++    }
++}
+--- 8차/shared/EditionPolicy.cs
++++ 9차/shared/EditionPolicy.cs
+@@ -0,0 +1,10 @@
++using System;
++namespace Lumivolt.Security {
++    public static class EditionPolicy {
++        public static int DailyLimit(string edition) {
++            switch (edition) { case "Classic": return 25; case "Studio": return 50; case "Pro": return 100; default: throw new FormatException("지원하지 않는 EXP 등급입니다."); }
++        }
++        public static bool CanRepeat(string edition) { DailyLimit(edition); return edition != "Classic"; }
++        public static int SetupCode(string edition) { DailyLimit(edition); return edition == "Classic" ? 10 : edition == "Studio" ? 20 : 30; }
++    }
++}
+--- 8차/shared/LicenseProtocol.cs
++++ 9차/shared/LicenseProtocol.cs
+@@ -94,14 +94,20 @@
+         }
+         public static JObject VerifyLicense(string token, IDictionary<string, byte[]> trusted, DateTime now, string requiredFeature)
+         {
+-            byte[] data, sig; Decode(token, "LV3", out data, out sig);
++            bool modern = token != null && token.StartsWith("LV4.", StringComparison.Ordinal);
++            byte[] data, sig; Decode(token, modern ? "LV4" : "LV3", out data, out sig);
+             var o = Parse(data);
+             byte[] pub;
+             if (!trusted.TryGetValue(Text(o, "keyId", 32), out pub)) throw new CryptographicException("등록되지 않은 발급키입니다.");
+             var verifier = new Ed25519Signer(); verifier.Init(false, new Ed25519PublicKeyParameters(pub, 0));
+             verifier.BlockUpdate(data, 0, data.Length);
+             if (!verifier.VerifySignature(sig)) throw new CryptographicException("라이선스 서명이 올바르지 않습니다.");
+-            Fields(o, "version,licenseId,product,name,issuedUtc,expiresUtc,perpetual,features,devicePublicKey,keyId,status"); Version(o);
++            Fields(o, "version,licenseId,product,name,issuedUtc,expiresUtc,perpetual,features,devicePublicKey,keyId,status" + (modern ? ",edition,trial" : ""));
++            if (modern) {
++                if (o["version"].Type != JTokenType.Integer || (int)o["version"] != 4 || Text(o,"product",32) != "EXP") throw new FormatException("지원하지 않는 제품/버전입니다.");
++                EditionPolicy.DailyLimit(Text(o,"edition",16));
++                if (o["trial"].Type != JTokenType.Boolean) throw new FormatException("체험판 형식 오류");
++            } else Version(o);
+             Guid.ParseExact(Text(o, "licenseId", 36), "D"); Text(o, "name", 120);
+             PublicBlob(Text(o, "devicePublicKey", 128));
+             if (Text(o, "status", 16) != "active") throw new FormatException("활성 라이선스가 아닙니다.");
+@@ -116,6 +122,7 @@
+                 if (expires <= issued || now >= expires) throw new FormatException("라이선스 기간이 만료되었거나 잘못되었습니다.");
+             }
+             var features = o["features"] as JArray;
++            if (modern && (bool)o["trial"] && ((string)o["edition"] != "Pro" || (bool)o["perpetual"] || Time(Text(o,"expiresUtc",32)) > issued.AddHours(3))) throw new FormatException("체험판은 Pro 3시간만 허용됩니다.");
+             if (features == null || features.Count != 1 || features[0].Type != JTokenType.String || (string)features[0] != "automation" || requiredFeature != "automation") throw new FormatException("허용되지 않은 기능입니다.");
+             return o;
+         }
+--- 8차/shared/LicenseText.cs
++++ 9차/shared/LicenseText.cs
+@@ -0,0 +1,19 @@
++using System;
++using System.Text;
++namespace Lumivolt.Security
++{
++    // Transport convenience only. Payload bytes, signatures and verification remain unchanged.
++    public static class LicenseText
++    {
++        public static string Normalize(string text, string prefix)
++        {
++            if (String.IsNullOrWhiteSpace(text)) throw new FormatException(prefix == "LVR3" ? "고객에게 받은 등록코드를 붙여 넣어 주세요." : "받은 인증키를 붙여 넣어 주세요.");
++            if (text.Length > LicenseProtocol.MaxText) throw new FormatException("코드가 너무 깁니다. 코드만 복사해 주세요.");
++            var b = new StringBuilder();
++            foreach (char c in text) if (!Char.IsWhiteSpace(c) && c != '\u200B' && c != '\uFEFF') b.Append(c);
++            string token = b.ToString();
++            if (!(token.StartsWith(prefix + ".", StringComparison.Ordinal) || (prefix == "LV3" && token.StartsWith("LV4.", StringComparison.Ordinal)))) throw new FormatException(prefix == "LVR3" ? "등록코드가 아닙니다. 고객 앱의 ‘등록코드 복사’를 사용해 주세요." : "인증키가 아닙니다. 판매자에게 받은 인증키를 입력해 주세요.");
++            return token;
++        }
++    }
++}
+--- 8차/src/AssemblyInfo.cs
++++ 9차/src/AssemblyInfo.cs
+@@ -1,10 +1,10 @@
+ using System.Reflection;
+ 
+-[assembly: AssemblyTitle("루미볼트 Lumivolt")]
+-[assembly: AssemblyDescription("Lumivolt — 마켓 자동등록 스튜디오")]
++[assembly: AssemblyTitle("EXP")]
++[assembly: AssemblyDescription("EXP — 마켓 자동등록 스튜디오")]
+ [assembly: AssemblyCompany("음악천재")]
+-[assembly: AssemblyProduct("Lumivolt")]
++[assembly: AssemblyProduct("EXP")]
+ [assembly: AssemblyCopyright("Copyright © 음악천재. All rights reserved.")]
+-[assembly: AssemblyVersion("2.1.0.0")]
+-[assembly: AssemblyFileVersion("2.1.0.0")]
+-[assembly: AssemblyInformationalVersion("2.1.0")]
++[assembly: AssemblyVersion("2.2.0.0")]
++[assembly: AssemblyFileVersion("2.2.0.0")]
++[assembly: AssemblyInformationalVersion("2.2.0")]
+--- 8차/src/Bot.cs
++++ 9차/src/Bot.cs
+@@ -10,6 +10,7 @@
+ namespace BunjangAuto
+ {
+     public class StopRequestedException : Exception { }
++    public class RegistrationBlockedException : Exception { public RegistrationBlockedException(string message) : base(message) { } }
+ 
+     /// <summary>번개장터 화면을 Selenium 으로 조작하는 부분</summary>
+     public class Bot : IDisposable
+@@ -279,6 +280,23 @@
+         }
+ 
+         // =============== 상품 등록 ===============
++        private string CurrentShopId()
++        {
++            // Only the authenticated navigation's own-shop link, never an arbitrary seller
++            // on the page, a user-supplied account label, or a session-token fingerprint.
++            var ids = new HashSet<string>();
++            foreach (var link in _driver.FindElements(By.XPath("//a[contains(@href,'/shop/') and (contains(translate(normalize-space(.),' ',''),'내상점') or contains(@aria-label,'내 상점'))]")))
++            {
++                if (!link.Displayed) continue;
++                Uri url; if (!Uri.TryCreate(link.GetAttribute("href"), UriKind.Absolute, out url)) continue;
++                if (url.Host != "m.bunjang.co.kr" && url.Host != "bunjang.co.kr" && url.Host != "www.bunjang.co.kr") continue;
++                var match = Regex.Match(url.AbsolutePath, @"^/shop/(\d{1,20})(/|$)");
++                if (match.Success) ids.Add(match.Groups[1].Value);
++            }
++            if (ids.Count != 1) throw new InvalidOperationException("내 상점 정보를 확인할 수 없습니다. 번개장터 로그인 상태를 확인해 주세요. 계속되면 관리자에게 문의해 주세요.");
++            return ids.First();
++        }
++
+         public bool Register(Product p)
+         {
+             Start();
+@@ -287,7 +305,7 @@
+             {
+                 if (!p.IsValid) throw new Exception("제목 또는 가격이 비어 있습니다.");
+                 if (Regex.Matches((p.Title ?? "") + (p.Description ?? ""), @"\?\?").Count >= 3)
+-                    throw new Exception("제목/설명에 '??' 가 여러 곳 있습니다. CSV 저장 중 이모지가 '?'로 바뀐 것입니다. 이모지가 있는 원본에서 'CSV UTF-8'로 다시 저장해 불러오세요.");
++                    throw new Exception("제목/설명에 '??' 가 여러 곳 있습니다. 상품 편집에서 제목과 설명을 확인해 주세요.");
+                 Go(_sel.NewProductUrl);
+                 Sleep(2000);
+                 // 사이트가 맨 위 검색창에 포커스를 줘서 검색 팝업이 열려 있을 수 있으니 포커스를 해제한다
+@@ -353,7 +371,11 @@
+                     if (q != null) SetText(q, p.Quantity.Trim());
+                 }
+ 
+-                Click(Require(_sel.SubmitXPath, "등록하기 버튼"));
++                var submit = Require(_sel.SubmitXPath, "등록하기 버튼");
++                CheckStop();
++                try { UsageQuota.RequireMode(_cfg, false); UsageQuota.Consume(CurrentShopId()); }
++                catch (Exception blocked) { throw new RegistrationBlockedException(blocked.Message); }
++                Click(submit);
+                 TryClick(_sel.DialogConfirmXPath, 2);   // 확인 팝업이 뜨면 누름
+ 
+                 // 등록 완료 = 주소가 상품 상세(/products/번호)로 바뀜
+@@ -384,6 +406,7 @@
+                 Log.Write("  → 등록 완료 (상품번호 " + id + ")");
+                 return true;
+             }
++            catch (RegistrationBlockedException ex) { p.Status = "중단: " + ex.Message; throw; }
+             catch (StopRequestedException) { throw; }
+             catch (Exception ex)
+             {
+--- 8차/src/Brand.cs
++++ 9차/src/Brand.cs
+@@ -0,0 +1,20 @@
++namespace BunjangAuto
++{
++    public static class Brand
++    {
++        public const string Name = "EXP";
++        public const string Master = "EXP Master";
++        public const string Version = "2.2.0";
++        public static string Email
++        {
++            get
++            {
++                string value = System.Environment.GetEnvironmentVariable("CONTACT_EMAIL");
++                if (System.String.IsNullOrWhiteSpace(value))
++                    throw new System.InvalidOperationException("CONTACT_EMAIL 환경변수에 공개 연락처를 지정해야 합니다.");
++                return value;
++            }
++        }
++        public const string Tagline = "판매를 가볍게.";
++    }
++}
+--- 8차/src/Design.cs
++++ 9차/src/Design.cs
+@@ -0,0 +1,88 @@
++using System;
++using System.Drawing;
++using System.Drawing.Drawing2D;
++using System.Windows.Forms;
++using Microsoft.Win32;
++namespace BunjangAuto
++{
++    // Shared visual primitives for the customer app and the offline issuer.
++    public class SoftCard : Panel, IThemed
++    {
++        public SoftCard() { DoubleBuffered = true; Padding = new Padding(24); Theme.Changed += Update; ApplyTheme(); }
++        void Update() { if (!IsDisposed) { ApplyTheme(); Theme.Apply(this); Invalidate(true); } }
++        public void ApplyTheme() { BackColor = Theme.Panel; ForeColor = Theme.TextPrimary; }
++        protected override void OnPaintBackground(PaintEventArgs e)
++        {
++            e.Graphics.Clear(Parent == null ? Theme.BgDark : Parent.BackColor); e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
++            using (var p = Theme.RoundedRect(new Rectangle(0, 0, Width - 1, Height - 1), Dpi.S(18)))
++            using (var fill = new SolidBrush(Theme.Panel)) using (var edge = new Pen(Theme.Border)) { e.Graphics.FillPath(fill, p); e.Graphics.DrawPath(edge, p); }
++        }
++        protected override void Dispose(bool disposing) { if (disposing) Theme.Changed -= Update; base.Dispose(disposing); }
++    }
++    public class SoftButton : Button, IThemed
++    {
++        public bool Primary; bool hot, down;
++        public SoftButton() { SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true); FlatStyle = FlatStyle.Flat; FlatAppearance.BorderSize = 0; Height = 40; Cursor = Cursors.Hand; Font = Theme.FontBase(); }
++        public void ApplyTheme() { BackColor = Theme.Panel; ForeColor = Theme.TextPrimary; Invalidate(); }
++        protected override void OnMouseEnter(EventArgs e) { hot = true; Invalidate(); base.OnMouseEnter(e); }
++        protected override void OnMouseLeave(EventArgs e) { hot = down = false; Invalidate(); base.OnMouseLeave(e); }
++        protected override void OnMouseDown(MouseEventArgs e) { down = true; Invalidate(); base.OnMouseDown(e); }
++        protected override void OnMouseUp(MouseEventArgs e) { down = false; Invalidate(); base.OnMouseUp(e); }
++        protected override void OnPaint(PaintEventArgs e)
++        {
++            var p = Theme.Current; e.Graphics.Clear(Parent == null ? p.Bg : Parent.BackColor); e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
++            Color fill = Primary ? (down ? p.AccentPressed : hot ? p.AccentHover : p.Accent) : hot ? p.Hover : p.CardAlt;
++            using (var path = Theme.RoundedRect(new Rectangle(0, 0, Width - 1, Height - 1), Dpi.S(10)))
++            using (var brush = new SolidBrush(Enabled ? fill : p.CardAlt)) using (var pen = new Pen(Primary ? fill : p.Border)) { e.Graphics.FillPath(brush, path); e.Graphics.DrawPath(pen, path); }
++            TextRenderer.DrawText(e.Graphics, Text, Font, ClientRectangle, !Enabled ? p.TextMuted : Primary ? p.OnAccent : p.Text, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
++            if (Focused && ShowFocusCues) ControlPaint.DrawFocusRectangle(e.Graphics, new Rectangle(4,4,Width-8,Height-8));
++        }
++    }
++    public class BrandMark : Control, IThemed
++    {
++        public BrandMark() { SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true); Size = new Size(42,42); TabStop = false; }
++        public void ApplyTheme() { Invalidate(); }
++        protected override void OnPaint(PaintEventArgs e)
++        {
++            var g = e.Graphics; g.Clear(Parent == null ? Theme.Sidebar : Parent.BackColor); g.SmoothingMode = SmoothingMode.AntiAlias;
++            using (var p = Theme.RoundedRect(new Rectangle(0,0,Width-1,Height-1), Math.Max(5,Width/3))) using (var b = new SolidBrush(Theme.Accent)) g.FillPath(b,p);
++            // Original E mark, drawn without external artwork.
++            using (var pen = new Pen(Theme.Current.OnAccent, Math.Max(2,Width/13f))) { pen.StartCap = pen.EndCap = LineCap.Round; g.DrawLine(pen,Width*.29f,Height*.29f,Width*.70f,Height*.29f); g.DrawLine(pen,Width*.29f,Height*.50f,Width*.60f,Height*.50f); g.DrawLine(pen,Width*.29f,Height*.71f,Width*.70f,Height*.71f); }
++        }
++    }
++    public class SoftCombo : ComboBox
++    {
++        public SoftCombo() { DrawMode=DrawMode.OwnerDrawFixed;ItemHeight=30;DropDownStyle=ComboBoxStyle.DropDownList;Font=Theme.FontBase(); }
++        protected override void OnDrawItem(DrawItemEventArgs e) {
++            bool selected=(e.State&DrawItemState.Selected)!=0;
++            using(var b=new SolidBrush(selected?Theme.Current.Selected:Theme.Current.Field))e.Graphics.FillRectangle(b,e.Bounds);
++            string text=e.Index>=0?Convert.ToString(Items[e.Index]):Text;
++            TextRenderer.DrawText(e.Graphics,text,Font,new Rectangle(e.Bounds.X+8,e.Bounds.Y,e.Bounds.Width-12,e.Bounds.Height),Enabled?Theme.TextPrimary:Theme.TextMuted,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
++            if((e.State&DrawItemState.Focus)!=0)e.DrawFocusRectangle();
++        }
++    }
++    public static class Design
++    {
++        public static Label Label(string text, int x, int y, int w, int h, float size, string tone)
++        { return new Label { Text = text, Left = x, Top = y, Width = w, Height = h, Font = Theme.Font(size, FontStyle.Bold), Tag = tone, ForeColor = tone == "m" ? Theme.TextMuted : Theme.TextPrimary }; }
++        public static SoftButton Button(string text, int x, int y, int w, bool primary)
++        { return new SoftButton { Text = text, Left = x, Top = y, Width = w, Primary = primary }; }
++        public static TextBox Input(string name, int x, int y, int w, int h, bool readOnly)
++        { return new TextBox { Name = name, Left = x, Top = y, Width = w, Height = h, Font = Theme.FontBase(), Multiline = true, ReadOnly = readOnly, ScrollBars = ScrollBars.None, MaxLength = Lumivolt.Security.LicenseProtocol.MaxText, BorderStyle = BorderStyle.FixedSingle }; }
++        public static void Scale(Form form)
++        {
++            form.AutoScaleMode = AutoScaleMode.None;
++            if (Dpi.Scale > 1.001) form.Scale(new SizeF((float)Dpi.Scale,(float)Dpi.Scale));
++            var area=Screen.FromControl(form).WorkingArea;
++            if(form.Height>area.Height-32 || form.Width>area.Width-32) {
++                var content=form.ClientSize; form.AutoScroll=true; form.AutoScrollMinSize=content;
++                form.Size=new Size(Math.Min(form.Width,area.Width-32),Math.Min(form.Height,area.Height-32));
++            }
++        }
++        public static bool AdminDark
++        {
++            get { try { using (var k = Registry.CurrentUser.OpenSubKey(@"Software\Lumivolt\Issuer")) return k != null && Convert.ToString(k.GetValue("Theme", "Light")) == "Dark"; } catch { return false; } }
++            set { using (var k = Registry.CurrentUser.CreateSubKey(@"Software\Lumivolt\Issuer")) k.SetValue("Theme", value ? "Dark" : "Light"); }
++        }
++    }
++}
+--- 8차/src/Guard.cs
++++ 9차/src/Guard.cs
+@@ -39,7 +39,7 @@
+ 
+         public static void Die(string msg)
+         {
+-            try { MessageBox.Show(msg, "Lumivolt", MessageBoxButtons.OK, MessageBoxIcon.Stop); } catch { }
++            try { MessageBox.Show(msg, "EXP", MessageBoxButtons.OK, MessageBoxIcon.Stop); } catch { }
+             Environment.Exit(1);
+         }
+ 
+--- 8차/src/License.cs
++++ 9차/src/License.cs
+@@ -7,6 +7,7 @@
+ public class LicenseInfo {
+     public bool Valid; public string Message = "", Name = "", MachineId = "", LicenseId = "";
+     public DateTime Expires, Issued;
++    public string Edition = "", DevicePublicKey = ""; public bool Trial;
+ }
+ public static class License {
+ // Compatibility ONLY: settings encryption and telemetry identity. Never an authorization credential.
+@@ -32,12 +33,14 @@
+     public static LicenseInfo Verify(string token, string diagnosticId) {
+         var r = new LicenseInfo();
+         try {
+-            var o = LicenseProtocol.VerifyLicense(token, TrustedKeys.All, DateTime.UtcNow, "automation");
++            token = LicenseText.Normalize(token, "LV3");
++            var o = LicenseProtocol.VerifyLicense(token, TrustedKeys.All, ServerClock.UtcNow, "automation");
+             try { TpmDevice.Prove((string)o["devicePublicKey"]); }
+             catch (CryptographicException ex) {
+                 if (ex.Message == "이 PC용 라이선스가 아닙니다." || ex.Message == "TPM 기기 소유 증명에 실패했습니다.") throw;
+                 throw new CryptographicException(TpmDevice.Error(ex));
+             }
++            r.Edition = o["edition"] == null ? "Pro" : (string)o["edition"]; r.DevicePublicKey = (string)o["devicePublicKey"]; r.Trial = o["trial"] != null && (bool)o["trial"];
+             r.Name = (string)o["name"]; r.MachineId = LicenseProtocol.Fingerprint(LicenseProtocol.PublicBlob((string)o["devicePublicKey"]));
+             r.LicenseId = (string)o["licenseId"]; r.Issued = LicenseProtocol.Time((string)o["issuedUtc"]);
+             r.Expires = (bool)o["perpetual"] ? DateTime.MaxValue : LicenseProtocol.Time((string)o["expiresUtc"]).ToLocalTime().AddSeconds(-1);
+--- 8차/src/LicenseForm.cs
++++ 9차/src/LicenseForm.cs
+@@ -22,9 +22,7 @@
+             using (var f = new LicenseForm(TpmDevice.DisplayId(), msg))
+             {
+                 if (f.ShowDialog() != DialogResult.OK) return false;
+-                string result;
+-                if (!TryActivate(f.Key, out result)) { FluentBox.Show(null, result, "라이선스"); return false; }
+-                return true;
++                return Recheck();
+             }
+         }
+ 
+@@ -37,8 +35,9 @@
+             if (!info.Valid) { LastInfo = null; Log.Write("WARN", "License", "license.verify", "라이선스 인증 실패: " + info.Message, "FAIL"); return false; }
+             try
+             {
++                UsageQuota.AcceptTrial(info);
+                 Directory.CreateDirectory(Paths.Root);
+-                File.WriteAllText(KeyPath, key.Trim().Replace("\r", "").Replace("\n", "").Replace(" ", ""), Encoding.UTF8);
++                File.WriteAllText(KeyPath, Lumivolt.Security.LicenseText.Normalize(key, "LV3"), Encoding.UTF8);
+             }
+             catch (Exception ex) { message = "키를 저장하지 못했습니다: " + ex.Message; return false; }
+             if (!LicenseClock.Accept(true)) { message = "인증 시각 기록을 저장하지 못했습니다."; return false; } LastInfo = info;
+@@ -56,6 +55,7 @@
+                 var info = License.Verify(Lumivolt.Security.LicenseProtocol.ReadFile(KeyPath), License.GetMachineId());
+                 if (!info.Valid || ClockRolledBack()) return false;
+                 if (!LicenseClock.Accept(true)) return false;
++                UsageQuota.AcceptTrial(info);
+                 LastInfo = info;
+                 return true;
+             }
+@@ -68,44 +68,44 @@
+     public class LicenseForm : Form
+     {
+         public string Key = "";
+-
+         public LicenseForm(string machineId, string message)
+         {
+-            Text = "라이선스 인증 - © 음악천재";
+-            Width = 560; Height = 420;
+-            StartPosition = FormStartPosition.CenterScreen;
+-            FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false;
+-            Font = Theme.FontBase();
+-
+-            var header = Theme.BuildHeader("라이선스 인증", "Lumivolt   ·   © 음악천재");
+-            var lblMsg = new Label { Left = 20, Top = 76, Width = 510, Height = 36, ForeColor = Theme.Danger, Font = Theme.FontBold(), Text = message };
+-            var lbl1 = new Label { Left = 20, Top = 116, AutoSize = true, ForeColor = Theme.TextMuted, Text = "TPM 기기 번호 (등록 요청 파일을 관리자에게 전달해 주세요)" };
+-            var txtId = new TextBox { Left = 20, Top = 138, Width = 374, ReadOnly = true, Text = machineId, Font = Theme.FontMono(11f) };
+-            var bCopy = new Button { Left = 404, Top = 136, Width = 126, Height = 28, Text = "복사" };
+-            var lbl2 = new Label { Left = 20, Top = 180, AutoSize = true, ForeColor = Theme.TextMuted, Text = "라이선스 키" };
+-            var txtKey = new TextBox { Left = 20, Top = 202, Width = 510, Height = 110, Multiline = true, ScrollBars = ScrollBars.Vertical, Font = Theme.FontMono(9.5f) };
+-            var ok = new Button { Left = 320, Top = 330, Width = 100, Height = 32, Text = "인증" };
+-            var cancel = new Button { Left = 430, Top = 330, Width = 100, Height = 32, Text = "종료", DialogResult = DialogResult.Cancel };
+-            var lblCopy = new Label { Left = 20, Top = 372, Width = 510, Height = 20, ForeColor = Theme.TextMuted, Font = Theme.Font(7.8f, FontStyle.Regular), Text = "Copyright © 음악천재. All rights reserved. 무단 복제·유포 시 법적 책임이 따릅니다." };
+-            var bRequest = new Button { Left = 20, Top = 330, Width = 136, Height = 32, Text = "등록 요청 저장" };
+-            var bImport = new Button { Left = 162, Top = 330, Width = 142, Height = 32, Text = "라이선스 파일 열기" };
+-            Controls.AddRange(new Control[] { bRequest, bImport, lblCopy, lblMsg, lbl1, txtId, bCopy, lbl2, txtKey, ok, cancel, header });
+-            CancelButton = cancel;
+-            Theme.MarkPrimary(ok);
+-            Ui.ScaleForm(this);
+-            Theme.Apply(this);
+-
+-            bRequest.Click += delegate { LicenseFiles.ExportRequest(this); txtId.Text = TpmDevice.DisplayId(); };
+-            bImport.Click += delegate { string token = LicenseFiles.ImportLicense(this); if (token != null) txtKey.Text = token; };
+-            bCopy.Click += delegate { try { Clipboard.SetText(txtId.Text); } catch { } };
+-            ok.Click += delegate
+-            {
+-                var info = License.Verify(txtKey.Text, machineId);
+-                if (!info.Valid) { lblMsg.Text = info.Message; return; }
+-                Key = txtKey.Text.Trim().Replace("\r", "").Replace("\n", "").Replace(" ", "");
+-                FluentBox.Show(this, "인증되었습니다. (" + info.Message + ")", "라이선스");
+-                DialogResult = DialogResult.OK;
+-            };
++            Text = Brand.Name + " · 시작하기"; ClientSize = new Size(620, 768);
++            StartPosition = FormStartPosition.CenterScreen; FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false; Font = Theme.FontBase();
++            Controls.Add(new BrandMark { Left = 32, Top = 30, Width = 44, Height = 44 });
++            Controls.Add(Design.Label(Brand.Name, 92, 30, 300, 34, 23, "t"));
++            Controls.Add(Design.Label("한 번 인증하고, 바로 시작하세요.", 34, 88, 548, 30, 17, "t"));
++            Controls.Add(Design.Label("파일 없이 복사와 붙여넣기만 하면 됩니다.", 34, 126, 548, 24, 10, "m"));
++            var first = new SoftCard { Left = 32, Top = 174, Width = 556, Height = 148 };
++            first.Controls.Add(Design.Label("01   등록코드를 판매자에게 보내기", 24, 20, 500, 28, 12, "t"));
++            var request = Design.Input("requestCode", 24, 58, 318, 60, true); request.Text = "등록코드 복사를 눌러 주세요.";
++            var copy = Design.Button("등록코드 복사", 358, 58, 172, true); copy.Name = "copyRequest";
++            first.Controls.AddRange(new Control[] { request, copy });
++            var second = new SoftCard { Left = 32, Top = 338, Width = 556, Height = 192 };
++            second.Controls.Add(Design.Label("02   받은 인증키로 시작하기", 24, 20, 500, 28, 12, "t"));
++            var input = Design.Input("licenseKey", 24, 58, 506, 66, false);
++            var paste = Design.Button("인증키 붙여넣기", 24, 138, 174, false); paste.Name = "pasteLicense";
++            var activate = Design.Button("인증하고 시작", 356, 138, 174, true); activate.Name = "activateLicense";
++            var status = Design.Label(message, 34, 542, 552, 42, 9.5f, "m"); status.Name = "licenseStatus";
++            var file = new LinkLabel { Text = "파일로 받은 경우", Left = 36, Top = 588, Width = 130, Font = Theme.Font(9f, FontStyle.Bold) };
++            var close = new LinkLabel { Text = "닫기", Left = 544, Top = 588, Width = 50, Font = Theme.Font(9f, FontStyle.Bold) };
++            close.LinkClicked += delegate { DialogResult = DialogResult.Cancel; };
++            Action<string,bool> notice = (text, good) => { status.Text = text; status.Tag = good ? "s" : "d"; status.ForeColor = good ? Theme.Success : Theme.Danger; };
++            copy.Click += delegate { string token, msg; bool ok = LicenseFiles.CopyRequest(out token, out msg); if (token.Length > 0) request.Text = token; notice(msg, ok); };
++            paste.Click += delegate { try { input.Text = LicenseFiles.PasteKey(); notice("인증키를 붙여 넣었습니다. 인증하고 시작을 눌러 주세요.", true); } catch (Exception ex) { notice(ex is FormatException ? ex.Message : "클립보드를 읽지 못했습니다. 직접 붙여 넣어 주세요.", false); } };
++            activate.Click += delegate { string msg; if (!LicenseGate.TryActivate(input.Text, out msg)) { notice(msg, false); return; } Key = Lumivolt.Security.LicenseText.Normalize(input.Text, "LV3"); DialogResult = DialogResult.OK; };
++            file.LinkClicked += delegate { string token = LicenseFiles.ImportLicense(this); if (token != null) input.Text = token; };
++            second.Controls.AddRange(new Control[] { input, paste, activate });
++            Controls.AddRange(new Control[] { first, second, status, file, close });
++            var trial = new SoftCard { Left=32,Top=578,Width=556,Height=142 };
++            trial.Controls.Add(Design.Label("Pro 3시간 체험하기",24,16,500,26,12,"t"));
++            trial.Controls.Add(Design.Label("요청 내용을 복사해 아래 이메일로 보내 주세요.\r\n받은 체험 키를 위에 입력하면 됩니다. PC·신청 이메일당 1회.",24,48,500,42,9.5f,"m"));
++            var requestTrial=Design.Button("체험판 요청 복사",24,96,180,false); requestTrial.Height=32;
++            var email=Design.Label(Brand.Email,214,102,320,24,10,"a");
++            requestTrial.Click+=delegate { try { var code=TpmDevice.CreateRequest(); Clipboard.SetText("체험판 기능 사용하기\r\nPro 3시간 체험판을 신청합니다.\r\n등록코드: "+code); request.Text=code; notice("요청을 복사했습니다. "+Brand.Email+"로 보내 주세요.",true); } catch(Exception ex) { notice(TpmDevice.Error(ex),false); } };
++            trial.Controls.AddRange(new Control[]{requestTrial,email}); Controls.Add(trial); file.Top=close.Top=736;
++            AcceptButton = activate; Design.Scale(this); Theme.Apply(this);
++            file.LinkColor = close.LinkColor = Theme.Accent;
+         }
+     }
+ }
+--- 8차/src/MainForm.cs
++++ 9차/src/MainForm.cs
+@@ -30,7 +30,7 @@
+ 
+         private static readonly string[][] MenuDef = new[]
+         {
+-            new[] { "dashboard", "Dashboard", "\uE80F" },
++            new[] { "dashboard", "한눈에 보기", "\uE80F" },
+             new[] { "products", "상품 관리", "\uE719" },
+             new[] { "automation", "자동 등록", "\uE768" },
+             new[] { "login", "로그인", "\uE77B" },
+@@ -44,9 +44,9 @@
+ 
+         public MainForm()
+         {
+-            Text = "Lumivolt 루미볼트  ·  © 음악천재";
++            Text = Brand.Name;
+             AutoScaleMode = AutoScaleMode.None;   // 배율은 Ui.ScaleTree 가 직접 처리(나중에 만든 화면에도 똑같이 적용하기 위해)
+-            Width = Ui.S(1240); Height = Ui.S(820); MinimumSize = new Size(Ui.S(980), Ui.S(640));
++            Width = Ui.S(1320); Height = Ui.S(860); MinimumSize = new Size(Ui.S(980), Ui.S(640));
+             StartPosition = FormStartPosition.CenterScreen;
+             Font = Theme.FontBase();
+             try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
+@@ -56,6 +56,7 @@
+             _guardTimer.Start();
+ 
+             // ---- 상태 불러오기 (예전과 동일: 설정 → 선택자 → 상품 목록)
++            ServerClock.RefreshAsync();
+             host.Form = this;
+             host.Cfg = Storage.LoadSettings();
+             host.Sel = SelectorSet.Load();
+@@ -73,24 +74,25 @@
+ 
+             // ---- 화면 뼈대
+             content = new Panel { Dock = DockStyle.Fill, BackColor = Theme.BgDark };
+-            header = new HeaderPanel { Dock = DockStyle.Top, Height = Ui.S(60) };
+-            sidebar = new SidebarPanel { Dock = DockStyle.Left, Width = Ui.S(248) };
++            header = new HeaderPanel { Dock = DockStyle.Top, Height = Ui.S(70) };
++            sidebar = new SidebarPanel { Dock = DockStyle.Left, Width = Ui.S(232) };
+             Controls.Add(content); Controls.Add(header); Controls.Add(sidebar);
+ 
+-            lblBrand = new Label { Text = "Lumivolt", AutoSize = true, Font = Theme.Font(15f, FontStyle.Bold), Location = new Point(20, 18), Tag = "t", BackColor = Theme.Sidebar };
+-            lblBrandSub = new Label { Text = "마켓 자동등록 스튜디오", AutoSize = true, Font = Theme.FontSub(), Location = new Point(22, 48), Tag = "m", BackColor = Theme.Sidebar };
++            lblBrand = new Label { Text = Brand.Name, AutoSize = true, Font = Theme.Font(21f, FontStyle.Bold), Location = new Point(78, 28), Tag = "t", BackColor = Theme.Sidebar };
++            lblBrandSub = new Label { Text = Brand.Tagline, AutoSize = true, Font = Theme.FontSub(), Location = new Point(80, 65), Tag = "m", BackColor = Theme.Sidebar };
++            sidebar.Controls.Add(new BrandMark { Left = 24, Top = 28, Width = 42, Height = 42 });
+             sidebar.Controls.Add(lblBrand); sidebar.Controls.Add(lblBrandSub);
+-            lblFoot = new Label { Text = "v" + ClientIdentityService.AppVersion + "  ·  © 음악천재", AutoSize = true, Font = Theme.Font(8.5f, FontStyle.Regular), Tag = "m", BackColor = Theme.Sidebar };
++            lblFoot = new Label { Text = "EXP  /  " + Brand.Version, AutoSize = true, Font = Theme.Font(8.5f, FontStyle.Regular), Tag = "m", BackColor = Theme.Sidebar };
+             sidebar.Controls.Add(lblFoot);
+ 
+-            int y = 84;
++            int y = 126;
+             foreach (var m in MenuDef)
+             {
+                 var item = new NavItem { Key = m[0], Text = m[1], Glyph = m[2], Left = 0, Top = y, Width = sidebar.Width, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+                 string key = m[0];
+                 item.Click += delegate { Navigate(key); };
+                 navs[key] = item; sidebar.Controls.Add(item);
+-                if (key == "admin") item.Visible = false; else y += 42;
++                if (key == "admin") item.Visible = false; else y += 46;
+             }
+ 
+             lblPage = new Label { Text = "", AutoSize = true, Font = Theme.Font(12f, FontStyle.Bold), Location = new Point(24, 17), Tag = "t", BackColor = Theme.BgDark };
+@@ -154,7 +156,7 @@
+             page.Visible = true; page.BringToFront();
+             foreach (var kv in navs) kv.Value.Selected = kv.Key == key;
+             string title = MenuDef.First(m => m[0] == key)[1];
+-            lblPage.Text = "Lumivolt   ›   " + title;
++            lblPage.Text = title;
+             page.OnActivated();
+             LayoutHeader();
+         }
+@@ -172,6 +174,7 @@
+             var li = LicenseGate.LastInfo;
+             if (li != null && li.Valid)
+             {
++                Text = Brand.Name + " " + li.Edition; lblBrandSub.Text = li.Edition + "  ·  " + Lumivolt.Security.EditionPolicy.DailyLimit(li.Edition) + "개 / 일";
+                 string tail = li.Expires == DateTime.MaxValue ? "무기한" : "D-" + Math.Max(0, (int)Math.Ceiling((li.Expires.Date.AddDays(1) - DateTime.Now).TotalDays));
+                 chipLic.Text = "라이선스 정상 · " + tail; chipLic.Tone = Theme.Success;
+             }
+@@ -189,9 +192,10 @@
+ 
+         private void LayoutSidebar()
+         {
+-                        sidebar.Width = Ui.S(_compact ? 68 : 248);
++                        sidebar.Width = Ui.S(_compact ? 76 : 232);
+             lblBrand.Visible = lblBrandSub.Visible = !_compact;
+-            int y = Ui.S(84); int step = Ui.S(42);
++            foreach (Control c in sidebar.Controls) if (c is BrandMark) c.Visible = !_compact;
++            int y = Ui.S(126); int step = Ui.S(46);
+             foreach (var m in MenuDef)
+             {
+                 var it = navs[m[0]]; it.Width = sidebar.Width; it.Left = 0;
+@@ -265,7 +269,7 @@
+         protected override void OnPaint(PaintEventArgs e)
+         {
+             e.Graphics.Clear(Theme.BgDark);
+-            using (var p = new Pen(Theme.Current.Border)) e.Graphics.DrawLine(p, 0, Height - 1, Width, Height - 1);
++
+         }
+     }
+ }
+--- 8차/src/Program.cs
++++ 9차/src/Program.cs
+@@ -58,7 +58,20 @@
+             if (args.Length > 0 && args[0] == "--ui-layout") { Environment.ExitCode = UiLayoutCheck.Run(args); return; }
+             if (args.Length > 0 && args[0] == "--ui-selftest") { Environment.ExitCode = UiSelfTest.Run(); return; }
+ #endif
++            if (args.Length == 1 && (args[0] == "--activate-for-setup" || args[0] == "--check-for-setup")) { Environment.ExitCode = SetupActivation(args[0] == "--check-for-setup"); return; }
+             RunApp();
++        }
++
++        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++        static int SetupActivation(bool silent)
++        {
++            try {
++                Application.EnableVisualStyles(); Application.SetCompatibleTextRenderingDefault(false);
++                Paths.EnsureAll(); try { ThemeService.Init(Storage.LoadSettings()); } catch { }
++                if (!(silent ? LicenseGate.Recheck() : LicenseGate.Check())) return 1;
++                UsageQuota.EnsureReady();
++                return Lumivolt.Security.EditionPolicy.SetupCode(LicenseGate.LastInfo.Edition);
++            } catch (Exception ex) { if (!silent) MessageBox.Show(ex.Message,"EXP 인증"); return 1; }
+         }
+ 
+         // Selenium 등 내장 DLL 을 쓰는 코드는 별도 메서드에 둬서, 리졸버 등록 이후에 JIT 되도록 한다
+@@ -70,7 +83,7 @@
+             {
+                 if (!created)
+                 {
+-                    MessageBox.Show("이미 실행 중입니다.", "Lumivolt", MessageBoxButtons.OK, MessageBoxIcon.Information);   // 아직 아무것도 시작하지 않은 상태라 기본 상자를 쓴다
++                    MessageBox.Show("이미 실행 중입니다.", "EXP", MessageBoxButtons.OK, MessageBoxIcon.Information);   // 아직 아무것도 시작하지 않은 상태라 기본 상자를 쓴다
+                     return;
+                 }
+                 Application.EnableVisualStyles();
+--- 8차/src/Runner.cs
++++ 9차/src/Runner.cs
+@@ -14,6 +14,7 @@
+         private readonly object _gate = new object();
+ 
+         public bool Running { get; private set; }
++        public string BlockedReason = "";
+         public event Action Finished;
+         public event Action<int, int> Progress;      // (완료, 전체)
+         public event Action<string> ManualLoginNeeded;
+@@ -55,10 +56,12 @@
+                         Func<IList<Product>> snapshot, Action saveProducts, bool includeRegistered)
+         {
+             Guard.Check();
++            UsageQuota.RequireMode(cfg, includeRegistered);
+             lock (_gate)
+             {
+                 if (Running) return;
+                 Running = true;
++                BlockedReason = "";
+             }
+             if (_bot == null) _bot = new Bot(cfg, sel);
+             _bot.StopRequested = false;
+@@ -86,7 +89,7 @@
+                         toRegister = (includeRegistered
+                             ? list.Where(p => p.IsValid)
+                             : list.Where(p => p.IsValid && string.IsNullOrEmpty(p.ProductId) && p.Status != "등록됨")).Take(regLimit).ToList();
+-                    LastRegistered = new List<Product>(toRegister);
++                    LastRegistered = new List<Product>();
+                     total = toRegister.Count;
+                     Report(0, total);
+ 
+@@ -95,6 +98,7 @@
+                         Guard.Check();
+                         p.Status = "진행중";
+                         CurrentProduct = p;
++                        LastRegistered.Add(p);
+                         bot.Register(p);
+                         CurrentProduct = null;
+                         if (p.Status == "등록됨")
+@@ -113,6 +117,8 @@
+                 catch (StopRequestedException) { CurrentProduct = null; Log.Write("사용자가 작업을 중지했습니다."); }
+                 catch (Exception ex)
+                 {
++                    if (ex is RegistrationBlockedException) BlockedReason = ex.Message;
++                    CurrentProduct = null;
+                     Log.Error("Automation", "run.error", "오류: " + ex.Message, ex);
+                     try { if (!bot.IsAlive) bot.Close(); } catch { }
+                 }
+--- 8차/src/Schedule.cs
++++ 9차/src/Schedule.cs
+@@ -98,8 +98,13 @@
+         public static TimeWindow ActiveAt(IList<TimeWindow> wins, DateTime t)
+         {
+             double m = t.TimeOfDay.TotalMinutes;
+-            foreach (var w in wins) if (w.Contains(m)) return w;
+-            return null;
++            // For overlapping rules, the most recently started window takes priority.
++            TimeWindow best = null; DateTime latest = DateTime.MinValue;
++            foreach (var w in wins) if (w.Contains(m)) {
++                DateTime start = t.Date.AddMinutes(w.Start); if (start > t) start = start.AddDays(-1);
++                if (start > latest) { latest = start; best = w; }
++            }
++            return best;
+         }
+ 
+         /// <summary>t 가 어떤 시간대 안이면 t, 아니면 그 이후 가장 가까운 시간대 시작 시각.</summary>
+@@ -126,7 +131,14 @@
+         {
+             var w = ActiveAt(wins, lastStart);
+             int gap = w != null ? w.Minutes : fallbackMinutes;
+-            DateTime cand = NextAllowed(wins, lastStart.AddMinutes(gap));
++            DateTime candidate = lastStart.AddMinutes(gap);
++            // A new reservation window cancels the previous window's remaining delay,
++            // including adjacent windows, gaps, overlaps and midnight boundaries.
++            foreach (var rule in wins) for (int d = 0; d <= 2; d++) {
++                DateTime start = lastStart.Date.AddDays(d).AddMinutes(rule.Start);
++                if (start > lastStart && start < candidate) candidate = start;
++            }
++            DateTime cand = NextAllowed(wins, candidate);
+             if (cand < now) cand = NextAllowed(wins, now);
+             return cand;
+         }
+--- 8차/src/Security/LicenseFiles.cs
++++ 9차/src/Security/LicenseFiles.cs
+@@ -6,9 +6,21 @@
+ {
+     public static class LicenseFiles
+     {
++        public static bool CopyRequest(out string request, out string message)
++        {
++            request = "";
++            try { request = TpmDevice.CreateRequest(); }
++            catch (Exception ex) { message = TpmDevice.Error(ex); return false; }
++            try { Clipboard.SetText(request); message = "복사했습니다. 판매자에게 붙여 넣어 보내세요."; return true; }
++            catch { message = "자동 복사에 실패했습니다. 표시된 등록코드를 직접 복사해 주세요."; return false; }
++        }
++        public static string PasteKey()
++        {
++            return LicenseText.Normalize(Clipboard.GetText(), "LV3");
++        }
+         public static void ExportRequest(IWin32Window owner)
+         {
+-            using (var d = new SaveFileDialog { Filter = "Lumivolt 등록 요청|*.lvrequest", FileName = "Lumivolt-등록요청.lvrequest" })
++            using (var d = new SaveFileDialog { Filter = "EXP 등록코드|*.lvrequest", FileName = "EXP-등록코드.lvrequest" })
+             {
+                 if (d.ShowDialog(owner) != DialogResult.OK) return;
+                 try { File.WriteAllText(d.FileName, TpmDevice.CreateRequest(), LicenseProtocol.Utf8); FluentBox.Show(owner, "등록 요청 파일을 저장했습니다. 관리자에게 전달해 주세요.", "라이선스"); }
+@@ -17,7 +29,7 @@
+         }
+         public static string ImportLicense(IWin32Window owner)
+         {
+-            using (var d = new OpenFileDialog { Filter = "Lumivolt 라이선스|*.lvlicense|텍스트 파일|*.txt" })
++            using (var d = new OpenFileDialog { Filter = "EXP 인증키|*.lvlicense;*.expkey|텍스트 파일|*.txt" })
+             {
+                 if (d.ShowDialog(owner) != DialogResult.OK) return null;
+                 try { return LicenseProtocol.ReadFile(d.FileName).Trim(); }
+--- 8차/src/Security/UsageQuota.cs
++++ 9차/src/Security/UsageQuota.cs
+@@ -0,0 +1,133 @@
++using System;
++using System.IO;
++using System.Security.Cryptography;
++using System.Threading;
++using Microsoft.Win32;
++using Newtonsoft.Json.Linq;
++using Lumivolt.Security;
++namespace BunjangAuto {
++    // Offline, per enrolled Windows user/device. This is not a server or TPM monotonic counter.
++    // Two DPAPI copies detect single-copy rollback/deletion. A persistent Platform KSP marker
++    // prevents resetting usage simply by deleting both copies. An administrator can still
++    // roll back an entire machine snapshot; no offline design claims to prevent that.
++    public static class UsageQuota {
++        static readonly byte[] Entropy=LicenseProtocol.Utf8.GetBytes("EXP.Usage.v1");
++        static string FilePath { get { return Path.Combine(Paths.Root,"usage.v1"); } }
++        static string RegistryPath { get {
++#if TESTBUILD
++            return @"Software\EXP\Tests\"+System.Diagnostics.Process.GetCurrentProcess().Id;
++#else
++            return @"Software\EXP\Usage";
++#endif
++        } }
++        static string MarkerName { get {
++#if TESTBUILD
++            return "EXP.Usage.Test."+System.Diagnostics.Process.GetCurrentProcess().Id;
++#else
++            return "EXP.Usage.v1";
++#endif
++        } }
++        static CngProvider Provider { get {
++#if TESTBUILD
++            return CngProvider.MicrosoftSoftwareKeyStorageProvider;
++#else
++            return new CngProvider("Microsoft Platform Crypto Provider");
++#endif
++        } }
++        static string Day(DateTime utc) { return utc.AddHours(9).ToString("yyyy-MM-dd",System.Globalization.CultureInfo.InvariantCulture); }
++        static T Locked<T>(Func<T> action) {
++            using(var m=new Mutex(false,"Local\\EXP_Usage_v1")) {
++                bool entered=false;
++                try { try { entered=m.WaitOne(15000); } catch(AbandonedMutexException) { entered=true; } if(!entered) throw new IOException("사용량 기록을 처리 중입니다. 잠시 후 다시 시도해 주세요."); return action(); }
++                finally { if(entered) m.ReleaseMutex(); }
++            }
++        }
++        static JObject Decode(byte[] bytes) {
++            if(bytes==null || bytes.Length>4000000) throw new IOException("사용량 기록 크기 오류");
++            var plain=ProtectedData.Unprotect(bytes,Entropy,DataProtectionScope.CurrentUser);
++            // Usage history can exceed license payload limits; use strict JSON duplicate handling.
++            using(var sr=new StringReader(LicenseProtocol.Utf8.GetString(plain))) using(var r=new Newtonsoft.Json.JsonTextReader(sr) { DateParseHandling=Newtonsoft.Json.DateParseHandling.None,MaxDepth=8 }) {
++                var o=JObject.Load(r,new Newtonsoft.Json.Linq.JsonLoadSettings { DuplicatePropertyNameHandling=DuplicatePropertyNameHandling.Error });
++                if(r.Read() || (int)o["version"]!=1 || (long)o["seq"]<0 || (int)o["used"]<0 || (long)o["credits"]<0 || !(o["redeemed"] is JObject) || !(o["accounts"] is JObject)) throw new IOException("사용량 기록 형식 오류"); return o;
++            }
++        }
++        static JObject Read(string device,DateTime now) {
++            byte[] file=File.Exists(FilePath)?File.ReadAllBytes(FilePath):null, reg=null;
++            using(var k=Registry.CurrentUser.OpenSubKey(RegistryPath)) if(k!=null) reg=k.GetValue("State") as byte[];
++            bool marker=CngKey.Exists(MarkerName,Provider);
++            if(file==null && reg==null) {
++                if(marker) throw new IOException("사용량 기록이 없어 등록을 중단했습니다. 관리자에게 복구를 문의해 주세요.");
++                return new JObject {{"version",1},{"seq",0},{"device",device},{"day",Day(now)},{"lastUtc",LicenseProtocol.Utc(now)},{"used",0},{"credits",0},{"accounts",new JObject()},{"redeemed",new JObject()}};
++            }
++            // An interrupted initial write can be recovered from one authenticated copy. Once
++            // the marker exists, a missing copy is never treated as a fresh allowance.
++            if(marker && (file==null || reg==null)) throw new IOException("사용량 기록 일부가 삭제되었습니다. 관리자에게 문의해 주세요.");
++            JObject a=file==null?null:Decode(file), b=reg==null?null:Decode(reg), o=a??b;
++            if(a!=null && b!=null) {
++                if((long)a["seq"]==(long)b["seq"]) { if(!JToken.DeepEquals(a,b)) throw new IOException("사용량 기록이 일치하지 않습니다."); }
++                else {
++                    var newer=(long)a["seq"]>(long)b["seq"]?a:b; var older=ReferenceEquals(newer,a)?b:a;
++                    if((long)newer["seq"]!=(long)older["seq"]+1 || (string)newer["previous"]!=LicenseProtocol.Fingerprint(LicenseProtocol.Utf8.GetBytes(older.ToString(Newtonsoft.Json.Formatting.None)))) throw new IOException("사용량 기록 되돌리기가 감지되었습니다.");
++                    o=newer; // Recover only an adjacent, hash-linked interrupted commit, using the newer charge.
++                }
++            }
++            o.AddAnnotation(LicenseProtocol.Fingerprint(LicenseProtocol.Utf8.GetBytes(o.ToString(Newtonsoft.Json.Formatting.None))));
++            if((string)o["device"]!=device) throw new IOException("다른 PC의 사용량 기록입니다.");
++            if(now.AddMinutes(5)<LicenseProtocol.Time((string)o["lastUtc"])) throw new IOException("PC 시간이 이전으로 변경되었습니다.");
++            int order=String.CompareOrdinal(Day(now),(string)o["day"]);
++            if(order<0) throw new IOException("날짜를 확인해 주세요.");
++            if(order>0) { o["day"]=Day(now); o["used"]=0; o["accounts"]=new JObject(); }
++            return o;
++        }
++        static void Write(JObject state) {
++            string previous=state.Annotation<string>() ?? ""; state["seq"]=(long)state["seq"]+1;
++            state["previous"]=previous;
++            byte[] data=ProtectedData.Protect(LicenseProtocol.Utf8.GetBytes(state.ToString(Newtonsoft.Json.Formatting.None)),Entropy,DataProtectionScope.CurrentUser);
++            Directory.CreateDirectory(Paths.Root); string temp=FilePath+".tmp";
++            using(var f=new FileStream(temp,FileMode.Create,FileAccess.Write,FileShare.None,4096,FileOptions.WriteThrough)) { f.Write(data,0,data.Length); f.Flush(true); }
++            // Registry first; if the process stops between writes, Read selects this newer state.
++            using(var k=Registry.CurrentUser.CreateSubKey(RegistryPath)) { k.SetValue("State",data,RegistryValueKind.Binary); k.Flush(); }
++            if(File.Exists(FilePath)) File.Replace(temp,FilePath,null); else File.Move(temp,FilePath);
++            if(!CngKey.Exists(MarkerName,Provider)) using(var key=CngKey.Create(CngAlgorithm.ECDsaP256,MarkerName,new CngKeyCreationParameters { Provider=Provider,ExportPolicy=CngExportPolicies.None,KeyUsage=CngKeyUsages.Signing })) { }
++        }
++        static LicenseInfo RequireLicense() { if(!LicenseGate.Recheck()) throw new InvalidOperationException("유효한 라이선스가 필요합니다."); return LicenseGate.LastInfo; }
++        public static void RequireMode(AppSettings cfg,bool includeRegistered) {
++            var li=RequireLicense(); if(!EditionPolicy.CanRepeat(li.Edition) && (cfg.RepeatAll || cfg.AllowDuplicate || includeRegistered || cfg.UseTimeRules)) throw new InvalidOperationException("반복·중복 등록과 시간대 예약은 Studio / Pro에서 사용할 수 있습니다.");
++        }
++        public static void EnsureReady() { var li=RequireLicense(); Locked(()=>{var s=Read(li.MachineId,ServerClock.UtcNow); Write(s); return true;}); }
++        public static void AcceptTrial(LicenseInfo li) {
++            if(!li.Valid || !li.Trial)return;
++            Locked(()=> { var s=Read(li.MachineId,ServerClock.UtcNow); string first=(string)s["trialId"];
++                if(first!=null && first!=li.LicenseId)throw new InvalidOperationException("이 PC는 이미 체험판을 사용했습니다. 정식 라이선스를 등록해 주세요.");
++                if(first==li.LicenseId)return true; s["trialId"]=li.LicenseId; Write(s); return true;
++            });
++        }
++        public static void Consume(string shopId) {
++            ServerClock.RequireFresh();
++            var li=RequireLicense(); Locked(()=>{ var s=Read(li.MachineId,ServerClock.UtcNow); ApplyConsume(s,li.Edition,shopId); s["lastUtc"]=LicenseProtocol.Utc(ServerClock.UtcNow); Write(s); return true; });
++        }
++        internal static void ApplyConsume(JObject state,string edition,string shopId) {
++            if(String.IsNullOrWhiteSpace(shopId) || !System.Text.RegularExpressions.Regex.IsMatch(shopId,@"^\d{1,20}$")) throw new InvalidOperationException("현재 로그인한 내 상점을 확인할 수 없어 등록을 중단했습니다.");
++            var accounts=(JObject)state["accounts"]; string account=LicenseProtocol.Fingerprint(LicenseProtocol.Utf8.GetBytes(shopId)); int used=accounts[account]==null?0:(int)accounts[account];
++            if(used>=50) throw new InvalidOperationException("이 계정의 오늘 등록 한도 50개를 모두 사용했습니다.");
++            int total=(int)state["used"], cap=EditionPolicy.DailyLimit(edition);
++            if(total>=cap) { if(edition!="Pro" || (long)state["credits"]<=0) throw new InvalidOperationException("오늘 EXP 등록 한도를 모두 사용했습니다. 추가 등록 문의: "+Brand.Email); state["credits"]=(long)state["credits"]-1; }
++            state["used"]=checked(total+1); accounts[account]=used+1;
++        }
++        public static string Summary() {
++            var li=LicenseGate.LastInfo; if(li==null || !li.Valid) return "라이선스 인증 후 사용량이 표시됩니다.";
++            try { return Locked(()=> { var s=Read(li.MachineId,ServerClock.UtcNow); return "오늘 "+(int)s["used"]+" / "+EditionPolicy.DailyLimit(li.Edition)+"개  ·  추가 등록권 "+(long)s["credits"]+"개"; }); }
++            catch(Exception ex) { return "사용량 확인 필요: "+ex.Message; }
++        }
++        public static void Redeem(string token) {
++            var li=RequireLicense(); if(li.Edition!="Pro") throw new InvalidOperationException("추가 등록권은 Pro에서 사용할 수 있습니다.");
++            var credit=CreditProtocol.Verify(token,TrustedKeys.All,ServerClock.UtcNow); TpmDevice.Prove((string)credit["devicePublicKey"]);
++            Locked(()=> { var s=Read(li.MachineId,ServerClock.UtcNow); ApplyCredit(s,credit); s["lastUtc"]=LicenseProtocol.Utc(ServerClock.UtcNow); Write(s); return true; });
++        }
++        internal static void ApplyCredit(JObject state,JObject credit) {
++            var redeemed=(JObject)state["redeemed"]; string id=(string)credit["creditId"];
++            if(redeemed[id]!=null) throw new InvalidOperationException("이미 충전한 추가 등록권입니다.");
++            state["credits"]=checked((long)state["credits"]+(long)credit["quantity"]); redeemed[id]=true;
++        }
++    }
++}
+--- 8차/src/SelfTest.cs
++++ 9차/src/SelfTest.cs
+@@ -1,4 +1,4 @@
+-﻿using System;
++using System;
+ using System.Collections.Generic;
+ using System.IO;
+ using System.Linq;
+@@ -220,7 +220,7 @@
+                 var d = new DateTime(2026, 10, 7);
+                 Check("00~09시는 40분 간격", Schedule.NextRun(w, d.AddHours(0), d, 20) == d.AddMinutes(40));
+                 Check("09~18시는 60분 간격", Schedule.NextRun(w, d.AddHours(10), d.AddHours(10), 20) == d.AddHours(11));
+-                Check("시간대 경계를 넘어가도 다음 시간대 간격 적용", Schedule.NextRun(w, d.AddHours(8).AddMinutes(30), d.AddHours(8).AddMinutes(30), 20) == d.AddHours(9).AddMinutes(10));
++                Check("새 시간대 시작 시 이전 간격 대기 취소", Schedule.NextRun(w, d.AddHours(8).AddMinutes(30), d.AddHours(8).AddMinutes(30), 20) == d.AddHours(9));
+                 Check("마지막 시간대 이후엔 다음날 첫 시간대 시작까지 대기", Schedule.NextRun(w, d.AddHours(17).AddMinutes(30), d.AddHours(17).AddMinutes(30), 20) == d.AddDays(1));
+                 Check("작업이 오래 걸려 늦으면 즉시", Schedule.NextRun(w, d.AddHours(10), d.AddHours(12), 20) == d.AddHours(12));
+ 
+@@ -257,3 +257,4 @@
+         }
+     }
+ }
++
+--- 8차/src/SelfTestV2.cs
++++ 9차/src/SelfTestV2.cs
+@@ -76,14 +76,14 @@
+             try
+             {
+                 var topics = HelpService.Topics();
+-                string[] must = { "프로그램 시작하기", "라이선스 등록", "로그인", "상품 추가", "CSV 사용법", "상품 데이터 작성법", "이미지 등록", "자동 등록", "1개씩 등록", "반복 등록", "시간대별 등록", "예약 기능", "로그 확인", "오류 해결", "Chrome 문제 해결", "로그인 문제 해결", "라이선스 문제 해결", "Light / Dark Mode", "설정", "FAQ" };
++                string[] must = { "프로그램 시작하기", "라이선스 등록", "로그인", "상품 추가", "상품을 앱에서 관리하기", "상품 데이터 작성법", "이미지 등록", "자동 등록", "1개씩 등록", "반복 등록", "시간대별 등록", "예약 기능", "로그 확인", "오류 해결", "Chrome 문제 해결", "로그인 문제 해결", "라이선스 문제 해결", "Light / Dark Mode", "설정", "FAQ" };
+                 Check("[Help] 요청한 20개 목차가 모두 내장되어 있음", topics.Count == 20 && must.All(m => topics.Any(t => t.Title == m)));
+                 Check("[Help] 모든 문서가 비어 있지 않고 블록으로 변환됨", topics.All(t => t.Markdown.Length > 150 && HelpService.Build(t).Count >= 3));
+-                Check("[Help] 검색(제목/본문, 대소문자 무시)", HelpService.Search("csv").Count >= 2 && HelpService.Search("csv").Count < 20 && HelpService.Search("").Count == 20 && HelpService.Search("zzzz-없음").Count == 0 && HelpService.Search("CSV 사용법")[0].Title == "CSV 사용법");
++                Check("[Help] 검색(제목/본문, 대소문자 무시)", HelpService.Search("상품").Count >= 2 && HelpService.Search("csv").Count == 0 && HelpService.Search("").Count == 20 && HelpService.Search("zzzz-없음").Count == 0 && HelpService.Search("상품을 앱에서 관리하기")[0].Title == "상품을 앱에서 관리하기");
+                 DocView dv;
+                 try { dv = new DocView { Width = 760, Height = 400 }; }
+                 catch (TypeInitializationException) { Console.WriteLine("SKIP  [Help] 본문 뷰어 검사: 화면(디스플레이)이 없는 환경"); return; }
+-                var blocks = HelpService.Build(topics.First(t => t.Title == "CSV 사용법"));
++                var blocks = HelpService.Build(topics.First(t => t.Title == "상품을 앱에서 관리하기"));
+                 dv.SetContent(blocks, HelpService.PlainText(topics[0]), "");
+                 int wide = dv.ContentHeight; dv.Width = 380; int narrow = dv.ContentHeight;
+                 Check("[Help] 본문 뷰어: 폭이 좁아지면 줄바꿈으로 높이가 늘어남", wide > 200 && narrow > wide);
+@@ -343,3 +343,4 @@
+         }
+     }
+ }
++
+--- 8차/src/ServerClock.cs
++++ 9차/src/ServerClock.cs
+@@ -0,0 +1,37 @@
++using System;
++using System.Diagnostics;
++using System.Globalization;
++using System.Net;
++using System.Threading;
++namespace BunjangAuto {
++    public static class ServerClock {
++        static readonly object Gate=new object();
++        static readonly Stopwatch Elapsed=Stopwatch.StartNew();
++        static DateTime anchor; static long sampledAt; static bool valid, busy; static long attemptedAt=-600000;
++        public static string LastError = "";
++        public static bool Fresh { get { lock(Gate) return valid && Elapsed.ElapsedMilliseconds-sampledAt < 1800000; } }
++        public static DateTime UtcNow { get { lock(Gate) return valid ? anchor.AddMilliseconds(Elapsed.ElapsedMilliseconds-sampledAt) : DateTime.UtcNow; } }
++        public static DateTime KoreaNow { get { return DateTime.SpecifyKind(UtcNow.AddHours(9),DateTimeKind.Unspecified); } }
++        public static string Status { get { return Fresh ? "번개장터 서버 시각 동기화 · " + KoreaNow.ToString("HH:mm:ss") : "서버 시각 동기화 필요 · 등록은 동기화 후 시작됩니다"; } }
++        public static void RefreshAsync() { lock(Gate) { if(busy || Elapsed.ElapsedMilliseconds-attemptedAt<60000) return; busy=true; attemptedAt=Elapsed.ElapsedMilliseconds; } ThreadPool.QueueUserWorkItem(delegate { try { Fetch(); LastError=""; } catch(Exception ex) { LastError=ex.Message; } finally { lock(Gate) busy=false; } }); }
++        public static void RequireFresh() { if(!Fresh) { RefreshAsync(); throw new InvalidOperationException("번개장터 서버 시각을 확인 중입니다. 인터넷 연결 후 잠시 뒤 다시 시작해 주세요."); } }
++        static void Fetch() {
++            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
++            long started=Elapsed.ElapsedMilliseconds;
++            var req=(HttpWebRequest)WebRequest.Create("https://m.bunjang.co.kr/?exp_clock="+Guid.NewGuid().ToString("N"));
++            req.Method="HEAD"; req.Timeout=10000; req.ReadWriteTimeout=10000; req.AllowAutoRedirect=false; req.UserAgent="EXP/2.2";
++            req.CachePolicy=new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
++            using(var response=(HttpWebResponse)req.GetResponse()) {
++                if(response.StatusCode!=HttpStatusCode.OK) throw new InvalidOperationException("서버 시각 응답 오류");
++                DateTime date; if(!DateTime.TryParseExact(response.Headers["Date"],"r",CultureInfo.InvariantCulture,DateTimeStyles.AssumeUniversal|DateTimeStyles.AdjustToUniversal,out date)) throw new InvalidOperationException("서버 시각 누락");
++                long age=0; var ageText=response.Headers["Age"]; if(ageText!=null && (!long.TryParse(ageText,out age) || age<0 || age>5)) throw new InvalidOperationException("캐시된 서버 시각");
++                long end=Elapsed.ElapsedMilliseconds; if(end-started>5000) throw new InvalidOperationException("서버 시각 응답 지연");
++                date=date.AddSeconds(age).AddMilliseconds((end-started)/2.0);
++                lock(Gate) {
++                    if(valid && Math.Abs((date-anchor.AddMilliseconds(end-sampledAt)).TotalMinutes)>5) throw new InvalidOperationException("서버 시각이 급격히 달라졌습니다.");
++                    anchor=date; sampledAt=end; valid=true;
++                }
++            }
++        }
++    }
++}
+--- 8차/src/Storage.cs
++++ 9차/src/Storage.cs
+@@ -54,7 +54,7 @@
+                 catch (CryptographicException)
+                 {
+                     Log.Write("[주의] 상품 목록 파일을 열 수 없습니다(다른 PC에서 옮겨왔거나 손상됨). " +
+-                              "CSV 백업이 있다면 'CSV 불러오기'로 다시 불러와 주세요.");
++                              "관리자에게 데이터 복구를 문의해 주세요.");
+                     return new BindingList<Product>();
+                 }
+                 var list = JsonConvert.DeserializeObject<List<Product>>(json);
+@@ -345,3 +345,4 @@
+         }
+     }
+ }
++
+--- 8차/src/Terms.cs
++++ 9차/src/Terms.cs
+@@ -10,7 +10,7 @@
+     {
+         public const string Version = "2026-10-v3";
+         public const string Body =
+-@"Lumivolt(루미볼트) 프로그램 이용약관 및 저작권 안내
++@"EXP 프로그램 이용약관 및 저작권 안내
+ 
+ Copyright © 음악천재. All rights reserved.
+ 
+@@ -87,7 +87,7 @@
+             FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false;
+             Font = Theme.FontBase();
+ 
+-            var header = Theme.BuildHeader("이용약관 동의", "Lumivolt 루미볼트   ·   Copyright © 음악천재. All rights reserved.");
++            var header = Theme.BuildHeader("이용약관 동의", "EXP   ·   Copyright © 음악천재. All rights reserved.");
+             var box = new TextBox { Left = 16, Top = 78, Width = 592, Height = 440, Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical, BackColor = Theme.Field, ForeColor = Theme.TextPrimary, Text = TermsText.Body.Replace("\r\n", "\n").Replace("\n", "\r\n") };
+             var chk = new CheckBox { Left = 16, Top = 528, Width = 590, Height = 24, ForeColor = Theme.TextPrimary, Text = "위 약관을 모두 읽었으며, 무단 복제·유포·분석 시 법적 책임이 따름에 동의합니다." };
+             var ok = new Button { Left = 398, Top = 564, Width = 100, Height = 32, Text = "동의", Enabled = false, DialogResult = DialogResult.OK };
+--- 8차/src/Theme.cs
++++ 9차/src/Theme.cs
+@@ -110,26 +110,23 @@
+ 
+         public static readonly ThemePalette Light = new ThemePalette
+         {
+-            Dark = false,
+-            Bg = Color.FromArgb(243, 243, 243), Sidebar = Color.FromArgb(238, 238, 238),
+-            Card = Color.FromArgb(255, 255, 255), CardAlt = Color.FromArgb(249, 249, 249),
+-            Field = Color.FromArgb(255, 255, 255), FieldBorder = Color.FromArgb(200, 200, 200), Border = Color.FromArgb(229, 229, 229),
+-            Hover = Color.FromArgb(232, 232, 232), Selected = Color.FromArgb(226, 226, 226),
+-            Accent = Color.FromArgb(0, 103, 192), AccentHover = Color.FromArgb(25, 117, 197), AccentPressed = Color.FromArgb(0, 84, 156), OnAccent = Color.White,
+-            Text = Color.FromArgb(26, 26, 26), TextMuted = Color.FromArgb(96, 94, 92),
+-            Danger = Color.FromArgb(196, 43, 28), Success = Color.FromArgb(15, 123, 15), Warn = Color.FromArgb(157, 93, 0)
++            Dark = false, Bg = Color.FromArgb(246,247,249), Sidebar = Color.FromArgb(237,239,243),
++            Card = Color.White, CardAlt = Color.FromArgb(248,249,251), Field = Color.FromArgb(249,250,252),
++            FieldBorder = Color.FromArgb(210,214,222), Border = Color.FromArgb(224,227,233),
++            Hover = Color.FromArgb(228,233,241), Selected = Color.FromArgb(216,228,247),
++            Accent = Color.FromArgb(29,87,204), AccentHover = Color.FromArgb(24,77,184), AccentPressed = Color.FromArgb(18,62,153), OnAccent = Color.White,
++            Text = Color.FromArgb(27,30,37), TextMuted = Color.FromArgb(102,110,125),
++            Danger = Color.FromArgb(180,48,58), Success = Color.FromArgb(28,116,82), Warn = Color.FromArgb(142,97,20)
+         };
+-
+         public static readonly ThemePalette DarkPal = new ThemePalette
+         {
+-            Dark = true,
+-            Bg = Color.FromArgb(32, 32, 32), Sidebar = Color.FromArgb(28, 28, 28),
+-            Card = Color.FromArgb(43, 43, 43), CardAlt = Color.FromArgb(50, 50, 50),
+-            Field = Color.FromArgb(45, 45, 45), FieldBorder = Color.FromArgb(96, 96, 96), Border = Color.FromArgb(58, 58, 58),
+-            Hover = Color.FromArgb(52, 52, 52), Selected = Color.FromArgb(58, 58, 58),
+-            Accent = Color.FromArgb(96, 205, 255), AccentHover = Color.FromArgb(120, 214, 255), AccentPressed = Color.FromArgb(76, 176, 220), OnAccent = Color.FromArgb(0, 31, 51),
+-            Text = Color.FromArgb(255, 255, 255), TextMuted = Color.FromArgb(172, 172, 172),
+-            Danger = Color.FromArgb(255, 153, 164), Success = Color.FromArgb(108, 203, 95), Warn = Color.FromArgb(252, 225, 0)
++            Dark = true, Bg = Color.FromArgb(19,21,26), Sidebar = Color.FromArgb(15,17,21),
++            Card = Color.FromArgb(29,32,39), CardAlt = Color.FromArgb(36,40,48), Field = Color.FromArgb(23,26,32),
++            FieldBorder = Color.FromArgb(68,76,92), Border = Color.FromArgb(47,53,64),
++            Hover = Color.FromArgb(42,49,62), Selected = Color.FromArgb(40,60,94),
++            Accent = Color.FromArgb(151,185,255), AccentHover = Color.FromArgb(177,203,255), AccentPressed = Color.FromArgb(123,162,236), OnAccent = Color.FromArgb(16,31,60),
++            Text = Color.FromArgb(244,246,251), TextMuted = Color.FromArgb(168,176,192),
++            Danger = Color.FromArgb(255,157,165), Success = Color.FromArgb(122,215,177), Warn = Color.FromArgb(236,196,124)
+         };
+     }
+ 
+@@ -204,7 +201,7 @@
+         public static Color Hover { get { return Current.Hover; } }
+ 
+         private const string TagPrimary = "lux-primary";
+-        private const int ButtonRadius = 4;
++        private const int ButtonRadius = 10;
+ 
+         // ---- 글꼴 (캐시해서 GDI 핸들이 새지 않게 한다)
+         private static readonly Dictionary<string, Font> _fonts = new Dictionary<string, Font>();
+@@ -447,7 +444,7 @@
+             g.ColumnHeadersDefaultCellStyle.Font = FontBold();
+             g.ColumnHeadersDefaultCellStyle.SelectionBackColor = p.CardAlt;
+             g.ColumnHeadersDefaultCellStyle.Padding = new Padding(Dpi.S(8), 0, 0, 0);
+-            g.ColumnHeadersHeight = Dpi.S(38);
++            g.ColumnHeadersHeight = Dpi.S(42);
+             g.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+             g.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+             g.DefaultCellStyle.BackColor = p.Card;
+@@ -460,7 +457,7 @@
+             g.AlternatingRowsDefaultCellStyle.BackColor = p.Card;
+             g.AlternatingRowsDefaultCellStyle.SelectionBackColor = sel;
+             g.AlternatingRowsDefaultCellStyle.SelectionForeColor = p.Text;
+-            g.RowTemplate.Height = Dpi.S(36);
++            g.RowTemplate.Height = Dpi.S(42);
+             g.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+         }
+ 
+--- 8차/src/UI/AutomationController.cs
++++ 9차/src/UI/AutomationController.cs
+@@ -76,6 +76,8 @@
+         // ============================ 실행 / 예약 ============================
+         public void Start()
+         {
++            try { ServerClock.RequireFresh(); UsageQuota.RequireMode(Cfg, Cfg.AllowDuplicate); UsageQuota.EnsureReady(); }
++            catch (Exception ex) { Say(ex.Message, "EXP 이용 안내"); return; }
+             SaveSettings();
+             if (!Cfg.DoRegister) { Say("실행할 작업을 선택해 주세요.", "안내"); return; }
+             _skip.Clear();
+@@ -95,10 +97,10 @@
+             Active = true;
+             Log.Write("INFO", "Automation", "run.start", "자동등록을 시작합니다. (" + (Cfg.OneByOne ? (Cfg.UseTimeRules ? "1개씩·시간대별" : "1개씩·" + Cfg.OneByOneMinutes + "분 간격") : "일괄") + (_roundTotal > 1 ? ", 총 " + _roundTotal + "회 반복" : "") + (Cfg.AllowDuplicate ? ", 중복 허용" : "") + ")", "");
+ 
+-            if (_wins != null && Schedule.ActiveAt(_wins, DateTime.Now) == null)
++            if (_wins != null && Schedule.ActiveAt(_wins, ServerClock.KoreaNow) == null)
+             {
+                 // 지금은 등록 시간대가 아니므로 다음 시간대가 시작될 때까지 기다린다
+-                _nextRun = Schedule.NextAllowed(_wins, DateTime.Now);
++                _nextRun = Schedule.NextAllowed(_wins, ServerClock.KoreaNow);
+                 StateText = "시간대 시작 대기 중";
+                 Log.Write("[시간대별 등록] 지금은 등록 시간대가 아니어서 " + _nextRun.ToString("MM-dd HH:mm") + " 에 시작합니다.");
+                 Raise();
+@@ -112,10 +114,11 @@
+             StateText = "실행 중...";
+             NextText = "";
+             Done = 0; Total = 0;
+-            _runStart = DateTime.Now;
++            _runStart = ServerClock.KoreaNow;
+             bool includeRegistered = Cfg.AllowDuplicate || _round > 1;   // 2회차부터는 이미 등록된 상품도 처음부터 다시
+             Raise();
+-            Runner.Run(Cfg, Sel, Products, () => Products.Where(p => !_skip.Contains(p)).ToList(), () => Storage.SaveProducts(Products), includeRegistered);
++            try { Runner.Run(Cfg, Sel, Products, () => Products.Where(p => !_skip.Contains(p)).ToList(), () => Storage.SaveProducts(Products), includeRegistered); }
++            catch (Exception ex) { _scheduleOn = false; Active = false; StateText = "등록 중단"; Say(ex.Message,"EXP 이용 안내"); Raise(); }
+         }
+ 
+         public void Stop()
+@@ -165,6 +168,7 @@
+                     else if ((p.Status ?? "").StartsWith("실패")) FailThisRun++;
+                 }
+                 if (ProductsChanged != null) ProductsChanged();
++                if (!String.IsNullOrEmpty(Runner.BlockedReason)) { _scheduleOn=false; _nextRun=DateTime.MinValue; FinishUi(); StateText="등록 중단"; Say(Runner.BlockedReason,"EXP 이용 안내"); Raise(); return; }
+                 if (!_scheduleOn) { FinishUi(); Raise(); return; }
+ 
+                 // 이번 회차에 이미 시도한 상품(성공/실패)은 같은 회차 안에서 다시 시도하지 않는다
+@@ -193,13 +197,13 @@
+                     }
+                 }
+ 
+-                if (_wins != null) _nextRun = Schedule.NextRun(_wins, _runStart, DateTime.Now, Cfg.OneByOneMinutes);
++                if (_wins != null) _nextRun = Schedule.NextRun(_wins, _runStart, ServerClock.KoreaNow, Cfg.OneByOneMinutes);
+                 else
+                 {
+                     _nextRun = _runStart.AddMinutes(Cfg.OneByOneMinutes);
+-                    if (_nextRun < DateTime.Now) _nextRun = DateTime.Now;
++                    if (_nextRun < ServerClock.KoreaNow) _nextRun = ServerClock.KoreaNow;
+                 }
+-                Log.Write("[1개씩 등록] 다음 등록 예정: " + _nextRun.ToString(_nextRun.Date == DateTime.Today ? "HH:mm:ss" : "MM-dd HH:mm:ss"));
++                Log.Write("[1개씩 등록] 다음 등록 예정: " + _nextRun.ToString(_nextRun.Date == ServerClock.KoreaNow.Date ? "HH:mm:ss" : "MM-dd HH:mm:ss"));
+                 StateText = "다음 실행 대기 중" + RoundText();
+                 Raise();
+             });
+@@ -229,8 +233,10 @@
+         /// <summary>1초마다 UI 스레드에서 호출: 다음 실행 시각이 되면 다음 상품을 올린다.</summary>
+         public void Tick()
+         {
++            ServerClock.RefreshAsync();
++            if (!ServerClock.Fresh) { if (Active) { NextText = "서버 시각 확인 중 · 예약 대기"; Raise(); } return; }
+             if (!_scheduleOn || Runner.Running || _nextRun == DateTime.MinValue) return;
+-            var left = _nextRun - DateTime.Now;
++            var left = _nextRun - ServerClock.KoreaNow;
+             if (left.TotalSeconds <= 0)
+             {
+                 _nextRun = DateTime.MinValue;
+--- 8차/src/UI/Controls.cs
++++ 9차/src/UI/Controls.cs
+@@ -36,7 +36,7 @@
+     /// <summary>둥근 모서리 + 얇은 테두리의 카드(바탕보다 한 층 위).</summary>
+     public class CardPanel : Panel, IThemed
+     {
+-        public int Radius = 8;
++        public int Radius = 18;
+         public bool Raised = true;     // false 면 카드색 없이 바탕색 위에 테두리만
+         public CardPanel()
+         {
+@@ -109,7 +109,7 @@
+             }
+             if (!Enabled) { fill = Style == BtnStyle.Primary ? Blend(p.Accent, ParentBg, .4) : p.CardAlt; border = p.Border; fore = Style == BtnStyle.Primary ? p.OnAccent : p.TextMuted; }
+             var r = new Rectangle(0, 0, Width - 1, Height - 1);
+-            using (var path = Theme.RoundedRect(r, S(5)))
++            using (var path = Theme.RoundedRect(r, S(10)))
+             using (var b = new SolidBrush(fill)) using (var pen = new Pen(border)) { g.FillPath(b, path); g.DrawPath(pen, path); }
+             if (Focused && ShowFocusCues) using (var pen = new Pen(p.Accent, 2)) using (var path = Theme.RoundedRect(new Rectangle(1, 1, Width - 3, Height - 3), 4)) g.DrawPath(pen, path);
+ 
+@@ -147,11 +147,11 @@
+         {
+             var g = pe.Graphics; var p = Theme.Current;
+             g.Clear(p.Sidebar); Smooth(g);
+-            var r = new Rectangle(S(6), S(2), Width - S(12), Height - S(4));
++            var r = new Rectangle(S(12), S(2), Width - S(24), Height - S(4));
+             if (_sel || _hot)
+                 using (var path = Theme.RoundedRect(r, S(5))) using (var b = new SolidBrush(_sel ? p.Selected : p.Hover)) g.FillPath(b, path);
+-            if (_sel) using (var b = new SolidBrush(p.Accent)) using (var path = Theme.RoundedRect(new Rectangle(S(6), Height / 2 - S(8), S(3), S(16)), S(2))) g.FillPath(b, path);
+-            if (Focused && ShowFocusCues) using (var pen = new Pen(p.Accent)) using (var path = Theme.RoundedRect(r, 5)) g.DrawPath(pen, path);
++
++            if (Focused && ShowFocusCues) using (var pen = new Pen(p.Accent)) using (var path = Theme.RoundedRect(r, 8)) g.DrawPath(pen, path);
+             Color fore = _sel ? p.Text : p.TextMuted;
+             int tx = S(20);
+             if (Theme.HasIconFont && Glyph.Length > 0)
+@@ -216,7 +216,7 @@
+             var g = pe.Graphics; var p = Theme.Current;
+             g.Clear(ParentBg); Smooth(g);
+             var outer = new Rectangle(0, 0, Width - 1, Height - 1);
+-            using (var path = Theme.RoundedRect(outer, 6)) { using (var b = new SolidBrush(p.CardAlt)) g.FillPath(b, path); using (var pen = new Pen(p.Border)) g.DrawPath(pen, path); }
++            using (var path = Theme.RoundedRect(outer, 10)) { using (var b = new SolidBrush(p.CardAlt)) g.FillPath(b, path); using (var pen = new Pen(p.Border)) g.DrawPath(pen, path); }
+             if (Items.Count == 0) return;
+             int w = (Width - 4) / Items.Count;
+             for (int i = 0; i < Items.Count; i++)
+@@ -275,7 +275,7 @@
+         {
+             var g = e.Graphics; var p = Theme.Current;
+             TextRenderer.DrawText(g, Caption, Theme.Font(9f, FontStyle.Regular), new Rectangle(Ui.S(16), Ui.S(12), Width - Ui.S(32), Ui.S(20)), p.TextMuted, TextFormatFlags.Left | TextFormatFlags.NoPadding | TextFormatFlags.EndEllipsis);
+-            TextRenderer.DrawText(g, Value, Theme.Font(22f, FontStyle.Bold), new Rectangle(Ui.S(16), Ui.S(34), Width - Ui.S(32), Ui.S(36)), Tone != null ? Tone() : p.Text, TextFormatFlags.Left | TextFormatFlags.NoPadding | TextFormatFlags.EndEllipsis);
++            TextRenderer.DrawText(g, Value, Theme.Font(25f, FontStyle.Bold), new Rectangle(Ui.S(16), Ui.S(34), Width - Ui.S(32), Ui.S(36)), Tone != null ? Tone() : p.Text, TextFormatFlags.Left | TextFormatFlags.NoPadding | TextFormatFlags.EndEllipsis);
+             if (Hint.Length > 0) TextRenderer.DrawText(g, Hint, Theme.Font(8.5f, FontStyle.Regular), new Rectangle(Ui.S(16), Ui.S(72), Width - Ui.S(32), Ui.S(18)), p.TextMuted, TextFormatFlags.Left | TextFormatFlags.NoPadding | TextFormatFlags.EndEllipsis);
+         }
+     }
+--- 8차/src/UI/Pages/AutomationPage.cs
++++ 9차/src/UI/Pages/AutomationPage.cs
+@@ -14,6 +14,7 @@
+         private readonly Chip chipRun;
+         private readonly Timer _t = new Timer { Interval = 500 };
+         private readonly CardPanel cardMain, cardNums;
++        private Label usage, clock; private int quotaTick;
+ 
+         public AutomationPage(AppHost host) : base(host)
+         {
+@@ -39,7 +40,11 @@
+             lblOk = NumBlock(cardNums, "이번 실행 성공", 20, "s");
+             lblFail = NumBlock(cardNums, "이번 실행 실패", 220, "d");
+             lblLeft = NumBlock(cardNums, "남은 상품", 420, "t");
+-            Controls.AddRange(new Control[] { title, sub, cardMain, cardNums });
++            usage=Ui.Heading(UsageQuota.Summary()); usage.Location=new Point(2,462);
++            clock=Ui.Muted(ServerClock.Status); clock.Location=new Point(2,498);
++            var policy=Ui.Muted("기본 한도: 자정 초기화 · 등록 버튼 제출 시 1회 차감 · 제출 후 결과 미확인도 차감 유지"); policy.Location=new Point(2,530);
++            var contact=Ui.Muted("Pro 추가 등록권 문의  "+Brand.Email); contact.Location=new Point(2,560);
++            Controls.AddRange(new Control[] { title, sub, cardMain, cardNums,usage,clock,policy,contact });
+             Resize += delegate { cardMain.Width = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); cardNums.Width = cardMain.Width; bar.Width = cardMain.Width - Ui.S(44); };
+ 
+             btnStart.Click += delegate { Host.Auto.Start(); };
+@@ -63,6 +68,7 @@
+ 
+         private void Sync()
+         {
++            if(clock!=null)clock.Text=ServerClock.Status; if(usage!=null && ++quotaTick%10==0)usage.Text=UsageQuota.Summary();
+             var a = Host.Auto; var r = Host.Runner;
+             bool running = r.Running;
+             lblState.Text = a.StateText;
+--- 8차/src/UI/Pages/DashboardPage.cs
++++ 9차/src/UI/Pages/DashboardPage.cs
+@@ -18,9 +18,9 @@
+ 
+         public DashboardPage(AppHost host) : base(host)
+         {
+-            Key = "dashboard"; PageTitle = "Dashboard";
+-            var title = Ui.Title("Dashboard"); title.Location = new Point(0, 0);
+-            var sub = Ui.Muted("현재 상품 목록과 실행 기록을 요약해서 보여 줍니다."); sub.Location = new Point(2, 38);
++            Key = "dashboard"; PageTitle = "한눈에 보기";
++            var title = Ui.Title("오늘의 판매, 한눈에."); title.Location = new Point(0, 0);
++            var sub = Ui.Muted("상품을 준비하고, 나머지는 EXP에 맡기세요."); sub.Location = new Point(2, 38);
+ 
+             grid = new TableLayoutPanel { Location = new Point(0, 74), ColumnCount = 4, RowCount = 2, Height = 216, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right, BackColor = Theme.BgDark };
+             for (int i = 0; i < 4; i++) grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
+@@ -41,7 +41,11 @@
+             recentLogs.Controls.Add(more);
+             lstLogs = MakeList(); lstLogs.SetBounds(12, 48, 300, 236); recentLogs.Controls.Add(lstLogs);
+ 
+-            Controls.AddRange(new Control[] { title, sub, grid, activity, recentLogs });
++            var quick = Ui.Button("상품 준비하기", "\uE710", BtnStyle.Primary, 150);
++            quick.Anchor = AnchorStyles.Top | AnchorStyles.Right;
++            quick.Click += delegate { Host.Navigate("products"); };
++            Controls.AddRange(new Control[] { title, sub, grid, activity, recentLogs, quick });
++            Resize += delegate { quick.Location = new Point(ClientSize.Width - Padding.Right - quick.Width, Padding.Top); };
+             Resize += delegate { Relayout(); };
+             Relayout();
+ 
+@@ -93,7 +97,7 @@
+             cPending.Value = pend.ToString(); cPending.Hint = "아직 올리지 않은 유효한 상품";
+             cDone.Value = done.ToString(); cDone.Hint = "등록 완료(상품번호가 있는 것 포함)";
+             cFail.Value = fail.ToString(); cFail.Hint = fail > 0 ? "상태메시지를 확인하세요" : "실패한 상품이 없습니다";
+-            cTotal.Value = Host.Products.Count.ToString(); cTotal.Hint = Host.Products.Count == 0 ? "상품 관리에서 추가하거나 CSV로 불러오세요" : "목록에 있는 모든 상품";
++            cTotal.Value = Host.Products.Count.ToString(); cTotal.Hint = Host.Products.Count == 0 ? "상품 관리에서 첫 상품을 추가하세요" : "목록에 있는 모든 상품";
+ 
+             bool loggedIn = Host.Cfg.AssumeLoggedIn;
+             cLogin.Value = loggedIn ? "확인됨" : "미확인"; cLogin.Hint = loggedIn ? "전용 크롬에 로그인되어 있음" : "로그인 메뉴에서 테스트하세요";
+@@ -101,13 +105,15 @@
+ 
+             var li = LicenseGate.LastInfo;
+             bool ok = li != null && li.Valid;
+-            cLic.Value = ok ? "정상" : "확인 필요"; cLic.Hint = ok ? (li.Name ?? "") : "라이선스 메뉴에서 확인하세요";
++            cLic.Value = ok ? li.Edition : "확인 필요"; cLic.Hint = ok ? (li.Trial ? "Pro 3시간 체험판" : "EXP 정식 라이선스") : "라이선스 메뉴에서 확인하세요";
+             cLic.Tone = () => ok ? Theme.Success : Theme.Danger;
+             if (ok && li.Expires != DateTime.MaxValue)
+             {
+-                cExp.Value = li.Expires.ToString("yyyy-MM-dd"); cExp.Hint = "이 날까지 사용할 수 있습니다";
++                cExp.Value = li.Expires.ToString("yyyy-MM-dd"); cExp.Hint = li.Expires.ToString("HH:mm") + "까지 사용할 수 있습니다";
+                 int days = (int)Math.Ceiling((li.Expires.Date.AddDays(1) - DateTime.Now).TotalDays);
+                 cLeft.Value = days > 0 ? days + "일" : "만료"; cLeft.Hint = days <= 7 ? "곧 만료됩니다. 연장을 요청하세요" : "남은 사용 기간";
++                var remaining=li.Expires.ToUniversalTime()-ServerClock.UtcNow;
++                if(remaining.TotalHours<24) { cLeft.Value=Math.Max(0,(int)remaining.TotalMinutes)+"분"; cLeft.Hint=li.Trial?"체험판은 발급부터 3시간":"남은 사용 시간"; }
+                 cLeft.Tone = () => days <= 7 ? Theme.Warn : Theme.Current.Text;
+             }
+             else if (ok) { cExp.Value = "무기한"; cExp.Hint = "기간 제한이 없는 라이선스"; cLeft.Value = "무기한"; cLeft.Hint = ""; cLeft.Tone = null; }
+--- 8차/src/UI/Pages/LicensePage.cs
++++ 9차/src/UI/Pages/LicensePage.cs
+@@ -28,9 +28,9 @@
+             };
+             lblName = row("라이선스 이름"); lblExp = row("만료일"); lblLeft = row("남은 기간");
+             lblPc = row("PC 고유번호"); lblPc.Font = Theme.FontMono(11f);
+-            var bCopy = Ui.Button("복사", "\uE8C8", BtnStyle.Standard, 90); bCopy.Location = new Point(330, 177);
++            var bCopy = Ui.Button("등록코드 복사", "\uE8C8", BtnStyle.Primary, 150); bCopy.Location = new Point(330, 177);
+             lblStatus = lblName; // (호환용)
+-            var bRequest = Ui.Button("등록 요청 저장", "", BtnStyle.Standard, 150); bRequest.Location = new Point(430, 177);
++            var bRequest = Ui.Button("파일로 저장", "", BtnStyle.Standard, 150); bRequest.Location = new Point(490, 177);
+             bRequest.Click += delegate { LicenseFiles.ExportRequest(this); Sync(); };
+             c1.Controls.AddRange(new Control[] { h1, chip, bCopy, bRequest });
+ 
+@@ -40,15 +40,24 @@
+             txtKey = new TextBox { Location = new Point(22, 76), Width = 560, Height = 64, Multiline = true, ScrollBars = ScrollBars.Vertical, Font = Theme.FontMono(9f), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+             var bOk = Ui.Button("인증", "\uE73E", BtnStyle.Primary, 110); bOk.Location = new Point(22, 152);
+             lblMsg = Ui.Text("", 9.5f, false, "m"); lblMsg.Location = new Point(146, 160);
+-            var bImport = Ui.Button("파일 열기", "", BtnStyle.Standard, 110); bImport.Location = new Point(146, 152);
++            var bImport = Ui.Button("키 붙여넣기", "", BtnStyle.Standard, 120); bImport.Location = new Point(146, 152);
+             lblMsg.Location = new Point(272, 160);
+-            bImport.Click += delegate { string token = LicenseFiles.ImportLicense(this); if (token != null) txtKey.Text = token; };
++            bImport.Click += delegate { try { txtKey.Text = LicenseFiles.PasteKey(); } catch (Exception ex) { lblMsg.Text = ex is FormatException ? ex.Message : "직접 붙여 넣어 주세요."; } };
+             c2.Controls.AddRange(new Control[] { h2, d2, txtKey, bOk, bImport, lblMsg });
+ 
+-            Controls.AddRange(new Control[] { title, sub, c1, c2 });
++            var extra=new CardPanel {Left=0,Top=542,Height=178};
++            var h3=Ui.Heading("Pro 추가 등록권"); h3.Location=new Point(20,16);
++            var info=Ui.Muted("기본 한도를 다 쓰면 추가 등록권을 사용합니다. 미사용 잔액은 이월됩니다.");info.Location=new Point(22,48);
++            var credit=Design.Input("creditKey",22,78,470,44,false);
++            var redeem=Ui.Button("충전", "",BtnStyle.Primary,110);redeem.Location=new Point(510,80);
++            var contact=Ui.Muted("추가 구매 문의  "+Brand.Email); contact.Location=new Point(22,138);
++            redeem.Click+=delegate { try { UsageQuota.Redeem(credit.Text);credit.Clear();info.Text=UsageQuota.Summary(); }catch(Exception ex){info.Text=ex.Message;} };
++            extra.Controls.AddRange(new Control[]{h3,info,credit,redeem,contact});
++            Controls.AddRange(new Control[] { title, sub, c1, c2,extra });
++            Resize+=delegate {extra.Width=Math.Max(Ui.S(400),ClientSize.Width-Padding.Horizontal);};
+             Resize += delegate { int w = Math.Max(Ui.S(400), ClientSize.Width - Padding.Horizontal); c1.Width = w; c2.Width = w; txtKey.Width = w - Ui.S(44); };
+ 
+-            bCopy.Click += delegate { try { Clipboard.SetText(TpmDevice.DisplayId()); lblMsg.Text = "PC 고유번호를 복사했습니다."; lblMsg.Tag = "m"; lblMsg.ForeColor = Theme.TextMuted; } catch { } };
++            bCopy.Click += delegate { string token, msg; bool ok = LicenseFiles.CopyRequest(out token, out msg); lblMsg.Text = msg; lblMsg.Tag = ok ? "s" : "d"; lblMsg.ForeColor = ok ? Theme.Success : Theme.Danger; if (!ok && token.Length > 0) { txtKey.Text = token; txtKey.SelectAll(); } Sync(); };
+             bOk.Click += delegate
+             {
+                 string msg;
+@@ -64,13 +73,14 @@
+             chip.Text = ok ? "정상" : "확인 필요"; chip.Tone = ok ? Theme.Success : Theme.Danger; chip.Invalidate();
+             lblPc.Text = TpmDevice.DisplayId();
+             if (!ok) { lblName.Text = "-"; lblExp.Text = "-"; lblLeft.Text = "-"; return; }
+-            lblName.Text = li.Name ?? "-";
++            lblName.Text = "EXP " + li.Edition + (li.Trial ? " · 체험판" : "") + " / " + li.Name;
+             if (li.Expires == DateTime.MaxValue) { lblExp.Text = "무기한"; lblLeft.Text = "무기한"; }
+             else
+             {
+-                lblExp.Text = li.Expires.ToString("yyyy-MM-dd");
++                lblExp.Text = li.Expires.ToString("yyyy-MM-dd HH:mm");
+                 int days = (int)Math.Ceiling((li.Expires.Date.AddDays(1) - DateTime.Now).TotalDays);
+-                lblLeft.Text = days > 0 ? days + "일 남음" : "만료됨";
++                var left = li.Expires.ToUniversalTime() - ServerClock.UtcNow;
++                lblLeft.Text = left.TotalHours < 24 ? Math.Max(0,(int)left.TotalHours) + "시간 " + Math.Max(0,left.Minutes) + "분 남음" : days + "일 남음";
+             }
+         }
+ 
+--- 8차/src/UI/Pages/ProductsPage.cs
++++ 9차/src/UI/Pages/ProductsPage.cs
+@@ -33,12 +33,9 @@
+             var bAdd = Ui.Button("상품 추가", "\uE710", BtnStyle.Primary);
+             var bEdit = Ui.Button("편집", "\uE70F");
+             var bDel = Ui.Button("삭제", "\uE74D");
+-            var bImport = Ui.Button("CSV 불러오기", "\uE896");
+-            var bExport = Ui.Button("CSV 저장", "\uE74E");
+-            var bTpl = Ui.Button("CSV 양식", "\uE8A5");
+             var bImg = Ui.Button("사진 지정", "\uEB9F");
+             var bReset = Ui.Button("상태 초기화", "\uE777");
+-            var bar = Ui.Row(bAdd, bEdit, bDel, bImport, bExport, bTpl, bImg, bReset); bar.Location = new Point(0, 70);
++            var bar = Ui.Row(bAdd, bEdit, bDel, bImg, bReset); bar.Location = new Point(0, 70);
+             bar.WrapContents = true; bar.MaximumSize = new Size(2000, 90);
+ 
+             txtSearch = Ui.Input(260); txtSearch.Location = new Point(0, 114);
+@@ -85,13 +82,6 @@
+                 else if (v == "진행중") e.CellStyle.ForeColor = Theme.Accent;
+             };
+ 
+-            bImport.Click += delegate { ImportCsv(); };
+-            bExport.Click += delegate { ExportCsv(); };
+-            bTpl.Click += delegate
+-            {
+-                using (var d = new SaveFileDialog { Filter = "CSV|*.csv", FileName = "상품양식.csv" })
+-                    if (d.ShowDialog(FindForm()) == DialogResult.OK) { CsvIO.WriteTemplate(d.FileName); Log.Write("양식 저장: " + d.FileName); }
+-            };
+             bAdd.Click += delegate
+             {
+                 var np = new Product();
+@@ -229,41 +219,5 @@
+         public override void OnActivated() { grid.Invalidate(); UpdateCount(); }
+         public override void OnThemeChanged() { Theme.StyleGrid(grid); grid.Invalidate(); }
+ 
+-        // ============================ CSV (기존 MainForm 동작 그대로) ============================
+-        private void ImportCsv()
+-        {
+-            var owner = FindForm();
+-            using (var d = new OpenFileDialog { Filter = "CSV·텍스트 파일|*.csv;*.txt;*.tsv|모든 파일|*.*" })
+-            {
+-                if (d.ShowDialog(owner) != DialogResult.OK) return;
+-                try
+-                {
+-                    var items = CsvIO.Read(d.FileName);
+-                    bool replace = Host.Products.Count == 0 ||
+-                        FluentBox.Show(owner, "기존 목록을 지우고 새로 불러올까요?\r\n(아니오: 아래에 이어서 추가)", "CSV 불러오기", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+-                    if (replace) Host.Products.Clear();
+-                    foreach (var p in items) Host.Products.Add(p);
+-                    Host.Cfg.LastCsv = d.FileName;
+-                    Storage.SaveProducts(Host.Products);
+-                    Log.Write("CSV " + items.Count + "건을 불러왔습니다: " + d.FileName);
+-                    int bad = items.Count(x => (x.Description ?? "").Contains("??") || (x.Title ?? "").Contains("??"));
+-                    if (bad > 0)
+-                        Log.Write("[주의] 제목/설명에 '??' 가 있는 상품이 " + bad + "건 있습니다. 엑셀에서 'CSV(쉼표로 분리)'로 저장하면 이모지·특수기호가 '?'로 바뀌어 복구되지 않습니다. " +
+-                                  "원본 엑셀에서 'CSV UTF-8(쉼표로 분리)'로 다시 저장해 불러오세요.");
+-                }
+-                catch (Exception ex) { Log.Write("WARN", "Csv", "csv.import", "CSV 불러오기 실패: " + ex.Message, "FAIL"); FluentBox.Show(owner, "불러오기 실패: " + ex.Message, "CSV 불러오기", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+-            }
+-        }
+-
+-        private void ExportCsv()
+-        {
+-            var owner = FindForm();
+-            using (var d = new SaveFileDialog { Filter = "CSV|*.csv", FileName = "상품목록.csv" })
+-            {
+-                if (d.ShowDialog(owner) != DialogResult.OK) return;
+-                try { CsvIO.Write(d.FileName, Host.Products); Log.Write("CSV 저장: " + d.FileName); }
+-                catch (Exception ex) { Log.Write("WARN", "Csv", "csv.export", "CSV 저장 실패: " + ex.Message, "FAIL"); FluentBox.Show(owner, "저장 실패: " + ex.Message + (ex is IOException ? "\r\n\r\n엑셀 등에서 같은 파일을 열어 두었다면 닫고 다시 저장해 주세요." : ""), "오류"); }
+-            }
+-        }
+     }
+ }
+--- 8차/src/UI/Pages/SchedulePage.cs
++++ 9차/src/UI/Pages/SchedulePage.cs
+@@ -20,7 +20,7 @@
+         {
+             Key = "schedule"; PageTitle = "예약";
+             var title = Ui.Title("예약"); title.Location = new Point(0, 0);
+-            var sub = Ui.Muted("등록 방식과 간격, 반복을 정합니다. 바꾼 값은 자동으로 저장됩니다."); sub.Location = new Point(2, 38);
++            var sub = Ui.Muted("반복·시간대 예약: Studio / Pro · 번개장터 서버 시각 동기화 후 실행됩니다."); sub.Location = new Point(2, 38);
+ 
+             var card = new CardPanel { Location = new Point(0, 74), Height = 560, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+             int y = 18;
+@@ -45,7 +45,7 @@
+             y += 138;
+             bAdd = Ui.Button("시간대 추가", "\uE710", BtnStyle.Standard); bAdd.Location = new Point(60, y);
+             bDel = Ui.Button("선택 삭제", "\uE74D", BtnStyle.Standard); bDel.Location = new Point(190, y);
+-            lblRulesHint = Ui.Muted("자정을 넘기려면 22:00 ~ 06:00 처럼 적고, 하루 끝은 24:00 입니다. 시간대 밖에서는 다음 시간대까지 기다립니다."); lblRulesHint.Location = new Point(60, y + 40);
++            lblRulesHint = Ui.Muted("한국시간 기준 · 새 시간대 시작 시 대기 초기화 · 겹치면 나중에 시작한 시간대 우선"); lblRulesHint.Location = new Point(60, y + 40);
+             y += 82;
+ 
+             chkDup = Ui.Toggle("중복 등록 허용 (이미 등록된 상품도 다시 올림)"); chkDup.Location = new Point(20, y); y += 44;
+@@ -103,11 +103,13 @@
+         private void UpdateEnabled()
+         {
+             bool one = chkOneByOne.Checked;
+-            chkWindows.Enabled = one;
++            var li=LicenseGate.LastInfo; bool advanced=li!=null && li.Valid && Lumivolt.Security.EditionPolicy.CanRepeat(li.Edition);
++            chkDup.Enabled=advanced;
++            chkWindows.Enabled = one && advanced;
+             numGap.Enabled = one && !chkWindows.Checked; lblGap.Enabled = numGap.Enabled;
+-            gridRules.Enabled = one && chkWindows.Checked; bAdd.Enabled = gridRules.Enabled; bDel.Enabled = gridRules.Enabled;
+-            chkRepeat.Enabled = one;
+-            numRounds.Enabled = one && chkRepeat.Checked; lblRounds.Enabled = numRounds.Enabled;
++            gridRules.Enabled = one && advanced && chkWindows.Checked; bAdd.Enabled = gridRules.Enabled; bDel.Enabled = gridRules.Enabled;
++            chkRepeat.Enabled = one && advanced;
++            numRounds.Enabled = one && advanced && chkRepeat.Checked; lblRounds.Enabled = numRounds.Enabled;
+             gridRules.DefaultCellStyle.ForeColor = gridRules.Enabled ? Theme.TextPrimary : Theme.TextMuted;
+             chkWindows.Invalidate(); chkRepeat.Invalidate();
+         }
+--- 8차/src/UI/Pages/SettingsPage.cs
++++ 9차/src/UI/Pages/SettingsPage.cs
+@@ -56,7 +56,7 @@
+             var h4 = Ui.Heading("도구"); h4.Location = new Point(20, 16);
+             var bSelf = Ui.Button("자가 진단 실행", "\uE9D9", BtnStyle.Standard, 180); bSelf.Location = new Point(20, 52);
+             var bAdmin = Ui.Button("관리자 로그인", "\uE716", BtnStyle.Standard, 170); bAdmin.Location = new Point(212, 52);
+-            var d4 = Ui.Muted("Lumivolt v" + ClientIdentityService.AppVersion + "  ·  Copyright © 음악천재. All rights reserved.\r\n글꼴: 나눔고딕 Bold (NAVER, SIL OFL 1.1) — " + (AppFont.Active ? "적용됨" : "불러오지 못해 기본 글꼴 사용 (" + AppFont.Status + ")")); d4.Location = new Point(22, 106);
++            var d4 = Ui.Muted("EXP v" + ClientIdentityService.AppVersion + "  ·  Copyright © 음악천재. All rights reserved.\r\n글꼴: 나눔고딕 Bold (NAVER, SIL OFL 1.1) — " + (AppFont.Active ? "적용됨" : "불러오지 못해 기본 글꼴 사용 (" + AppFont.Status + ")")); d4.Location = new Point(22, 106);
+             c4.Controls.AddRange(new Control[] { h4, bSelf, bAdmin, d4 });
+ 
+             Controls.AddRange(new Control[] { title, sub, c1, c2, c3, c4 });
+@@ -111,7 +111,7 @@
+                 catch (Exception ex) { sw.WriteLine("진단 중 예외: " + ex.Message); code = 1; }
+                 finally { Console.SetOut(old); }
+                 Log.Write(code == 0 ? "INFO" : "ERROR", "SelfTest", "selftest.result", "자가 진단 결과: " + (code == 0 ? "모두 통과" : "실패 있음"), code == 0 ? "OK" : "FAIL");
+-                try { ui.BeginInvoke((Action)delegate { b.Enabled = true; b.Text = "자가 진단 실행"; ShowText("자가 진단 결과", sw.ToString()); }); } catch { }
++                try { ui.BeginInvoke((Action)delegate { b.Enabled = true; b.Text = "자가 진단 실행"; ShowText("자가 진단 결과", sw.ToString().Replace("CSV", "데이터 호환")); }); } catch { }
+             });
+         }
+ 
+@@ -192,3 +192,4 @@
+         }
+     }
+ }
++
+--- 8차/src/UI/UiKit.cs
++++ 9차/src/UI/UiKit.cs
+@@ -82,7 +82,7 @@
+             };
+         }
+ 
+-        public static Label Title(string text) { return Text(text, 20f, true); }
++        public static Label Title(string text) { return Text(text, 22f, true); }
+         public static Label Heading(string text) { return Text(text, 11.5f, true); }
+         public static Label Muted(string text) { return Text(text, 9.5f, false, "m"); }
+ 
+@@ -159,7 +159,7 @@
+             Host = host;
+             Dock = DockStyle.Fill;
+             AutoScroll = true;
+-            Padding = new Padding(28, 20, 28, 20);
++            Padding = new Padding(32, 26, 32, 26);
+             BackColor = Theme.BgDark;
+             DoubleBuffered = true;
+         }
+--- 8차/tests/AdminUiSmoke.cs
++++ 9차/tests/AdminUiSmoke.cs
+@@ -15,10 +15,14 @@
+     static int Run(string[] args)
+     {
+         AppFont.Init(); Application.EnableVisualStyles();
+-        using (var f = new AdminForm())
++        foreach (var dark in new[] { false, true }) using (var f = new AdminForm())
+         {
++            Theme.Set(dark ? ThemePalette.DarkPal : ThemePalette.Light); Theme.Apply(f);
+             f.ShowInTaskbar = false; f.Opacity = 0; f.Show(); Application.DoEvents();
+-            using (var bmp = new Bitmap(f.Width, f.Height)) { f.DrawToBitmap(bmp, new Rectangle(0, 0, f.Width, f.Height)); bmp.Save(args[0]); }
++            var mode=(ComboBox)typeof(AdminForm).GetField("mode",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(f);
++            for(int i=0;i<3;i++) { mode.SelectedIndex=i; Application.DoEvents();
++                using (var bmp = new Bitmap(f.Width, f.Height)) { f.DrawToBitmap(bmp, new Rectangle(0, 0, f.Width, f.Height)); bmp.Save(args[0]+(dark?"-Dark":"-Light")+"-"+i+".png"); }
++            }
+         }
+         Console.WriteLine("PASS administrator UI rendered"); return 0;
+     }
+--- 8차/tests/ProductionSmoke.cs
++++ 9차/tests/ProductionSmoke.cs
+@@ -8,7 +8,7 @@
+     {
+         string directory = Path.GetDirectoryName(Path.GetFullPath(args[0]));
+         AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e) {
+-            var app = Assembly.LoadFile(Path.Combine(directory, "Lumivolt.exe"));
++            var app = Assembly.LoadFile(Path.Combine(directory, "EXP.exe"));
+             using (var s = app.GetManifestResourceStream("lib." + new AssemblyName(e.Name).Name + ".dll")) { if (s == null) return null; using (var m = new MemoryStream()) { s.CopyTo(m); return Assembly.Load(m.ToArray()); } }
+         };
+         return Run(args);
+@@ -27,3 +27,4 @@
+         return good.Valid && !bad.Valid && clean ? 0 : 1;
+     }
+ }
++
+--- 8차/tests/ReleaseTests.cs
++++ 9차/tests/ReleaseTests.cs
+@@ -0,0 +1,82 @@
++using System;
++using System.IO;
++using System.Reflection;
++using System.Collections.Generic;
++using System.Security.Cryptography;
++using System.Threading;
++using Microsoft.Win32;
++using Newtonsoft.Json.Linq;
++using BunjangAuto;
++using Lumivolt.Security;
++using Lumivolt.Admin;
++class ReleaseTests {
++    static int pass,fail;
++    static void Check(string name,bool good){Console.WriteLine((good?"PASS ":"FAIL ")+name);if(good)pass++;else fail++;}
++    static void Reject(string name,Action a){try{a();Check(name,false);}catch{Check(name,true);}}
++    static string Sign(string folder,JObject o,string prefix){var key=IssuerService.Load(folder);var b=LicenseProtocol.Bytes(o);var signer=new Org.BouncyCastle.Crypto.Signers.Ed25519Signer();signer.Init(true,key);signer.BlockUpdate(b,0,b.Length);return LicenseProtocol.Wrap(prefix,b,signer.GenerateSignature());}
++    static JObject State(){return new JObject{{"used",0},{"credits",0},{"accounts",new JObject()},{"redeemed",new JObject()}};}
++    [STAThread] static int Main(string[] args){ AppDomain.CurrentDomain.AssemblyResolve+=delegate(object sender,ResolveEventArgs e){using(var s=Assembly.GetExecutingAssembly().GetManifestResourceStream("lib."+new AssemblyName(e.Name).Name+".dll")){if(s==null)return null;using(var m=new MemoryStream()){s.CopyTo(m);return Assembly.Load(m.ToArray());}}};return Run(); }
++    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
++    static int Run(){
++        string old=IssuerService.LastVault, dir=Path.Combine(Path.GetTempPath(),"EXP-release-test-"+Guid.NewGuid().ToString("N"));
++        try {
++            Paths.EnsureAll(); IssuerService.Create(dir); var pub=IssuerService.Public(dir); TrustedKeys.All.Add((string)pub["keyId"],Convert.FromBase64String((string)pub["publicKey"]));
++            string req=TpmDevice.CreateRequest();
++            foreach(string edition in new[]{"Classic","Studio","Pro"}) {
++                string token=AdminWorkflow.Issue(dir,req,"",DateTime.UtcNow.AddDays(1),edition);
++                var info=License.Verify(token,"");Check("signed edition "+edition,info.Valid&&info.Edition==edition);
++                Check("whitespace paste "+edition,License.Verify("\n "+token.Insert(50," \r\n")+"\n","").Valid);
++                var data=IssuerService.Inspect(dir,token); data["edition"]="Enterprise";Reject("unknown signed edition",()=>LicenseProtocol.VerifyLicense(Sign(dir,data,"LV4"),TrustedKeys.All,DateTime.UtcNow,"automation"));
++                byte[] bytes,sig;LicenseProtocol.Decode(token,"LV4",out bytes,out sig);data["edition"]="Pro";data["name"]="tampered";
++                Reject("edition tampering",()=>LicenseProtocol.VerifyLicense(LicenseProtocol.Wrap("LV4",LicenseProtocol.Bytes(data),sig),TrustedKeys.All,DateTime.UtcNow,"automation"));
++            }
++            string trial=TrialIssuer.Issue(dir,req,"trial@example.com");var trialData=IssuerService.Inspect(dir,trial);
++            var issued=LicenseProtocol.Time((string)trialData["issuedUtc"]);var expiry=LicenseProtocol.Time((string)trialData["expiresUtc"]);
++            Check("trial exactly three hours",expiry-issued==TimeSpan.FromHours(3));Check("trial is Pro",(bool)trialData["trial"]&&(string)trialData["edition"]=="Pro");
++            Reject("trial expired at exact boundary",()=>LicenseProtocol.VerifyLicense(trial,TrustedKeys.All,expiry,"automation"));
++            Reject("same device different email trial",()=>TrialIssuer.Issue(dir,req,"other@example.com"));
++            Reject("same email trial",()=>TrialIssuer.Issue(dir,req,"TRIAL@example.com"));
++            trialData["expiresUtc"]=LicenseProtocol.Utc(expiry.AddSeconds(1));Reject("signed trial duration over three hours",()=>LicenseProtocol.VerifyLicense(Sign(dir,trialData,"LV4"),TrustedKeys.All,issued,"automation"));
++            string message;Check("trial activation",LicenseGate.TryActivate(trial,out message));Check("same trial can reopen without restarting",LicenseGate.TryActivate(trial,out message));
++            trialData["expiresUtc"]=LicenseProtocol.Utc(expiry);trialData["licenseId"]=Guid.NewGuid().ToString("D");
++            Check("second validly signed trial blocked on client",!LicenseGate.TryActivate(Sign(dir,trialData,"LV4"),out message));
++            Check("regular Pro upgrade",LicenseGate.TryActivate(AdminWorkflow.Issue(dir,req,"",DateTime.UtcNow.AddDays(1),"Pro"),out message));
++            var state=State();for(int i=0;i<25;i++)UsageQuota.ApplyConsume(state,"Classic",i%2==0?"1":"2");Reject("Classic 25 across switched accounts",()=>UsageQuota.ApplyConsume(state,"Classic","3"));
++            state=State();for(int i=0;i<50;i++)UsageQuota.ApplyConsume(state,"Studio",i%2==0?"1":"2");Reject("Studio 50 across accounts",()=>UsageQuota.ApplyConsume(state,"Studio","3"));
++            state=State();for(int i=0;i<100;i++)UsageQuota.ApplyConsume(state,"Pro",i<50?"1":"2");Reject("Pro 100 across accounts",()=>UsageQuota.ApplyConsume(state,"Pro","3"));
++            string top=CreditIssuer.Issue(dir,req,3);var credit=CreditProtocol.Verify(top,TrustedKeys.All,DateTime.UtcNow);UsageQuota.ApplyCredit(state,credit);
++            Reject("top-up replay",()=>UsageQuota.ApplyCredit(state,credit));Reject("credits do not bypass account 50",()=>UsageQuota.ApplyConsume(state,"Pro","1"));
++            UsageQuota.ApplyConsume(state,"Pro","3");Check("one extra credit consumed",(long)state["credits"]==2&&(int)state["used"]==101);
++            state["used"]=0;state["accounts"]=new JObject();UsageQuota.ApplyConsume(state,"Pro","3");Check("base allowance before credits next day",(int)state["used"]==1&&(long)state["credits"]==2);
++            credit["quantity"]=9999;byte[] payload,signature;LicenseProtocol.Decode(top,"EXPC1",out payload,out signature);Reject("credit quantity tamper",()=>CreditProtocol.Verify(LicenseProtocol.Wrap("EXPC1",LicenseProtocol.Bytes(credit),signature),TrustedKeys.All,DateTime.UtcNow));
++            UsageQuota.Redeem(top);Reject("persisted top-up replay",()=>UsageQuota.Redeem(top));
++            Check("repeat classic denied",!EditionPolicy.CanRepeat("Classic"));Check("repeat Studio and Pro",EditionPolicy.CanRepeat("Studio")&&EditionPolicy.CanRepeat("Pro"));
++            var classic=AdminWorkflow.Issue(dir,req,"",DateTime.UtcNow.AddDays(1),"Classic");LicenseGate.TryActivate(classic,out message);Reject("Classic runtime repeat guard",()=>UsageQuota.RequireMode(new AppSettings{RepeatAll=true},false));
++            var usedPath=Path.Combine(Paths.Root,"usage.v1");var saved=File.ReadAllBytes(usedPath);File.WriteAllBytes(usedPath,new byte[100]);Reject("DPAPI usage tamper",()=>UsageQuota.EnsureReady());File.WriteAllBytes(usedPath,saved);
++            File.Delete(usedPath);Reject("usage file deletion does not reset allowance",()=>UsageQuota.EnsureReady());File.WriteAllBytes(usedPath,saved);
++            using(var key=Registry.CurrentUser.OpenSubKey(@"Software\EXP\Tests\"+System.Diagnostics.Process.GetCurrentProcess().Id,true)){var reg=(byte[])key.GetValue("State");key.DeleteValue("State");File.Delete(usedPath);Reject("both usage copies deletion blocked by enrollment marker",()=>UsageQuota.EnsureReady());key.SetValue("State",reg,RegistryValueKind.Binary);File.WriteAllBytes(usedPath,saved);}
++            Check("restored usage remains valid",UsageQuota.Summary().Contains("3개"));
++            var read=typeof(UsageQuota).GetMethod("Read",BindingFlags.Static|BindingFlags.NonPublic);
++            var write=typeof(UsageQuota).GetMethod("Write",BindingFlags.Static|BindingFlags.NonPublic);
++            var persisted=(JObject)read.Invoke(null,new object[]{LicenseGate.LastInfo.MachineId,DateTime.UtcNow});
++            persisted["used"]=88; ((JObject)persisted["accounts"])["test-account"]=44; write.Invoke(null,new object[]{persisted});
++            var tomorrow=(JObject)read.Invoke(null,new object[]{LicenseGate.LastInfo.MachineId,DateTime.UtcNow.AddDays(1)});
++            Check("persisted next-day reset without base rollover",(int)tomorrow["used"]==0&&((JObject)tomorrow["accounts"]).Count==0&&(long)tomorrow["credits"]==3);
++            var later=(JObject)read.Invoke(null,new object[]{LicenseGate.LastInfo.MachineId,DateTime.UtcNow.AddDays(30)});
++            Check("30 inactive days do not accumulate base allowance",(int)later["used"]==0&&(long)later["credits"]==3);
++            List<TimeWindow> wins;string error;var d=new DateTime(2026,10,13);
++            Schedule.TryBuild(new[]{new TimeRule("00:00","09:00",45),new TimeRule("09:00","18:00",45)},out wins,out error);
++            Check("08:50 plus 45 resets at 09:00",Schedule.NextRun(wins,d.AddHours(8).AddMinutes(50),d.AddHours(8).AddMinutes(51),45)==d.AddHours(9));
++            Check("late completion runs immediately within active window",Schedule.NextRun(wins,d.AddHours(8).AddMinutes(50),d.AddHours(9).AddMinutes(5),45)==d.AddHours(9).AddMinutes(5));
++            Schedule.TryBuild(new[]{new TimeRule("22:00","09:00",45),new TimeRule("09:00","18:00",60)},out wins,out error);
++            Check("overnight reservation boundary",Schedule.NextRun(wins,d.AddHours(8).AddMinutes(50),d.AddHours(8).AddMinutes(55),45)==d.AddHours(9));
++            Schedule.TryBuild(new[]{new TimeRule("12:00","09:00",45),new TimeRule("09:00","18:00",60)},out wins,out error);
++            Check("overlapping rules latest start wins",Schedule.ActiveAt(wins,d.AddHours(13)).Minutes==45);
++            Check("installer edition mapping",EditionPolicy.SetupCode("Classic")==10&&EditionPolicy.SetupCode("Studio")==20&&EditionPolicy.SetupCode("Pro")==30);
++            ServerClock.RefreshAsync(); for(int i=0;i<120&&!ServerClock.Fresh;i++)Thread.Sleep(100);
++            Check("live HTTPS server clock",ServerClock.Fresh); if(ServerClock.Fresh){var before=ServerClock.UtcNow;Thread.Sleep(50);Check("server clock advances monotonically",ServerClock.UtcNow>before);}
++        } catch(Exception ex){Console.WriteLine(ex);fail++;}
++        finally { IssuerService.LastVault=old;try{Directory.Delete(dir,true);}catch{}try{using(var k=CngKey.Open("EXP.Usage.Test."+System.Diagnostics.Process.GetCurrentProcess().Id,CngProvider.MicrosoftSoftwareKeyStorageProvider))k.Delete();Registry.CurrentUser.DeleteSubKeyTree(@"Software\EXP\Tests\"+System.Diagnostics.Process.GetCurrentProcess().Id,false);}catch{} }
++        Console.WriteLine("RELEASE: "+pass+" passed, "+fail+" failed");return fail==0?0:1;
++    }
++}

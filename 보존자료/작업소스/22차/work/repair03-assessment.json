@@ -1,0 +1,9 @@
+{
+  "cause": "독립Batch31개검사에서2초대기만료로정상진행중작업을미완료assert,UI검사stdout기본인코딩불일치",
+  "method": "제어지연으로검사대기부족RED재현후StartAndWait완료대기상한만합리적으로분리,업무assert유지.테스트Main UTF8출력명시",
+  "role": "build",
+  "selection_reason": "제품동작이아닌검사하네스의대기/표시수리로기존build Solmedium담당적합.중앙25초상한/실제quota와기대값약화금지",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "new_observation": "최종영수증7.203초/Batchexit1,31개21개처리중오류필드없음,다음65PASS. FAIL원문과source불변보존"
+}
